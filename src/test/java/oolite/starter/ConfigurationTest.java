@@ -6,6 +6,7 @@ package oolite.starter;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.List;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -47,12 +48,13 @@ public class ConfigurationTest {
     @Test
     public void testDefaultConfiguration() throws MalformedURLException {
         Configuration c = new Configuration();
-        assertEquals("[/home/hiran/GNUstep/Applications/Oolite/AddOns, /home/hiran/.Oolite/Add-ons, /home/hiran/GNUstep/Library/ApplicationSupport/Oolite/ManagedAddOns, /home/hiran/GNUstep/Library/ApplicationSupport/Oolite/DeactivatedAddOns]", String.valueOf(c.getAddonDirs()));
-        assertEquals("/home/hiran/GNUstep/Library/ApplicationSupport/Oolite/DeactivatedAddOns", String.valueOf(c.getDeactivatedAddonsDir()));
+        List<File> addonDirs = c.getAddonDirs();
+        assertEquals(4, addonDirs.size());
+        assertTrue(String.valueOf(c.getDeactivatedAddonsDir()).contains("GNUstep/Library/ApplicationSupport/Oolite/DeactivatedAddOns"));
         assertEquals("[https://addons.oolite.space/api/1.0/overview/, http://addons.oolite.org/api/1.0/overview/]", String.valueOf(c.getExpansionManagerURLs()));
-        assertEquals("/home/hiran/GNUstep/Library/ApplicationSupport/Oolite/ManagedAddOns", String.valueOf(c.getManagedAddonsDir()));
-        assertEquals("/home/hiran/GNUstep/Applications/Oolite/oolite.app/oolite-wrapper", c.getOoliteCommand());
-        assertEquals("/home/hiran/oolite-saves", String.valueOf(c.getSaveGameDir()));
+        assertTrue(String.valueOf(c.getManagedAddonsDir()).contains("GNUstep/Library/ApplicationSupport/Oolite/ManagedAddOns"));
+        assertTrue(c.getOoliteCommand().contains("GNUstep/Applications/Oolite/oolite.app/oolite-wrapper"));
+        assertTrue(String.valueOf(c.getSaveGameDir()).contains("oolite-saves"));
     }
 
     /**
@@ -61,7 +63,8 @@ public class ConfigurationTest {
     @Test
     public void testDefaultConfiguration2() throws MalformedURLException, IOException {
         Configuration c = new Configuration(new File("src/test/resources/testConfig.properties"));
-        assertEquals("[/home/hiran/GNUstep/Applications/Oolite/AddOns, /home/hiran/.Oolite/Add-ons, active, inactive]", String.valueOf(c.getAddonDirs()));
+        List<File> addonDirs = c.getAddonDirs();
+        assertEquals(4, addonDirs.size());
         assertEquals("inactive", String.valueOf(c.getDeactivatedAddonsDir()));
         assertEquals("[https://addons.oolite.space/api/1.0/overview/, http://addons.oolite.org/api/1.0/overview/]", String.valueOf(c.getExpansionManagerURLs()));
         assertEquals("active", String.valueOf(c.getManagedAddonsDir()));
