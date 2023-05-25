@@ -1,0 +1,396 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>oolite</groupId>
+    <artifactId>OoliteStarter</artifactId>
+    <version>0.1-SNAPSHOT</version>
+    <packaging>jar</packaging>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <exec.mainClass>oolite.starter.MainFrame</exec.mainClass>
+        <sonar.coverage.jacoco.xmlReportPaths>${project.basedir}/target/site/jacoco-aggregate/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
+        <sonar.junit.reportsPath>target/surefire-reports/TEST-*.xml</sonar.junit.reportsPath>
+        <sonar.tests>src/test/java</sonar.tests>
+        
+        <macos.jvm.file>microsoft-jdk-17.0.7-macOS-x64.tar.gz</macos.jvm.file>
+        <macos.jvm.version>jdk-17.0.7</macos.jvm.version>
+        <macos.jvm.url>https://aka.ms/download-jdk/${macos.jvm.file}</macos.jvm.url>
+    </properties>
+    
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.antlr</groupId>
+                    <artifactId>antlr4-maven-plugin</artifactId>
+                    <version>4.3</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-checkstyle-plugin</artifactId>
+                    <version>3.1.2</version>
+                    <dependencies>
+                        <dependency>
+                        <groupId>com.puppycrawl.tools</groupId>
+                        <artifactId>checkstyle</artifactId>
+                        <version>9.2.1</version>
+                        </dependency>
+                    </dependencies>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+        <plugins>
+            <plugin>
+                <groupId>org.antlr</groupId>
+                <artifactId>antlr4-maven-plugin</artifactId>
+                <version>4.9</version>
+                <executions>
+                    <execution>
+                        <id>antlr</id>
+                        <goals>
+                            <goal>antlr4</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>3.1.2</version>
+                <configuration>
+                    <configLocation>checkstyle.xml</configLocation>
+                    <encoding>UTF-8</encoding>
+                    <consoleOutput>true</consoleOutput>
+                    <failsOnError>true</failsOnError>
+                    <linkXRef>false</linkXRef>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>validate</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+             </plugin>            
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.3.0</version>
+                <configuration>
+                    <outputDirectory>${project.build.directory}/dist</outputDirectory>
+                    <archive>
+			<manifest>
+                            <addClasspath>true</addClasspath>
+                            <classpathPrefix>lib/</classpathPrefix>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                            <mainClass>${exec.mainClass}</mainClass>
+                        </manifest>
+                        <manifestEntries>
+                            <SplashScreen-Image>oolite_logo.png</SplashScreen-Image>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.1.1</version>
+                <executions>
+                    <execution>
+                        <id>copy-dependencies</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/dist/lib</outputDirectory>
+                            <overWriteReleases>false</overWriteReleases>
+                            <overWriteSnapshots>false</overWriteSnapshots>
+                            <overWriteIfNewer>true</overWriteIfNewer>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.9</version>
+                <executions>
+                    
+                    <execution>
+                        <id>default-prepare-agent</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+
+                    <execution>
+                        <id>default-report</id>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                    
+                    <execution>
+                        <id>default-check</id>
+                        <goals>
+                          <goal>check</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <rule>
+                                    <element>BUNDLE</element>
+<!--
+    Activate this code when you want to introduce limits
+                                    <limits>
+                                        <limit>
+                                            <counter>COMPLEXITY</counter>
+                                            <value>COVEREDRATIO</value>
+                                            <minimum>0.60</minimum>
+                                        </limit>
+                                    </limits>
+-->
+                                </rule>
+                            </rules>
+                        </configuration>
+                    </execution>                    
+                    
+                </executions>
+                <configuration>
+                    <excludes>
+                        <exclude>oolite/starter/ui/*.class</exclude>
+                        <exclude>com/chaudhuri/plist/*.class</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>com.google.code.maven-replacer-plugin</groupId>
+                <artifactId>maven-replacer-plugin</artifactId>
+                <version>1.4.0</version>
+                <executions>                
+                    <execution>
+                        <id>1</id>
+                        <phase>process-sources</phase>
+                        <goals>
+                            <goal>replace</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <includes>
+                        <include>src/main/resources-ext/run-linux.sh</include> 
+                        <include>src/main/resources-ext/macos/Info.plist</include> 
+                        <include>src/main/resources-ext/macos/run-macos.sh</include> 
+                        <include>src/main/resources-ext/run.cmd</include> 
+                    </includes>
+                    <!--<file>src/main/resources-ext/run.cmd</file>-->
+                    <outputDir>target/</outputDir>
+                    <replacements>
+                        <replacement>
+                            <token>@buildnumber@</token>
+                            <value>${svn.revision}</value>
+                        </replacement>
+                        <replacement>
+                            <token>@buildtime@</token>
+                            <value>${maven.build.timestamp}</value>
+                        </replacement>
+                        <replacement>
+                            <token>@pomversion@</token>
+                            <value>${project.version}</value>
+                        </replacement>
+                        <replacement>
+                            <token>@projectname@</token>
+                            <value>${project.artifactId}</value>
+                        </replacement>
+                    </replacements>                        
+                </configuration>
+            </plugin>
+
+            <!--
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>3.0.0</version>
+                <executions>
+                    <execution>
+                        <id>get-macos-jvm</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <mkdir dir="cache"/>
+                                <get src="${macos.jvm.url}" dest="cache/${macos.jvm.file}" skipexisting="true"/>
+                                <untar src="cache/${macos.jvm.file}" dest="target/macos/jvm" compression="gzip"/>
+                            </target>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>jpackage-app-image-creation</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <echo>JPackage phase One</echo>
+                                <exec executable="jpackage" failonerror="true">
+                                    <arg line="- -type app-image"/>
+                                    <arg line="- -app-version &quot;${project.version}&quot;"/>
+                                    <arg line="- -copyright Copyright"/>
+                                    <arg line="- -description &quot;Nexus is an add-on for Oolite to allow multiplayer interaction. (check http://wiki.alioth.net/index.php/Nexus)&quot;"/>
+                                    <arg line="- -name &quot;Nexus&quot;"/>
+                                    <arg line="- -dest target"/>
+                                    <arg line="- -temp target/Nexus-tmp"/>
+                                    <arg line="- -vendor hiran"/>
+                                    <arg line="- -verbose"/>
+                                    <arg line="- -icon target/classes/org/oolite/hiran/nexus/ui/Communicator_Logo_Icon.png"/>
+                                    <arg line="- -input target/dist"/>
+                                    <arg line="- -main-jar Nexus-${project.version}.jar"/>
+                                    <arg line="- -main-class ${mainclass}"/>
+                                    <arg line="- -resource-dir src/jpackage/resources"/>
+                                </exec>
+                                <copy file="src/jpackage/resources/Nexus.desktop" tofile="target/Nexus/lib/nexus-Nexus.desktop"/>
+                            </target>
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>jpackage-app-image-finalization</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <echo>JPackage phase Two</echo>
+                                <exec executable="jpackage" failonerror="true">
+                                    <arg line="- -app-image target/Nexus"/>
+                                    <arg line="- -app-version &quot;${project.version}&quot;"/>
+                                    <arg line="- -copyright Copyright"/>
+                                    <arg line="- -description &quot;Nexus is an add-on for Oolite to allow multiplayer interaction. (check http://wiki.alioth.net/index.php/Nexus)&quot;"/>
+                                    <arg line="- -name &quot;Nexus&quot;"/>
+                                    <arg line="- -dest target"/>
+                                    <arg line="- -temp target/Nexus-tmp"/>
+                                    <arg line="- -vendor hiran"/>
+                                    <arg line="- -verbose"/>
+                                    <arg line="- -resource-dir src/jpackage/resources"/>
+                                </exec>
+                                
+                                <!- - build AppDir - ->
+                                <copy toDir="target/AppDir/usr">
+                                    <fileset dir="target/Nexus"/>
+                                </copy>
+                                <chmod file="target/AppDir/usr/bin/Nexus" perm="ugo+x"/>
+                                <symlink link="target/AppDir/AppRun" resource="usr/bin/Nexus"/>
+                                <symlink link="target/AppDir/.DirIcon" resource="usr/lib/Nexus.png"/>
+                                <concat destfile="target/AppDir/nexus.desktop">[Desktop Entry]
+Name=Oolite Nexus
+Exec=Nexus
+Icon=nexus
+Type=Application
+Categories=Game;
+</concat>
+                                <symlink link="target/AppDir/nexus.png" resource="usr/lib/Nexus.png"/>
+                                
+                                <!- - Create AppImage from AppDir - ->
+                                <mkdir dir="cache"/>
+                                <get src="${macos.jvm.url}" dest="cache/${macos.jvm.file}" skipexisting="true"/>
+                                <get src="https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage" dest="cache/appimagetool-x86_64.AppImage"/>
+                                <chmod file="cache/appimagetool-x86_64.AppImage" perm="ugo+x"/>
+                                <exec executable="cache/appimagetool-x86_64.AppImage" failonerror="true">
+                                    <env key="ARCH" value="x86_64"/>
+                                    <arg line="target/AppDir"/>
+                                    <arg line="target/Nexus-${project.version}-x86_64.AppImage"/>
+                                </exec>
+                            </target>
+                        </configuration>
+                    </execution>
+
+                </executions>
+            </plugin>
+            -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>3.3.0</version>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <descriptors>
+                                <descriptor>src/assembly/generic.xml</descriptor>
+                            </descriptors>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            
+        </plugins>
+    </build>
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <version>2.20.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>2.20.0</version>
+            <scope>runtime</scope>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.antlr/antlr4-runtime -->
+        <dependency>
+            <groupId>org.antlr</groupId>
+            <artifactId>antlr4-runtime</artifactId>
+            <version>4.9.3</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.11.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>5.6.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-params</artifactId>
+            <version>5.6.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>5.6.0</version>
+            <scope>test</scope>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-inline</artifactId>
+            <version>5.2.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-junit-jupiter</artifactId>
+            <version>5.2.0</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+</project>

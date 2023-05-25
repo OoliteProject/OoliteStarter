@@ -1,0 +1,30 @@
+(
+{
+	"identifier" = "oolite.oxp.cim.camera-drones";
+	"required_oolite_version" = "1.79";
+	"title" = "Camera Drones";
+	"version" = "1.4";
+	"category" = "Equipment";
+	"description" = "Drone cameras which provide a variety of alternative external views for your ship";
+	"download_url" = "http://cim.sotl.org.uk/games/files/oolite/CameraDrones_1.4.oxz";
+	"author" = "cim";
+	"file_size" = "3890";
+	"information_url" = "http://wiki.alioth.net/index.php/Camera_Drones";
+	"license" = "CC-BY-SA 3.0";
+	"upload_date" = "1403381556";
+}
+,{
+	"identifier" = "oolite.oxp.cim.ships-library";
+	"required_oolite_version" = "1.79";
+	"title" = "Ship's Library";
+	"version" = "0.8";
+	"category" = "Equipment";
+	"description" = "An e-reader for your ship which can read various books while docked - or with a purchasable upgrade, also while in flight. It comes with a ship's manual as an initial book, with other books available as separate expansion packs.";
+	"download_url" = "http://cim.sotl.org.uk/games/files/oolite/Ships_Library_0.8.oxz";
+	"author" = "cim";
+	"file_size" = "1797795";
+	"information_url" = "http://aegidian.org/bb/viewtopic.php?f=4&t=13818";
+	"license" = "GPL v2+ / CC-BY-NC-SA 3.0";
+	"upload_date" = "1395575445";
+}
+)

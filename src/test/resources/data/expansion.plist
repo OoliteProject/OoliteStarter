@@ -1,0 +1,21 @@
+{
+	"identifier" = "oolite.oxp.cim.camera-drones";
+	"required_oolite_version" = "1.79";
+	"title" = "Camera Drones";
+	"version" = "1.4";
+	"category" = "Equipment";
+	"description" = "Drone cameras which provide a variety of alternative external views for your ship";
+	"download_url" = "http://cim.sotl.org.uk/games/files/oolite/CameraDrones_1.4.oxz";
+	"author" = "cim";
+	"file_size" = "3890";
+	"information_url" = "http://wiki.alioth.net/index.php/Camera_Drones";
+	"license" = "CC-BY-SA 3.0";
+	"upload_date" = "1403381556";
+        "conflict_oxps" = "";
+        "maximum_oolite_version" = "";
+        "optional_oxps" = "";
+        "required_oolite_version" = "";
+        "requires_oxps" = "";
+        "tags" = "";
+        "illegal_key" = "";
+}
