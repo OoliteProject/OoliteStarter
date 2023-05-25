@@ -46,3 +46,58 @@ jobs:
         echo -n "Current directory: "
         pwd
         find
+
+    - uses: actions/upload-artifact@v2
+      with:
+        name: OoliteAddonScanner
+        path: target/OoliteStarter-${{ env.GITVERSION_SEMVER }}-generic.*
+
+    - name: Remove old prereleases
+      if: github.ref != 'refs/heads/master'
+      uses: s00d/delete-older-releases@0.2.1
+      with:
+        #repo: <owner>/<repoName> # defaults to current repo
+        keep_latest: 3
+        delete_tag_pattern: v
+        delete_type: 'prerelease'
+        target_branch: '${{ github.ref_name }}'
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Create Prerelease
+      if: github.ref != 'refs/heads/master'
+      id: create_prerelease
+      uses: "marvinpinto/action-automatic-releases@latest"
+      with:
+        repo_token: "${{ secrets.GITHUB_TOKEN }}"
+        automatic_release_tag: "v${{ env.GITVERSION_SEMVER }}"
+        prerelease: true
+        title: "OoliteAddonScanner v${{ env.GITVERSION_SEMVER }}"
+        files: |
+          target/*.zip
+          target/*.tar.gz
+      
+    - name: Remove old releases
+      if: github.ref == 'refs/heads/master'
+      uses: s00d/delete-older-releases@0.2.1
+      with:
+        #repo: <owner>/<repoName> # defaults to current repo
+        keep_latest: 3
+        delete_tag_pattern: v
+        delete_type: 'release'
+        target_branch: 'main'
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    
+    - name: Create Release
+      if: github.ref == 'refs/heads/master'
+      id: create_release
+      uses: "marvinpinto/action-automatic-releases@latest"
+      with:
+        repo_token: "${{ secrets.GITHUB_TOKEN }}"
+        automatic_release_tag: "v${{ env.GITVERSION_SEMVER }}"
+        prerelease: false
+        title: "OoliteAddonScanner v${{ env.GITVERSION_SEMVER }}"
+        files: |
+          target/*.zip
+          target/*.tar.gz
