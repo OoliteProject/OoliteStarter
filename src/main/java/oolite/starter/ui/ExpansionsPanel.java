@@ -5,8 +5,11 @@ package oolite.starter.ui;
 import java.awt.BorderLayout;
 import java.awt.event.ItemEvent;
 import java.net.MalformedURLException;
+import java.util.ArrayList;
 import java.util.List;
 import javax.swing.RowFilter;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableRowSorter;
@@ -85,10 +88,42 @@ updatable
                 }
             }
         });
+        txtFilterText.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent de) {
+                applyFilter();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent de) {
+                applyFilter();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent de) {
+                applyFilter();
+            }
+        });
         
         ep = new ExpansionPanel();
         ep.setVisible(false);
         add(ep, BorderLayout.SOUTH);
+    }
+    
+    private void applyFilter() {
+        log.debug("applyFilter");
+        if (trw != null) {
+            List<RowFilter<ExpansionsTableModel, Integer>> filters = new ArrayList<>();
+            filters.add(new MyRowStatusFilter(String.valueOf(cbFilterMode.getSelectedItem()), txtFilterText.getText()));
+            if (!"".equals(txtFilterText.getText())) {
+                try {
+                    filters.add(RowFilter.regexFilter(txtFilterText.getText()));
+                } catch (Exception e) {
+                    log.info("Cannot apply regexp filter", e);
+                }
+            }
+            trw.setRowFilter(RowFilter.andFilter(filters));
+        }
     }
     
     /**
@@ -161,7 +196,6 @@ updatable
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Filter"));
 
         jLabel1.setText("Status");
-        jPanel1.add(jLabel1);
 
         cbFilterMode.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "all", "installed", "updatable", "not installed", "enabled", "disabled", "not online" }));
         cbFilterMode.addItemListener(new java.awt.event.ItemListener() {
@@ -169,11 +203,35 @@ updatable
                 cbFilterModeItemStateChanged(evt);
             }
         });
-        jPanel1.add(cbFilterMode);
 
-        jLabel2.setText("and contains");
-        jPanel1.add(jLabel2);
-        jPanel1.add(txtFilterText);
+        jLabel2.setText("and contains RE");
+
+        txtFilterText.setText(".*");
+        txtFilterText.setMinimumSize(new java.awt.Dimension(300, 24));
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(cbFilterMode, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(txtFilterText, javax.swing.GroupLayout.PREFERRED_SIZE, 122, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addComponent(cbFilterMode, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jLabel1)
+                .addComponent(jLabel2)
+                .addComponent(txtFilterText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+        );
 
         add(jPanel1, java.awt.BorderLayout.PAGE_START);
     }// </editor-fold>//GEN-END:initComponents
@@ -181,9 +239,7 @@ updatable
     private void cbFilterModeItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbFilterModeItemStateChanged
         if (evt.getStateChange() == ItemEvent.SELECTED) {
             log.debug("cbFilterModeItemStateChanged({})", evt);
-            if (trw != null) {
-                trw.setRowFilter(new MyRowStatusFilter(String.valueOf(evt.getItem()), txtFilterText.getText()));
-            }
+            applyFilter();
         }
     }//GEN-LAST:event_cbFilterModeItemStateChanged
 
