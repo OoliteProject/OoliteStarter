@@ -81,10 +81,16 @@ updatable
                 log.debug("valueChanged({})", lse);
                 if (!lse.getValueIsAdjusting()) {
                     // we have a final value - let's render it
-                    int rowIndex = jTable1.convertRowIndexToModel(jTable1.getSelectedRow());
-                    Expansion row = model.getRow(rowIndex);
-                    ep.setData(row);
-                    ep.setVisible(true);
+                    int rowIndex = jTable1.getSelectedRow();
+                    if (rowIndex >=0) {
+                        rowIndex = jTable1.convertRowIndexToModel(rowIndex);
+                        Expansion row = model.getRow(rowIndex);
+                        ep.setData(row);
+                        ep.setVisible(true);
+                    } else {
+                        ep.setVisible(false);
+                        ep.setData(null);
+                    }
                 }
             }
         });

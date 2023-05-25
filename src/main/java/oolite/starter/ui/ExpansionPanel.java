@@ -30,11 +30,13 @@ public class ExpansionPanel extends javax.swing.JPanel implements PropertyChange
      * @param data the expansion
      */
     public void setData(Expansion data) {
-        if (data != null) {
-            data.removePropertyChangeListener(this);
+        if (this.data != null) {
+            this.data.removePropertyChangeListener(this);
         }
         this.data = data;
-        data.addPropertyChangeListener(this);
+        if (data != null) {
+            data.addPropertyChangeListener(this);
+        }
         
         update();
     }
@@ -43,15 +45,19 @@ public class ExpansionPanel extends javax.swing.JPanel implements PropertyChange
         if (data == null) {
             txtDescription.setText("");
             txtLocalFile.setText("");
+            btInstall.setEnabled(false);
+            btEnable.setEnabled(false);
+            btDisable.setEnabled(false);
+            btRemove.setEnabled(false);
         } else {
             txtDescription.setText(data.getDescription());
             txtLocalFile.setText(String.valueOf(data.getLocalFile()));
+            btInstall.setEnabled(data.isOnline() && !data.isLocal());
+            btEnable.setEnabled(data.isLocal() && !data.isEnabled());
+            btDisable.setEnabled(data.isLocal() && data.isEnabled());
+            btRemove.setEnabled(data.isLocal());
         }
         
-        btInstall.setEnabled(data.isOnline() && !data.isLocal());
-        btEnable.setEnabled(data.isLocal() && !data.isEnabled());
-        btDisable.setEnabled(data.isLocal() && data.isEnabled());
-        btRemove.setEnabled(data.isLocal());
     }
 
     /**
