@@ -3,10 +3,13 @@
 package oolite.starter.ui;
 
 import java.awt.BorderLayout;
+import java.awt.event.ItemEvent;
 import java.net.MalformedURLException;
 import java.util.List;
+import javax.swing.RowFilter;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.table.TableRowSorter;
 import oolite.starter.Oolite;
 import oolite.starter.model.Expansion;
 import org.apache.logging.log4j.LogManager;
@@ -19,8 +22,47 @@ import org.apache.logging.log4j.Logger;
 public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.OoliteListener {
     private static final Logger log = LogManager.getLogger();
     
+    class MyRowStatusFilter extends RowFilter<ExpansionsTableModel, Integer> {
+        
+        private String filterMode;
+        
+        public MyRowStatusFilter(String filterMode, String filterText) {
+            this.filterMode = filterMode;
+        }
+
+        @Override
+        public boolean include(Entry<? extends ExpansionsTableModel, ? extends Integer> entry) {
+            log.debug("include({})", entry);
+            
+            ExpansionsTableModel etm = entry.getModel();
+            Expansion expansion = model.getRow(entry.getIdentifier());
+            log.trace("    expansion = {}", expansion);
+            
+            /*
+updatable
+            */
+            switch(filterMode) {
+                case "installed":
+                    return expansion.isLocal();
+                case "not installed":
+                    return !expansion.isLocal();
+                case "enabled":
+                    return expansion.isEnabled();
+                case "disabled":
+                    return expansion.isLocal() && !expansion.isEnabled();
+                case "not online":
+                    return !expansion.isOnline();
+                case "updatable":
+                    return model.getSiblingCount(expansion)>1;
+                default: // all
+                    return true;
+            }
+        }
+    }
+    
     private Oolite oolite;
     private ExpansionsTableModel model;
+    private TableRowSorter<ExpansionsTableModel> trw;
     private ExpansionPanel ep;
 
     /**
@@ -73,6 +115,9 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
 
             model = new ExpansionsTableModel(expansions);
             jTable1.setModel(model);
+            
+            trw = new TableRowSorter<ExpansionsTableModel>(model);
+            jTable1.setRowSorter(trw);
         } catch (Exception e) {
             log.warn("Could not update", e);
         }
@@ -89,10 +134,14 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
 
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
+        jPanel1 = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
+        cbFilterMode = new javax.swing.JComboBox<>();
+        jLabel2 = new javax.swing.JLabel();
+        txtFilterText = new javax.swing.JTextField();
 
         setLayout(new java.awt.BorderLayout());
 
-        jTable1.setAutoCreateRowSorter(true);
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
@@ -108,12 +157,45 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
         jScrollPane1.setViewportView(jTable1);
 
         add(jScrollPane1, java.awt.BorderLayout.CENTER);
+
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Filter"));
+
+        jLabel1.setText("Status");
+        jPanel1.add(jLabel1);
+
+        cbFilterMode.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "all", "installed", "updatable", "not installed", "enabled", "disabled", "not online" }));
+        cbFilterMode.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                cbFilterModeItemStateChanged(evt);
+            }
+        });
+        jPanel1.add(cbFilterMode);
+
+        jLabel2.setText("and contains");
+        jPanel1.add(jLabel2);
+        jPanel1.add(txtFilterText);
+
+        add(jPanel1, java.awt.BorderLayout.PAGE_START);
     }// </editor-fold>//GEN-END:initComponents
+
+    private void cbFilterModeItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbFilterModeItemStateChanged
+        if (evt.getStateChange() == ItemEvent.SELECTED) {
+            log.debug("cbFilterModeItemStateChanged({})", evt);
+            if (trw != null) {
+                trw.setRowFilter(new MyRowStatusFilter(String.valueOf(evt.getItem()), txtFilterText.getText()));
+            }
+        }
+    }//GEN-LAST:event_cbFilterModeItemStateChanged
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JComboBox<String> cbFilterMode;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
+    private javax.swing.JTextField txtFilterText;
     // End of variables declaration//GEN-END:variables
 
     @Override
