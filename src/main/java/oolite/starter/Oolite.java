@@ -21,6 +21,12 @@ import java.util.zip.ZipFile;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
@@ -30,6 +36,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
 /**
@@ -334,6 +341,9 @@ public class Oolite {
                 if (e.getLocalFile() != null) {
                     h.setLocalFile(e.getLocalFile());
                 }
+                if (e.getDownloadUrl() != null) {
+                    h.setDownloadUrl(e.getDownloadUrl());
+                }
             } else {
                 result.add(e);
             }
@@ -570,5 +580,32 @@ public class Oolite {
         File test = expansion.getLocalFile();
         
         return FileUtils.directoryContains(parent, test);
+    }
+    
+    /**
+     * Writes the list of currently enabled expansions as xml file.
+     * 
+     * @param destination the file to write to
+     */
+    public void exportEnabledExpansions(File destination) throws IOException, ParserConfigurationException, TransformerConfigurationException, TransformerException {
+        List<Expansion> expansions = getAllExpansions();
+        
+        DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+        Document doc = db.newDocument();
+        Element root = doc.createElement("ExpansionList");
+        doc.appendChild(root);
+        
+        for (Expansion expansion: expansions) {
+            if (expansion.isLocal() && expansion.isEnabled()) {
+                Element element = doc.createElement("Expansion");
+                element.setAttribute("identifier", expansion.getIdentifier());
+                element.setAttribute("version", expansion.getVersion());
+                element.setAttribute("downloadUrl", expansion.getDownloadUrl());
+                root.appendChild(element);
+            }
+        }
+        
+        Transformer t = TransformerFactory.newInstance().newTransformer();
+        t.transform(new DOMSource(doc), new StreamResult(destination));
     }
 }
