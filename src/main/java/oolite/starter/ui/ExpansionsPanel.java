@@ -159,10 +159,12 @@ updatable
             List<Expansion> expansions = oolite.getAllExpansions();
 
             model = new ExpansionsTableModel(expansions);
+            jTable1.setRowSorter(null);
             jTable1.setModel(model);
             
             trw = new TableRowSorter<ExpansionsTableModel>(model);
             jTable1.setRowSorter(trw);
+            applyFilter();
             
             showDetailsOfSelection();
         } catch (Exception e) {

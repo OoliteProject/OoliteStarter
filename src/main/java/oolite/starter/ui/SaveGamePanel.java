@@ -26,14 +26,25 @@ public class SaveGamePanel extends javax.swing.JPanel {
      */
     public void setData(SaveGame data) {
         this.data = data;
-        txtFilename.setText(String.valueOf(data.getFile()));
-        txtOoliteVersion.setText(String.valueOf(data.getOoliteVersion()));
-        txtShipName.setText(String.valueOf(data.getShipName()));
-        txtShipClass.setText(String.valueOf(data.getShipClassName()));
-        txtStarSystem.setText(String.valueOf(data.getCurrentSystemName()));
-        txtCredits.setText(String.valueOf(data.getCredits()));
-        txtShipKills.setText(String.valueOf(data.getShipKills()));
-        txtPilotName.setText(String.valueOf(data.getPlayerName()));
+        if (data != null) {
+            txtFilename.setText(String.valueOf(data.getFile()));
+            txtOoliteVersion.setText(String.valueOf(data.getOoliteVersion()));
+            txtShipName.setText(String.valueOf(data.getShipName()));
+            txtShipClass.setText(String.valueOf(data.getShipClassName()));
+            txtStarSystem.setText(String.valueOf(data.getCurrentSystemName()));
+            txtCredits.setText(String.valueOf(data.getCredits()));
+            txtShipKills.setText(String.valueOf(data.getShipKills()));
+            txtPilotName.setText(String.valueOf(data.getPlayerName()));
+        } else {
+            txtFilename.setText("");
+            txtOoliteVersion.setText("");
+            txtShipName.setText("");
+            txtShipClass.setText("");
+            txtStarSystem.setText("");
+            txtCredits.setText("");
+            txtShipKills.setText("");
+            txtPilotName.setText("");
+        }
     }
 
     /**

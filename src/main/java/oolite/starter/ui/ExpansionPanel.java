@@ -53,8 +53,8 @@ public class ExpansionPanel extends javax.swing.JPanel implements PropertyChange
             txtDescription.setText(data.getDescription());
             txtLocalFile.setText(String.valueOf(data.getLocalFile()));
             btInstall.setEnabled(data.isOnline() && !data.isLocal());
-            btEnable.setEnabled(data.isLocal() && !data.isEnabled());
-            btDisable.setEnabled(data.isLocal() && data.isEnabled());
+            btEnable.setEnabled(data.isLocal() && !data.isEnabled() && data.getLocalFile().isFile());
+            btDisable.setEnabled(data.isLocal() && data.isEnabled() && data.getLocalFile().isFile());
             btRemove.setEnabled(data.isLocal());
         }
         
@@ -170,6 +170,8 @@ public class ExpansionPanel extends javax.swing.JPanel implements PropertyChange
             data.install();
         } catch (Exception e) {
             log.error("Could not install", e);
+        } finally {
+            update();
         }
     }//GEN-LAST:event_btInstallActionPerformed
 
@@ -178,6 +180,8 @@ public class ExpansionPanel extends javax.swing.JPanel implements PropertyChange
             data.enable();
         } catch (Exception e) {
             log.error("Could not enable", e);
+        } finally {
+            update();
         }
     }//GEN-LAST:event_btEnableActionPerformed
 
@@ -186,6 +190,8 @@ public class ExpansionPanel extends javax.swing.JPanel implements PropertyChange
             data.disable();
         } catch (Exception e) {
             log.error("Could not disable", e);
+        } finally {
+            update();
         }
     }//GEN-LAST:event_btDisableActionPerformed
 
@@ -194,6 +200,8 @@ public class ExpansionPanel extends javax.swing.JPanel implements PropertyChange
             data.remove();
         } catch (Exception e) {
             log.error("Could not remove", e);
+        } finally {
+            update();
         }
     }//GEN-LAST:event_btRemoveActionPerformed
 
