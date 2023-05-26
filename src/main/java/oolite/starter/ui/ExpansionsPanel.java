@@ -81,16 +81,7 @@ updatable
                 log.debug("valueChanged({})", lse);
                 if (!lse.getValueIsAdjusting()) {
                     // we have a final value - let's render it
-                    int rowIndex = jTable1.getSelectedRow();
-                    if (rowIndex >=0) {
-                        rowIndex = jTable1.convertRowIndexToModel(rowIndex);
-                        Expansion row = model.getRow(rowIndex);
-                        ep.setData(row);
-                        ep.setVisible(true);
-                    } else {
-                        ep.setVisible(false);
-                        ep.setData(null);
-                    }
+                    showDetailsOfSelection();
                 }
             }
         });
@@ -132,6 +123,19 @@ updatable
         }
     }
     
+    private void showDetailsOfSelection() {
+        int rowIndex = jTable1.getSelectedRow();
+        if (rowIndex >=0) {
+            rowIndex = jTable1.convertRowIndexToModel(rowIndex);
+            Expansion row = model.getRow(rowIndex);
+            ep.setData(row);
+            ep.setVisible(true);
+        } else {
+            ep.setVisible(false);
+            ep.setData(null);
+        }
+    }
+    
     /**
      * Sets the Oolite instance to run the savegames from.
      * 
@@ -159,6 +163,8 @@ updatable
             
             trw = new TableRowSorter<ExpansionsTableModel>(model);
             jTable1.setRowSorter(trw);
+            
+            showDetailsOfSelection();
         } catch (Exception e) {
             log.warn("Could not update", e);
         }
