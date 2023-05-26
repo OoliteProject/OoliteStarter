@@ -326,9 +326,9 @@ public class Oolite {
             if (result.contains(e)) {
                 int index = result.indexOf(e);
                 Expansion h = result.get(index);
-                log.warn("we have this already: {} at position {}", e, index);
-                log.warn("have: {}{} {}{}{}", h.getIdentifier(), h.getVersion(), h.isOnline(), h.isLocal(), h.isEnabled());
-                log.warn("want: {}{} {}{}{}", e.getIdentifier(), e.getVersion(), e.isOnline(), e.isLocal(), e.isEnabled());
+                log.trace("we have this already: {} at position {}", e, index);
+                log.trace("have: {}{} {}{}{}", h.getIdentifier(), h.getVersion(), h.isOnline(), h.isLocal(), h.isEnabled());
+                log.trace("want: {}{} {}{}{}", e.getIdentifier(), e.getVersion(), e.isOnline(), e.isLocal(), e.isEnabled());
                 
                 h.setOnline( h.isOnline() || e.isOnline());
                 if (e.getLocalFile() != null) {
@@ -339,6 +339,7 @@ public class Oolite {
             }
         }
         
+        Collections.sort(result);
         return result;
     }
 
@@ -415,6 +416,7 @@ public class Oolite {
             }
         }
         
+        Collections.sort(result);
         return result;
     }
 
