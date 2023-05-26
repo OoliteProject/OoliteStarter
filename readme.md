@@ -11,7 +11,7 @@ and manage save games.
   https://www.youtube.com/watch?v=IJ-PJbvJBGs
 * You need to have a copy of Oolite Starter unzipped in a directory of
   your choice. Just in case, you can download it from
-  <TODO>
+  https://github.com/HiranChaudhuri/OoliteStarter/releases
 
 ## Configuration
 

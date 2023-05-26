@@ -4,6 +4,7 @@ package oolite.starter;
 
 import java.io.File;
 import java.io.IOException;
+import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
@@ -27,6 +28,7 @@ public class MainFrame extends javax.swing.JFrame {
     public MainFrame() throws IOException, SAXException, ParserConfigurationException, XPathExpressionException {
         initComponents();
         setTitle(MainFrame.class.getPackage().getImplementationTitle() + " " + MainFrame.class.getPackage().getImplementationVersion());
+        setIconImage(new ImageIcon(getClass().getResource("/oolite_logo.png")).getImage());
 
         Oolite oolite = new Oolite();
         File confFile = new File(System.getProperty("oolite.starter.configuration", "oolite-starter.properties"));

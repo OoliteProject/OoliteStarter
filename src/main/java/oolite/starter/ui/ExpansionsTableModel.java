@@ -6,6 +6,8 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import javax.swing.table.AbstractTableModel;
 import oolite.starter.model.Expansion;
 
@@ -16,6 +18,7 @@ import oolite.starter.model.Expansion;
 public class ExpansionsTableModel extends AbstractTableModel implements PropertyChangeListener {
    
     private List<Expansion> data;
+    private Map<String, Integer> siblingCount;
     
     /**
      * Creates a new instance of ExpansionsTableModel.
@@ -24,8 +27,17 @@ public class ExpansionsTableModel extends AbstractTableModel implements Property
      */
     public ExpansionsTableModel(List<Expansion> data) {
         this.data = data;
+        siblingCount = new TreeMap<>();
+
         for (Expansion e: data) {
             e.addPropertyChangeListener(this);
+            
+            Integer c = siblingCount.get(e.getIdentifier());
+            if (c == null) {
+                siblingCount.put(e.getIdentifier(), 1);
+            } else {
+                siblingCount.put(e.getIdentifier(), c+1);
+            }
         }
     }
 
@@ -102,6 +114,16 @@ public class ExpansionsTableModel extends AbstractTableModel implements Property
      */
     public Expansion getRow(int rowIndex) {
         return data.get(rowIndex);
+    }
+    
+    /**
+     * Returns the sibling count - meaning how many related expansions.
+     * 
+     * @param expansion one specimen of the family
+     * @return the count
+     */
+    public Integer getSiblingCount(Expansion expansion) {
+        return siblingCount.get(expansion.getIdentifier());
     }
 
     @Override
