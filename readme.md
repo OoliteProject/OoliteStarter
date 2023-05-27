@@ -15,9 +15,12 @@ and manage save games.
 
 ## Configuration
 
-Rename (or copy) the file configuration.example.properties to 
-configuration.properties, then edit it to contain the correct settings according
-to the comments in that file.
+Rename (or copy) the file oolite-starter.example.properties to 
+oolite-starter.properties, then edit it to contain the correct settings according
+to the comments in that file. If the starter cannot find the file on it's own,
+you can help by setting a system property like this:
+
+java -Doolite.starter.configuration=/path/to/oolite-starter.properties -jar Oolite-Starter.jar
 
 ## Usage
 
