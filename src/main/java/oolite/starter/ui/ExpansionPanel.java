@@ -53,8 +53,8 @@ public class ExpansionPanel extends javax.swing.JPanel implements PropertyChange
             txtDescription.setText(data.getDescription());
             txtLocalFile.setText(String.valueOf(data.getLocalFile()));
             btInstall.setEnabled(data.isOnline() && !data.isLocal());
-            btEnable.setEnabled(data.isLocal() && !data.isEnabled() && data.getLocalFile().isFile());
-            btDisable.setEnabled(data.isLocal() && data.isEnabled() && data.getLocalFile().isFile());
+            btEnable.setEnabled(data.isLocal() && !data.isEnabled());
+            btDisable.setEnabled(data.isLocal() && data.isEnabled());
             btRemove.setEnabled(data.isLocal());
         }
         

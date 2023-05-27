@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.TreeMap;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import javax.xml.parsers.DocumentBuilder;
@@ -28,6 +29,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import oolite.starter.model.Expansion;
@@ -37,6 +39,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 /**
@@ -333,9 +336,6 @@ public class Oolite {
             if (result.contains(e)) {
                 int index = result.indexOf(e);
                 Expansion h = result.get(index);
-                log.trace("we have this already: {} at position {}", e, index);
-                log.trace("have: {}{} {}{}{}", h.getIdentifier(), h.getVersion(), h.isOnline(), h.isLocal(), h.isEnabled());
-                log.trace("want: {}{} {}{}{}", e.getIdentifier(), e.getVersion(), e.isOnline(), e.isLocal(), e.isEnabled());
                 
                 h.setOnline( h.isOnline() || e.isOnline());
                 if (e.getLocalFile() != null) {
@@ -379,7 +379,7 @@ public class Oolite {
                 }
                 
             } catch (Exception e) {
-                log.error("Could not read from " + url, e);
+                log.warn("Could not read from " + url, e);
             }
         }
         
@@ -517,7 +517,13 @@ public class Oolite {
         log.debug("enable({})", expansion);
 
         log.debug("Move {} to {}", expansion.getLocalFile(), configuration.getManagedAddonsDir());
-        FileUtils.moveFileToDirectory(expansion.getLocalFile(), configuration.getManagedAddonsDir(), true);
+
+        if (expansion.getLocalFile().isFile()) {
+            FileUtils.moveFileToDirectory(expansion.getLocalFile(), configuration.getManagedAddonsDir(), true);
+        } else if (expansion.getLocalFile().isDirectory()) {
+            FileUtils.moveDirectoryToDirectory(expansion.getLocalFile(), configuration.getManagedAddonsDir(), true);
+        }
+        
         expansion.setLocalFile(new File(configuration.getManagedAddonsDir(), expansion.getLocalFile().getName()));
     }
     
@@ -530,7 +536,11 @@ public class Oolite {
         log.debug("disable({})", expansion);
         
         log.debug("Move {} to {}", expansion.getLocalFile(), configuration.getDeactivatedAddonsDir());
-        FileUtils.moveFileToDirectory(expansion.getLocalFile(), configuration.getDeactivatedAddonsDir(), true);
+        if (expansion.getLocalFile().isFile()) {
+            FileUtils.moveFileToDirectory(expansion.getLocalFile(), configuration.getDeactivatedAddonsDir(), true);
+        } else if (expansion.getLocalFile().isDirectory()) {
+            FileUtils.moveDirectoryToDirectory(expansion.getLocalFile(), configuration.getDeactivatedAddonsDir(), true);
+        }
         expansion.setLocalFile(new File(configuration.getDeactivatedAddonsDir(), expansion.getLocalFile().getName()));
     }
     
@@ -580,6 +590,54 @@ public class Oolite {
         File test = expansion.getLocalFile();
         
         return FileUtils.directoryContains(parent, test);
+    }
+    
+    /**
+     * Parses the list of expansions from a expansion set xml file
+     * and enacts on it.
+     * 
+     * @param source the file to read from
+     */
+    public void setEnabledExpansions(File source) throws IOException, ParserConfigurationException, SAXException, XPathExpressionException {
+        List<Expansion> expansions = getAllExpansions();
+        
+        DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+        Document doc = db.parse(source);
+        XPath xpath = XPathFactory.newInstance().newXPath();
+        NodeList nl = (NodeList)xpath.evaluate("/ExpansionList/Expansion", doc, XPathConstants.NODESET);
+        
+        TreeMap<String, String> enabledAddons = new TreeMap<>();
+        for (int i = 0; i < nl.getLength(); i++) {
+            Element e = (Element)nl.item(i);
+            enabledAddons.put(e.getAttribute("identifier") + ":" + e.getAttribute("version"), e.getAttribute("downloadUrl"));
+        }
+        
+        log.debug("we want: {}", enabledAddons);
+        
+        // first remove what we do not need
+        for (Expansion expansion: expansions) {
+            String i = expansion.getIdentifier() + ":" + expansion.getVersion();
+            if (expansion.isLocal() && expansion.isEnabled() && !enabledAddons.containsKey(i)) {
+                expansion.disable();
+            }
+        }
+
+        // now install what may be missing
+        TreeMap<String, Expansion> expansionMap = new TreeMap<>();
+        for (Expansion expansion: expansions) { 
+            expansionMap.put(expansion.getIdentifier() + ":" + expansion.getVersion(), expansion);
+        }
+        for (String i: enabledAddons.keySet()) {
+            log.debug("checking {}", i);
+            Expansion expansion = expansionMap.get(i);
+            if (expansion == null) {
+                log.error("Don't know how to handle {}", i);
+            } else if (expansion.isLocal() && !expansion.isEnabled()) {
+                expansion.enable();
+            } else {
+                expansion.install();
+            }
+        }
     }
     
     /**

@@ -15,6 +15,8 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.TableRowSorter;
 import oolite.starter.Oolite;
 import oolite.starter.model.Expansion;
@@ -42,7 +44,6 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
             
             ExpansionsTableModel etm = entry.getModel();
             Expansion expansion = model.getRow(entry.getIdentifier());
-            log.trace("    expansion = {}", expansion);
             
             /*
 updatable
@@ -193,7 +194,7 @@ updatable
         jLabel2 = new javax.swing.JLabel();
         txtFilterText = new javax.swing.JTextField();
         jPanel3 = new javax.swing.JPanel();
-        btImport = new javax.swing.JButton();
+        btActivate = new javax.swing.JButton();
         btExport = new javax.swing.JButton();
 
         setLayout(new java.awt.BorderLayout());
@@ -259,10 +260,10 @@ updatable
 
         jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("Expansion Set"));
 
-        btImport.setText("Import...");
-        btImport.addActionListener(new java.awt.event.ActionListener() {
+        btActivate.setText("Activate...");
+        btActivate.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btImportActionPerformed(evt);
+                btActivateActionPerformed(evt);
             }
         });
 
@@ -279,7 +280,7 @@ updatable
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(btImport)
+                .addComponent(btActivate)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btExport)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -289,7 +290,7 @@ updatable
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGap(6, 6, 6)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btImport)
+                    .addComponent(btActivate)
                     .addComponent(btExport)))
         );
 
@@ -321,23 +322,50 @@ updatable
         }
     }//GEN-LAST:event_cbFilterModeItemStateChanged
 
-    private void btImportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btImportActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btImportActionPerformed
+    private void btActivateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btActivateActionPerformed
+        try {
+            JFileChooser jfc = new JFileChooser();
+            FileFilter filter = new FileNameExtensionFilter("Oolite Expansion Set (*.oolite-es)", "oolite-es");
+            jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+            jfc.addChoosableFileFilter(filter);
+            jfc.setFileFilter(filter);
+            if (jfc.showDialog(this, "Activate") == JFileChooser.APPROVE_OPTION) {
+                oolite.setEnabledExpansions(jfc.getSelectedFile());
+            }
+        } catch (Exception e) {
+            log.error("Could not activate", e);
+            JOptionPane.showMessageDialog(this, "Could not activate.\n" + e.getClass().getName() + ": " + e.getMessage());
+        } finally {
+            update();
+        }
+    }//GEN-LAST:event_btActivateActionPerformed
 
     private void btExportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btExportActionPerformed
         try {
             JFileChooser jfc = new JFileChooser();
-            if (jfc.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
+            FileFilter filter = new FileNameExtensionFilter("Oolite Expansion Set (*.oolite-es)", "oolite-es");
+            jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+            jfc.addChoosableFileFilter(filter);
+            jfc.setFileFilter(filter);
+            if (jfc.showDialog(this, "Export") == JFileChooser.APPROVE_OPTION) {
                 
                 File f = jfc.getSelectedFile();
+                
+                // Java does not automatically add the extension
+                if (jfc.getFileFilter() instanceof FileNameExtensionFilter fnef) {
+                    if (!fnef.accept(f)) {
+                        // attach extension
+                        f = new File(f.getAbsolutePath() + "." + fnef.getExtensions()[0]);
+                    }
+                }
+                
                 if (f.exists()) {
                     if (JOptionPane.showConfirmDialog(this, String.format("File %s exists. Do you want to overwrite?", f.getAbsolutePath())) != JOptionPane.OK_OPTION) {
                         return;
                     }
                 }
                 
-                oolite.exportEnabledExpansions(jfc.getSelectedFile());
+                oolite.exportEnabledExpansions(f);
             }
         } catch (Exception e) {
             log.error("Could not export", e);
@@ -347,8 +375,8 @@ updatable
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btActivate;
     private javax.swing.JButton btExport;
-    private javax.swing.JButton btImport;
     private javax.swing.JComboBox<String> cbFilterMode;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
