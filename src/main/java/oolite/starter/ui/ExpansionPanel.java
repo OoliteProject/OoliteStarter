@@ -167,41 +167,33 @@ public class ExpansionPanel extends javax.swing.JPanel implements PropertyChange
 
     private void btInstallActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btInstallActionPerformed
         try {
-            data.install();
+            new ExpansionWorker(data, ExpansionWorker.Action.install).execute();
         } catch (Exception e) {
-            log.error("Could not install", e);
-        } finally {
-            update();
+            log.error("Could not trigger install", e);
         }
     }//GEN-LAST:event_btInstallActionPerformed
 
     private void btEnableActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btEnableActionPerformed
         try {
-            data.enable();
+            new ExpansionWorker(data, ExpansionWorker.Action.enable).execute();
         } catch (Exception e) {
-            log.error("Could not enable", e);
-        } finally {
-            update();
+            log.error("Could not trigger enable", e);
         }
     }//GEN-LAST:event_btEnableActionPerformed
 
     private void btDisableActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btDisableActionPerformed
         try {
-            data.disable();
+            new ExpansionWorker(data, ExpansionWorker.Action.disable).execute();
         } catch (Exception e) {
-            log.error("Could not disable", e);
-        } finally {
-            update();
+            log.error("Could not trigger disable", e);
         }
     }//GEN-LAST:event_btDisableActionPerformed
 
     private void btRemoveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btRemoveActionPerformed
         try {
-            data.remove();
+            new ExpansionWorker(data, ExpansionWorker.Action.remove).execute();
         } catch (Exception e) {
-            log.error("Could not remove", e);
-        } finally {
-            update();
+            log.error("Could not trigger remove", e);
         }
     }//GEN-LAST:event_btRemoveActionPerformed
 
