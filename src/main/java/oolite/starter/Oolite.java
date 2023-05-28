@@ -293,7 +293,7 @@ public class Oolite {
                     try {
                         result.setUploadDate(LocalDateTime.ofEpochSecond(Long.parseLong(value), 0, ZoneOffset.UTC));
                     } catch (NumberFormatException e) {
-                        throw new IOException("Could not parse " + kvc.start.getTokenSource().getSourceName() + " line " + kvc.start.getLine() + ":" + kvc.start.getCharPositionInLine(), e);
+                        log.warn("Could not parse {} line {}:{}", kvc.start.getTokenSource().getSourceName(), kvc.start.getLine(), kvc.start.getCharPositionInLine(), e);
                     }
                     break;
                 case "version":
