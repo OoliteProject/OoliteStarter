@@ -49,7 +49,7 @@ jobs:
 
     - uses: actions/upload-artifact@v2
       with:
-        name: OoliteAddonScanner
+        name: OoliteStarter
         path: target/OoliteStarter-${{ env.GITVERSION_SEMVER }}-generic.*
 
     - name: Remove old prereleases
@@ -72,7 +72,7 @@ jobs:
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
         automatic_release_tag: "v${{ env.GITVERSION_SEMVER }}"
         prerelease: true
-        title: "OoliteAddonScanner v${{ env.GITVERSION_SEMVER }}"
+        title: "OoliteStarter v${{ env.GITVERSION_SEMVER }}"
         files: |
           target/*.zip
           target/*.tar.gz
@@ -97,7 +97,7 @@ jobs:
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
         automatic_release_tag: "v${{ env.GITVERSION_SEMVER }}"
         prerelease: false
-        title: "OoliteAddonScanner v${{ env.GITVERSION_SEMVER }}"
+        title: "OoliteStarter v${{ env.GITVERSION_SEMVER }}"
         files: |
           target/*.zip
           target/*.tar.gz
