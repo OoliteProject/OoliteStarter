@@ -24,8 +24,6 @@ java -Doolite.starter.configuration=/path/to/oolite-starter.properties -jar Ooli
 
 ## Usage
 
-* Edit the file configuration.properties to add your command
-  to startup Oolite.
 * Execute the startup script - depending on your operating system this may be
   either run.sh or run.cmd. When going for run.sh you may need to set execute
   permissions (chmod +x run.sh)
@@ -35,5 +33,7 @@ java -Doolite.starter.configuration=/path/to/oolite-starter.properties -jar Ooli
 * Play as usual.
 * If you want to change the installed expansions, switch to the 'Expansions' tab,
   check the list and choose to install, remove, enable or disable expansions.
+  You can also export your currently active expansions as 'Oolite Expansion Set',
+  to load it later again or share with your friends.
 
 Happy Flying!
