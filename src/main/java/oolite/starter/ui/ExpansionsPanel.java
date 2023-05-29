@@ -3,6 +3,7 @@
 package oolite.starter.ui;
 
 import java.awt.BorderLayout;
+import java.awt.Rectangle;
 import java.awt.event.ItemEvent;
 import java.io.File;
 import java.net.MalformedURLException;
@@ -140,6 +141,19 @@ updatable
             ep.setVisible(false);
             ep.setData(null);
         }
+        
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException ex) {
+                    log.debug("Interrupted");
+                }
+                Rectangle r = jTable1.getCellRect(jTable1.getSelectedRow(), 0, true);
+                jTable1.scrollRectToVisible(r);
+            }
+        });
     }
     
     /**

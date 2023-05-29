@@ -196,6 +196,8 @@ public class Oolite {
     
     /**
      * Runs Oolite for the given savegame.
+     * Uses the pretty much only command line option supported by Oolite.
+     * See https://github.com/OoliteProject/oolite/blob/58bf7e1efb01ac346d06da5271cf755c0cb4f55a/src/SDL/main.m#L102
      * 
      * @param savegame the game to run
      */
