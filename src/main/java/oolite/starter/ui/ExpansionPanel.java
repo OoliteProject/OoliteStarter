@@ -4,6 +4,7 @@ package oolite.starter.ui;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import javax.swing.SwingUtilities;
 import oolite.starter.model.Expansion;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -167,7 +168,7 @@ public class ExpansionPanel extends javax.swing.JPanel implements PropertyChange
 
     private void btInstallActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btInstallActionPerformed
         try {
-            new ExpansionWorker(data, ExpansionWorker.Action.install).execute();
+            new ExpansionWorker(data, ExpansionWorker.Action.install, this).execute();
         } catch (Exception e) {
             log.error("Could not trigger install", e);
         }
@@ -175,7 +176,7 @@ public class ExpansionPanel extends javax.swing.JPanel implements PropertyChange
 
     private void btEnableActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btEnableActionPerformed
         try {
-            new ExpansionWorker(data, ExpansionWorker.Action.enable).execute();
+            new ExpansionWorker(data, ExpansionWorker.Action.enable, this).execute();
         } catch (Exception e) {
             log.error("Could not trigger enable", e);
         }
@@ -183,7 +184,7 @@ public class ExpansionPanel extends javax.swing.JPanel implements PropertyChange
 
     private void btDisableActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btDisableActionPerformed
         try {
-            new ExpansionWorker(data, ExpansionWorker.Action.disable).execute();
+            new ExpansionWorker(data, ExpansionWorker.Action.disable, this).execute();
         } catch (Exception e) {
             log.error("Could not trigger disable", e);
         }
@@ -191,7 +192,7 @@ public class ExpansionPanel extends javax.swing.JPanel implements PropertyChange
 
     private void btRemoveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btRemoveActionPerformed
         try {
-            new ExpansionWorker(data, ExpansionWorker.Action.remove).execute();
+            new ExpansionWorker(data, ExpansionWorker.Action.remove, this).execute();
         } catch (Exception e) {
             log.error("Could not trigger remove", e);
         }
@@ -212,6 +213,11 @@ public class ExpansionPanel extends javax.swing.JPanel implements PropertyChange
 
     @Override
     public void propertyChange(PropertyChangeEvent pce) {
-        update();
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                update();
+            }
+        });
     }
 }

@@ -226,7 +226,7 @@ public class Oolite {
      * @return the Expansion
      */
     public Expansion createExpansion(PlistParser.ValueContext vc) throws IOException {
-        log.debug("createExpansion(...)");
+        log.debug("createExpansion({})", vc);
         return createExpansion(vc.dictionary());
     }
 
@@ -237,7 +237,7 @@ public class Oolite {
      * @return the Expansion
      */    
     public Expansion createExpansion(PlistParser.DictionaryContext dc) throws IOException {
-        log.debug("createExpansion(...)");
+        log.debug("createExpansion({})", dc);
         Expansion result = new Expansion();
         for (PlistParser.KeyvaluepairContext kvc: dc.keyvaluepair()) {
             String key = kvc.STRING().getText();
@@ -314,7 +314,7 @@ public class Oolite {
      * @return the Expansion
      */    
     public Expansion createExpansion(InputStream manifest, String sourceName) throws IOException {
-        log.debug("createExpansion(...)");
+        log.debug("createExpansion({}, {})", manifest, sourceName);
         // parse plist, then create Expansion from that
         PlistParser.DictionaryContext dc = PlistUtil.parsePListDict(manifest, sourceName);
         return createExpansion(dc);
@@ -414,8 +414,8 @@ public class Oolite {
                             Expansion expansion = getExpansionFrom(f);
                         
                             if (expansion != null) {
-                                expansion.setLocalFile(f);
                                 expansion.setOolite(this);
+                                expansion.setLocalFile(f);
                                 result.add(expansion);
                             }
                         } catch (Exception e) {
@@ -594,13 +594,12 @@ public class Oolite {
     
     /**
      * Parses the list of expansions from a expansion set xml file
-     * and enacts on it.
+     * and esures only the right ones are enabled.
      * 
      * @param source the file to read from
+     * @param expansions the expansions to work on
      */
-    public void setEnabledExpansions(File source) throws IOException, ParserConfigurationException, SAXException, XPathExpressionException {
-        List<Expansion> expansions = getAllExpansions();
-        
+    public void setEnabledExpansions(File source, List<Expansion> expansions) throws IOException, ParserConfigurationException, SAXException, XPathExpressionException {
         DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
         Document doc = db.parse(source);
         XPath xpath = XPathFactory.newInstance().newXPath();
@@ -632,9 +631,14 @@ public class Oolite {
             Expansion expansion = expansionMap.get(i);
             if (expansion == null) {
                 log.error("Don't know how to handle {}", i);
+            } else if (expansion.isLocal() && expansion.isEnabled()) {
+                // already here - do nothing
+                log.info("{} is already installed & enabled - doing nothing");
             } else if (expansion.isLocal() && !expansion.isEnabled()) {
+                log.info("{} is already installed but disabled - enabling");
                 expansion.enable();
             } else {
+                log.info("{} is not installed - installing");
                 expansion.install();
             }
         }

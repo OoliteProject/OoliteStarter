@@ -11,6 +11,7 @@ import java.util.List;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.RowFilter;
+import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
@@ -71,6 +72,7 @@ updatable
     private ExpansionsTableModel model;
     private TableRowSorter<ExpansionsTableModel> trw;
     private ExpansionPanel ep;
+    private List<Expansion> expansions;
 
     /**
      * Creates new form ExpansionsPanel.
@@ -158,9 +160,12 @@ updatable
         oolite.addOoliteListener(this);
     }
     
-    private void update() {
+    /**
+     * Updates the expansionspanel display.
+     */
+    public void update() {
         try {
-            List<Expansion> expansions = oolite.getAllExpansions();
+            expansions = oolite.getAllExpansions();
 
             model = new ExpansionsTableModel(expansions);
             jTable1.setRowSorter(null);
@@ -330,13 +335,11 @@ updatable
             jfc.addChoosableFileFilter(filter);
             jfc.setFileFilter(filter);
             if (jfc.showDialog(this, "Activate") == JFileChooser.APPROVE_OPTION) {
-                oolite.setEnabledExpansions(jfc.getSelectedFile());
+                new ActivationWorker(oolite, expansions, jfc.getSelectedFile(), this).execute();
             }
         } catch (Exception e) {
-            log.error("Could not activate", e);
-            JOptionPane.showMessageDialog(this, "Could not activate.\n" + e.getClass().getName() + ": " + e.getMessage());
-        } finally {
-            update();
+            log.error("Could not trigger activate", e);
+            JOptionPane.showMessageDialog(this, "Could not trigger activate.\n" + e.getClass().getName() + ": " + e.getMessage());
         }
     }//GEN-LAST:event_btActivateActionPerformed
 
@@ -394,6 +397,11 @@ updatable
 
     @Override
     public void terminated() {
-        update();
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                update();
+            }
+        });
     }
 }

@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import javax.swing.SwingUtilities;
 import javax.swing.table.AbstractTableModel;
 import oolite.starter.model.Expansion;
 
@@ -130,7 +131,13 @@ public class ExpansionsTableModel extends AbstractTableModel implements Property
     public void propertyChange(PropertyChangeEvent pce) {
         if (pce.getSource() instanceof Expansion e) {
             int index = data.indexOf(e);
-            fireTableRowsUpdated(index, index);
+
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    fireTableRowsUpdated(index, index);
+                }
+            });
         }
     }
 }
