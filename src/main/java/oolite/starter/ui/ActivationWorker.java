@@ -7,6 +7,7 @@ import java.io.File;
 import java.util.List;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
+import javax.swing.ProgressMonitor;
 import javax.swing.SwingWorker;
 import oolite.starter.Oolite;
 import oolite.starter.model.Expansion;
@@ -40,12 +41,15 @@ public class ActivationWorker extends SwingWorker<Object, Void> {
 
     @Override
     protected Object doInBackground() throws Exception {
+        ProgressMonitor pm = new ProgressMonitor(component, "activating " + file.getName(), "", 0, 10);
         try {
-            oolite.setEnabledExpansions(file, allExpansions);
+            oolite.setEnabledExpansions(file, allExpansions, pm);
             return null;
         } catch (Exception e) {
             log.error("doInBackground threw exception", e);
             throw e;
+        } finally {
+            pm.close();
         }
     }
 

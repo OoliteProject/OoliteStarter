@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.TreeMap;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+import javax.swing.ProgressMonitor;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -599,7 +600,14 @@ public class Oolite {
      * @param source the file to read from
      * @param expansions the expansions to work on
      */
-    public void setEnabledExpansions(File source, List<Expansion> expansions) throws IOException, ParserConfigurationException, SAXException, XPathExpressionException {
+    public void setEnabledExpansions(File source, List<Expansion> expansions, ProgressMonitor pm) throws IOException, ParserConfigurationException, SAXException, XPathExpressionException {
+        pm.setMinimum(0);
+        pm.setMaximum(expansions.size() + 2);
+        int progress = 0;
+        
+        pm.setProgress(progress);
+        pm.setNote("parseing " + source.getName() + "...");
+        
         DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
         Document doc = db.parse(source);
         XPath xpath = XPathFactory.newInstance().newXPath();
@@ -610,18 +618,26 @@ public class Oolite {
             Element e = (Element)nl.item(i);
             enabledAddons.put(e.getAttribute("identifier") + ":" + e.getAttribute("version"), e.getAttribute("downloadUrl"));
         }
-        
+
+        progress++;
+        pm.setMaximum(expansions.size() + enabledAddons.size() + 1);
+        pm.setProgress(progress);
         log.debug("we want: {}", enabledAddons);
         
+        
         // first remove what we do not need
+        pm.setNote("Deactivating unneeded expansions...");
         for (Expansion expansion: expansions) {
             String i = expansion.getIdentifier() + ":" + expansion.getVersion();
             if (expansion.isLocal() && expansion.isEnabled() && !enabledAddons.containsKey(i)) {
                 expansion.disable();
             }
+            progress++;
+            pm.setProgress(progress);
         }
 
         // now install what may be missing
+        pm.setNote("Installing missing expansions...");
         TreeMap<String, Expansion> expansionMap = new TreeMap<>();
         for (Expansion expansion: expansions) { 
             expansionMap.put(expansion.getIdentifier() + ":" + expansion.getVersion(), expansion);
@@ -636,12 +652,17 @@ public class Oolite {
                 log.info("{} is already installed & enabled - doing nothing");
             } else if (expansion.isLocal() && !expansion.isEnabled()) {
                 log.info("{} is already installed but disabled - enabling");
+                pm.setNote("enabling "+ i);
                 expansion.enable();
             } else {
                 log.info("{} is not installed - installing");
+                pm.setNote("installing "+ i);
                 expansion.install();
             }
+            progress ++;
+            pm.setProgress(progress);
         }
+        
     }
     
     /**
