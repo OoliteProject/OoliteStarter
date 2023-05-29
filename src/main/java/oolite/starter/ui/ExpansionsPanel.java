@@ -335,6 +335,7 @@ updatable
             jfc.addChoosableFileFilter(filter);
             jfc.setFileFilter(filter);
             if (jfc.showDialog(this, "Activate") == JFileChooser.APPROVE_OPTION) {
+                update();
                 new ActivationWorker(oolite, expansions, jfc.getSelectedFile(), this).execute();
             }
         } catch (Exception e) {
