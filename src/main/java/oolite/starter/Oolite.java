@@ -10,6 +10,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
@@ -676,6 +677,8 @@ public class Oolite {
         DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
         Document doc = db.newDocument();
         Element root = doc.createElement("ExpansionList");
+        root.setAttribute("generatedAt", Instant.now().toString());
+        root.setAttribute("generatedBy", getClass().getPackage().getImplementationTitle() + " " + getClass().getPackage().getImplementationVersion());
         doc.appendChild(root);
         
         for (Expansion expansion: expansions) {
