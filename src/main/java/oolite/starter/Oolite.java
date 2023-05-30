@@ -223,6 +223,51 @@ public class Oolite {
             l.terminated();
         }
     }
+    
+    /**
+     * See https://wiki.alioth.net/index.php/Manifest.plist#Dependency_management_keys
+     * @param vc 
+     */
+    private List<String> parseDependencyList(PlistParser.ValueContext vc) {
+        log.debug("parseDependencyList({})", vc);
+        
+        List<String> result = new ArrayList<>();
+        
+        if (vc.list() != null) {
+            for (PlistParser.ValueContext vc2: vc.list().value()) {
+                PlistParser.DictionaryContext dict = vc2.dictionary();
+
+                String identifier = "";
+                String version = "";
+                    
+                for (PlistParser.KeyvaluepairContext kvc: dict.keyvaluepair()) {
+                    String key = kvc.STRING().getText();
+                    String value = kvc.value().getText();
+                    switch(key) {
+                        case "identifier":
+                            identifier = value;
+                            break;
+                        case "version":
+                            version = value;
+                            break;
+                        case "description":
+                            break;
+                        case "maximum_version":
+                            break;
+                        default:
+                            log.warn("unknown dependency key {}", key);
+                            break;
+                    }
+                }
+                
+                String id = identifier + ":" + version;
+                result.add(id);
+            }
+        }
+        
+        Collections.sort(result);
+        return result;
+    }
         
     /**
      * Creates an Expansion from a value context.
@@ -256,8 +301,7 @@ public class Oolite {
                     result.setCategory(value);
                     break;
                 case "conflict_oxps":
-                    // TODO: This is a list which needs either proper parsing or proper serialization
-                    //result.setConflictOxps(value);
+                    result.setConflictOxps(parseDependencyList(kvc.value()));
                     break;
                 case "description":
                     result.setDescription(value);
@@ -281,15 +325,13 @@ public class Oolite {
                     result.setMaximumOoliteVersion(value);
                     break;
                 case "optional_oxps":
-                    // TODO: This is a list which needs either proper parsing or proper serialization
-                    //result.setOptionalOxps(value);
+                    result.setOptionalOxps(parseDependencyList(kvc.value()));
                     break;
                 case "required_oolite_version":
                     result.setRequiredOoliteVersion(value);
                     break;
                 case "requires_oxps":
-                    // TODO: This is a list which needs either proper parsing or proper serialization
-                    //result.setRequiresOxps(value);
+                    result.setRequiresOxps(parseDependencyList(kvc.value()));
                     break;
                 case "tags":
                     result.setTags(value);

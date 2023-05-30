@@ -36,7 +36,7 @@ public class AnnotationRenderer implements TableCellRenderer {
         
         @Override
         public void paint(Graphics g, JComponent c) {
-            log.debug("layerUI.paint");
+            //log.debug("layerUI.paint");
             super.paint(g, c);
 
             g.setColor(Color.red);
