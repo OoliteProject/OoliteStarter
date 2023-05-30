@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Map;
 import java.util.TreeMap;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -255,7 +256,8 @@ public class Oolite {
                     result.setCategory(value);
                     break;
                 case "conflict_oxps":
-                    result.setConflictOxps(value);
+                    // TODO: This is a list which needs either proper parsing or proper serialization
+                    //result.setConflictOxps(value);
                     break;
                 case "description":
                     result.setDescription(value);
@@ -279,13 +281,15 @@ public class Oolite {
                     result.setMaximumOoliteVersion(value);
                     break;
                 case "optional_oxps":
-                    result.setOptionalOxps(value);
+                    // TODO: This is a list which needs either proper parsing or proper serialization
+                    //result.setOptionalOxps(value);
                     break;
                 case "required_oolite_version":
                     result.setRequiredOoliteVersion(value);
                     break;
                 case "requires_oxps":
-                    result.setRequiresOxps(value);
+                    // TODO: This is a list which needs either proper parsing or proper serialization
+                    //result.setRequiresOxps(value);
                     break;
                 case "tags":
                     result.setTags(value);
@@ -695,5 +699,33 @@ public class Oolite {
         
         Transformer t = TransformerFactory.newInstance().newTransformer();
         t.transform(new DOMSource(doc), new StreamResult(destination));
+    }
+    
+    /**
+     * Validates whether the list of expansions is acceptable in itself.
+     * 
+     * @param expansions the expansions to check
+     */
+    public void validateDependencies(List<Expansion> expansions) throws IOException {
+        log.debug("validateDependencies(...)");
+        
+        Map<String, Expansion> indexed = new TreeMap<>();
+        for (Expansion expansion: expansions) {
+            indexed.put(expansion.getIdentifier() + ":" + expansion.getVersion(), expansion);
+        }
+        
+        for (Expansion expansion: expansions) {
+            if (expansion.getRequiresOxps() != null) {
+//                try (InputStream in = new ReaderInputStream(new StringReader(expansion.getRequiresOxps()), Charset.defaultCharset()) ) {
+//                    PlistParser.ListContext lc = PlistUtil.parsePListList(in, expansion.toString());
+//                    for (PlistParser.ValueContext vc: lc.value()) {
+//                        log.debug("vc={}", vc);
+//                    }
+//                } catch (ParseCancellationException e) {
+//                    throw new IOException("Could not parse Expansion " + expansion.getIdentifier() + ":" + expansion.getVersion() + ", requiredOxps", e);
+//                }
+            }
+            
+        }
     }
 }

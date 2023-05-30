@@ -7,6 +7,7 @@ import java.beans.PropertyChangeSupport;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.List;
 import oolite.starter.Oolite;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -20,7 +21,7 @@ public class Expansion implements Comparable {
 
     private String author;
     private String category;
-    private String conflictOxps;
+    private List<String> conflictOxps;
     private String description;
     private String downloadUrl;
     private long fileSize;
@@ -28,9 +29,9 @@ public class Expansion implements Comparable {
     private String informationUrl;
     private String license;
     private String maximumOoliteVersion;
-    private String optionalOxps;
+    private List<String> optionalOxps;
     private String requiredOoliteVersion;
-    private String requiresOxps;
+    private List<String> requiresOxps;
     private String tags;
     private String title;
     private LocalDateTime uploadDate;
@@ -109,7 +110,7 @@ public class Expansion implements Comparable {
      * 
      * @return the list of OXPs.
      */
-    public String getConflictOxps() {
+    public List<String> getConflictOxps() {
         return conflictOxps;
     }
 
@@ -118,7 +119,7 @@ public class Expansion implements Comparable {
      * 
      * @param conflictOxps the list of OXPs.
      */
-    public void setConflictOxps(String conflictOxps) {
+    public void setConflictOxps(List<String> conflictOxps) {
         this.conflictOxps = conflictOxps;
     }
 
@@ -253,7 +254,7 @@ public class Expansion implements Comparable {
      * 
      * @return the list of OXPs
      */
-    public String getOptionalOxps() {
+    public List<String> getOptionalOxps() {
         return optionalOxps;
     }
 
@@ -262,7 +263,7 @@ public class Expansion implements Comparable {
      * 
      * @param optionalOxps the list of OXPs
      */
-    public void setOptionalOxps(String optionalOxps) {
+    public void setOptionalOxps(List<String> optionalOxps) {
         this.optionalOxps = optionalOxps;
     }
 
@@ -289,7 +290,7 @@ public class Expansion implements Comparable {
      * 
      * @return the OXP list
      */
-    public String getRequiresOxps() {
+    public List<String> getRequiresOxps() {
         return requiresOxps;
     }
 
@@ -298,7 +299,7 @@ public class Expansion implements Comparable {
      * 
      * @param requiresOxps the OXP list
      */
-    public void setRequiresOxps(String requiresOxps) {
+    public void setRequiresOxps(List<String> requiresOxps) {
         this.requiresOxps = requiresOxps;
     }
 
