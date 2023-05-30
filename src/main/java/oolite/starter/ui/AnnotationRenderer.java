@@ -3,12 +3,10 @@
 
 package oolite.starter.ui;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Rectangle2D;
 import javax.swing.JComponent;
 import javax.swing.JLayer;
 import javax.swing.JTable;
@@ -39,10 +37,10 @@ public class AnnotationRenderer implements TableCellRenderer {
             //log.debug("layerUI.paint");
             super.paint(g, c);
 
-            g.setColor(Color.red);
-            g.drawLine(0, 0, c.getWidth(), c.getHeight());
-            Rectangle2D r = g.getFont().getStringBounds(indicator, frc);
-            g.drawString(indicator, (int)(c.getWidth()-r.getWidth()), (int)(c.getHeight() - 1));
+//            g.setColor(Color.red);
+//            g.drawLine(0, 0, c.getWidth(), c.getHeight());
+//            Rectangle2D r = g.getFont().getStringBounds(indicator, frc);
+//            g.drawString(indicator, (int)(c.getWidth()-r.getWidth()), (int)(c.getHeight() - 1));
         }
     };
     

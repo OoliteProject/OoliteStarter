@@ -225,6 +225,7 @@ public class Oolite {
     }
     
     /**
+     * Parses a dependency list.
      * See https://wiki.alioth.net/index.php/Manifest.plist#Dependency_management_keys
      * @param vc 
      */
@@ -748,26 +749,35 @@ public class Oolite {
      * 
      * @param expansions the expansions to check
      */
-    public void validateDependencies(List<Expansion> expansions) throws IOException {
+    public List<String> validateDependencies(List<Expansion> expansions) throws IOException {
         log.debug("validateDependencies(...)");
         
+        List<String> warnings =  new ArrayList<>();
+        
+        Map<String, Expansion> indexedWithVersion = new TreeMap<>();
+        for (Expansion expansion: expansions) {
+            indexedWithVersion.put(expansion.getIdentifier() + ":" + expansion.getVersion(), expansion);
+        }
         Map<String, Expansion> indexed = new TreeMap<>();
         for (Expansion expansion: expansions) {
-            indexed.put(expansion.getIdentifier() + ":" + expansion.getVersion(), expansion);
+            indexed.put(expansion.getIdentifier(), expansion);
         }
         
         for (Expansion expansion: expansions) {
             if (expansion.getRequiresOxps() != null) {
-//                try (InputStream in = new ReaderInputStream(new StringReader(expansion.getRequiresOxps()), Charset.defaultCharset()) ) {
-//                    PlistParser.ListContext lc = PlistUtil.parsePListList(in, expansion.toString());
-//                    for (PlistParser.ValueContext vc: lc.value()) {
-//                        log.debug("vc={}", vc);
-//                    }
-//                } catch (ParseCancellationException e) {
-//                    throw new IOException("Could not parse Expansion " + expansion.getIdentifier() + ":" + expansion.getVersion() + ", requiredOxps", e);
-//                }
+                for (String dependency: expansion.getRequiresOxps()) {
+                    if (!indexedWithVersion.containsKey(dependency)) {
+                        
+                        String dep = dependency.substring(dependency.lastIndexOf(":"));
+                        if (!indexed.containsKey(dep)) {
+                            warnings.add(String.format("Expansion %s:%s: cannot find required %s", expansion.getIdentifier(), expansion.getVersion(), dependency));
+                        }
+                    }
+                }
             }
             
         }
+        
+        return warnings;
     }
 }

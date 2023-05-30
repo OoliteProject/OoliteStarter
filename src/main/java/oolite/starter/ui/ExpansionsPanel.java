@@ -3,14 +3,17 @@
 package oolite.starter.ui;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.event.ItemEvent;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JEditorPane;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
 import javax.swing.RowFilter;
 import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
@@ -405,7 +408,24 @@ updatable
 
     private void btValidateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btValidateActionPerformed
         try {
-            oolite.validateDependencies(expansions);
+            List<Expansion> es = new ArrayList<>();
+            for (int i= 0; i< trw.getViewRowCount(); i++) {
+                es.add(model.getRow(jTable1.convertRowIndexToModel(i)));
+            }
+            List<String> warnings = oolite.validateDependencies(es);
+            
+            if (warnings.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "All dependencies resolved.");
+            } else {
+                JEditorPane jep = new JEditorPane();
+                jep.setEditable(false);
+                jep.setText(String.join("\n", warnings));
+                JScrollPane sp = new JScrollPane(jep);
+                Dimension d = new Dimension(900, 600);
+                sp.setMaximumSize(d);
+                sp.setPreferredSize(d);
+                JOptionPane.showMessageDialog(this, sp, "Validation Result", JOptionPane.WARNING_MESSAGE);
+            }
         } catch (Exception e) {
             log.error("Could not validate", e);
             JOptionPane.showMessageDialog(this, "Could not validate.");
