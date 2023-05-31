@@ -126,7 +126,11 @@ public class Oolite {
         if (files != null) {
             for (File f: files) {
                 if (f.getName().toLowerCase().endsWith(".oolite-save")) {
-                    result.add(createSaveGame(f));
+                    try {
+                        result.add(createSaveGame(f));
+                    } catch (Exception e) {
+                        log.warn("Skipping savegame {}", f.getAbsolutePath(), e);
+                    }
                 }
             }
         }

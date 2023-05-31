@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.IOException;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
 import oolite.starter.ui.ExpansionsPanel;
@@ -31,13 +32,23 @@ public class MainFrame extends javax.swing.JFrame {
         setIconImage(new ImageIcon(getClass().getResource("/oolite_logo.png")).getImage());
 
         Oolite oolite = new Oolite();
+        Configuration configuration = null;
         File confFile = new File(System.getProperty("oolite.starter.configuration", "oolite-starter.properties"));
         if (confFile.exists()) {
-            oolite.setConfiguration(new Configuration(confFile));
+            configuration = new Configuration(confFile);
         } else {
             log.warn("Configuration {} does not exist. Loading builtin defaults.", confFile.getAbsolutePath());
-            oolite.setConfiguration(new Configuration());
+            configuration = new Configuration();
         }
+        
+        // verify we have the necessary directories
+        if (configuration.getDeactivatedAddonsDir() == null || !configuration.getDeactivatedAddonsDir().exists()) {
+            throw new IllegalStateException("Directory for deactivated expansions " + configuration.getDeactivatedAddonsDir() + " not found");
+        }
+        if (configuration.getManagedAddonsDir()== null || !configuration.getManagedAddonsDir().exists()) {
+            throw new IllegalStateException("Directory for managed expansions " + configuration.getManagedAddonsDir()+ " not found");
+        }
+        
 
         JLabel l = null;
         
@@ -113,6 +124,9 @@ public class MainFrame extends javax.swing.JFrame {
                 } catch (Exception e) {
                     System.out.println("Could not initialize UI");
                     e.printStackTrace(System.out);
+                    
+                    JOptionPane.showMessageDialog(null, e.getClass().getName() + ":\n" + e.getMessage(), "Fatal Error", JOptionPane.ERROR_MESSAGE);
+                    System.exit(1);
                 }
             }
         });
