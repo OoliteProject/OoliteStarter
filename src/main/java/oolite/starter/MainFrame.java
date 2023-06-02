@@ -31,7 +31,6 @@ public class MainFrame extends javax.swing.JFrame {
         setTitle(MainFrame.class.getPackage().getImplementationTitle() + " " + MainFrame.class.getPackage().getImplementationVersion());
         setIconImage(new ImageIcon(getClass().getResource("/oolite_logo.png")).getImage());
 
-        Oolite oolite = new Oolite();
         Configuration configuration = null;
         File confFile = new File(System.getProperty("oolite.starter.configuration", "oolite-starter.properties"));
         if (confFile.exists()) {
@@ -40,6 +39,9 @@ public class MainFrame extends javax.swing.JFrame {
             log.warn("Configuration {} does not exist. Loading builtin defaults.", confFile.getAbsolutePath());
             configuration = new Configuration();
         }
+
+        Oolite oolite = new Oolite();
+        oolite.setConfiguration(configuration);
         
         // verify we have the necessary directories
         if (configuration.getDeactivatedAddonsDir() == null || !configuration.getDeactivatedAddonsDir().exists()) {
