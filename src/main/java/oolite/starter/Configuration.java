@@ -10,6 +10,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import java.util.StringTokenizer;
 
 /**
  *
@@ -29,6 +30,12 @@ public class Configuration {
         properties.setProperty("oolite.addons.deactivated.dir", System.getProperty("user.home") +"/GNUstep/Library/ApplicationSupport/Oolite/DeactivatedAddOns");
         properties.setProperty("oolite.addons.activated.dir", System.getProperty("user.home") +"/GNUstep/Library/ApplicationSupport/Oolite/ManagedAddOns");
         properties.setProperty("oolite.executable", "/home/hiran/GNUstep/Applications/Oolite/oolite.app/oolite-wrapper");
+        
+        StringBuilder s = new StringBuilder();
+        s.append(new File(System.getProperty("user.home") +"/GNUstep/Applications/Oolite/AddOns").getAbsolutePath());
+        s.append(File.pathSeparator);
+        s.append(new File(System.getProperty("user.home") +"/.Oolite/Add-ons").getAbsolutePath());
+        properties.setProperty("oolite.addons.additional_dirs", s.toString());
     }
 
     /**
@@ -81,11 +88,14 @@ public class Configuration {
      */
     public List<File> getAddonDirs() {
         List<File> result = new ArrayList<>();
-        
-        result.add(new File(System.getProperty("user.home") +"/GNUstep/Applications/Oolite/AddOns"));
-        
-        // this directory may exist in Linux
-        result.add(new File(System.getProperty("user.home") +"/.Oolite/Add-ons"));
+
+        StringTokenizer st = new StringTokenizer(
+                properties.getProperty("oolite.addons.additional_dirs"),
+                File.pathSeparator
+        );
+        while(st.hasMoreTokens()) {
+            result.add(new File(st.nextToken()));
+        }
         
         // but here is where the expansion manager will install
         result.add(getManagedAddonsDir());
