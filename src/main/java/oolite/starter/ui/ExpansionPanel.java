@@ -23,6 +23,7 @@ public class ExpansionPanel extends javax.swing.JPanel implements PropertyChange
      */
     public ExpansionPanel() {
         initComponents();
+        update();
     }
     
     /**
@@ -64,7 +65,6 @@ public class ExpansionPanel extends javax.swing.JPanel implements PropertyChange
             btDisable.setEnabled(data.isLocal() && data.isEnabled());
             btRemove.setEnabled(data.isLocal());
         }
-        
     }
 
     /**
@@ -101,28 +101,36 @@ public class ExpansionPanel extends javax.swing.JPanel implements PropertyChange
         txtDescription.setWrapStyleWord(true);
         jScrollPane1.setViewportView(txtDescription);
 
+        btInstall.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/download_for_offline_FILL0_wght400_GRAD0_opsz24.png"))); // NOI18N
         btInstall.setText("Install");
+        btInstall.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         btInstall.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btInstallActionPerformed(evt);
             }
         });
 
+        btEnable.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/check_circle_FILL0_wght400_GRAD0_opsz24.png"))); // NOI18N
         btEnable.setText("Enable");
+        btEnable.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         btEnable.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btEnableActionPerformed(evt);
             }
         });
 
+        btDisable.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/unpublished_FILL0_wght400_GRAD0_opsz24.png"))); // NOI18N
         btDisable.setText("Disable");
+        btDisable.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         btDisable.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btDisableActionPerformed(evt);
             }
         });
 
+        btRemove.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/delete_forever_FILL0_wght400_GRAD0_opsz24.png"))); // NOI18N
         btRemove.setText("Remove");
+        btRemove.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         btRemove.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btRemoveActionPerformed(evt);
@@ -159,11 +167,11 @@ public class ExpansionPanel extends javax.swing.JPanel implements PropertyChange
                     .addComponent(jLabel5))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(txtLocalFile)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 294, Short.MAX_VALUE)
+                    .addComponent(txtLocalFile, javax.swing.GroupLayout.DEFAULT_SIZE, 294, Short.MAX_VALUE)
                     .addComponent(txtRequires)
                     .addComponent(txtConflicts)
-                    .addComponent(txtOptional))
+                    .addComponent(txtOptional)
+                    .addComponent(jScrollPane1))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(btRemove, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)

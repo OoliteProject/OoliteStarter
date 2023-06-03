@@ -11,9 +11,12 @@ on:
     branches: [ main ]
 
 jobs:
-  build:
+  semver:
     runs-on: ubuntu-latest
-
+    outputs:
+      GITVERSION_SEMVER: ${{ steps.output1.outputs.GITVERSION_SEMVER }}
+      GITVERSION_ASSEMBLYSEMVER: ${{ steps.output1.outputs.GITVERSION_ASSEMBLYSEMVER }}
+      GITVERSION_MAJORMINORPATCH: ${{ steps.output1.outputs.GITVERSION_MAJORMINORPATCH }}
     steps:
     - name: Checkout project
       uses: actions/checkout@v3
@@ -25,32 +28,242 @@ jobs:
       with:
         versionSpec: '5.x'
       
+    - name: Determine Version
+      id: gitversion
+      uses: gittools/actions/gitversion/execute@v0
+      
+    - id: output1
+      run: |
+        set | grep GITVERSION | sort
+        echo "GITVERSION_SEMVER=${GITVERSION_SEMVER}" >> "$GITHUB_OUTPUT"
+        echo "GITVERSION_ASSEMBLYSEMVER=${GITVERSION_ASSEMBLYSEMVER}" >> "$GITHUB_OUTPUT"
+        echo "GITVERSION_MAJORMINORPATCH=${GITVERSION_MAJORMINORPATCH}" >> "$GITHUB_OUTPUT"
+
+  build:
+    needs: [semver]
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout project
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+
     - name: Set up JDK 17
-      uses: actions/setup-java@v2
+      uses: actions/setup-java@v3
       with:
         java-version: '17'
         distribution: 'adopt'
 
-    - name: Determine Version
-      id: gitversion
-      uses: gittools/actions/gitversion/execute@v0
-
     - name: Build with Maven
       run: |
-        mvn versions:set "-DnewVersion=${{ env.GITVERSION_SEMVER }}"
+        mvn versions:set "-DnewVersion=${{ needs.semver.outputs.GITVERSION_SEMVER }}"
         mvn -B package -e --file pom.xml
         
+#    - name: Check status
+#      run: |
+#        set
+#        echo -n "Current directory: "
+#        pwd
+#        find
+
+    - uses: actions/upload-artifact@v3
+      with:
+        name: OoliteStarter
+        path: target/OoliteStarter-${{ needs.semver.outputs.GITVERSION_SEMVER }}-generic.*
+
+  package-linux:
+    needs: [semver,build]
+    runs-on: ubuntu-latest
+    steps:
+    - name: Set up JDK 17
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'adopt'
+
+    - name: Checkout project
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+        path: oolitestarter
+
+    - name: Download artifacts
+      uses: actions/download-artifact@v3
+      with:
+        path: artifacts
+
+    - name: Extract project
+      run: |
+        tar xvfz artifacts/OoliteStarter/OoliteStarter-${{ needs.semver.outputs.GITVERSION_SEMVER }}-generic.tar.gz
+
+#    - name: Check status 1
+#      run: |
+#        set
+#        echo -n "Current directory: "
+#        pwd
+#        find . -not -path "./oolitestarter/.git/*"
+        
+    - name: Prepare AppImage
+      run: |
+        jpackage --type app-image --app-version "${{ needs.semver.outputs.GITVERSION_SEMVER }}" --copyright Copyright --description "OoliteStarter" --name "OoliteStarter" --dest target/appimage --temp target/oolite-starter-tmp --vendor "hiran" --verbose --icon oolitestarter/src/main/resources/oolite_logo.png --input OoliteStarter-${{ needs.semver.outputs.GITVERSION_SEMVER }}/dist --main-jar OoliteStarter-${{ needs.semver.outputs.GITVERSION_SEMVER }}.jar --main-class oolite.starter.MainFrame
+        # --resource-dir src/jpackage/resources
+
+#    - name: Check status 2
+#      run: |
+#        set
+#        echo -n "Current directory: "
+#        pwd
+#        find . -not -path "./oolitestarter/.git/*"
+
+    - name: Finish AppImage
+      run: |
+        jpackage --verbose --app-image target/appimage/OoliteStarter --name "OoliteStarter" --dest target
+        # --resource-dir src/jpackage/resources"/>
+
+    - name: Check status 3
+      run: |
+        set
+        echo -n "Current directory: "
+        pwd
+        find . -not -path "./oolitestarter/.git/*"
+
+    - uses: actions/upload-artifact@v3
+      with:
+        name: OoliteStarter
+        path: ./target/oolitestarter*.deb
+
+  package-windows:
+    needs: [semver,build]
+    runs-on: windows-latest
+    steps:
+    - name: Set up JDK 17
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'adopt'
+
+    - name: Checkout project
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+        path: oolitestarter
+
+    - name: Download artifacts
+      uses: actions/download-artifact@v3
+      with:
+        path: artifacts
+
+    - name: Extract project
+      run: |
+        unzip artifacts\OoliteStarter\OoliteStarter-${{ needs.semver.outputs.GITVERSION_SEMVER }}-generic.zip
+
+    - name: Check status 1
+      run: |
+        get-childitem . -Recurse | where {!$_.PSIsContainer} | select-object FullName
+
+    - name: Prepare AppImage
+      run: |
+        jpackage --type app-image --app-version "${{ needs.semver.outputs.GITVERSION_ASSEMBLYSEMVER }}" --copyright Copyright --description "OoliteStarter" --name "OoliteStarter" --dest target/appimage --temp target/oolite-starter-tmp --vendor "hiran" --verbose --icon oolitestarter/src/main/resources/oolite_logo.png --input OoliteStarter-${{ needs.semver.outputs.GITVERSION_SEMVER }}/dist --main-jar OoliteStarter-${{ needs.semver.outputs.GITVERSION_SEMVER }}.jar --main-class oolite.starter.MainFrame
+        # --resource-dir src/jpackage/resources
+
+    - name: Check status 2
+      run: |
+        get-childitem . -Recurse | where {!$_.PSIsContainer} | select-object FullName
+
+    - name: Finish AppImage
+      run: |
+        jpackage --verbose --app-image target/appimage/OoliteStarter --name "OoliteStarter" --dest target
+        # --resource-dir src/jpackage/resources"/>
+
+    - name: Check status 3
+      run: |
+        get-childitem . -Recurse | where {!$_.PSIsContainer} | select-object FullName
+
+    - uses: actions/upload-artifact@v3
+      with:
+        name: OoliteStarter
+        path: ./target/*.exe
+
+  package-macos:
+    needs: [semver,build]
+    runs-on: macos-latest
+
+    steps:
+    - name: Set up JDK 17
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'adopt'
+
+    - name: Checkout project
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+        path: oolitestarter
+
+    - name: Download artifacts
+      uses: actions/download-artifact@v3
+      with:
+        path: artifacts
+
+    - name: Extract project
+      run: |
+        tar xvfz artifacts/OoliteStarter/OoliteStarter-${{ needs.semver.outputs.GITVERSION_SEMVER }}-generic.tar.gz
+
+    - name: Check status 1
+      run: |
+        set
+        echo -n "Current directory: "
+        pwd
+        find . -not -path "./oolitestarter/.git/*"
+        
+    - name: Prepare AppImage
+      run: |
+        jpackage --type app-image --app-version "1.0.0" --copyright Copyright --description "OoliteStarter" --name "OoliteStarter" --dest target/appimage --temp target/oolite-starter-tmp --vendor "hiran" --verbose --icon oolitestarter/src/main/resources/oolite_logo.png --input OoliteStarter-${{ needs.semver.outputs.GITVERSION_SEMVER }}/dist --main-jar OoliteStarter-${{ needs.semver.outputs.GITVERSION_SEMVER }}.jar --main-class oolite.starter.MainFrame
+        # --app-version "${{ needs.semver.outputs.GITVERSION_MAJORMINORPATCH }}"
+        # --resource-dir src/jpackage/resources
+
+    - name: Check status 2
+      run: |
+        set
+        echo -n "Current directory: "
+        pwd
+        find . -not -path "./oolitestarter/.git/*"
+
+    - name: Finish AppImage
+      run: |
+        jpackage --verbose --app-image target/appimage/OoliteStarter.app --name "OoliteStarter" --dest target
+        # --resource-dir src/jpackage/resources"/>
+
+    - name: Check status 3
+      run: |
+        set
+        echo -n "Current directory: "
+        pwd
+        find . -not -path "./oolitestarter/.git/*"
+
+    - uses: actions/upload-artifact@v3
+      with:
+        name: OoliteStarter
+        path: ./target/OoliteStarter*.dmg
+
+  release:
+    needs: [semver,package-linux,package-windows,package-macos]
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Download artifacts
+      uses: actions/download-artifact@v3
+      with:
+        path: artifacts
+
     - name: Check status
       run: |
         set
         echo -n "Current directory: "
         pwd
-        find
-
-    - uses: actions/upload-artifact@v2
-      with:
-        name: OoliteStarter
-        path: target/OoliteStarter-${{ env.GITVERSION_SEMVER }}-generic.*
+        find . -not -path "./oolitestarter/.git/*"
 
     - name: Remove old prereleases
       if: github.ref != 'refs/heads/master'
@@ -70,12 +283,15 @@ jobs:
       uses: "marvinpinto/action-automatic-releases@latest"
       with:
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
-        automatic_release_tag: "v${{ env.GITVERSION_SEMVER }}"
+        automatic_release_tag: "v${{ needs.semver.outputs.GITVERSION_SEMVER }}"
         prerelease: true
-        title: "OoliteStarter v${{ env.GITVERSION_SEMVER }}"
+        title: "OoliteStarter v${{ needs.semver.outputs.GITVERSION_SEMVER }}"
         files: |
-          target/*.zip
-          target/*.tar.gz
+          artifacts/OoliteStarter/*.zip
+          artifacts/OoliteStarter/*.tar.gz
+          artifacts/OoliteStarter/*.deb
+          artifacts/OoliteStarter/*.exe
+          artifacts/OoliteStarter/*.dmg
       
     - name: Remove old releases
       if: github.ref == 'refs/heads/master'
@@ -95,9 +311,12 @@ jobs:
       uses: "marvinpinto/action-automatic-releases@latest"
       with:
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
-        automatic_release_tag: "v${{ env.GITVERSION_SEMVER }}"
+        automatic_release_tag: "v${{ needs.semver.outputs.GITVERSION_SEMVER }}"
         prerelease: false
-        title: "OoliteStarter v${{ env.GITVERSION_SEMVER }}"
+        title: "OoliteStarter v${{ needs.semver.outputs.GITVERSION_SEMVER }}"
         files: |
-          target/*.zip
-          target/*.tar.gz
+          artifacts/OoliteStarter/*.zip
+          artifacts/OoliteStarter/*.tar.gz
+          artifacts/OoliteStarter/*.deb
+          artifacts/OoliteStarter/*.exe
+          artifacts/OoliteStarter/*.dmg

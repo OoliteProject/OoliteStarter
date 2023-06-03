@@ -72,8 +72,6 @@ public class AnnotationRenderer implements TableCellRenderer {
             c = new JLayer<JComponent>(c, layerUI);
         }
         return c;
-
-//        return new JLabel("b");
     }
 
 }
