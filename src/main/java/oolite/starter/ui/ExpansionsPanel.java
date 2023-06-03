@@ -2,9 +2,7 @@
  */
 package oolite.starter.ui;
 
-import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.Rectangle;
 import java.awt.event.ItemEvent;
 import java.io.File;
 import java.net.MalformedURLException;
@@ -75,8 +73,9 @@ updatable
     private Oolite oolite;
     private ExpansionsTableModel model;
     private TableRowSorter<ExpansionsTableModel> trw;
-    private ExpansionPanel ep;
     private List<Expansion> expansions;
+
+    private ExpansionPanel ep;
 
     /**
      * Creates new form ExpansionsPanel.
@@ -114,8 +113,8 @@ updatable
         });
         
         ep = new ExpansionPanel();
-        ep.setVisible(false);
-        add(ep, BorderLayout.SOUTH);
+        //add(ep, BorderLayout.EAST);
+        jSplitPane1.setRightComponent(ep);
     }
     
     private void applyFilter() {
@@ -131,6 +130,8 @@ updatable
                 }
             }
             trw.setRowFilter(RowFilter.andFilter(filters));
+            
+            txtStatus.setText(String.format("%d expansions", trw.getViewRowCount()));
         }
     }
     
@@ -140,24 +141,22 @@ updatable
             rowIndex = jTable1.convertRowIndexToModel(rowIndex);
             Expansion row = model.getRow(rowIndex);
             ep.setData(row);
-            ep.setVisible(true);
         } else {
-            ep.setVisible(false);
             ep.setData(null);
         }
-        
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    Thread.sleep(500);
-                } catch (InterruptedException ex) {
-                    log.debug("Interrupted");
-                }
-                Rectangle r = jTable1.getCellRect(jTable1.getSelectedRow(), 0, true);
-                jTable1.scrollRectToVisible(r);
-            }
-        });
+//        
+//        SwingUtilities.invokeLater(new Runnable() {
+//            @Override
+//            public void run() {
+//                try {
+//                    Thread.sleep(500);
+//                } catch (InterruptedException ex) {
+//                    log.debug("Interrupted");
+//                }
+//                Rectangle r = jTable1.getCellRect(jTable1.getSelectedRow(), 0, true);
+//                jTable1.scrollRectToVisible(r);
+//            }
+//        });
     }
     
     /**
@@ -193,7 +192,7 @@ updatable
             jTable1.setRowSorter(trw);
             applyFilter();
             
-            showDetailsOfSelection();
+            //showDetailsOfSelection();
         } catch (Exception e) {
             log.warn("Could not update", e);
         }
@@ -208,9 +207,7 @@ updatable
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
-        jPanel1 = new javax.swing.JPanel();
+        jpToolbar = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         cbFilterMode = new javax.swing.JComboBox<>();
@@ -220,24 +217,14 @@ updatable
         btActivate = new javax.swing.JButton();
         btExport = new javax.swing.JButton();
         btValidate = new javax.swing.JButton();
+        btReload = new javax.swing.JButton();
+        jSplitPane1 = new javax.swing.JSplitPane();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTable1 = new javax.swing.JTable();
+        jPanel1 = new javax.swing.JPanel();
+        txtStatus = new javax.swing.JLabel();
 
         setLayout(new java.awt.BorderLayout());
-
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {"No expansions found"},
-                {null},
-                {null},
-                {null}
-            },
-            new String [] {
-                "Expansions"
-            }
-        ));
-        jTable1.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        jScrollPane1.setViewportView(jTable1);
-
-        add(jScrollPane1, java.awt.BorderLayout.CENTER);
 
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Filter"));
 
@@ -267,7 +254,7 @@ updatable
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txtFilterText, javax.swing.GroupLayout.DEFAULT_SIZE, 322, Short.MAX_VALUE)
+                .addComponent(txtFilterText, javax.swing.GroupLayout.PREFERRED_SIZE, 212, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
@@ -324,29 +311,83 @@ updatable
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btActivate)
                     .addComponent(btExport)
-                    .addComponent(btValidate)))
+                    .addComponent(btValidate))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
+
+        btReload.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/refresh_FILL0_wght400_GRAD0_opsz24.png"))); // NOI18N
+        btReload.setText("Reload");
+        btReload.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btReloadActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jpToolbarLayout = new javax.swing.GroupLayout(jpToolbar);
+        jpToolbar.setLayout(jpToolbarLayout);
+        jpToolbarLayout.setHorizontalGroup(
+            jpToolbarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jpToolbarLayout.createSequentialGroup()
+                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btReload)
+                .addContainerGap())
+        );
+        jpToolbarLayout.setVerticalGroup(
+            jpToolbarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jpToolbarLayout.createSequentialGroup()
+                .addGroup(jpToolbarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jpToolbarLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(btReload, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(0, 6, Short.MAX_VALUE))
+        );
+
+        add(jpToolbar, java.awt.BorderLayout.PAGE_START);
+
+        jSplitPane1.setResizeWeight(0.5);
+        jSplitPane1.setOneTouchExpandable(true);
+
+        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {"No expansions found"},
+                {null},
+                {null},
+                {null}
+            },
+            new String [] {
+                "Expansions"
+            }
+        ));
+        jTable1.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        jScrollPane1.setViewportView(jTable1);
+
+        jSplitPane1.setLeftComponent(jScrollPane1);
+
+        add(jSplitPane1, java.awt.BorderLayout.CENTER);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addContainerGap()
+                .addComponent(txtStatus)
+                .addContainerGap(917, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(0, 6, Short.MAX_VALUE))
+                .addContainerGap()
+                .addComponent(txtStatus)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        add(jPanel1, java.awt.BorderLayout.PAGE_START);
+        add(jPanel1, java.awt.BorderLayout.PAGE_END);
     }// </editor-fold>//GEN-END:initComponents
 
     private void cbFilterModeItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbFilterModeItemStateChanged
@@ -432,10 +473,20 @@ updatable
         }
     }//GEN-LAST:event_btValidateActionPerformed
 
+    private void btReloadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btReloadActionPerformed
+        try {
+            update();
+        } catch (Exception e) {
+            log.error("Could not reload", e);
+            JOptionPane.showMessageDialog(null, "Could not reload");
+        }
+    }//GEN-LAST:event_btReloadActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btActivate;
     private javax.swing.JButton btExport;
+    private javax.swing.JButton btReload;
     private javax.swing.JButton btValidate;
     private javax.swing.JComboBox<String> cbFilterMode;
     private javax.swing.JLabel jLabel1;
@@ -444,8 +495,11 @@ updatable
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JTable jTable1;
+    private javax.swing.JPanel jpToolbar;
     private javax.swing.JTextField txtFilterText;
+    private javax.swing.JLabel txtStatus;
     // End of variables declaration//GEN-END:variables
 
     @Override
