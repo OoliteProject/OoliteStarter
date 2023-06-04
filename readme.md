@@ -6,7 +6,11 @@ and manage save games.
 
 ## Requirements
 
-* You need to have Java 17 or newer installed. 
+* You need to have Java SDK 17 or newer installed. 
+  If you are unfamiliar with installing Java on Linux, follow
+  https://www.youtube.com/watch?v=7lzIP-PvHoY
+  If you are unfamiliar with installing Java on MacOS, follow
+  https://www.youtube.com/watch?v=wXotUgqOdh8
   If you are unfamiliar with installing Java on Windows, follow
   https://www.youtube.com/watch?v=IJ-PJbvJBGs
 * You need to have a copy of Oolite Starter unzipped in a directory of

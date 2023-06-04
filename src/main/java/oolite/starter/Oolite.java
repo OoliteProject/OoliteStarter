@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Map;
 import java.util.TreeMap;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -125,7 +126,11 @@ public class Oolite {
         if (files != null) {
             for (File f: files) {
                 if (f.getName().toLowerCase().endsWith(".oolite-save")) {
-                    result.add(createSaveGame(f));
+                    try {
+                        result.add(createSaveGame(f));
+                    } catch (Exception e) {
+                        log.warn("Skipping savegame {}", f.getAbsolutePath(), e);
+                    }
                 }
             }
         }
@@ -196,6 +201,8 @@ public class Oolite {
     
     /**
      * Runs Oolite for the given savegame.
+     * Uses the pretty much only command line option supported by Oolite.
+     * See https://github.com/OoliteProject/oolite/blob/58bf7e1efb01ac346d06da5271cf755c0cb4f55a/src/SDL/main.m#L102
      * 
      * @param savegame the game to run
      */
@@ -219,6 +226,52 @@ public class Oolite {
         for (OoliteListener l: listeners) {
             l.terminated();
         }
+    }
+    
+    /**
+     * Parses a dependency list.
+     * See https://wiki.alioth.net/index.php/Manifest.plist#Dependency_management_keys
+     * @param vc 
+     */
+    private List<String> parseDependencyList(PlistParser.ValueContext vc) {
+        log.debug("parseDependencyList({})", vc);
+        
+        List<String> result = new ArrayList<>();
+        
+        if (vc.list() != null) {
+            for (PlistParser.ValueContext vc2: vc.list().value()) {
+                PlistParser.DictionaryContext dict = vc2.dictionary();
+
+                String identifier = "";
+                String version = "";
+                    
+                for (PlistParser.KeyvaluepairContext kvc: dict.keyvaluepair()) {
+                    String key = kvc.STRING().getText();
+                    String value = kvc.value().getText();
+                    switch(key) {
+                        case "identifier":
+                            identifier = value;
+                            break;
+                        case "version":
+                            version = value;
+                            break;
+                        case "description":
+                            break;
+                        case "maximum_version":
+                            break;
+                        default:
+                            log.warn("unknown dependency key {}", key);
+                            break;
+                    }
+                }
+                
+                String id = identifier + ":" + version;
+                result.add(id);
+            }
+        }
+        
+        Collections.sort(result);
+        return result;
     }
         
     /**
@@ -253,7 +306,7 @@ public class Oolite {
                     result.setCategory(value);
                     break;
                 case "conflict_oxps":
-                    result.setConflictOxps(value);
+                    result.setConflictOxps(parseDependencyList(kvc.value()));
                     break;
                 case "description":
                     result.setDescription(value);
@@ -277,13 +330,13 @@ public class Oolite {
                     result.setMaximumOoliteVersion(value);
                     break;
                 case "optional_oxps":
-                    result.setOptionalOxps(value);
+                    result.setOptionalOxps(parseDependencyList(kvc.value()));
                     break;
                 case "required_oolite_version":
                     result.setRequiredOoliteVersion(value);
                     break;
                 case "requires_oxps":
-                    result.setRequiresOxps(value);
+                    result.setRequiresOxps(parseDependencyList(kvc.value()));
                     break;
                 case "tags":
                     result.setTags(value);
@@ -693,5 +746,42 @@ public class Oolite {
         
         Transformer t = TransformerFactory.newInstance().newTransformer();
         t.transform(new DOMSource(doc), new StreamResult(destination));
+    }
+    
+    /**
+     * Validates whether the list of expansions is acceptable in itself.
+     * 
+     * @param expansions the expansions to check
+     */
+    public List<String> validateDependencies(List<Expansion> expansions) throws IOException {
+        log.debug("validateDependencies(...)");
+        
+        List<String> warnings =  new ArrayList<>();
+        
+        Map<String, Expansion> indexedWithVersion = new TreeMap<>();
+        for (Expansion expansion: expansions) {
+            indexedWithVersion.put(expansion.getIdentifier() + ":" + expansion.getVersion(), expansion);
+        }
+        Map<String, Expansion> indexed = new TreeMap<>();
+        for (Expansion expansion: expansions) {
+            indexed.put(expansion.getIdentifier(), expansion);
+        }
+        
+        for (Expansion expansion: expansions) {
+            if (expansion.getRequiresOxps() != null) {
+                for (String dependency: expansion.getRequiresOxps()) {
+                    if (!indexedWithVersion.containsKey(dependency)) {
+                        
+                        String dep = dependency.substring(dependency.lastIndexOf(":"));
+                        if (!indexed.containsKey(dep)) {
+                            warnings.add(String.format("Expansion %s:%s: cannot find required %s", expansion.getIdentifier(), expansion.getVersion(), dependency));
+                        }
+                    }
+                }
+            }
+            
+        }
+        
+        return warnings;
     }
 }

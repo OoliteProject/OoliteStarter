@@ -2,14 +2,16 @@
  */
 package oolite.starter.ui;
 
-import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.event.ItemEvent;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JEditorPane;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
 import javax.swing.RowFilter;
 import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
@@ -71,8 +73,9 @@ updatable
     private Oolite oolite;
     private ExpansionsTableModel model;
     private TableRowSorter<ExpansionsTableModel> trw;
-    private ExpansionPanel ep;
     private List<Expansion> expansions;
+
+    private ExpansionPanel ep;
 
     /**
      * Creates new form ExpansionsPanel.
@@ -91,6 +94,7 @@ updatable
                 }
             }
         });
+        jTable1.setDefaultRenderer(Object.class, new AnnotationRenderer(jTable1.getDefaultRenderer(Object.class)));
         txtFilterText.getDocument().addDocumentListener(new DocumentListener() {
             @Override
             public void insertUpdate(DocumentEvent de) {
@@ -109,8 +113,8 @@ updatable
         });
         
         ep = new ExpansionPanel();
-        ep.setVisible(false);
-        add(ep, BorderLayout.SOUTH);
+        //add(ep, BorderLayout.EAST);
+        jSplitPane1.setRightComponent(ep);
     }
     
     private void applyFilter() {
@@ -126,6 +130,8 @@ updatable
                 }
             }
             trw.setRowFilter(RowFilter.andFilter(filters));
+            
+            txtStatus.setText(String.format("%d expansions", trw.getViewRowCount()));
         }
     }
     
@@ -135,11 +141,22 @@ updatable
             rowIndex = jTable1.convertRowIndexToModel(rowIndex);
             Expansion row = model.getRow(rowIndex);
             ep.setData(row);
-            ep.setVisible(true);
         } else {
-            ep.setVisible(false);
             ep.setData(null);
         }
+//        
+//        SwingUtilities.invokeLater(new Runnable() {
+//            @Override
+//            public void run() {
+//                try {
+//                    Thread.sleep(500);
+//                } catch (InterruptedException ex) {
+//                    log.debug("Interrupted");
+//                }
+//                Rectangle r = jTable1.getCellRect(jTable1.getSelectedRow(), 0, true);
+//                jTable1.scrollRectToVisible(r);
+//            }
+//        });
     }
     
     /**
@@ -175,7 +192,7 @@ updatable
             jTable1.setRowSorter(trw);
             applyFilter();
             
-            showDetailsOfSelection();
+            //showDetailsOfSelection();
         } catch (Exception e) {
             log.warn("Could not update", e);
         }
@@ -190,9 +207,7 @@ updatable
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
-        jPanel1 = new javax.swing.JPanel();
+        jpToolbar = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         cbFilterMode = new javax.swing.JComboBox<>();
@@ -201,24 +216,15 @@ updatable
         jPanel3 = new javax.swing.JPanel();
         btActivate = new javax.swing.JButton();
         btExport = new javax.swing.JButton();
+        btValidate = new javax.swing.JButton();
+        btReload = new javax.swing.JButton();
+        jSplitPane1 = new javax.swing.JSplitPane();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTable1 = new javax.swing.JTable();
+        jPanel1 = new javax.swing.JPanel();
+        txtStatus = new javax.swing.JLabel();
 
         setLayout(new java.awt.BorderLayout());
-
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
-            }
-        ));
-        jTable1.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        jScrollPane1.setViewportView(jTable1);
-
-        add(jScrollPane1, java.awt.BorderLayout.CENTER);
 
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Filter"));
 
@@ -248,7 +254,7 @@ updatable
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txtFilterText, javax.swing.GroupLayout.DEFAULT_SIZE, 347, Short.MAX_VALUE)
+                .addComponent(txtFilterText, javax.swing.GroupLayout.PREFERRED_SIZE, 212, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
@@ -279,16 +285,24 @@ updatable
             }
         });
 
+        btValidate.setText("Validate");
+        btValidate.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btValidateActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addContainerGap()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btActivate)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btExport)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btValidate))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -296,28 +310,84 @@ updatable
                 .addGap(6, 6, 6)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btActivate)
-                    .addComponent(btExport)))
+                    .addComponent(btExport)
+                    .addComponent(btValidate))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
+
+        btReload.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/refresh_FILL0_wght400_GRAD0_opsz24.png"))); // NOI18N
+        btReload.setText("Reload");
+        btReload.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btReloadActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jpToolbarLayout = new javax.swing.GroupLayout(jpToolbar);
+        jpToolbar.setLayout(jpToolbarLayout);
+        jpToolbarLayout.setHorizontalGroup(
+            jpToolbarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jpToolbarLayout.createSequentialGroup()
+                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btReload)
+                .addContainerGap())
+        );
+        jpToolbarLayout.setVerticalGroup(
+            jpToolbarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jpToolbarLayout.createSequentialGroup()
+                .addGroup(jpToolbarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jpToolbarLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(btReload, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(0, 6, Short.MAX_VALUE))
+        );
+
+        add(jpToolbar, java.awt.BorderLayout.PAGE_START);
+
+        jSplitPane1.setResizeWeight(0.5);
+        jSplitPane1.setOneTouchExpandable(true);
+
+        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {"No expansions found"},
+                {null},
+                {null},
+                {null}
+            },
+            new String [] {
+                "Expansions"
+            }
+        ));
+        jTable1.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        jScrollPane1.setViewportView(jTable1);
+
+        jSplitPane1.setLeftComponent(jScrollPane1);
+
+        add(jSplitPane1, java.awt.BorderLayout.CENTER);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap()
+                .addComponent(txtStatus)
+                .addContainerGap(917, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(0, 6, Short.MAX_VALUE))
+                .addContainerGap()
+                .addComponent(txtStatus)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        add(jPanel1, java.awt.BorderLayout.PAGE_START);
+        add(jPanel1, java.awt.BorderLayout.PAGE_END);
     }// </editor-fold>//GEN-END:initComponents
 
     private void cbFilterModeItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbFilterModeItemStateChanged
@@ -377,10 +447,47 @@ updatable
         }
     }//GEN-LAST:event_btExportActionPerformed
 
+    private void btValidateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btValidateActionPerformed
+        try {
+            List<Expansion> es = new ArrayList<>();
+            for (int i= 0; i< trw.getViewRowCount(); i++) {
+                es.add(model.getRow(jTable1.convertRowIndexToModel(i)));
+            }
+            List<String> warnings = oolite.validateDependencies(es);
+            
+            if (warnings.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "All dependencies resolved.");
+            } else {
+                JEditorPane jep = new JEditorPane();
+                jep.setEditable(false);
+                jep.setText(String.join("\n", warnings));
+                JScrollPane sp = new JScrollPane(jep);
+                Dimension d = new Dimension(900, 600);
+                sp.setMaximumSize(d);
+                sp.setPreferredSize(d);
+                JOptionPane.showMessageDialog(this, sp, "Validation Result", JOptionPane.WARNING_MESSAGE);
+            }
+        } catch (Exception e) {
+            log.error("Could not validate", e);
+            JOptionPane.showMessageDialog(this, "Could not validate.");
+        }
+    }//GEN-LAST:event_btValidateActionPerformed
+
+    private void btReloadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btReloadActionPerformed
+        try {
+            update();
+        } catch (Exception e) {
+            log.error("Could not reload", e);
+            JOptionPane.showMessageDialog(null, "Could not reload");
+        }
+    }//GEN-LAST:event_btReloadActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btActivate;
     private javax.swing.JButton btExport;
+    private javax.swing.JButton btReload;
+    private javax.swing.JButton btValidate;
     private javax.swing.JComboBox<String> cbFilterMode;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -388,8 +495,11 @@ updatable
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JTable jTable1;
+    private javax.swing.JPanel jpToolbar;
     private javax.swing.JTextField txtFilterText;
+    private javax.swing.JLabel txtStatus;
     // End of variables declaration//GEN-END:variables
 
     @Override

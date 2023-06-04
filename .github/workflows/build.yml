@@ -57,8 +57,8 @@ jobs:
       uses: s00d/delete-older-releases@0.2.1
       with:
         #repo: <owner>/<repoName> # defaults to current repo
-        keep_latest: 3
-        delete_tag_pattern: v
+        keep_latest: 5
+        delete_tag_pattern: v\d+\.\d+\.\d+-.*
         delete_type: 'prerelease'
         target_branch: '${{ github.ref_name }}'
       env:
@@ -83,7 +83,7 @@ jobs:
       with:
         #repo: <owner>/<repoName> # defaults to current repo
         keep_latest: 3
-        delete_tag_pattern: v
+        delete_tag_pattern: v\d+\.\d+\.\d+
         delete_type: 'release'
         target_branch: 'main'
       env:

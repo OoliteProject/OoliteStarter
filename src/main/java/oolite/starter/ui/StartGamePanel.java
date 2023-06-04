@@ -2,7 +2,6 @@
  */
 package oolite.starter.ui;
 
-import java.awt.BorderLayout;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
@@ -54,15 +53,14 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
                         rowIndex = jTable1.convertRowIndexToModel(rowIndex);
                         SaveGame row = model.getRow(rowIndex);
                         sgp.setData(row);
-                        sgp.setVisible(true);
                     }
                 }
             }
         });
         
         sgp = new SaveGamePanel();
-        sgp.setVisible(false);
-        add(sgp, BorderLayout.SOUTH);
+        //add(sgp, BorderLayout.SOUTH);
+        jSplitPane1.setRightComponent(sgp);
         
         update();
     }
@@ -72,8 +70,9 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
             model = new SaveGameTableModel(oolite.getSaveGames());
             jTable1.clearSelection();
             jTable1.setModel(model);
-            sgp.setVisible(false);
             sgp.setData(null);
+            
+            txtStatus.setText(String.format("%d save games", model.getRowCount()));
         } catch (Exception e) {
             log.warn("Could not update", e);
         }
@@ -89,52 +88,98 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        jPanel2 = new javax.swing.JPanel();
+        btReload = new javax.swing.JButton();
+        btNew = new javax.swing.JButton();
+        btResume = new javax.swing.JButton();
+        jSplitPane1 = new javax.swing.JSplitPane();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
+        jPanel3 = new javax.swing.JPanel();
+        txtStatus = new javax.swing.JLabel();
 
         setLayout(new java.awt.BorderLayout());
 
-        jPanel1.setLayout(new java.awt.GridLayout(0, 1));
-
-        jButton1.setText("New");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
-            }
-        });
-        jPanel1.add(jButton1);
-
-        jButton2.setText("Continue");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
-            }
-        });
-        jPanel1.add(jButton2);
-
+        jPanel1.setLayout(new java.awt.GridBagLayout());
         add(jPanel1, java.awt.BorderLayout.LINE_END);
+
+        jPanel2.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
+
+        btReload.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/refresh_FILL0_wght400_GRAD0_opsz48.png"))); // NOI18N
+        btReload.setText("Reload");
+        btReload.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btReloadActionPerformed(evt);
+            }
+        });
+        jPanel2.add(btReload);
+
+        btNew.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/play_arrow_FILL0_wght400_GRAD0_opsz48.png"))); // NOI18N
+        btNew.setText("New");
+        btNew.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        btNew.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btNewActionPerformed(evt);
+            }
+        });
+        jPanel2.add(btNew);
+
+        btResume.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/resume_FILL0_wght400_GRAD0_opsz48.png"))); // NOI18N
+        btResume.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        btResume.setLabel("Resume");
+        btResume.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btResumeActionPerformed(evt);
+            }
+        });
+        jPanel2.add(btResume);
+
+        add(jPanel2, java.awt.BorderLayout.PAGE_START);
+
+        jSplitPane1.setOneTouchExpandable(true);
 
         jTable1.setAutoCreateRowSorter(true);
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {"No save games found"},
+                {null},
+                {null},
+                {null}
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+                "Save Games"
             }
         ));
         jTable1.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jScrollPane1.setViewportView(jTable1);
 
-        add(jScrollPane1, java.awt.BorderLayout.CENTER);
+        jSplitPane1.setLeftComponent(jScrollPane1);
+
+        add(jSplitPane1, java.awt.BorderLayout.CENTER);
+
+        txtStatus.setText("jLabel1");
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(txtStatus)
+                .addContainerGap(507, Short.MAX_VALUE))
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(txtStatus)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        add(jPanel3, java.awt.BorderLayout.PAGE_END);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void btNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btNewActionPerformed
         // new game button
         try {
             SwingUtilities.getRoot(this).setVisible(false);
@@ -145,9 +190,9 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
         } finally {
             SwingUtilities.getRoot(this).setVisible(true);
         }
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_btNewActionPerformed
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+    private void btResumeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btResumeActionPerformed
         // run savegame
         try {
             int rowIndex = jTable1.convertRowIndexToModel(jTable1.getSelectedRow());
@@ -162,15 +207,29 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
         } finally {
             SwingUtilities.getRoot(this).setVisible(true);
         }
-    }//GEN-LAST:event_jButton2ActionPerformed
+    }//GEN-LAST:event_btResumeActionPerformed
+
+    private void btReloadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btReloadActionPerformed
+        try {
+            update();
+        } catch (Exception e) {
+            log.error("Could not reload", e);
+            JOptionPane.showMessageDialog(null, "Could not reload");
+        }
+    }//GEN-LAST:event_btReloadActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
+    private javax.swing.JButton btNew;
+    private javax.swing.JButton btReload;
+    private javax.swing.JButton btResume;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JTable jTable1;
+    private javax.swing.JLabel txtStatus;
     // End of variables declaration//GEN-END:variables
 
     @Override

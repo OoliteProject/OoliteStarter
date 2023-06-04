@@ -27,7 +27,7 @@
         <file>
             <source>src/main/resources-ext/oolite-starter.example.properties</source>
             <outputDirectory></outputDirectory>
-            <destName>configuration.example.properties</destName>
+            <destName>oolite-starter.example.properties</destName>
             <fileMode>0755</fileMode>
         </file>
     </files>

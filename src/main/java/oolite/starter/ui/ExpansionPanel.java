@@ -23,6 +23,7 @@ public class ExpansionPanel extends javax.swing.JPanel implements PropertyChange
      */
     public ExpansionPanel() {
         initComponents();
+        update();
     }
     
     /**
@@ -46,6 +47,9 @@ public class ExpansionPanel extends javax.swing.JPanel implements PropertyChange
         if (data == null) {
             txtDescription.setText("");
             txtLocalFile.setText("");
+            txtRequires.setText("");
+            txtConflicts.setText("");
+            txtOptional.setText("");
             btInstall.setEnabled(false);
             btEnable.setEnabled(false);
             btDisable.setEnabled(false);
@@ -53,12 +57,14 @@ public class ExpansionPanel extends javax.swing.JPanel implements PropertyChange
         } else {
             txtDescription.setText(data.getDescription());
             txtLocalFile.setText(String.valueOf(data.getLocalFile()));
+            txtRequires.setText(String.valueOf(data.getRequiresOxps()));
+            txtConflicts.setText(String.valueOf(data.getConflictOxps()));
+            txtOptional.setText(String.valueOf(data.getOptionalOxps()));
             btInstall.setEnabled(data.isOnline() && !data.isLocal());
             btEnable.setEnabled(data.isLocal() && !data.isEnabled());
             btDisable.setEnabled(data.isLocal() && data.isEnabled());
             btRemove.setEnabled(data.isLocal());
         }
-        
     }
 
     /**
@@ -79,6 +85,12 @@ public class ExpansionPanel extends javax.swing.JPanel implements PropertyChange
         btRemove = new javax.swing.JButton();
         txtLocalFile = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        txtRequires = new javax.swing.JTextField();
+        jLabel4 = new javax.swing.JLabel();
+        txtConflicts = new javax.swing.JTextField();
+        jLabel5 = new javax.swing.JLabel();
+        txtOptional = new javax.swing.JTextField();
 
         jLabel1.setText("Description");
 
@@ -89,28 +101,36 @@ public class ExpansionPanel extends javax.swing.JPanel implements PropertyChange
         txtDescription.setWrapStyleWord(true);
         jScrollPane1.setViewportView(txtDescription);
 
+        btInstall.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/download_for_offline_FILL0_wght400_GRAD0_opsz24.png"))); // NOI18N
         btInstall.setText("Install");
+        btInstall.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         btInstall.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btInstallActionPerformed(evt);
             }
         });
 
+        btEnable.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/check_circle_FILL0_wght400_GRAD0_opsz24.png"))); // NOI18N
         btEnable.setText("Enable");
+        btEnable.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         btEnable.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btEnableActionPerformed(evt);
             }
         });
 
+        btDisable.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/unpublished_FILL0_wght400_GRAD0_opsz24.png"))); // NOI18N
         btDisable.setText("Disable");
+        btDisable.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         btDisable.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btDisableActionPerformed(evt);
             }
         });
 
+        btRemove.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/delete_forever_FILL0_wght400_GRAD0_opsz24.png"))); // NOI18N
         btRemove.setText("Remove");
+        btRemove.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         btRemove.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btRemoveActionPerformed(evt);
@@ -118,9 +138,20 @@ public class ExpansionPanel extends javax.swing.JPanel implements PropertyChange
         });
 
         txtLocalFile.setEditable(false);
-        txtLocalFile.setText("jTextField1");
 
         jLabel2.setText("Local File");
+
+        jLabel3.setText("Requires");
+
+        txtRequires.setEditable(false);
+
+        jLabel4.setText("Conflicts");
+
+        txtConflicts.setEditable(false);
+
+        jLabel5.setText("Optional");
+
+        txtOptional.setEditable(false);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -130,11 +161,17 @@ public class ExpansionPanel extends javax.swing.JPanel implements PropertyChange
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel1)
-                    .addComponent(jLabel2))
+                    .addComponent(jLabel2)
+                    .addComponent(jLabel3)
+                    .addComponent(jLabel4)
+                    .addComponent(jLabel5))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(txtLocalFile)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 294, Short.MAX_VALUE))
+                    .addComponent(txtLocalFile, javax.swing.GroupLayout.DEFAULT_SIZE, 294, Short.MAX_VALUE)
+                    .addComponent(txtRequires)
+                    .addComponent(txtConflicts)
+                    .addComponent(txtOptional)
+                    .addComponent(jScrollPane1))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(btRemove, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -162,7 +199,19 @@ public class ExpansionPanel extends javax.swing.JPanel implements PropertyChange
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtLocalFile, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel2))
-                .addContainerGap(25, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel3)
+                    .addComponent(txtRequires, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel4)
+                    .addComponent(txtConflicts, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel5)
+                    .addComponent(txtOptional, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -206,9 +255,15 @@ public class ExpansionPanel extends javax.swing.JPanel implements PropertyChange
     private javax.swing.JButton btRemove;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTextField txtConflicts;
     private javax.swing.JTextArea txtDescription;
     private javax.swing.JTextField txtLocalFile;
+    private javax.swing.JTextField txtOptional;
+    private javax.swing.JTextField txtRequires;
     // End of variables declaration//GEN-END:variables
 
     @Override
