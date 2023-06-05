@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=OoliteStarter
+Comment=UI to manage Oolite, SaveGames and Expansions
+Exec=/opt/oolitestarter/bin/OoliteStarter
+Icon=/opt/oolitestarter/lib/OoliteStarter.png
+Terminal=false
+Type=Application
+Categories=Unknown
+MimeType=
+StartupWMClass=org-oolite-hiran-nexus-Main
