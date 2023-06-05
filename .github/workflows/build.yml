@@ -107,7 +107,10 @@ jobs:
     - name: Prepare AppImage
       run: |
         jpackage --type app-image --app-version "${{ needs.semver.outputs.GITVERSION_SEMVER }}" --copyright Copyright --description "OoliteStarter" --name "OoliteStarter" --dest target/appimage --temp target/oolite-starter-tmp --vendor "hiran" --verbose --icon oolitestarter/src/main/resources/oolite_logo.png --input OoliteStarter-${{ needs.semver.outputs.GITVERSION_SEMVER }}/dist --main-jar OoliteStarter-${{ needs.semver.outputs.GITVERSION_SEMVER }}.jar --main-class oolite.starter.MainFrame --resource-dir oolitestarter/src/jpackage/resources-linux
-        cp "oolitestarter/src/jpackage/resources-linux/OoliteStarter.desktop" "target/appimage/OoliteStarter/lib/oolitestarter-OoliteStarter.desktop"
+
+    - name: Tweak AppImage
+      run: |
+        cp -v "oolitestarter/src/jpackage/resources-linux/OoliteStarter.desktop" "target/appimage/OoliteStarter/lib/oolitestarter-OoliteStarter.desktop"
 
 
     - name: Check status 2
