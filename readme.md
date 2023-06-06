@@ -4,7 +4,7 @@ The Oolite Starter allows users to more comfortably preconfigure Oolite
 for various missions. It's main purpose is to ease OXP management, Oolite versions
 and manage save games.
 
-## Requirements
+## Requirements (generic package)
 
 * You need to have Java SDK 17 or newer installed. 
   If you are unfamiliar with installing Java on Linux, follow
@@ -13,7 +13,7 @@ and manage save games.
   https://www.youtube.com/watch?v=wXotUgqOdh8
   If you are unfamiliar with installing Java on Windows, follow
   https://www.youtube.com/watch?v=IJ-PJbvJBGs
-* You need to have a copy of Oolite Starter unzipped in a directory of
+* You need to have a copy of the generic Oolite Starter unzipped in a directory of
   your choice. Just in case, you can download it from
   https://github.com/HiranChaudhuri/OoliteStarter/releases
 
@@ -25,6 +25,9 @@ to the comments in that file. If the starter cannot find the file on it's own,
 you can help by setting a system property like this:
 
 java -Doolite.starter.configuration=/path/to/oolite-starter.properties -jar Oolite-Starter.jar
+
+If you do not know what to put into this file, check out
+https://raw.githubusercontent.com/HiranChaudhuri/OoliteStarter/master/src/main/resources-ext/oolite-starter.example.properties
 
 ## Usage
 
