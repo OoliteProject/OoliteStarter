@@ -101,6 +101,16 @@ public class ExpansionsTableModel extends AbstractTableModel implements Property
                 } else {
                     s += "e";
                 }
+                if (row.getRequiresOxps() !=null && row.getRequiresOxps().size()>0) {
+                    s += "R";
+                } else {
+                    s += "r";
+                }
+                if (row.getConflictOxps() !=null && row.getConflictOxps().size()>0) {
+                    s += "C";
+                } else {
+                    s += "c";
+                }
                 return s;
             }
             default: return "n/a";
