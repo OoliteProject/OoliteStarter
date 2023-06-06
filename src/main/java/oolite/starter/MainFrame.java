@@ -10,6 +10,7 @@ import javax.swing.JOptionPane;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
 import oolite.starter.ui.ExpansionsPanel;
+import oolite.starter.ui.InstallationsPanel;
 import oolite.starter.ui.StartGamePanel;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -68,9 +69,9 @@ public class MainFrame extends javax.swing.JFrame {
         ep.setOolite(oolite);
         jTabbedPane1.add(ep);
 
-//        l = new JLabel("Show Oolite available versions. Allow to install/uninstall them");
-//        l.setName("Oolite Version");
-//        jTabbedPane1.add(l);
+        InstallationsPanel ip = new InstallationsPanel();
+        //ip.setOolite(oolite);
+        jTabbedPane1.add(ip);
     }
 
     /**
