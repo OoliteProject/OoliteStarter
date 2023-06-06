@@ -32,11 +32,13 @@ public class MainFrame extends javax.swing.JFrame {
         setIconImage(new ImageIcon(getClass().getResource("/oolite_logo.png")).getImage());
 
         Configuration configuration = null;
-        File confFile = new File(System.getProperty("oolite.starter.configuration", "oolite-starter.properties"));
+        File confFile = new File(System.getProperty("oolite.starter.configuration", System.getProperty("user.home") + "/.oolite-starter.properties"));
         if (confFile.exists()) {
             configuration = new Configuration(confFile);
         } else {
-            log.warn("Configuration {} does not exist. Loading builtin defaults.", confFile.getAbsolutePath());
+            String msg = String.format("Configuration file %s not found. Loading defaults.", confFile.getAbsolutePath());
+            log.warn(msg);
+            JOptionPane.showMessageDialog(null, msg);
             configuration = new Configuration();
         }
 
@@ -45,10 +47,14 @@ public class MainFrame extends javax.swing.JFrame {
         
         // verify we have the necessary directories
         if (configuration.getDeactivatedAddonsDir() == null || !configuration.getDeactivatedAddonsDir().exists()) {
-            throw new IllegalStateException("Directory for deactivated expansions " + configuration.getDeactivatedAddonsDir() + " not found");
+            String msg = "Directory for deactivated expansions " + configuration.getDeactivatedAddonsDir() + " not found";
+            log.warn(msg);
+            JOptionPane.showMessageDialog(null, msg);
         }
         if (configuration.getManagedAddonsDir()== null || !configuration.getManagedAddonsDir().exists()) {
-            throw new IllegalStateException("Directory for managed expansions " + configuration.getManagedAddonsDir()+ " not found");
+            String msg = "Directory for managed expansions " + configuration.getManagedAddonsDir()+ " not found";
+            log.warn(msg);
+            JOptionPane.showMessageDialog(null, msg);
         }
         
 
