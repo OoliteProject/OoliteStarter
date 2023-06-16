@@ -2,9 +2,12 @@
  */
 package oolite.starter.ui;
 
+import java.io.File;
+import java.io.FileReader;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import oolite.starter.model.Installation;
+import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -35,7 +38,7 @@ public class InstallationForm extends javax.swing.JPanel {
 
         if (data == null) {
             txtAddOnDir.setText("");
-            txtDeactivatedAddOnDir.setText("");
+            txtManagedDeactivatedAddOnDir.setText("");
             txtExecutable.setText("");
             txtHomeDir.setText("");
             txtManagedAddOnDir.setText("");
@@ -44,6 +47,7 @@ public class InstallationForm extends javax.swing.JPanel {
         } else {
             txtAddOnDir.setText(data.getAddonDir());
             txtDeactivatedAddOnDir.setText(data.getDeactivatedAddonDir());
+            txtManagedDeactivatedAddOnDir.setText(data.getManagedDeactivatedAddonDir());
             txtExecutable.setText(data.getExcecutable());
             txtHomeDir.setText(data.getHomeDir());
             txtManagedAddOnDir.setText(data.getManagedAddonDir());
@@ -60,6 +64,8 @@ public class InstallationForm extends javax.swing.JPanel {
     public Installation getData() {
         data.setAddonDir(txtAddOnDir.getText());
         data.setDeactivatedAddonDir(txtDeactivatedAddOnDir.getText());
+        data.setManagedAddonDir(txtManagedAddOnDir.getText());
+        data.setManagedDeactivatedAddonDir(txtManagedDeactivatedAddOnDir.getText());
         data.setExcecutable(txtExecutable.getText());
         data.setHomeDir(txtHomeDir.getText());
         data.setManagedAddonDir(txtManagedAddOnDir.getText());
@@ -75,15 +81,17 @@ public class InstallationForm extends javax.swing.JPanel {
         btExecutable.setVisible(enabled);
         btSavegameDir.setVisible(enabled);
         btAddOnDir.setVisible(enabled);
-        btManagedAddOnDir.setVisible(enabled);
         btDeactivatedAddOnDir.setVisible(enabled);
+        btManagedAddOnDir.setVisible(enabled);
+        btManagedDeactivatedAddOnDir.setVisible(enabled);
         
         txtHomeDir.setEnabled(enabled);
         txtExecutable.setEnabled(enabled);
         txtSavegameDir.setEnabled(enabled);
         txtAddOnDir.setEnabled(enabled);
-        txtManagedAddOnDir.setEnabled(enabled);
         txtDeactivatedAddOnDir.setEnabled(enabled);
+        txtManagedAddOnDir.setEnabled(enabled);
+        txtManagedDeactivatedAddOnDir.setEnabled(enabled);
         txtVersion.setEnabled(enabled);
     }
     
@@ -96,6 +104,7 @@ public class InstallationForm extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        filler1 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 0), new java.awt.Dimension(32767, 0));
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
@@ -103,7 +112,7 @@ public class InstallationForm extends javax.swing.JPanel {
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
-        txtDeactivatedAddOnDir = new javax.swing.JTextField();
+        txtManagedDeactivatedAddOnDir = new javax.swing.JTextField();
         txtManagedAddOnDir = new javax.swing.JTextField();
         txtAddOnDir = new javax.swing.JTextField();
         txtSavegameDir = new javax.swing.JTextField();
@@ -115,7 +124,11 @@ public class InstallationForm extends javax.swing.JPanel {
         btSavegameDir = new javax.swing.JButton();
         btAddOnDir = new javax.swing.JButton();
         btManagedAddOnDir = new javax.swing.JButton();
+        btManagedDeactivatedAddOnDir = new javax.swing.JButton();
+        jLabel8 = new javax.swing.JLabel();
         btDeactivatedAddOnDir = new javax.swing.JButton();
+        txtDeactivatedAddOnDir = new javax.swing.JTextField();
+        filler3 = new javax.swing.Box.Filler(new java.awt.Dimension(5, 0), new java.awt.Dimension(0, 0), new java.awt.Dimension(32767, 0));
 
         jLabel1.setText("Home Directory");
 
@@ -129,7 +142,7 @@ public class InstallationForm extends javax.swing.JPanel {
 
         jLabel6.setText("Managed AddOn Directory");
 
-        jLabel7.setText("Deactivated AddOn Directory");
+        jLabel7.setText("Managed Deactivated AddOn Directory");
 
         btHomeDir.setText("...");
         btHomeDir.addActionListener(new java.awt.event.ActionListener() {
@@ -166,6 +179,15 @@ public class InstallationForm extends javax.swing.JPanel {
             }
         });
 
+        btManagedDeactivatedAddOnDir.setText("...");
+        btManagedDeactivatedAddOnDir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btManagedDeactivatedAddOnDirActionPerformed(evt);
+            }
+        });
+
+        jLabel8.setText("Deactivated AddOn Directory");
+
         btDeactivatedAddOnDir.setText("...");
         btDeactivatedAddOnDir.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -180,34 +202,52 @@ public class InstallationForm extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel7)
-                    .addComponent(jLabel6)
-                    .addComponent(jLabel5)
-                    .addComponent(jLabel4)
-                    .addComponent(jLabel3)
-                    .addComponent(jLabel2)
-                    .addComponent(jLabel1))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(txtHomeDir, javax.swing.GroupLayout.DEFAULT_SIZE, 244, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btHomeDir))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(txtVersion, javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txtDeactivatedAddOnDir)
-                            .addComponent(txtManagedAddOnDir)
-                            .addComponent(txtAddOnDir)
-                            .addComponent(txtSavegameDir)
-                            .addComponent(txtExecutable))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(btExecutable, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(btSavegameDir, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(btAddOnDir, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(btManagedAddOnDir, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(btDeactivatedAddOnDir, javax.swing.GroupLayout.Alignment.TRAILING))))
+                            .addComponent(jLabel5)
+                            .addComponent(jLabel4)
+                            .addComponent(jLabel3)
+                            .addComponent(jLabel2)
+                            .addComponent(jLabel1))
+                        .addGap(131, 131, 131)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(txtVersion, javax.swing.GroupLayout.DEFAULT_SIZE, 319, Short.MAX_VALUE)
+                            .addComponent(txtSavegameDir, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(txtAddOnDir, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(txtExecutable, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(txtHomeDir))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(7, 7, 7)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(btExecutable, javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(btSavegameDir, javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(btAddOnDir, javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(btHomeDir, javax.swing.GroupLayout.Alignment.TRAILING)))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(filler3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(16, 16, 16))))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel7)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(txtManagedDeactivatedAddOnDir))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel8)
+                                    .addComponent(jLabel6))
+                                .addGap(75, 75, 75)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(txtDeactivatedAddOnDir)
+                                    .addComponent(txtManagedAddOnDir))))
+                        .addGap(7, 7, 7)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(btDeactivatedAddOnDir)
+                                .addComponent(btManagedAddOnDir))
+                            .addComponent(btManagedDeactivatedAddOnDir, javax.swing.GroupLayout.Alignment.TRAILING))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -218,10 +258,15 @@ public class InstallationForm extends javax.swing.JPanel {
                     .addComponent(jLabel1)
                     .addComponent(txtHomeDir, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btHomeDir))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(txtVersion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel2)
+                            .addComponent(txtVersion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(16, 16, 16)
+                        .addComponent(filler3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
@@ -239,21 +284,88 @@ public class InstallationForm extends javax.swing.JPanel {
                     .addComponent(btAddOnDir))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel6)
+                    .addComponent(jLabel8)
+                    .addComponent(btDeactivatedAddOnDir)
+                    .addComponent(txtDeactivatedAddOnDir, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtManagedAddOnDir, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btManagedAddOnDir))
+                    .addComponent(btManagedAddOnDir)
+                    .addComponent(jLabel6))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel7)
-                    .addComponent(txtDeactivatedAddOnDir, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btDeactivatedAddOnDir))
+                    .addComponent(btManagedDeactivatedAddOnDir)
+                    .addComponent(txtManagedDeactivatedAddOnDir, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
     private void btHomeDirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btHomeDirActionPerformed
         try {
-            JFileChooser jfc = null;
+            String dir = txtHomeDir.getText();
+            if (dir == null || dir.trim().isEmpty()) {
+                System.getProperty("user.home");
+            }
+            
+            JFileChooser jfc = new JFileChooser(new File(dir));
+            jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+            if (jfc.showDialog(this, "Select") == JFileChooser.APPROVE_OPTION) {
+                txtHomeDir.setText(jfc.getSelectedFile().getAbsolutePath());
+                
+                // check which other fields we want to populate
+                if (txtVersion.getText().isBlank()) {
+                    File releaseTxt = new File(jfc.getSelectedFile(), "release.txt");
+                    if (releaseTxt.isFile()) {
+                        txtVersion.setText(IOUtils.toString(new FileReader(releaseTxt)).trim());
+                    }
+                }
+                
+                if (txtExecutable.getText().isBlank()) {
+                    File executable = new File(jfc.getSelectedFile(), "oolite.app/oolite-wrapper");
+                    if (!executable.exists()) {
+                        executable = new File(jfc.getSelectedFile(), "oolite.app/oolite.exe");
+                    }
+                    if (!executable.exists()) {
+                        executable = new File(jfc.getSelectedFile(), "oolite.app/oolite");
+                    }
+
+                    if (executable.isFile()) {
+                        txtExecutable.setText(executable.getAbsolutePath());
+                    }
+                }
+
+                if (txtSavegameDir.getText().isBlank()) {
+                    File d = new File(new File(System.getProperty("user.home")), "oolite-saves");
+                    if (d.isDirectory()) {
+                        txtSavegameDir.setText(d.getAbsolutePath());
+                    }
+                }
+                
+                if (txtAddOnDir.getText().isBlank()) {
+                    File d = new File(jfc.getSelectedFile(), "AddOns");
+                    if (d.isDirectory()) {
+                        txtAddOnDir.setText(d.getAbsolutePath());
+                    }
+                    
+                    if (txtDeactivatedAddOnDir.getText().isBlank()) {
+                        File dd = new File(d, "../DeactivatedAddOns");
+                        txtDeactivatedAddOnDir.setText(dd.getCanonicalPath());
+                    }
+                }
+                
+                if (txtManagedAddOnDir.getText().isBlank()) {
+                    File d = new File(new File(System.getProperty("user.home")), "GNUstep/Library/ApplicationSupport/Oolite/ManagedAddOns");
+                    if (d.isDirectory()) {
+                        txtManagedAddOnDir.setText(d.getAbsolutePath());
+                    }
+                    
+                    if (txtManagedDeactivatedAddOnDir.getText().isBlank()) {
+                        File dd = new File(d, "../ManagedDeactivatedAddOns");
+                        txtManagedDeactivatedAddOnDir.setText(dd.getCanonicalPath());
+                    }
+                }
+            }
         } catch (Exception e) {
             log.error("Could not set home dir", e);
             JOptionPane.showMessageDialog(this, "Error");
@@ -261,23 +373,111 @@ public class InstallationForm extends javax.swing.JPanel {
     }//GEN-LAST:event_btHomeDirActionPerformed
 
     private void btExecutableActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btExecutableActionPerformed
-        JOptionPane.showMessageDialog(this, "jau!");
+        try {
+            String dir = txtExecutable.getText();
+            if (dir == null || dir.trim().isEmpty()) {
+                System.getProperty("user.home");
+            }
+            
+            JFileChooser jfc = new JFileChooser(new File(dir));
+            jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+            if (jfc.showDialog(this, "Select") == JFileChooser.APPROVE_OPTION) {
+                txtExecutable.setText(jfc.getSelectedFile().getAbsolutePath());
+            }
+        } catch (Exception e) {
+            log.error("Could not set executable", e);
+            JOptionPane.showMessageDialog(this, "Error");
+        }
     }//GEN-LAST:event_btExecutableActionPerformed
 
     private void btSavegameDirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btSavegameDirActionPerformed
-        JOptionPane.showMessageDialog(this, "jau!");
+        try {
+            String dir = txtSavegameDir.getText();
+            if (dir == null || dir.trim().isEmpty()) {
+                System.getProperty("user.home");
+            }
+            
+            JFileChooser jfc = new JFileChooser(new File(dir));
+            jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+            if (jfc.showDialog(this, "Select") == JFileChooser.APPROVE_OPTION) {
+                txtSavegameDir.setText(jfc.getSelectedFile().getAbsolutePath());
+            }
+        } catch (Exception e) {
+            log.error("Could not set savegame dir", e);
+            JOptionPane.showMessageDialog(this, "Error");
+        }
     }//GEN-LAST:event_btSavegameDirActionPerformed
 
     private void btAddOnDirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btAddOnDirActionPerformed
-        JOptionPane.showMessageDialog(this, "jau!");
+        try {
+            String dir = txtAddOnDir.getText();
+            if (dir == null || dir.trim().isEmpty()) {
+                System.getProperty("user.home");
+            }
+            
+            JFileChooser jfc = new JFileChooser(new File(dir));
+            jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+            if (jfc.showDialog(this, "Select") == JFileChooser.APPROVE_OPTION) {
+                txtAddOnDir.setText(jfc.getSelectedFile().getAbsolutePath());
+            }
+        } catch (Exception e) {
+            log.error("Could not set addon dir", e);
+            JOptionPane.showMessageDialog(this, "Error");
+        }
     }//GEN-LAST:event_btAddOnDirActionPerformed
 
     private void btManagedAddOnDirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btManagedAddOnDirActionPerformed
-        JOptionPane.showMessageDialog(this, "jau!");
+        try {
+            String dir = txtManagedAddOnDir.getText();
+            if (dir == null || dir.trim().isEmpty()) {
+                System.getProperty("user.home");
+            }
+            
+            JFileChooser jfc = new JFileChooser(new File(dir));
+            jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+            if (jfc.showDialog(this, "Select") == JFileChooser.APPROVE_OPTION) {
+                txtManagedAddOnDir.setText(jfc.getSelectedFile().getAbsolutePath());
+            }
+        } catch (Exception e) {
+            log.error("Could not set managed addon dir", e);
+            JOptionPane.showMessageDialog(this, "Error");
+        }
     }//GEN-LAST:event_btManagedAddOnDirActionPerformed
 
+    private void btManagedDeactivatedAddOnDirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btManagedDeactivatedAddOnDirActionPerformed
+        try {
+            String dir = txtManagedDeactivatedAddOnDir.getText();
+            if (dir == null || dir.trim().isEmpty()) {
+                System.getProperty("user.home");
+            }
+            
+            JFileChooser jfc = new JFileChooser(new File(dir));
+            jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+            if (jfc.showDialog(this, "Select") == JFileChooser.APPROVE_OPTION) {
+                txtManagedDeactivatedAddOnDir.setText(jfc.getSelectedFile().getAbsolutePath());
+            }
+        } catch (Exception e) {
+            log.error("Could not set managed deactivated addon dir", e);
+            JOptionPane.showMessageDialog(this, "Error");
+        }
+    }//GEN-LAST:event_btManagedDeactivatedAddOnDirActionPerformed
+
     private void btDeactivatedAddOnDirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btDeactivatedAddOnDirActionPerformed
-        JOptionPane.showMessageDialog(this, "jau!");
+        try {
+            String dir = txtDeactivatedAddOnDir.getText();
+            if (dir == null || dir.trim().isEmpty()) {
+                System.getProperty("user.home");
+            }
+            
+            JFileChooser jfc = new JFileChooser(new File(dir));
+            jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+            if (jfc.showDialog(this, "Select") == JFileChooser.APPROVE_OPTION) {
+                txtDeactivatedAddOnDir.setText(jfc.getSelectedFile().getAbsolutePath());
+            }
+        } catch (Exception e) {
+            log.error("Could not set deactivated addon dir", e);
+            JOptionPane.showMessageDialog(this, "Error");
+        }
     }//GEN-LAST:event_btDeactivatedAddOnDirActionPerformed
 
 
@@ -287,7 +487,10 @@ public class InstallationForm extends javax.swing.JPanel {
     private javax.swing.JButton btExecutable;
     private javax.swing.JButton btHomeDir;
     private javax.swing.JButton btManagedAddOnDir;
+    private javax.swing.JButton btManagedDeactivatedAddOnDir;
     private javax.swing.JButton btSavegameDir;
+    private javax.swing.Box.Filler filler1;
+    private javax.swing.Box.Filler filler3;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -295,11 +498,13 @@ public class InstallationForm extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
     private javax.swing.JTextField txtAddOnDir;
     private javax.swing.JTextField txtDeactivatedAddOnDir;
     private javax.swing.JTextField txtExecutable;
     private javax.swing.JTextField txtHomeDir;
     private javax.swing.JTextField txtManagedAddOnDir;
+    private javax.swing.JTextField txtManagedDeactivatedAddOnDir;
     private javax.swing.JTextField txtSavegameDir;
     private javax.swing.JTextField txtVersion;
     // End of variables declaration//GEN-END:variables

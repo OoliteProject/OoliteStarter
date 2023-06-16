@@ -18,8 +18,9 @@ public class Installation {
     private String excecutable;
     private String savegameDir;
     private String addonDir;
-    private String managedAddonDir;
     private String deactivatedAddonDir;
+    private String managedAddonDir;
+    private String managedDeactivatedAddonDir;
     
     /**
      * Creates a new Installation.
@@ -154,6 +155,24 @@ public class Installation {
         this.deactivatedAddonDir = deactivatedAddonDir;
     }
 
+    /**
+     * Returns the managed deactivated addon directory.
+     * 
+     * @return the full path 
+     */
+    public String getManagedDeactivatedAddonDir() {
+        return managedDeactivatedAddonDir;
+    }
+
+    /**
+     * Sets the managed deactivated addon directory.
+     * 
+     * @param managedDeactivatedAddonDir the full path 
+     */
+    public void setManagedDeactivatedAddonDir(String managedDeactivatedAddonDir) {
+        this.managedDeactivatedAddonDir = managedDeactivatedAddonDir;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -163,8 +182,9 @@ public class Installation {
         sb.append(", homeDir=").append(homeDir);
         sb.append(", savegameDir=").append(savegameDir);
         sb.append(", addonDirs=").append(addonDir);
-        sb.append(", managedAddonDir=").append(managedAddonDir);
         sb.append(", deactivatedAddonDir=").append(deactivatedAddonDir);
+        sb.append(", managedAddonDir=").append(managedAddonDir);
+        sb.append(", managedDeactivatedAddonDir=").append(managedDeactivatedAddonDir);
         sb.append('}');
         return sb.toString();
     }

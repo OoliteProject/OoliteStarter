@@ -5,7 +5,6 @@ package oolite.starter;
 import java.io.File;
 import java.io.IOException;
 import javax.swing.ImageIcon;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
@@ -33,7 +32,7 @@ public class MainFrame extends javax.swing.JFrame {
         setIconImage(new ImageIcon(getClass().getResource("/oolite_logo.png")).getImage());
 
         Configuration configuration = null;
-        File confFile = new File(System.getProperty("oolite.starter.configuration", System.getProperty("user.home") + "/.oolite-starter.properties"));
+        File confFile = new File(System.getProperty("oolite.starter.configuration", System.getProperty("user.home") + "/.oolite-starter.conf"));
         if (confFile.exists()) {
             configuration = new Configuration(confFile);
         } else {
@@ -46,21 +45,6 @@ public class MainFrame extends javax.swing.JFrame {
         Oolite oolite = new Oolite();
         oolite.setConfiguration(configuration);
         
-        // verify we have the necessary directories
-        if (configuration.getDeactivatedAddonsDir() == null || !configuration.getDeactivatedAddonsDir().exists()) {
-            String msg = "Directory for deactivated expansions " + configuration.getDeactivatedAddonsDir() + " not found";
-            log.warn(msg);
-            JOptionPane.showMessageDialog(null, msg);
-        }
-        if (configuration.getManagedAddonsDir()== null || !configuration.getManagedAddonsDir().exists()) {
-            String msg = "Directory for managed expansions " + configuration.getManagedAddonsDir()+ " not found";
-            log.warn(msg);
-            JOptionPane.showMessageDialog(null, msg);
-        }
-        
-
-        JLabel l = null;
-        
         StartGamePanel sgp = new StartGamePanel();
         sgp.setOolite(oolite);
         jTabbedPane1.add(sgp);
@@ -70,6 +54,7 @@ public class MainFrame extends javax.swing.JFrame {
         jTabbedPane1.add(ep);
 
         InstallationsPanel ip = new InstallationsPanel();
+        ip.setConfiguration(configuration);
         //ip.setOolite(oolite);
         jTabbedPane1.add(ip);
     }

@@ -5,9 +5,8 @@ package oolite.starter.ui;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.ArrayList;
-import java.util.List;
 import javax.swing.table.AbstractTableModel;
+import oolite.starter.Configuration;
 import oolite.starter.model.Installation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -19,15 +18,15 @@ import org.apache.logging.log4j.Logger;
 public class InstallationTableModel extends AbstractTableModel implements PropertyChangeListener {
     private static final Logger log = LogManager.getLogger();
     
-    private List<Installation> data;
+    private Configuration data;
 
     /**
      * Creates a new instance.
      * 
      * @param data the data to display
      */
-    public InstallationTableModel(List<Installation> data) {
-        this.data = new ArrayList<>(data);
+    public InstallationTableModel(Configuration data) {
+        this.data = data;
     }
     
     /**
@@ -37,7 +36,7 @@ public class InstallationTableModel extends AbstractTableModel implements Proper
      * @return the row
      */
     public Installation getRow(int rowIndex) {
-        return data.get(rowIndex);
+        return data.getInstallations().get(rowIndex);
     }
 
     /**
@@ -46,8 +45,8 @@ public class InstallationTableModel extends AbstractTableModel implements Proper
      * @param row the row to add 
      */
     public void addRow(Installation row) {
-        data.add(row);
-        int rowIndex = data.indexOf(row);
+        data.getInstallations().add(row);
+        int rowIndex = data.getInstallations().indexOf(row);
         
         fireTableRowsInserted(rowIndex, rowIndex);
     }
@@ -58,8 +57,8 @@ public class InstallationTableModel extends AbstractTableModel implements Proper
      * @param row the row that was updated 
      */
     public void updateRow(Installation row) {
-        if (data.contains(row)) {
-            int rowIndex = data.indexOf(row);
+        if (data.getInstallations().contains(row)) {
+            int rowIndex = data.getInstallations().indexOf(row);
             fireTableRowsUpdated(rowIndex, rowIndex);
         }
     }
@@ -70,7 +69,7 @@ public class InstallationTableModel extends AbstractTableModel implements Proper
      * @param rowIndex the row that needs to be removed
      */
     public void removeRow(int rowIndex) {
-        data.remove(rowIndex);
+        data.getInstallations().remove(rowIndex);
         fireTableRowsDeleted(rowIndex, rowIndex);
     }
     
@@ -79,19 +78,29 @@ public class InstallationTableModel extends AbstractTableModel implements Proper
         switch (columnIndex) {
             case 0: return "Home Directory";
             case 1: return "Version";
+            case 2: return "Active";
             default:
                 return super.getColumnName(columnIndex);
         }
     }
 
     @Override
+    public Class<?> getColumnClass(int columnIndex) {
+        switch (columnIndex) {
+            case 2: return Boolean.class;
+            default:
+                return super.getColumnClass(columnIndex);
+        }
+    }
+    
+    @Override
     public int getRowCount() {
-        return data.size();
+        return data.getInstallations().size();
     }
 
     @Override
     public int getColumnCount() {
-        return 2;
+        return 3;
     }
 
     @Override
@@ -105,6 +114,7 @@ public class InstallationTableModel extends AbstractTableModel implements Proper
         switch (columnIndex) {
             case 0: return row.getHomeDir();
             case 1: return row.getVersion();
+            case 2: return row == data.getActiveInstallation();
             default:
                 return "n/a";
         }

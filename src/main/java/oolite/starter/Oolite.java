@@ -635,16 +635,49 @@ public class Oolite {
     }
     
     /**
+     * Determines if an Expansion is managed.
+     * 
+     * @param expansion the expansion to test
+     * @return true if and only if it is managed
+     */
+    public boolean isManaged(Expansion expansion) throws IOException {
+        File test = expansion.getLocalFile();
+        if (test == null)
+            return false;
+        if (!test.isDirectory()) {
+            return false;
+        }
+        
+        return FileUtils.directoryContains(configuration.getManagedDeactivatedAddonsDir(), test)
+                || FileUtils.directoryContains(configuration.getManagedAddonsDir(), test);
+    }
+    
+    /**
+     * Determines if an Expansion can be found by Oolite.
+     * 
+     * @param expansion the expansion to test
+     * @return true if and only if it is activated
+     */
+    public boolean isEnabled(Expansion expansion) throws IOException {
+        File test = expansion.getLocalFile();
+        if (test == null)
+            return false;
+        if (!test.isDirectory()) {
+            return false;
+        }
+        
+        return FileUtils.directoryContains(configuration.getAddonsDir(), test)
+                || FileUtils.directoryContains(configuration.getManagedAddonsDir(), test);
+    }
+    
+    /**
      * Determines if an Expansion is part of the deactivated expansions directory.
      * 
      * @param expansion the expansion to test
      * @return true if and only if it is deactivated
      */
     public boolean isDisabled(Expansion expansion) throws IOException {
-        File parent = configuration.getDeactivatedAddonsDir();
-        File test = expansion.getLocalFile();
-        
-        return FileUtils.directoryContains(parent, test);
+        return !isEnabled(expansion);
     }
     
     /**

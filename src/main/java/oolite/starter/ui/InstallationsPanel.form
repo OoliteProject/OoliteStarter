@@ -39,6 +39,10 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="btScan" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
+                  <Component id="btActivate" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace pref="65" max="32767" attributes="0"/>
+                  <Component id="btSave" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -52,6 +56,8 @@
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="btRemove" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="btScan" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="btSave" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="btActivate" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                   </Group>
                   <EmptySpace max="32767" attributes="0"/>
@@ -90,6 +96,22 @@
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btScanActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JButton" name="btSave">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Save"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btSaveActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JButton" name="btActivate">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Activate"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btActivateActionPerformed"/>
           </Events>
         </Component>
       </SubComponents>
