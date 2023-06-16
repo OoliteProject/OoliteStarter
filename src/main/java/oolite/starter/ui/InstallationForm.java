@@ -18,13 +18,18 @@ public class InstallationForm extends javax.swing.JPanel {
     private Installation data;
 
     /**
-     * Creates new form InstallationForm
+     * Creates new InstallationForm.
      */
     public InstallationForm() {
         initComponents();
         this.setData(new Installation());
     }
     
+    /**
+     * Populates the form with given data.
+     * 
+     * @param data the data to display 
+     */
     public void setData(Installation data) {
         this.data = data;
 
@@ -47,6 +52,11 @@ public class InstallationForm extends javax.swing.JPanel {
         }
     }
     
+    /**
+     * Returns the form data including user edits.
+     * 
+     * @return the data 
+     */
     public Installation getData() {
         data.setAddonDir(txtAddOnDir.getText());
         data.setDeactivatedAddonDir(txtDeactivatedAddOnDir.getText());

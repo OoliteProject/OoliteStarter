@@ -20,15 +20,31 @@ public class InstallationTableModel extends AbstractTableModel implements Proper
     private static final Logger log = LogManager.getLogger();
     
     private List<Installation> data;
-    
+
+    /**
+     * Creates a new instance.
+     * 
+     * @param data the data to display
+     */
     public InstallationTableModel(List<Installation> data) {
         this.data = new ArrayList<>(data);
     }
     
+    /**
+     * Returns the row object with specified index.
+     * 
+     * @param rowIndex the index of the row
+     * @return the row
+     */
     public Installation getRow(int rowIndex) {
         return data.get(rowIndex);
     }
-    
+
+    /**
+     * Adds a row to this tablemodel.
+     * 
+     * @param row the row to add 
+     */
     public void addRow(Installation row) {
         data.add(row);
         int rowIndex = data.indexOf(row);
@@ -36,10 +52,35 @@ public class InstallationTableModel extends AbstractTableModel implements Proper
         fireTableRowsInserted(rowIndex, rowIndex);
     }
 
+    /**
+     * Update a table row.
+     * 
+     * @param row the row that was updated 
+     */
     public void updateRow(Installation row) {
         if (data.contains(row)) {
             int rowIndex = data.indexOf(row);
             fireTableRowsUpdated(rowIndex, rowIndex);
+        }
+    }
+
+    /**
+     * remove a table row.
+     * 
+     * @param rowIndex the row that needs to be removed
+     */
+    public void removeRow(int rowIndex) {
+        data.remove(rowIndex);
+        fireTableRowsDeleted(rowIndex, rowIndex);
+    }
+    
+    @Override
+    public String getColumnName(int columnIndex) {
+        switch (columnIndex) {
+            case 0: return "Home Directory";
+            case 1: return "Version";
+            default:
+                return super.getColumnName(columnIndex);
         }
     }
 

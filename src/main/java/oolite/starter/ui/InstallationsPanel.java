@@ -5,6 +5,9 @@ package oolite.starter.ui;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JOptionPane;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.TableRowSorter;
 import oolite.starter.model.Installation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -18,9 +21,10 @@ public class InstallationsPanel extends javax.swing.JPanel {
 
     private InstallationForm installationForm;
     private InstallationTableModel model;
+    private TableRowSorter<InstallationTableModel> trw;
     
     /**
-     * Creates new form InstallationsPanel
+     * Creates new form InstallationsPanel.
      */
     public InstallationsPanel() {
         initComponents();
@@ -28,10 +32,33 @@ public class InstallationsPanel extends javax.swing.JPanel {
         List<Installation> data = new ArrayList<>();
         model = new InstallationTableModel(data);
         jTable1.setModel(model);
+        jTable1.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent lse) {
+                log.debug("valueChanged({})", lse);
+                if (!lse.getValueIsAdjusting()) {
+                    // we have a final value - let's render it
+                    showDetailsOfSelection();
+                }
+            }
+        });
+        trw = new TableRowSorter<InstallationTableModel>(model);
+        jTable1.setRowSorter(trw);
         
         installationForm = new InstallationForm();
         installationForm.setEnabled(false);
         jSplitPane1.setRightComponent(installationForm);
+    }
+    
+    private void showDetailsOfSelection() {
+        int rowIndex = jTable1.getSelectedRow();
+        if (rowIndex >=0) {
+            rowIndex = jTable1.convertRowIndexToModel(rowIndex);
+            Installation row = model.getRow(rowIndex);
+            installationForm.setData(row);
+        } else {
+            installationForm.setData(null);
+        }
     }
 
     /**
@@ -157,7 +184,11 @@ public class InstallationsPanel extends javax.swing.JPanel {
             installationForm.setData(i);
             
             if (JOptionPane.showOptionDialog(this, installationForm, "Add Installation...", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, null, null) == JOptionPane.OK_OPTION) {
-                model.updateRow(installationForm.getData());
+                Installation data = installationForm.getData();
+                model.updateRow(data);
+                if (model.getRow(jTable1.getSelectedRow()) == data) {
+                    this.installationForm.setData(data);
+                }
             }
         } catch (Exception e) {
             log.error("Error", e);
@@ -166,7 +197,21 @@ public class InstallationsPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_btEditActionPerformed
 
     private void btRemoveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btRemoveActionPerformed
-        // TODO add your handling code here:
+        try {
+            int rowIndex = jTable1.getSelectedRow();
+            if (rowIndex == -1) {
+                JOptionPane.showConfirmDialog(this, "Please select row");
+                return;
+            }
+            
+            rowIndex = jTable1.convertRowIndexToModel(rowIndex);
+            Installation i = model.getRow(rowIndex);
+            
+            model.removeRow(rowIndex);
+        } catch (Exception e) {
+            log.error("Error", e);
+            JOptionPane.showMessageDialog(this, "Error");
+        }        
     }//GEN-LAST:event_btRemoveActionPerformed
 
 
