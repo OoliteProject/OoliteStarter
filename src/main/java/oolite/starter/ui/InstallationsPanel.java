@@ -70,6 +70,15 @@ public class InstallationsPanel extends javax.swing.JPanel {
             installationForm.setData(null);
         }
     }
+    
+    private void ensureDirectoryExists(String dirName, String dirPath) {
+        File dir = new File(dirPath);
+        if (!dir.isDirectory()) {
+            if (JOptionPane.showConfirmDialog(this, "Directory for " + dirName + " located at\n" + dirPath + "\ndoes not exist. Would you like it created?") == JOptionPane.OK_OPTION) {
+                dir.mkdirs();
+            }
+        }
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -263,6 +272,12 @@ public class InstallationsPanel extends javax.swing.JPanel {
             
             int modelIndex = jTable1.convertRowIndexToModel(rowIndex);
             Installation i = model.getRow(modelIndex);
+            
+            // validate installation
+            ensureDirectoryExists("AddonDir", i.getAddonDir());
+            ensureDirectoryExists("Deactivated AddonDir", i.getDeactivatedAddonDir());
+            ensureDirectoryExists("Managed AddonDir", i.getManagedAddonDir());
+            ensureDirectoryExists("Managed Deactivated AddonDir", i.getManagedDeactivatedAddonDir());
             
             configuration.activateInstallation(i);
             model.fireTableDataChanged();
