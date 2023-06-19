@@ -6,7 +6,6 @@ package oolite.starter.ui;
 import java.io.File;
 import java.util.List;
 import javax.swing.JComponent;
-import javax.swing.JOptionPane;
 import javax.swing.ProgressMonitor;
 import javax.swing.SwingWorker;
 import oolite.starter.Oolite;
@@ -56,7 +55,7 @@ public class ActivationWorker extends SwingWorker<Object, Void> {
     @Override
     protected void done() {
         log.info("done()");
-        JOptionPane.showMessageDialog(component, "Finished activating " + file.getName());
+        //JOptionPane.showMessageDialog(component, "Finished activating " + file.getName());
         if (component instanceof ExpansionsPanel ep) {
             ep.update();
         }

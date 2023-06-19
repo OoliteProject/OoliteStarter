@@ -6,7 +6,6 @@ package oolite.starter.ui;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JComponent;
-import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
 import oolite.starter.model.Expansion;
 import org.apache.logging.log4j.LogManager;
@@ -86,7 +85,7 @@ public class ExpansionWorker extends SwingWorker<Object, Void> { // first is ret
     @Override
     protected void done() {
         log.debug("done()");
-        JOptionPane.showMessageDialog(component, "Finished " + expansions.size() + "");
+        //JOptionPane.showMessageDialog(component, "Finished " + expansions.size() + "");
         if (component instanceof ExpansionsPanel ep) {
             ep.update();
         }

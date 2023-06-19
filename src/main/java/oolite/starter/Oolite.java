@@ -571,15 +571,22 @@ public class Oolite {
     public void enable(Expansion expansion) throws IOException {
         log.debug("enable({})", expansion);
 
-        log.debug("Move {} to {}", expansion.getLocalFile(), configuration.getManagedAddonsDir());
-
-        if (expansion.getLocalFile().isFile()) {
-            FileUtils.moveFileToDirectory(expansion.getLocalFile(), configuration.getManagedAddonsDir(), true);
-        } else if (expansion.getLocalFile().isDirectory()) {
-            FileUtils.moveDirectoryToDirectory(expansion.getLocalFile(), configuration.getManagedAddonsDir(), true);
+        File destination = null;
+        if (isManaged(expansion)) {
+            destination = configuration.getManagedAddonsDir();
+        } else {
+            destination = configuration.getAddonsDir();
         }
         
-        expansion.setLocalFile(new File(configuration.getManagedAddonsDir(), expansion.getLocalFile().getName()));
+        log.debug("Move {} to {}", expansion.getLocalFile(), destination);
+
+        if (expansion.getLocalFile().isFile()) {
+            FileUtils.moveFileToDirectory(expansion.getLocalFile(), destination, true);
+        } else if (expansion.getLocalFile().isDirectory()) {
+            FileUtils.moveDirectoryToDirectory(expansion.getLocalFile(), destination, true);
+        }
+        
+        expansion.setLocalFile(new File(destination, expansion.getLocalFile().getName()));
     }
     
     /**
@@ -590,13 +597,20 @@ public class Oolite {
     public void disable(Expansion expansion) throws IOException {
         log.debug("disable({})", expansion);
         
-        log.debug("Move {} to {}", expansion.getLocalFile(), configuration.getDeactivatedAddonsDir());
-        if (expansion.getLocalFile().isFile()) {
-            FileUtils.moveFileToDirectory(expansion.getLocalFile(), configuration.getDeactivatedAddonsDir(), true);
-        } else if (expansion.getLocalFile().isDirectory()) {
-            FileUtils.moveDirectoryToDirectory(expansion.getLocalFile(), configuration.getDeactivatedAddonsDir(), true);
+        File destination = null;
+        if (isManaged(expansion)) {
+            destination = configuration.getManagedDeactivatedAddonsDir();
+        } else {
+            destination = configuration.getDeactivatedAddonsDir();
         }
-        expansion.setLocalFile(new File(configuration.getDeactivatedAddonsDir(), expansion.getLocalFile().getName()));
+        
+        log.debug("Move {} to {}", expansion.getLocalFile(), destination);
+        if (expansion.getLocalFile().isFile()) {
+            FileUtils.moveFileToDirectory(expansion.getLocalFile(), destination, true);
+        } else if (expansion.getLocalFile().isDirectory()) {
+            FileUtils.moveDirectoryToDirectory(expansion.getLocalFile(), destination, true);
+        }
+        expansion.setLocalFile(new File(destination, expansion.getLocalFile().getName()));
     }
     
     /**
@@ -644,9 +658,6 @@ public class Oolite {
         File test = expansion.getLocalFile();
         if (test == null)
             return false;
-        if (!test.isDirectory()) {
-            return false;
-        }
         
         return FileUtils.directoryContains(configuration.getManagedDeactivatedAddonsDir(), test)
                 || FileUtils.directoryContains(configuration.getManagedAddonsDir(), test);
@@ -662,9 +673,6 @@ public class Oolite {
         File test = expansion.getLocalFile();
         if (test == null)
             return false;
-        if (!test.isDirectory()) {
-            return false;
-        }
         
         return FileUtils.directoryContains(configuration.getAddonsDir(), test)
                 || FileUtils.directoryContains(configuration.getManagedAddonsDir(), test);
