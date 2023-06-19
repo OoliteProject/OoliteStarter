@@ -19,7 +19,7 @@ set -e
 
 case "$1" in
     configure)
-xdg-desktop-menu install /opt/oolitestarter/lib/OoliteStarter.desktop
+xdg-desktop-menu install /opt/oolitestarter/lib/oolitestarter-OoliteStarter.desktop
     ;;
 
     abort-upgrade|abort-remove|abort-deconfigure)
