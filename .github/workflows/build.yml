@@ -250,6 +250,10 @@ jobs:
         jpackage --verbose --app-image target/appimage/OoliteStarter.app --name "OoliteStarter" --dest target
         #--resource-dir src/jpackage/resources
 
+    - name: Rename result
+      run: |
+        mv ./target/OoliteStarter-1.0.dmg ./target/OoliteStarter-${{ needs.semver.outputs.GITVERSION_SEMVER }}.dmg
+
     - name: Check status 3
       run: |
         set
