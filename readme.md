@@ -19,28 +19,34 @@ and manage save games.
 
 ## Configuration
 
-Rename (or copy) the file oolite-starter.example.properties to 
-oolite-starter.properties, then edit it to contain the correct settings according
-to the comments in that file. If the starter cannot find the file on it's own,
-you can help by setting a system property like this:
+When you run the application, it will seach the configuration file
+$HOME/.oolite-starter.conf
 
-java -Doolite.starter.configuration=/path/to/oolite-starter.properties -jar Oolite-Starter.jar
+If this file is not present, do not worry. A warning will be displayed and the
+application will run. Switch to the Installations tab and add at least one
+Oolite installation. Then press Save and the missing file will be created.
 
-If you do not know what to put into this file, check out
-https://raw.githubusercontent.com/HiranChaudhuri/OoliteStarter/master/src/main/resources-ext/oolite-starter.example.properties
+For each Oolite installation you can define a number of places in the filesystem.
+Since some players have multple such installations in parallel, they can be
+configured once.
+
+Oolite-Starter needs to know which installation it should actually use. Select
+the one of your choice and press the Activate button. At this time OoliteStarter
+will check if some directory is missing and also offers to create it for you.
 
 ## Usage
 
-* Execute the startup script - depending on your operating system this may be
-  either run.sh or run.cmd. When going for run.sh you may need to set execute
+* Run the application. Depending on your operating system and the package you 
+  chose this may mean to just click an icon, a menu entry or use either 
+  run.sh or run.cmd. When going for run.sh you may need to set execute
   permissions (chmod +x run.sh)
 * The Starter will present you with the list of your save games. Either press
   the 'New' button to run a new game, or choose the save game and press 'Continue'.
   Either of those buttons will run Oolite the way you chose.
 * Play as usual.
 * If you want to change the installed expansions, switch to the 'Expansions' tab,
-  check the list and choose to install, remove, enable or disable expansions.
+  check the list and choose to install, remove, enable or disable single expansions.
   You can also export your currently active expansions as 'Oolite Expansion Set',
-  to load it later again or share with your friends.
+  and load it later again or share with your friends.
 
 Happy Flying!

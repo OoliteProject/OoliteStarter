@@ -72,7 +72,7 @@ jobs:
 
     - uses: actions/upload-artifact@v3
       with:
-        name: OoliteStarter
+        name: OoliteStarter-generic
         path: target/OoliteStarter-${{ needs.semver.outputs.GITVERSION_SEMVER }}-generic.*
 
   package-linux:
@@ -94,11 +94,19 @@ jobs:
     - name: Download artifacts
       uses: actions/download-artifact@v3
       with:
+        name: OoliteStarter-generic
         path: artifacts
 
+    - name: Check status 0
+      run: |
+        set
+        echo -n "Current directory: "
+        pwd
+        find . -not -path "./oolitestarter/.git/*"
+        
     - name: Extract project
       run: |
-        tar xvfz artifacts/OoliteStarter/OoliteStarter-${{ needs.semver.outputs.GITVERSION_SEMVER }}-generic.tar.gz
+        tar xvfz artifacts/OoliteStarter-${{ needs.semver.outputs.GITVERSION_SEMVER }}-generic.tar.gz
 
     - name: Check status 1
       run: |
@@ -125,7 +133,7 @@ jobs:
 
     - name: Finish AppImage
       run: |
-        jpackage --verbose --app-image target/appimage/OoliteStarter --name "OoliteStarter ${{ needs.semver.outputs.GITVERSION_SEMVER }}" --dest target --resource-dir oolitestarter/src/jpackage/resources-linux
+        jpackage --verbose --app-image target/appimage/OoliteStarter --name "OoliteStarter" --app-version "${{ needs.semver.outputs.DEBIAN_PKGVERSION }}" --dest target --resource-dir oolitestarter/src/jpackage/resources-linux
 
     - name: Check status 3
       run: |
@@ -158,11 +166,16 @@ jobs:
     - name: Download artifacts
       uses: actions/download-artifact@v3
       with:
+        name: OoliteStarter-generic
         path: artifacts
+
+    - name: Check status 0
+      run: |
+        get-childitem . -Recurse | where {!$_.PSIsContainer} | select-object FullName
 
     - name: Extract project
       run: |
-        unzip artifacts\OoliteStarter\OoliteStarter-${{ needs.semver.outputs.GITVERSION_SEMVER }}-generic.zip
+        unzip artifacts\OoliteStarter-${{ needs.semver.outputs.GITVERSION_SEMVER }}-generic.zip
 
     - name: Check status 1
       run: |
@@ -211,11 +224,19 @@ jobs:
     - name: Download artifacts
       uses: actions/download-artifact@v3
       with:
+        name: OoliteStarter-generic
         path: artifacts
 
+    - name: Check status 1
+      run: |
+        set
+        echo -n "Current directory: "
+        pwd
+        find . -not -path "./oolitestarter/.git/*"
+        
     - name: Extract project
       run: |
-        tar xvfz artifacts/OoliteStarter/OoliteStarter-${{ needs.semver.outputs.GITVERSION_SEMVER }}-generic.tar.gz
+        tar xvfz artifacts/OoliteStarter-${{ needs.semver.outputs.GITVERSION_SEMVER }}-generic.tar.gz
 
     - name: Check status 1
       run: |
@@ -227,7 +248,9 @@ jobs:
     - name: Prepare AppImage
       run: |
         jpackage \
-          --type app-image --app-version "1.0.0" --copyright Copyright \
+          --type app-image \
+          --app-version "1.0.0" \
+          --copyright Copyright \
           --description "OoliteStarter ${{ needs.semver.outputs.GITVERSION_SEMVER }}" \
           --name "OoliteStarter" --dest target/appimage \
           --temp target/oolite-starter-tmp --vendor "hiran" --verbose \
@@ -235,8 +258,11 @@ jobs:
           --input OoliteStarter-${{ needs.semver.outputs.GITVERSION_SEMVER }}/dist \
           --main-jar OoliteStarter-${{ needs.semver.outputs.GITVERSION_SEMVER }}.jar \
           --main-class oolite.starter.MainFrame --mac-package-name "OoliteStarter"
+
+        #  --mac-sign --mac-package-signing-prefix space.oolite.oolitestarter. \
+        #  --mac-signing-key-user-name "HiranChaudhuri"
         # --resource-dir src/jpackage/resources
-        # --app-version "${{ needs.semver.outputs.GITVERSION_MAJORMINORPATCH }}"
+        # --app-version "${{ needs.semver.outputs.GITVERSION_MAJORMINORPATCH }}" \
 
     - name: Check status 2
       run: |
@@ -305,8 +331,8 @@ jobs:
         prerelease: true
         title: "OoliteStarter v${{ needs.semver.outputs.GITVERSION_SEMVER }}"
         files: |
-          artifacts/OoliteStarter/*.zip
-          artifacts/OoliteStarter/*.tar.gz
+          artifacts/OoliteStarter-generic/*.zip
+          artifacts/OoliteStarter-generic/*.tar.gz
           artifacts/OoliteStarter/*.deb
           artifacts/OoliteStarter/*.exe
           artifacts/OoliteStarter/*.dmg
@@ -333,8 +359,8 @@ jobs:
         prerelease: false
         title: "OoliteStarter v${{ needs.semver.outputs.GITVERSION_SEMVER }}"
         files: |
-          artifacts/OoliteStarter/*.zip
-          artifacts/OoliteStarter/*.tar.gz
+          artifacts/OoliteStarter-generic/*.zip
+          artifacts/OoliteStarter-generic/*.tar.gz
           artifacts/OoliteStarter/*.deb
           artifacts/OoliteStarter/*.exe
           artifacts/OoliteStarter/*.dmg

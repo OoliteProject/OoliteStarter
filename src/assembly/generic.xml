@@ -24,12 +24,6 @@
             <destName>run.cmd</destName>
             <fileMode>0755</fileMode>
         </file>
-        <file>
-            <source>src/main/resources-ext/oolite-starter.example.properties</source>
-            <outputDirectory></outputDirectory>
-            <destName>oolite-starter.example.properties</destName>
-            <fileMode>0755</fileMode>
-        </file>
     </files>
     <fileSets>
         <fileSet>
