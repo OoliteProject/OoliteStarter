@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<OoliteStarter starter-version="" stored="2023-06-18T12:56:04.804206835Z">
+    <ExpansionManager>
+        <manifestUrl>https://addons.oolite.space/api/1.0/overview/</manifestUrl>
+        <manifestUrl>http://addons.oolite.org/api/1.0/overview/</manifestUrl>
+    </ExpansionManager>
+    <Installations>
+        <Installation active="false">
+            <HomeDir>a</HomeDir>
+            <Version>b</Version>
+            <Executable>c</Executable>
+            <SaveGameDir>d</SaveGameDir>
+            <AddonDir>e</AddonDir>
+            <DeactivatedAddonDir>f</DeactivatedAddonDir>
+            <ManagedAddonDir>g</ManagedAddonDir>
+            <ManagedDeactivatedAddonDir>h</ManagedDeactivatedAddonDir>
+        </Installation>
+        <Installation active="true">
+            <HomeDir>/home/hiran/GNUstep/Applications/Oolite</HomeDir>
+            <Version>1.90.0.7282-200829-0b1ff49</Version>
+            <Executable>/home/user/GNUstep/Applications/Oolite/oolite.app/oolite-wrapper</Executable>
+            <SaveGameDir>/home/user/oolite-saves</SaveGameDir>
+            <AddonDir>/home/hiran/GNUstep/Applications/Oolite/AddOns</AddonDir>
+            <DeactivatedAddonDir>/home/user/GNUstep/Applications/Oolite/DeactivatedAddOns</DeactivatedAddonDir>
+            <ManagedAddonDir>/home/user/GNUstep/Library/ApplicationSupport/Oolite/ManagedAddOns</ManagedAddonDir>
+            <ManagedDeactivatedAddonDir>/home/user/GNUstep/Library/ApplicationSupport/Oolite/ManagedAddOns</ManagedDeactivatedAddonDir>
+        </Installation>
+    </Installations>
+</OoliteStarter>

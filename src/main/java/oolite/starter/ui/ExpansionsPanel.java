@@ -144,19 +144,6 @@ updatable
         } else {
             ep.setData(null);
         }
-//        
-//        SwingUtilities.invokeLater(new Runnable() {
-//            @Override
-//            public void run() {
-//                try {
-//                    Thread.sleep(500);
-//                } catch (InterruptedException ex) {
-//                    log.debug("Interrupted");
-//                }
-//                Rectangle r = jTable1.getCellRect(jTable1.getSelectedRow(), 0, true);
-//                jTable1.scrollRectToVisible(r);
-//            }
-//        });
     }
     
     /**

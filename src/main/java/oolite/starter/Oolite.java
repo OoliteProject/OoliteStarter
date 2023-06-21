@@ -5,8 +5,10 @@ package oolite.starter;
 import com.chaudhuri.plist.PlistParser;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -18,9 +20,11 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
+import java.util.StringTokenizer;
 import java.util.TreeMap;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+import java.util.zip.ZipInputStream;
 import javax.swing.ProgressMonitor;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -38,6 +42,7 @@ import javax.xml.xpath.XPathFactory;
 import oolite.starter.model.Expansion;
 import oolite.starter.model.SaveGame;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.w3c.dom.Document;
@@ -163,6 +168,39 @@ public class Oolite {
             result.setShipKills(Long.parseLong(xpath.evaluate("/plist/dict/key[.='ship_kills']/following-sibling::integer", doc)));
             result.setShipClassName(xpath.evaluate("/plist/dict/key[.='ship_class_name']/following-sibling::string", doc));
             result.setShipName(xpath.evaluate("/plist/dict/key[.='ship_unique_name']/following-sibling::string", doc));
+            
+            String resourcepaths = xpath.evaluate("/plist/dict/key[.='mission_variables']/following-sibling::dict/key[.='mission_ooliteStarter_oxpList']/following-sibling::string", doc);
+            if (resourcepaths != null && !resourcepaths.isEmpty()) {
+                List<String> expansions = new ArrayList<>();
+                StringTokenizer st = new StringTokenizer(resourcepaths, ",");
+                st.nextToken(); // Resources
+                String managedAddOnDir = st.nextToken(); // ManagedAddOns
+                String addOnDir = st.nextToken(); // AddOns
+                String myAddOn = addOnDir + File.separator + "org.oolite.hiran.OoliteStarter.oxp";
+                String debugAddOn = addOnDir + File.separator + "Basic-debug.oxp";
+                
+                while (st.hasMoreTokens()) {
+                    String token = st.nextToken();
+                    if (token.startsWith(managedAddOnDir)) {
+                        expansions.add(token.substring(managedAddOnDir.length()+1));
+                    } else if (token.equals(debugAddOn)) {
+                        // do nothing
+                    } else if (token.equals(myAddOn)) {
+                        // do nothing
+                    } else if (token.startsWith(addOnDir)) {
+                        expansions.add(token.substring(addOnDir.length()+1));
+                    } else {
+                        expansions.add(token);
+                    }
+                }
+                
+                Collections.sort(expansions);
+                
+                for (String s: expansions) {
+                    log.warn("we have {}", s);
+                }
+                result.setExpansions(expansions);
+            }
 
         } catch (SAXException | XPathExpressionException | ParserConfigurationException e) {
             throw new IOException("Could not parse " + f.getAbsolutePath(), e);
@@ -177,25 +215,31 @@ public class Oolite {
     public void run() throws IOException, InterruptedException {
         log.debug("run()");
         
-        ProcessBuilder pb = new ProcessBuilder(configuration.getOoliteCommand());
-        pb.redirectOutput(ProcessBuilder.Redirect.INHERIT);
-        pb.redirectError(ProcessBuilder.Redirect.INHERIT);
-        Process p = pb.start();
+        injectExpansion();
         
-        for (OoliteListener l: listeners) {
-            try {
-                l.launched();
-            } catch (Exception e) {
-                log.warn("Listener threw exception", e);
+        try {
+            ProcessBuilder pb = new ProcessBuilder(configuration.getOoliteCommand());
+            pb.redirectOutput(ProcessBuilder.Redirect.INHERIT);
+            pb.redirectError(ProcessBuilder.Redirect.INHERIT);
+            Process p = pb.start();
+
+            for (OoliteListener l: listeners) {
+                try {
+                    l.launched();
+                } catch (Exception e) {
+                    log.warn("Listener threw exception", e);
+                }
             }
-        }
-        p.waitFor();
-        for (OoliteListener l: listeners) {
-            try {
-                l.terminated();
-            } catch (Exception e) {
-                log.warn("Listener threw exception", e);
+            p.waitFor();
+            for (OoliteListener l: listeners) {
+                try {
+                    l.terminated();
+                } catch (Exception e) {
+                    log.warn("Listener threw exception", e);
+                }
             }
+        } finally {
+            removeExpansion();
         }
     }
     
@@ -209,23 +253,29 @@ public class Oolite {
     public void run(SaveGame savegame) throws IOException, InterruptedException {
         log.debug("run({})", savegame);
 
-        List<String> command = new ArrayList<>();
-        command.add(configuration.getOoliteCommand());
-        command.add("-load");
-        command.add(savegame.getFile().getAbsolutePath());
+        injectExpansion();
         
-        ProcessBuilder pb = new ProcessBuilder(command);
-        pb.redirectOutput(ProcessBuilder.Redirect.INHERIT);
-        pb.redirectError(ProcessBuilder.Redirect.INHERIT);
-        Process p = pb.start();
+        try {
+            List<String> command = new ArrayList<>();
+            command.add(configuration.getOoliteCommand());
+            command.add("-load");
+            command.add(savegame.getFile().getAbsolutePath());
 
-        for (OoliteListener l: listeners) {
-            l.launched();
-        }
-        p.waitFor();
-        for (OoliteListener l: listeners) {
-            l.terminated();
-        }
+            ProcessBuilder pb = new ProcessBuilder(command);
+            pb.redirectOutput(ProcessBuilder.Redirect.INHERIT);
+            pb.redirectError(ProcessBuilder.Redirect.INHERIT);
+            Process p = pb.start();
+
+            for (OoliteListener l: listeners) {
+                l.launched();
+            }
+            p.waitFor();
+            for (OoliteListener l: listeners) {
+                l.terminated();
+            }
+        } finally {
+            removeExpansion();
+        }            
     }
     
     /**
@@ -571,15 +621,22 @@ public class Oolite {
     public void enable(Expansion expansion) throws IOException {
         log.debug("enable({})", expansion);
 
-        log.debug("Move {} to {}", expansion.getLocalFile(), configuration.getManagedAddonsDir());
-
-        if (expansion.getLocalFile().isFile()) {
-            FileUtils.moveFileToDirectory(expansion.getLocalFile(), configuration.getManagedAddonsDir(), true);
-        } else if (expansion.getLocalFile().isDirectory()) {
-            FileUtils.moveDirectoryToDirectory(expansion.getLocalFile(), configuration.getManagedAddonsDir(), true);
+        File destination = null;
+        if (isManaged(expansion)) {
+            destination = configuration.getManagedAddonsDir();
+        } else {
+            destination = configuration.getAddonsDir();
         }
         
-        expansion.setLocalFile(new File(configuration.getManagedAddonsDir(), expansion.getLocalFile().getName()));
+        log.debug("Move {} to {}", expansion.getLocalFile(), destination);
+
+        if (expansion.getLocalFile().isFile()) {
+            FileUtils.moveFileToDirectory(expansion.getLocalFile(), destination, true);
+        } else if (expansion.getLocalFile().isDirectory()) {
+            FileUtils.moveDirectoryToDirectory(expansion.getLocalFile(), destination, true);
+        }
+        
+        expansion.setLocalFile(new File(destination, expansion.getLocalFile().getName()));
     }
     
     /**
@@ -590,13 +647,20 @@ public class Oolite {
     public void disable(Expansion expansion) throws IOException {
         log.debug("disable({})", expansion);
         
-        log.debug("Move {} to {}", expansion.getLocalFile(), configuration.getDeactivatedAddonsDir());
-        if (expansion.getLocalFile().isFile()) {
-            FileUtils.moveFileToDirectory(expansion.getLocalFile(), configuration.getDeactivatedAddonsDir(), true);
-        } else if (expansion.getLocalFile().isDirectory()) {
-            FileUtils.moveDirectoryToDirectory(expansion.getLocalFile(), configuration.getDeactivatedAddonsDir(), true);
+        File destination = null;
+        if (isManaged(expansion)) {
+            destination = configuration.getManagedDeactivatedAddonsDir();
+        } else {
+            destination = configuration.getDeactivatedAddonsDir();
         }
-        expansion.setLocalFile(new File(configuration.getDeactivatedAddonsDir(), expansion.getLocalFile().getName()));
+        
+        log.debug("Move {} to {}", expansion.getLocalFile(), destination);
+        if (expansion.getLocalFile().isFile()) {
+            FileUtils.moveFileToDirectory(expansion.getLocalFile(), destination, true);
+        } else if (expansion.getLocalFile().isDirectory()) {
+            FileUtils.moveDirectoryToDirectory(expansion.getLocalFile(), destination, true);
+        }
+        expansion.setLocalFile(new File(destination, expansion.getLocalFile().getName()));
     }
     
     /**
@@ -635,16 +699,43 @@ public class Oolite {
     }
     
     /**
+     * Determines if an Expansion is managed.
+     * 
+     * @param expansion the expansion to test
+     * @return true if and only if it is managed
+     */
+    public boolean isManaged(Expansion expansion) throws IOException {
+        File test = expansion.getLocalFile();
+        if (test == null)
+            return false;
+        
+        return FileUtils.directoryContains(configuration.getManagedDeactivatedAddonsDir(), test)
+                || FileUtils.directoryContains(configuration.getManagedAddonsDir(), test);
+    }
+    
+    /**
+     * Determines if an Expansion can be found by Oolite.
+     * 
+     * @param expansion the expansion to test
+     * @return true if and only if it is activated
+     */
+    public boolean isEnabled(Expansion expansion) throws IOException {
+        File test = expansion.getLocalFile();
+        if (test == null)
+            return false;
+        
+        return FileUtils.directoryContains(configuration.getAddonsDir(), test)
+                || FileUtils.directoryContains(configuration.getManagedAddonsDir(), test);
+    }
+    
+    /**
      * Determines if an Expansion is part of the deactivated expansions directory.
      * 
      * @param expansion the expansion to test
      * @return true if and only if it is deactivated
      */
     public boolean isDisabled(Expansion expansion) throws IOException {
-        File parent = configuration.getDeactivatedAddonsDir();
-        File test = expansion.getLocalFile();
-        
-        return FileUtils.directoryContains(parent, test);
+        return !isEnabled(expansion);
     }
     
     /**
@@ -783,5 +874,50 @@ public class Oolite {
         }
         
         return warnings;
+    }
+    
+    /**
+     * Injects the Oolitestarter expansion into the Oolite AddOns folder.
+     */
+    public void injectExpansion() throws IOException {
+        log.debug("injectExpansion()");
+        
+        // just to be sure we do not rely on old stuff
+        removeExpansion();
+        
+        URL src = getClass().getResource("/" + "org.oolite.hiran.OoliteStarter.oxp" + ".zip");
+        log.warn("src={}", src);
+        String filename = new File(src.getFile()).getName();
+        if (filename.endsWith(".zip")) {
+            filename = filename.substring(0, filename.length()-4);
+        }
+        log.warn("srcFile={}", filename);
+        File destDir = new File(configuration.getAddonsDir(), filename);
+        log.warn("dst={}", destDir);
+        
+        try (ZipInputStream zis = new ZipInputStream(src.openStream())) {
+            ZipEntry zEntry = null;
+            while ( (zEntry = zis.getNextEntry()) != null ) {
+                log.info("ZipEntry {}", zEntry.getName());
+                File dest = new File(destDir, zEntry.getName());
+                if (zEntry.isDirectory()) {
+                    dest.mkdirs();
+                } else {
+                    OutputStream os = new FileOutputStream(dest);
+                    IOUtils.copy(zis, os, 4096);
+                }
+            }
+        }
+    }
+
+    /**
+     * Removes the Oolitestarter expansion from the Oolite AddOns folder.
+     * 
+     * @throws IOException something went wrong
+     */
+    public void removeExpansion() throws IOException {
+        File destDir = new File(configuration.getAddonsDir(), "org.oolite.hiran.OoliteStarter.oxp");
+        log.info("removing {}", destDir);
+        FileUtils.deleteDirectory(destDir);
     }
 }

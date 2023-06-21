@@ -5,11 +5,11 @@ package oolite.starter;
 import java.io.File;
 import java.io.IOException;
 import javax.swing.ImageIcon;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
 import oolite.starter.ui.ExpansionsPanel;
+import oolite.starter.ui.InstallationsPanel;
 import oolite.starter.ui.StartGamePanel;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -32,27 +32,18 @@ public class MainFrame extends javax.swing.JFrame {
         setIconImage(new ImageIcon(getClass().getResource("/oolite_logo.png")).getImage());
 
         Configuration configuration = null;
-        File confFile = new File(System.getProperty("oolite.starter.configuration", "oolite-starter.properties"));
+        File confFile = new File(System.getProperty("oolite.starter.configuration", System.getProperty("user.home") + "/.oolite-starter.conf"));
         if (confFile.exists()) {
             configuration = new Configuration(confFile);
         } else {
-            log.warn("Configuration {} does not exist. Loading builtin defaults.", confFile.getAbsolutePath());
+            String msg = String.format("Configuration file %s not found. Loading defaults.", confFile.getAbsolutePath());
+            log.warn(msg);
+            JOptionPane.showMessageDialog(null, msg);
             configuration = new Configuration();
         }
 
         Oolite oolite = new Oolite();
         oolite.setConfiguration(configuration);
-        
-        // verify we have the necessary directories
-        if (configuration.getDeactivatedAddonsDir() == null || !configuration.getDeactivatedAddonsDir().exists()) {
-            throw new IllegalStateException("Directory for deactivated expansions " + configuration.getDeactivatedAddonsDir() + " not found");
-        }
-        if (configuration.getManagedAddonsDir()== null || !configuration.getManagedAddonsDir().exists()) {
-            throw new IllegalStateException("Directory for managed expansions " + configuration.getManagedAddonsDir()+ " not found");
-        }
-        
-
-        JLabel l = null;
         
         StartGamePanel sgp = new StartGamePanel();
         sgp.setOolite(oolite);
@@ -62,9 +53,10 @@ public class MainFrame extends javax.swing.JFrame {
         ep.setOolite(oolite);
         jTabbedPane1.add(ep);
 
-//        l = new JLabel("Show Oolite available versions. Allow to install/uninstall them");
-//        l.setName("Oolite Version");
-//        jTabbedPane1.add(l);
+        InstallationsPanel ip = new InstallationsPanel();
+        ip.setConfiguration(configuration);
+        //ip.setOolite(oolite);
+        jTabbedPane1.add(ip);
     }
 
     /**

@@ -186,6 +186,7 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
             
             oolite.run();
         } catch (Exception e) {
+            log.error("Could not run game", e);
             JOptionPane.showMessageDialog(null, "Could not run game");
         } finally {
             SwingUtilities.getRoot(this).setVisible(true);
@@ -203,6 +204,7 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
             
             update();
         } catch (Exception e) {
+            log.error("Could not run game", e);
             JOptionPane.showMessageDialog(null, "Could not run game");
         } finally {
             SwingUtilities.getRoot(this).setVisible(true);

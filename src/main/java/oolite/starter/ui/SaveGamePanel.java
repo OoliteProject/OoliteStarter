@@ -2,6 +2,7 @@
  */
 package oolite.starter.ui;
 
+import javax.swing.DefaultListModel;
 import oolite.starter.model.SaveGame;
 
 /**
@@ -35,6 +36,18 @@ public class SaveGamePanel extends javax.swing.JPanel {
             txtCredits.setText(String.valueOf(data.getCredits()));
             txtShipKills.setText(String.valueOf(data.getShipKills()));
             txtPilotName.setText(String.valueOf(data.getPlayerName()));
+
+            DefaultListModel dlm = new DefaultListModel<String>();
+            if (data.getExpansions() != null) {
+                dlm.addAll(data.getExpansions());
+                
+                if (dlm.size()==0) {
+                    dlm.addElement("<empty list>");
+                }
+            } else {
+                dlm.addElement("<unknown list>");
+            }
+            lsExpansions.setModel(dlm);
         } else {
             txtFilename.setText("");
             txtOoliteVersion.setText("");
@@ -44,6 +57,8 @@ public class SaveGamePanel extends javax.swing.JPanel {
             txtCredits.setText("");
             txtShipKills.setText("");
             txtPilotName.setText("");
+            
+            lsExpansions.setModel(new DefaultListModel<String>());
         }
     }
 
@@ -76,6 +91,9 @@ public class SaveGamePanel extends javax.swing.JPanel {
         jLabel8 = new javax.swing.JLabel();
         txtOoliteVersion = new javax.swing.JTextField();
         txtFilename = new javax.swing.JTextField();
+        jLabel9 = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        lsExpansions = new javax.swing.JList<>();
 
         setLayout(new java.awt.GridBagLayout());
 
@@ -110,7 +128,7 @@ public class SaveGamePanel extends javax.swing.JPanel {
                             .addComponent(jLabel2))
                         .addGap(12, 12, 12)
                         .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txtCredits, javax.swing.GroupLayout.DEFAULT_SIZE, 498, Short.MAX_VALUE)
+                            .addComponent(txtCredits, javax.swing.GroupLayout.DEFAULT_SIZE, 505, Short.MAX_VALUE)
                             .addComponent(txtStarSystem)))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
                         .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -172,7 +190,7 @@ public class SaveGamePanel extends javax.swing.JPanel {
                     .addComponent(jLabel6))
                 .addGap(54, 54, 54)
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(txtShipName, javax.swing.GroupLayout.DEFAULT_SIZE, 498, Short.MAX_VALUE)
+                    .addComponent(txtShipName, javax.swing.GroupLayout.DEFAULT_SIZE, 505, Short.MAX_VALUE)
                     .addComponent(txtShipClass))
                 .addContainerGap())
         );
@@ -207,6 +225,10 @@ public class SaveGamePanel extends javax.swing.JPanel {
 
         txtFilename.setEditable(false);
 
+        jLabel9.setText("Expansions");
+
+        jScrollPane1.setViewportView(lsExpansions);
+
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
         jPanel6.setLayout(jPanel6Layout);
         jPanel6Layout.setHorizontalGroup(
@@ -215,11 +237,13 @@ public class SaveGamePanel extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel7)
-                    .addComponent(jLabel8))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(txtOoliteVersion, javax.swing.GroupLayout.DEFAULT_SIZE, 494, Short.MAX_VALUE)
-                    .addComponent(txtFilename))
+                    .addComponent(jLabel8)
+                    .addComponent(jLabel9))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 495, Short.MAX_VALUE)
+                    .addComponent(txtFilename)
+                    .addComponent(txtOoliteVersion))
                 .addContainerGap())
         );
         jPanel6Layout.setVerticalGroup(
@@ -233,7 +257,11 @@ public class SaveGamePanel extends javax.swing.JPanel {
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel8)
                     .addComponent(txtFilename, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel9)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -253,9 +281,12 @@ public class SaveGamePanel extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JList<String> lsExpansions;
     private javax.swing.JTextField txtCredits;
     private javax.swing.JTextField txtFilename;
     private javax.swing.JTextField txtOoliteVersion;

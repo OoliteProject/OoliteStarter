@@ -17,9 +17,11 @@ set -e
 # for details, see https://www.debian.org/doc/debian-policy/ or
 # the debian-policy package
 
+echo $0 called with $*
+
 case "$1" in
     configure)
-xdg-desktop-menu install /opt/oolitestarter/lib/OoliteStarter.desktop
+xdg-desktop-menu install /opt/oolitestarter/lib/oolitestarter-OoliteStarter.desktop
     ;;
 
     abort-upgrade|abort-remove|abort-deconfigure)

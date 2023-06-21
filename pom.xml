@@ -322,6 +322,21 @@ Categories=Game;
                 <version>3.3.0</version>
                 <executions>
                     <execution>
+                        <id>make-OXP</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <appendAssemblyId>false</appendAssemblyId>
+                            <outputDirectory>target/classes</outputDirectory>
+                            <finalName>org.oolite.hiran.OoliteStarter.oxp</finalName>
+                            <descriptors>
+                                <descriptor>src/assembly/OXP.xml</descriptor>
+                            </descriptors>
+                        </configuration>
+                    </execution>
+                    <execution>
                         <id>make-assembly</id>
                         <phase>package</phase>
                         <goals>

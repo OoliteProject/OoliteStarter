@@ -3,39 +3,65 @@
 package oolite.starter;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
-import java.util.StringTokenizer;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
+import oolite.starter.model.Installation;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 /**
  *
  * @author hiran
  */
 public class Configuration {
+
+    /**
+     * The file where we load and store configuration data.
+     */
+    private File configFile;
     
-    private Properties properties;
+    /**
+     * The list of installations on this system.
+     */
+    private List<Installation> installations;
+    
+    /**
+     * The one active installation.
+     */
+    private Installation activeInstallation;
+    
+    private List<URL> expansionManagerURLs;
 
     /**
      * Creates a new Configuration instance.
      * Finds the platform specific configuration file to initialize.
      */
-    public Configuration() {
-        properties = new Properties();
-        properties.setProperty("oolite.savegames.dir", System.getProperty("user.home") + "/oolite-saves");
-        properties.setProperty("oolite.addons.deactivated.dir", System.getProperty("user.home") +"/GNUstep/Library/ApplicationSupport/Oolite/DeactivatedAddOns");
-        properties.setProperty("oolite.addons.activated.dir", System.getProperty("user.home") +"/GNUstep/Library/ApplicationSupport/Oolite/ManagedAddOns");
-        properties.setProperty("oolite.executable", "/home/hiran/GNUstep/Applications/Oolite/oolite.app/oolite-wrapper");
+    public Configuration() throws MalformedURLException {
+        expansionManagerURLs = new ArrayList<>();
+        expansionManagerURLs.add(new URL("https://addons.oolite.space/api/1.0/overview/"));
+        expansionManagerURLs.add(new URL("http://addons.oolite.org/api/1.0/overview/"));
         
-        StringBuilder s = new StringBuilder();
-        s.append(new File(System.getProperty("user.home") +"/GNUstep/Applications/Oolite/AddOns").getAbsolutePath());
-        s.append(File.pathSeparator);
-        s.append(new File(System.getProperty("user.home") +"/.Oolite/Add-ons").getAbsolutePath());
-        properties.setProperty("oolite.addons.additional_dirs", s.toString());
+        installations = new ArrayList<>();
     }
 
     /**
@@ -44,13 +70,176 @@ public class Configuration {
      * 
      * @param the configuration file to load
      */
-    public Configuration(File f) throws IOException {
+    public Configuration(File f) throws IOException, ParserConfigurationException, SAXException, XPathExpressionException {
         this();
         
-        Properties p = new Properties();
-        p.load(new FileInputStream(f));
+        this.loadConfiguration(f);
+    }
+    
+    /**
+     * Loads the configuration from the given configuration file.
+     * 
+     * @param f the file to load
+     */
+    public final void loadConfiguration(File f) throws ParserConfigurationException, SAXException, IOException, XPathExpressionException {
+        configFile = f;
+        
+        DocumentBuilder db = DocumentBuilderFactory.newDefaultInstance().newDocumentBuilder();
+        Document doc = db.parse(f);
+        XPath xpath = XPathFactory.newDefaultInstance().newXPath();
+        
+        // load expansion manager URLs
+        NodeList nl = (NodeList)xpath.evaluate("/OoliteStarter/ExpansionManager/manifestUrl", doc, XPathConstants.NODESET);
+        ArrayList<URL> urls = new ArrayList<>();
+        for (int i = 0; i< nl.getLength(); i++) {
+            Element eExpansionManagerUrl = (Element)nl.item(i);
+            urls.add(new URL(eExpansionManagerUrl.getTextContent()));
+        }
+        expansionManagerURLs = urls;
+        
+        // load installations
+        nl = (NodeList)xpath.evaluate("/OoliteStarter/Installations/Installation", doc, XPathConstants.NODESET);
+        ArrayList<Installation> insts = new ArrayList<>();
+        for (int i = 0; i< nl.getLength(); i++) {
+            Element eInstallation = (Element)nl.item(i);
+            Installation inst = new Installation();
+            inst.setHomeDir(xpath.evaluate("HomeDir", eInstallation));
+            inst.setVersion(xpath.evaluate("Version", eInstallation));
+            inst.setExcecutable(xpath.evaluate("Executable", eInstallation));
+            inst.setSavegameDir(xpath.evaluate("SaveGameDir", eInstallation));
+            inst.setAddonDir(xpath.evaluate("AddonDir", eInstallation));
+            inst.setDeactivatedAddonDir(xpath.evaluate("DeactivatedAddonDir", eInstallation));
+            inst.setManagedAddonDir(xpath.evaluate("ManagedAddonDir", eInstallation));
+            inst.setManagedDeactivatedAddonDir(xpath.evaluate("ManagedDeactivatedAddonDir", eInstallation));
+            insts.add(inst);
+            
+            if ("true".equals(eInstallation.getAttribute("active"))) {
+                activeInstallation = inst;
+            }
+        }
+        installations = insts;
+    }
+    
+    /**
+     * Stores configuration data to the given file.
+     * 
+     * @param the file to store into
+     */
+    public final void saveConfiguration(File f) throws ParserConfigurationException, TransformerConfigurationException, TransformerException, MalformedURLException {
+        DocumentBuilder db = DocumentBuilderFactory.newDefaultInstance().newDocumentBuilder();
+        Document doc = db.newDocument();
+        Element root = doc.createElement("OoliteStarter");
+        root.setAttribute("stored", Instant.now().toString());
+        root.setAttribute("starter-version", getClass().getPackage().getImplementationVersion());
+        doc.appendChild(root);
+        
+        // add Expansion Manager URLs
+        Element expansionManager = doc.createElement("ExpansionManager");
+        for (URL url: getExpansionManagerURLs()) {
+            Element eUrl = doc.createElement("manifestUrl");
+            eUrl.setTextContent(url.toString());
+            expansionManager.appendChild(eUrl);
+        }
+        root.appendChild(expansionManager);
 
-        properties.putAll(p);
+        // add installations
+        Element eInstallations = doc.createElement("Installations");
+        for (Installation installation: installations) {
+            Element eInstallation = doc.createElement("Installation");
+            
+            eInstallation.setAttribute("active", String.valueOf( installation == activeInstallation ));
+            
+            Element e = doc.createElement("HomeDir");
+            e.setTextContent(installation.getHomeDir());
+            eInstallation.appendChild(e);
+            
+            e = doc.createElement("Version");
+            e.setTextContent(installation.getVersion());
+            eInstallation.appendChild(e);
+
+            e = doc.createElement("Executable");
+            e.setTextContent(installation.getExcecutable());
+            eInstallation.appendChild(e);
+            
+            e = doc.createElement("SaveGameDir");
+            e.setTextContent(installation.getSavegameDir());
+            eInstallation.appendChild(e);
+            
+            e = doc.createElement("AddonDir");
+            e.setTextContent(installation.getAddonDir());
+            eInstallation.appendChild(e);
+            
+            e = doc.createElement("DeactivatedAddonDir");
+            e.setTextContent(installation.getDeactivatedAddonDir());
+            eInstallation.appendChild(e);
+            
+            e = doc.createElement("ManagedAddonDir");
+            e.setTextContent(installation.getManagedAddonDir());
+            eInstallation.appendChild(e);
+            
+            e = doc.createElement("ManagedDeactivatedAddonDir");
+            e.setTextContent(installation.getManagedDeactivatedAddonDir());
+            eInstallation.appendChild(e);
+            
+            eInstallations.appendChild(eInstallation);
+        }
+        root.appendChild(eInstallations);
+        
+        TransformerFactory tf = TransformerFactory.newDefaultInstance();
+        tf.setAttribute("indent-number", 4);
+        Transformer t = tf.newTransformer();
+        t.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+        t.setOutputProperty(OutputKeys.INDENT, "yes");
+        t.transform(new DOMSource(doc), new StreamResult(f));
+    }
+    
+    /**
+     * Lists all the configured installations.
+     * 
+     * @return a list of identifiers
+     */
+    public List<String> listInstallations() {
+        return null;
+    }
+    
+    /**
+     * Returns the installations list.
+     * 
+     * @return the list
+     */
+    public List<Installation> getInstallations() {
+        return installations;
+    }
+    
+    /**
+     * Activates the configuration with given identifier.
+     * 
+     * @param installationId the installation to activate
+     */
+    public void activateInstallation(String installationId) {
+        throw new UnsupportedOperationException("not yet implemented");
+    }
+
+    /**
+     * Activates the given installation.
+     * 
+     * @param installation the installation to activate
+     */
+    public void activateInstallation(Installation installation) {
+        if (installations.contains(installation)) {
+            activeInstallation = installation;
+        } else {
+            activeInstallation = null;
+        }
+    }
+
+    /**
+     * Returns the currently active installation.
+     * 
+     * @return the installation
+     */
+    public Installation getActiveInstallation() {
+        return activeInstallation;
     }
     
     /**
@@ -59,51 +248,10 @@ public class Configuration {
      * @return the directory
      */
     public File getSaveGameDir() {
-        return new File(properties.getProperty("oolite.savegames.dir"));
-    }
-    
-    /**
-     * Returns the directory where we hide expansions from Oolite.
-     * 
-     * @return the directory
-     */
-    public File getDeactivatedAddonsDir() {
-        return new File(properties.getProperty("oolite.addons.deactivated.dir"));
-    }
-
-    /**
-     * Returns the directory where we hide expansions from Oolite.
-     * 
-     * @return the directory
-     */
-    public File getManagedAddonsDir() {
-        return new File(properties.getProperty("oolite.addons.activated.dir"));
-    }
-
-    /**
-     * Returns the directory where Oolite stores groups of OXPs.
-     * @see https://wiki.alioth.net/index.php/OXP#Locating_your_AddOns_folder
-     * 
-     * @return the directory
-     */
-    public List<File> getAddonDirs() {
-        List<File> result = new ArrayList<>();
-
-        StringTokenizer st = new StringTokenizer(
-                properties.getProperty("oolite.addons.additional_dirs"),
-                File.pathSeparator
-        );
-        while(st.hasMoreTokens()) {
-            result.add(new File(st.nextToken()));
+        if (activeInstallation == null) {
+            throw new IllegalStateException("No active installation");
         }
-        
-        // but here is where the expansion manager will install
-        result.add(getManagedAddonsDir());
-        
-        // and this is where we will park deactivated expansions
-        result.add(getDeactivatedAddonsDir());
-        
-        return result;
+        return new File(activeInstallation.getSavegameDir());
     }
     
     /**
@@ -112,7 +260,10 @@ public class Configuration {
      * @return the command
      */
     public String getOoliteCommand() {
-        return properties.getProperty("oolite.executable");
+        if (activeInstallation == null) {
+            throw new IllegalStateException("No active installation");
+        }
+        return activeInstallation.getExcecutable();
     }
     
     /**
@@ -122,10 +273,77 @@ public class Configuration {
      * @throws MalformedURLException something went wrong
      */
     public List<URL> getExpansionManagerURLs() throws MalformedURLException {
-        List<URL> result = new ArrayList<>();
-        result.add(new URL("https://addons.oolite.space/api/1.0/overview/"));
-        //result.add(new URL("http://addons.oolite.space/api/1.0/overview/"));
-        result.add(new URL("http://addons.oolite.org/api/1.0/overview/"));
+        return expansionManagerURLs;
+    }
+    
+    /**
+     * Returns the directory where we hide unmanaged expansions from Oolite.
+     * 
+     * @return the directory
+     */
+    public File getDeactivatedAddonsDir() {
+        if (activeInstallation == null) {
+            throw new IllegalStateException("No active installation");
+        }
+        return new File(activeInstallation.getDeactivatedAddonDir());
+    }
+    
+    /**
+     * Returns the directory where we hide managed expansions from Oolite.
+     * 
+     * @return the directory
+     */
+    public File getManagedDeactivatedAddonsDir() {
+        if (activeInstallation == null) {
+            throw new IllegalStateException("No active installation");
+        }
+        return new File(activeInstallation.getManagedDeactivatedAddonDir());
+    }
+    
+    /**
+     * Returns the directory where Oolite finds managed addons.
+     * 
+     * @return the directory
+     */
+    public File getManagedAddonsDir() {
+        if (activeInstallation == null) {
+            throw new IllegalStateException("No active installation");
+        }
+        return new File(activeInstallation.getManagedAddonDir());
+    }
+    
+    /**
+     * Returns the directory where Oolite finds unmanaged addons.
+     * 
+     * @return the directory
+     */
+    public File getAddonsDir() {
+        if (activeInstallation == null) {
+            throw new IllegalStateException("No active installation");
+        }
+        return new File(activeInstallation.getAddonDir());
+    }
+    
+    /**
+     * Returns all directories where Oolite stores groups of OXPs.
+     * That means it is both activated/deactivated for both managed/unmanaged addons.
+     * @see https://wiki.alioth.net/index.php/OXP#Locating_your_AddOns_folder
+     * 
+     * @return the directory
+     */
+    public List<File> getAddonDirs() {
+        if (activeInstallation == null) {
+            throw new IllegalStateException("No active installation");
+        }
+
+        List<File> result = new ArrayList<>();
+
+        result.add(getManagedAddonsDir());
+        result.add(getManagedDeactivatedAddonsDir());
+        
+        result.add(getAddonsDir());
+        result.add(getDeactivatedAddonsDir());
+        
         return result;
     }
 }
