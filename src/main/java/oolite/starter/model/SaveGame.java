@@ -3,6 +3,7 @@
 package oolite.starter.model;
 
 import java.io.File;
+import java.util.List;
 
 /**
  *
@@ -19,6 +20,9 @@ public class SaveGame {
     private long shipKills;
     private String shipClassName;
     private String shipName;
+    
+    /** Holds the detected expansions, if possible. */
+    private List<String> expansions;
     
     /**
      * Creates a new SaveGame.
@@ -186,6 +190,28 @@ public class SaveGame {
      */
     public void setShipName(String shipName) {
         this.shipName = shipName;
+    }
+
+    /**
+     * Returns the list of expansions that were active when saving the game.
+     * If the list is empty, no expansions were active. If the list is null,
+     * we just do not know.
+     * 
+     * @return the list of expansions or null if unknown
+     */
+    public List<String> getExpansions() {
+        return expansions;
+    }
+
+    /**
+     * Sets the list of expansions that were active when saving the game.
+     * If the list is empty, no expansions were active. If the list is null,
+     * we just do not know.
+     * 
+     * @param expansions the list of expansions or null if unknown
+     */
+    public void setExpansions(List<String> expansions) {
+        this.expansions = expansions;
     }
 
     @Override

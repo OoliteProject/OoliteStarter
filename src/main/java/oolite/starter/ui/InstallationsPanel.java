@@ -74,7 +74,16 @@ public class InstallationsPanel extends javax.swing.JPanel {
     private void ensureDirectoryExists(String dirName, String dirPath) {
         File dir = new File(dirPath);
         if (!dir.isDirectory()) {
-            if (JOptionPane.showConfirmDialog(this, "Directory for " + dirName + " located at\n" + dirPath + "\ndoes not exist. Would you like it created?") == JOptionPane.OK_OPTION) {
+            if (JOptionPane.showOptionDialog(
+                    this, 
+                    "Directory \n" + dirPath + "\ndoes not exist. Would you like it created?",
+                    dirName + " missing",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.QUESTION_MESSAGE,
+                    null,
+                    null,
+                    null
+            ) == JOptionPane.OK_OPTION) {
                 dir.mkdirs();
             }
         }
