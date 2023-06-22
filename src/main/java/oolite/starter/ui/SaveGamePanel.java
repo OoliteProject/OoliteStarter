@@ -2,7 +2,10 @@
  */
 package oolite.starter.ui;
 
+import java.awt.Color;
 import javax.swing.DefaultListModel;
+import javax.swing.border.Border;
+import javax.swing.border.LineBorder;
 import oolite.starter.model.SaveGame;
 
 /**
@@ -10,7 +13,7 @@ import oolite.starter.model.SaveGame;
  * @author hiran
  */
 public class SaveGamePanel extends javax.swing.JPanel {
-
+    
     private SaveGame data;
     
     /**
@@ -18,6 +21,7 @@ public class SaveGamePanel extends javax.swing.JPanel {
      */
     public SaveGamePanel() {
         initComponents();
+        lsExpansions.setCellRenderer(new ExpansionReferenceCellRenderer());
     }
     
     /**
@@ -37,15 +41,29 @@ public class SaveGamePanel extends javax.swing.JPanel {
             txtShipKills.setText(String.valueOf(data.getShipKills()));
             txtPilotName.setText(String.valueOf(data.getPlayerName()));
 
-            DefaultListModel dlm = new DefaultListModel<String>();
+            DefaultListModel dlm = new DefaultListModel<SaveGame.ExpansionReference>();
             if (data.getExpansions() != null) {
                 dlm.addAll(data.getExpansions());
                 
                 if (dlm.size()==0) {
-                    dlm.addElement("<empty list>");
+                    // indicate we have no data?
                 }
+
+                Border border = null;
+                for (SaveGame.ExpansionReference er: data.getExpansions()) {
+                    if (er.status == SaveGame.ExpansionReference.Status.surplus && border==null) {
+                        border = new LineBorder(Color.orange);
+                    }
+                    if (er.status == SaveGame.ExpansionReference.Status.missing) {
+                        border = new LineBorder(Color.red);
+                        break;
+                    }
+                }
+                
+                jScrollPane1.setBorder(border);
             } else {
-                dlm.addElement("<unknown list>");
+                // indicate we have no data?
+                jScrollPane1.setBorder(null);
             }
             lsExpansions.setModel(dlm);
         } else {
@@ -58,7 +76,8 @@ public class SaveGamePanel extends javax.swing.JPanel {
             txtShipKills.setText("");
             txtPilotName.setText("");
             
-            lsExpansions.setModel(new DefaultListModel<String>());
+            lsExpansions.setModel(new DefaultListModel<SaveGame.ExpansionReference>());
+            jScrollPane1.setBorder(null);
         }
     }
 
@@ -286,7 +305,7 @@ public class SaveGamePanel extends javax.swing.JPanel {
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JList<String> lsExpansions;
+    private javax.swing.JList<SaveGame.ExpansionReference> lsExpansions;
     private javax.swing.JTextField txtCredits;
     private javax.swing.JTextField txtFilename;
     private javax.swing.JTextField txtOoliteVersion;

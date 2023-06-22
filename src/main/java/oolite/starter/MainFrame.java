@@ -4,6 +4,8 @@ package oolite.starter;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.Duration;
+import java.time.Instant;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.xml.parsers.ParserConfigurationException;
@@ -115,9 +117,21 @@ public class MainFrame extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 try {
+                    Instant i0 = Instant.now();
+                    
                     MainFrame mf = new MainFrame();
                     mf.pack();
                     mf.setLocationRelativeTo(null);
+                    
+                    Instant i1 = Instant.now();
+                    
+                    Duration spent = Duration.between(i0, i1);
+                    long spentSeconds = spent.getSeconds();
+                    
+                    if (spentSeconds < 3) {
+                        Thread.sleep((3 - spentSeconds) * 1000);
+                    }
+                    
                     mf.setVisible(true);
                 } catch (Exception e) {
                     System.out.println("Could not initialize UI");

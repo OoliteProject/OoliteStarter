@@ -11,6 +11,33 @@ import java.util.List;
  */
 public class SaveGame {
     
+    public static class ExpansionReference implements Comparable<ExpansionReference> {
+
+        public enum Status {
+            ok, missing, surplus
+        }
+
+        public String name;
+        public Status status;
+        
+        @Override
+        public int compareTo(ExpansionReference other) {
+            if (other == null) {
+                return 1;
+            }
+            if (name == null) {
+                return 1;
+            }
+            return this.name.compareTo(other.name);
+        }
+
+        @Override
+        public String toString() {
+            return "ExpansionReference{" + "name=" + name + ", status=" + status + '}';
+        }
+
+    }
+    
     private String name;
     private File file;
     private String playerName;
@@ -22,7 +49,7 @@ public class SaveGame {
     private String shipName;
     
     /** Holds the detected expansions, if possible. */
-    private List<String> expansions;
+    private List<ExpansionReference> expansions;
     
     /**
      * Creates a new SaveGame.
@@ -199,7 +226,7 @@ public class SaveGame {
      * 
      * @return the list of expansions or null if unknown
      */
-    public List<String> getExpansions() {
+    public List<ExpansionReference> getExpansions() {
         return expansions;
     }
 
@@ -210,7 +237,7 @@ public class SaveGame {
      * 
      * @param expansions the list of expansions or null if unknown
      */
-    public void setExpansions(List<String> expansions) {
+    public void setExpansions(List<ExpansionReference> expansions) {
         this.expansions = expansions;
     }
 

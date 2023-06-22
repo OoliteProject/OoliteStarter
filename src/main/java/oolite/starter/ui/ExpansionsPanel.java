@@ -2,15 +2,19 @@
  */
 package oolite.starter.ui;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ItemEvent;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.JEditorPane;
+import javax.swing.DefaultListModel;
 import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.RowFilter;
 import javax.swing.SwingUtilities;
@@ -23,6 +27,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.TableRowSorter;
 import oolite.starter.Oolite;
 import oolite.starter.model.Expansion;
+import oolite.starter.model.SaveGame;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -440,19 +445,28 @@ updatable
             for (int i= 0; i< trw.getViewRowCount(); i++) {
                 es.add(model.getRow(jTable1.convertRowIndexToModel(i)));
             }
-            List<String> warnings = oolite.validateDependencies(es);
+            List<SaveGame.ExpansionReference> warnings = oolite.validateDependencies(es);
             
             if (warnings.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "All dependencies resolved.");
             } else {
-                JEditorPane jep = new JEditorPane();
-                jep.setEditable(false);
-                jep.setText(String.join("\n", warnings));
-                JScrollPane sp = new JScrollPane(jep);
+                DefaultListModel<SaveGame.ExpansionReference> dlm = new DefaultListModel<>();
+                dlm.addAll(warnings);
+                JList<SaveGame.ExpansionReference> list = new JList<>(dlm);
+                list.setCellRenderer(new ExpansionReferenceCellRenderer());
+                
+                JScrollPane sp = new JScrollPane(list);
+                
+                JPanel content = new JPanel();
+                content.setLayout(new BorderLayout());
+                
+                content.add(new JLabel("<html>Here is a list of missing dependencies and conflicts.<br/><br/></html>"), BorderLayout.NORTH);
+                content.add(sp, BorderLayout.CENTER);
+                
                 Dimension d = new Dimension(900, 600);
                 sp.setMaximumSize(d);
                 sp.setPreferredSize(d);
-                JOptionPane.showMessageDialog(this, sp, "Validation Result", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(this, content, "Validation Result", JOptionPane.PLAIN_MESSAGE);
             }
         } catch (Exception e) {
             log.error("Could not validate", e);

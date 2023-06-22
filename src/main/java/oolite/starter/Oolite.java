@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
-import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
 import java.util.zip.ZipEntry;
@@ -170,8 +169,9 @@ public class Oolite {
             result.setShipName(xpath.evaluate("/plist/dict/key[.='ship_unique_name']/following-sibling::string", doc));
             
             String resourcepaths = xpath.evaluate("/plist/dict/key[.='mission_variables']/following-sibling::dict/key[.='mission_ooliteStarter_oxpList']/following-sibling::string", doc);
+            
             if (resourcepaths != null && !resourcepaths.isEmpty()) {
-                List<String> expansions = new ArrayList<>();
+                List<SaveGame.ExpansionReference> expansions = new ArrayList<>();
                 StringTokenizer st = new StringTokenizer(resourcepaths, ",");
                 st.nextToken(); // Resources
                 String managedAddOnDir = st.nextToken(); // ManagedAddOns
@@ -182,21 +182,23 @@ public class Oolite {
                 while (st.hasMoreTokens()) {
                     String token = st.nextToken();
                     if (token.startsWith(managedAddOnDir)) {
-                        expansions.add(token.substring(managedAddOnDir.length()+1));
+                        String name = token.substring(managedAddOnDir.length()+1);
+                        expansions.add(getExpansionReference(name));
                     } else if (token.equals(debugAddOn)) {
                         // do nothing
                     } else if (token.equals(myAddOn) || token.endsWith("org.oolite.hiran.OoliteStarter.oxp")) {
                         // do nothing
                     } else if (token.startsWith(addOnDir)) {
-                        expansions.add(token.substring(addOnDir.length()+1));
+                        String name = token.substring(addOnDir.length()+1);
+                        expansions.add(getExpansionReference(name));
                     } else {
-                        expansions.add(token);
+                        expansions.add(getExpansionReference(token));
                     }
                 }
                 
                 Collections.sort(expansions);
                 
-                for (String s: expansions) {
+                for (SaveGame.ExpansionReference s: expansions) {
                     log.warn("we have {}", s);
                 }
                 result.setExpansions(expansions);
@@ -604,7 +606,7 @@ public class Oolite {
             filename = filename.substring(index);
         }
         
-        File file = new File(configuration.getManagedAddonsDir(), expansion.getIdentifier() + expansion.getVersion() + ".oxz");
+        File file = new File(configuration.getManagedAddonsDir(), expansion.getIdentifier() + "@" + expansion.getVersion() + ".oxz");
         downloadUrl(url, file);
         
         if (!file.isFile())
@@ -843,37 +845,49 @@ public class Oolite {
      * Validates whether the list of expansions is acceptable in itself.
      * 
      * @param expansions the expansions to check
+     * @return the list of discrepancies found
      */
-    public List<String> validateDependencies(List<Expansion> expansions) throws IOException {
+    public List<SaveGame.ExpansionReference> validateDependencies(List<Expansion> expansions) throws IOException {
         log.debug("validateDependencies(...)");
         
-        List<String> warnings =  new ArrayList<>();
-        
-        Map<String, Expansion> indexedWithVersion = new TreeMap<>();
+        List<SaveGame.ExpansionReference> result =  new ArrayList<>();
+                
         for (Expansion expansion: expansions) {
-            indexedWithVersion.put(expansion.getIdentifier() + ":" + expansion.getVersion(), expansion);
-        }
-        Map<String, Expansion> indexed = new TreeMap<>();
-        for (Expansion expansion: expansions) {
-            indexed.put(expansion.getIdentifier(), expansion);
-        }
-        
-        for (Expansion expansion: expansions) {
+            if (!expansion.isEnabled()) {
+                continue;
+            }                
+            
             if (expansion.getRequiresOxps() != null) {
                 for (String dependency: expansion.getRequiresOxps()) {
-                    if (!indexedWithVersion.containsKey(dependency)) {
-                        
-                        String dep = dependency.substring(dependency.lastIndexOf(":"));
-                        if (!indexed.containsKey(dep)) {
-                            warnings.add(String.format("Expansion %s:%s: cannot find required %s", expansion.getIdentifier(), expansion.getVersion(), dependency));
-                        }
+                    int idx = dependency.indexOf(":");
+                    if (idx >= 0) {
+                        dependency = dependency.substring(0, idx);
+                    }
+                    
+                    SaveGame.ExpansionReference er = getExpansionReference(dependency);
+                    if (er.status == SaveGame.ExpansionReference.Status.missing) {
+                        result.add(er);
                     }
                 }
             }
-            
+
+            if (expansion.getConflictOxps() != null) {
+                for (String dependency: expansion.getConflictOxps()) {
+                    int idx = dependency.indexOf(":");
+                    if (idx >= 0) {
+                        dependency = dependency.substring(0, idx);
+                    }
+
+                    SaveGame.ExpansionReference er = getExpansionReference(dependency);
+                    if (er.status == SaveGame.ExpansionReference.Status.ok) {
+                        er.status = SaveGame.ExpansionReference.Status.surplus;
+                        result.add(er);
+                    }
+                }
+            }
         }
         
-        return warnings;
+        return result;
     }
     
     /**
@@ -919,5 +933,44 @@ public class Oolite {
         File destDir = new File(configuration.getAddonsDir(), "org.oolite.hiran.OoliteStarter.oxp");
         log.info("removing {}", destDir);
         FileUtils.deleteDirectory(destDir);
+    }
+    
+    protected SaveGame.ExpansionReference getExpansionReference(String name) {
+        SaveGame.ExpansionReference result = new SaveGame.ExpansionReference();
+        result.name = name;
+        result.status = SaveGame.ExpansionReference.Status.missing;
+        
+        // find a direct match
+        if (
+                new File(configuration.getAddonsDir(), name).exists()
+            ||
+                new File(configuration.getManagedAddonsDir(), name).exists()
+            ) {
+            result.status = SaveGame.ExpansionReference.Status.ok;
+            return result;
+        }
+        
+        // find some indirect match. First strip off version number, then find substring
+        String id = name;
+        int idx = id.indexOf("@");
+        if (idx >= 0) {
+            id = id.substring(0, idx);
+        }
+        File[] files = configuration.getAddonsDir().listFiles();
+        for (File f: files) {
+            if (f.getName().contains(id)) {
+                result.status = SaveGame.ExpansionReference.Status.ok;
+                return result;
+            }
+        }
+        files = configuration.getManagedAddonsDir().listFiles();
+        for (File f: files) {
+            if (f.getName().contains(id)) {
+                result.status = SaveGame.ExpansionReference.Status.ok;
+                return result;
+            }
+        }
+
+        return result;
     }
 }
