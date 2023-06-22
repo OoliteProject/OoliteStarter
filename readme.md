@@ -17,7 +17,7 @@ and manage save games.
   your choice. Just in case, you can download it from
   https://github.com/HiranChaudhuri/OoliteStarter/releases
 
-## Configuration
+## Configuration (Installations)
 
 When you run the application, it will seach the configuration file
 $HOME/.oolite-starter.conf
@@ -35,6 +35,8 @@ the one of your choice and press the Activate button. At this time OoliteStarter
 will check if some directory is missing and also offers to create it for you.
 
 ## Usage
+
+![](https://www.plantuml.com/plantuml/svg/TO_1QiCm44Jl-eezsWV_W0_5WegYImyk_O35Megf91klv0H2_ZqW15w7v3WpxBwPWHDkAGUlr8hJF_uHcEkAaUSbmaq1PAO9cS16JkYzS4OAoqw03ACHjfxIl6CgWPR19s6DrFsWrR-Ode7QkTSmAspZvlIERINc1tVwma0dn3TTJWZEeNJhVvcs7hhk0vhQhvNcQAJI9zKSCrlvgUoHqafLTaY2bRUbg92rgHeekXpy0m00)
 
 * Run the application. Depending on your operating system and the package you 
   chose this may mean to just click an icon, a menu entry or use either 

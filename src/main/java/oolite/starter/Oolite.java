@@ -185,7 +185,7 @@ public class Oolite {
                         expansions.add(token.substring(managedAddOnDir.length()+1));
                     } else if (token.equals(debugAddOn)) {
                         // do nothing
-                    } else if (token.equals(myAddOn)) {
+                    } else if (token.equals(myAddOn) || token.endsWith("org.oolite.hiran.OoliteStarter.oxp")) {
                         // do nothing
                     } else if (token.startsWith(addOnDir)) {
                         expansions.add(token.substring(addOnDir.length()+1));

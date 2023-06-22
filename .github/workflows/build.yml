@@ -115,9 +115,23 @@ jobs:
         pwd
         find . -not -path "./oolitestarter/.git/*"
         
-    - name: Prepare AppImage
+    - name: Prepare AppImage for Ubuntu
       run: |
-        jpackage --type app-image --app-version "${{ needs.semver.outputs.DEBIAN_PKGVERSION }}" --copyright Copyright --description "OoliteStarter ${{ needs.semver.outputs.GITVERSION_SEMVER }}" --name "OoliteStarter" --dest target/appimage --temp target/oolite-starter-tmp --vendor "hiran" --verbose --icon oolitestarter/src/main/resources/oolite_logo.png --input OoliteStarter-${{ needs.semver.outputs.GITVERSION_SEMVER }}/dist --main-jar OoliteStarter-${{ needs.semver.outputs.GITVERSION_SEMVER }}.jar --main-class oolite.starter.MainFrame --resource-dir oolitestarter/src/jpackage/resources-linux
+        jpackage \
+          --type app-image \
+          --app-version "${{ needs.semver.outputs.DEBIAN_PKGVERSION }}" \
+          --copyright Copyright \
+          --description "OoliteStarter ${{ needs.semver.outputs.GITVERSION_SEMVER }}" \
+          --name "OoliteStarter" \
+          --dest target/appimage \
+          --temp target/oolite-starter-tmp \
+          --vendor "hiran" \
+          --verbose \
+          --icon oolitestarter/src/main/resources/oolite_logo.png \
+          --input OoliteStarter-${{ needs.semver.outputs.GITVERSION_SEMVER }}/dist \
+          --main-jar OoliteStarter-${{ needs.semver.outputs.GITVERSION_SEMVER }}.jar \
+          --main-class oolite.starter.MainFrame \
+          --resource-dir oolitestarter/src/jpackage/resources-linux
 
     - name: Tweak AppImage
       run: |
@@ -131,9 +145,16 @@ jobs:
         pwd
         find . -not -path "./oolitestarter/.git/*"
 
-    - name: Finish AppImage
+    - name: Finish AppImage for Ubuntu
       run: |
-        jpackage --verbose --app-image target/appimage/OoliteStarter --name "OoliteStarter" --app-version "${{ needs.semver.outputs.DEBIAN_PKGVERSION }}" --dest target --resource-dir oolitestarter/src/jpackage/resources-linux
+        jpackage \
+          --verbose \
+          --app-image target/appimage/OoliteStarter \
+          --name "OoliteStarter" \
+          --app-version "${{ needs.semver.outputs.DEBIAN_PKGVERSION }}" \
+          --dest target --resource-dir oolitestarter/src/jpackage/resources-linux \
+          --linux-shortcut \
+          --linux-menu-group Game
 
     - name: Check status 3
       run: |
@@ -181,18 +202,18 @@ jobs:
       run: |
         get-childitem . -Recurse | where {!$_.PSIsContainer} | select-object FullName
 
-    - name: Prepare AppImage
+    - name: Prepare AppImage for Windows
       run: |
-        jpackage --type app-image --app-version "${{ needs.semver.outputs.GITVERSION_ASSEMBLYSEMVER }}" --copyright Copyright --description "OoliteStarter ${{ needs.semver.outputs.GITVERSION_SEMVER }}" --name "OoliteStarter" --dest target/appimage --temp target/oolite-starter-tmp --vendor "hiran" --verbose --icon oolitestarter/src/main/resources/oolite_logo.png --input OoliteStarter-${{ needs.semver.outputs.GITVERSION_SEMVER }}/dist --main-jar OoliteStarter-${{ needs.semver.outputs.GITVERSION_SEMVER }}.jar --main-class oolite.starter.MainFrame
+        jpackage --type app-image --app-version "${{ needs.semver.outputs.GITVERSION_ASSEMBLYSEMVER }}" --copyright Copyright --description "OoliteStarter ${{ needs.semver.outputs.GITVERSION_SEMVER }}" --name "OoliteStarter" --dest target/appimage --temp target/oolite-starter-tmp --vendor "hiran" --verbose --icon oolitestarter/src/main/resources/oolite_logo.ico --input OoliteStarter-${{ needs.semver.outputs.GITVERSION_SEMVER }}/dist --main-jar OoliteStarter-${{ needs.semver.outputs.GITVERSION_SEMVER }}.jar --main-class oolite.starter.MainFrame
         # --resource-dir src/jpackage/resources
 
     - name: Check status 2
       run: |
         get-childitem . -Recurse | where {!$_.PSIsContainer} | select-object FullName
 
-    - name: Finish AppImage
+    - name: Finish AppImage for Windows
       run: |
-        jpackage --verbose --app-image target/appimage/OoliteStarter --name "OoliteStarter ${{ needs.semver.outputs.GITVERSION_SEMVER }}" --dest target
+        jpackage --verbose --app-image target/appimage/OoliteStarter --name "OoliteStarter ${{ needs.semver.outputs.GITVERSION_SEMVER }}" --dest target --win-shortcut --icon oolitestarter/src/main/resources/oolite_logo.ico --win-shortcut --win-menu --win-menu-group Oolite
         #--resource-dir src/jpackage/resources
 
     - name: Check status 3
@@ -317,7 +338,7 @@ jobs:
         keep_latest: 5
         delete_tag_pattern: v\d+\.\d+\.\d+-.*
         delete_type: 'prerelease'
-        target_branch: '${{ github.ref_name }}'
+        #delete_branch: '${{ github.ref_name }}'
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -345,7 +366,7 @@ jobs:
         keep_latest: 3
         delete_tag_pattern: v\d+\.\d+\.\d+
         delete_type: 'release'
-        target_branch: 'main'
+        #delete_branch: 'main'
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     
