@@ -128,11 +128,16 @@ public class MainFrame extends javax.swing.JFrame {
                     Duration spent = Duration.between(i0, i1);
                     long spentSeconds = spent.getSeconds();
                     
-                    if (spentSeconds < 3) {
-                        Thread.sleep((3 - spentSeconds) * 1000);
+                    GithubVersionChecker gvc = new GithubVersionChecker();
+                    gvc.init();
+                    
+                    if (spentSeconds < 4) {
+                        Thread.sleep((4 - spentSeconds) * 1000);
                     }
                     
                     mf.setVisible(true);
+                    gvc.maybeAnnounceUpdate(mf);
+                    
                 } catch (Exception e) {
                     System.out.println("Could not initialize UI");
                     e.printStackTrace(System.out);
