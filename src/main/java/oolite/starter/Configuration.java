@@ -59,7 +59,7 @@ public class Configuration {
     public Configuration() throws MalformedURLException {
         expansionManagerURLs = new ArrayList<>();
         expansionManagerURLs.add(new URL("https://addons.oolite.space/api/1.0/overview/"));
-        expansionManagerURLs.add(new URL("http://addons.oolite.org/api/1.0/overview/"));
+        //expansionManagerURLs.add(new URL("http://addons.oolite.org/api/1.0/overview/"));
         
         installations = new ArrayList<>();
     }
@@ -131,6 +131,7 @@ public class Configuration {
         Element root = doc.createElement("OoliteStarter");
         root.setAttribute("stored", Instant.now().toString());
         root.setAttribute("starter-version", getClass().getPackage().getImplementationVersion());
+        root.setAttribute("logging", new File(new File(System.getProperty("user.home")), ".Oolite/Logs").getAbsolutePath());
         doc.appendChild(root);
         
         // add Expansion Manager URLs

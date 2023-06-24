@@ -309,6 +309,8 @@ public class InstallationForm extends javax.swing.JPanel {
             }
             
             JFileChooser jfc = new JFileChooser(new File(dir));
+            jfc.setAccessory(new OoliteFileChooserAccessory(jfc));
+            jfc.setFileView(new OoliteFileView());
             jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
             if (jfc.showDialog(this, "Select") == JFileChooser.APPROVE_OPTION) {
                 txtHomeDir.setText(jfc.getSelectedFile().getAbsolutePath());
@@ -335,6 +337,12 @@ public class InstallationForm extends javax.swing.JPanel {
                     }
                 }
 
+                if (txtSavegameDir.getText().isBlank()) {
+                    File d = new File(jfc.getSelectedFile(), "oolite.app/oolite-saves");
+                    if (d.isDirectory()) {
+                        txtSavegameDir.setText(d.getAbsolutePath());
+                    }
+                }
                 if (txtSavegameDir.getText().isBlank()) {
                     File d = new File(new File(System.getProperty("user.home")), "oolite-saves");
                     if (d.isDirectory()) {
@@ -380,6 +388,8 @@ public class InstallationForm extends javax.swing.JPanel {
             }
             
             JFileChooser jfc = new JFileChooser(new File(dir));
+            jfc.setAccessory(new OoliteFileChooserAccessory(jfc));
+            jfc.setFileView(new OoliteFileView());
             jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
             if (jfc.showDialog(this, "Select") == JFileChooser.APPROVE_OPTION) {
                 txtExecutable.setText(jfc.getSelectedFile().getAbsolutePath());
@@ -398,6 +408,8 @@ public class InstallationForm extends javax.swing.JPanel {
             }
             
             JFileChooser jfc = new JFileChooser(new File(dir));
+            jfc.setAccessory(new OoliteFileChooserAccessory(jfc));
+            jfc.setFileView(new OoliteFileView());
             jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
             if (jfc.showDialog(this, "Select") == JFileChooser.APPROVE_OPTION) {
                 txtSavegameDir.setText(jfc.getSelectedFile().getAbsolutePath());
@@ -416,6 +428,8 @@ public class InstallationForm extends javax.swing.JPanel {
             }
             
             JFileChooser jfc = new JFileChooser(new File(dir));
+            jfc.setAccessory(new OoliteFileChooserAccessory(jfc));
+            jfc.setFileView(new OoliteFileView());
             jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
             if (jfc.showDialog(this, "Select") == JFileChooser.APPROVE_OPTION) {
                 txtAddOnDir.setText(jfc.getSelectedFile().getAbsolutePath());
@@ -434,6 +448,8 @@ public class InstallationForm extends javax.swing.JPanel {
             }
             
             JFileChooser jfc = new JFileChooser(new File(dir));
+            jfc.setAccessory(new OoliteFileChooserAccessory(jfc));
+            jfc.setFileView(new OoliteFileView());
             jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
             if (jfc.showDialog(this, "Select") == JFileChooser.APPROVE_OPTION) {
                 txtManagedAddOnDir.setText(jfc.getSelectedFile().getAbsolutePath());
@@ -452,6 +468,8 @@ public class InstallationForm extends javax.swing.JPanel {
             }
             
             JFileChooser jfc = new JFileChooser(new File(dir));
+            jfc.setAccessory(new OoliteFileChooserAccessory(jfc));
+            jfc.setFileView(new OoliteFileView());
             jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
             if (jfc.showDialog(this, "Select") == JFileChooser.APPROVE_OPTION) {
                 txtManagedDeactivatedAddOnDir.setText(jfc.getSelectedFile().getAbsolutePath());
@@ -470,6 +488,8 @@ public class InstallationForm extends javax.swing.JPanel {
             }
             
             JFileChooser jfc = new JFileChooser(new File(dir));
+            jfc.setAccessory(new OoliteFileChooserAccessory(jfc));
+            jfc.setFileView(new OoliteFileView());
             jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
             if (jfc.showDialog(this, "Select") == JFileChooser.APPROVE_OPTION) {
                 txtDeactivatedAddOnDir.setText(jfc.getSelectedFile().getAbsolutePath());

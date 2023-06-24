@@ -413,6 +413,18 @@ Categories=Game;
             <artifactId>flatlaf</artifactId>
             <version>3.1.1</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.owlike</groupId>
+            <artifactId>genson</artifactId>
+            <version>1.6</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.vdurmont</groupId>
+            <artifactId>semver4j</artifactId>
+            <version>3.1.0</version>
+        </dependency>
         
     </dependencies>
 </project>

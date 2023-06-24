@@ -131,12 +131,13 @@ jobs:
           --input OoliteStarter-${{ needs.semver.outputs.GITVERSION_SEMVER }}/dist \
           --main-jar OoliteStarter-${{ needs.semver.outputs.GITVERSION_SEMVER }}.jar \
           --main-class oolite.starter.MainFrame \
-          --resource-dir oolitestarter/src/jpackage/resources-linux
+          --java-options '-splash:$APPDIR/splash.png' \
+          --resource-dir oolitestarter/src/jpackage/resources-linux \
 
     - name: Tweak AppImage
       run: |
         cp -v "oolitestarter/src/jpackage/resources-linux/OoliteStarter.desktop" "target/appimage/OoliteStarter/lib/oolitestarter-OoliteStarter.desktop"
-
+        cp -v "oolitestarter/src/main/resources/images/OoliteStarter_Splashscreen_640x360.png" "target/appimage/OoliteStarter/lib/app/splash.png"
 
     - name: Check status 2
       run: |
@@ -152,9 +153,13 @@ jobs:
           --app-image target/appimage/OoliteStarter \
           --name "OoliteStarter" \
           --app-version "${{ needs.semver.outputs.DEBIAN_PKGVERSION }}" \
-          --dest target --resource-dir oolitestarter/src/jpackage/resources-linux \
-          --linux-shortcut \
-          --linux-menu-group Game
+          --dest target \
+          --license-file oolitestarter/LICENSE \
+          --icon oolitestarter/src/main/resources/oolite_logo.png \
+          --resource-dir oolitestarter/src/jpackage/resources-linux
+          #--linux-shortcut \
+          #--linux-menu-group Game \
+          #--linux-app-category misc \
 
     - name: Check status 3
       run: |
@@ -165,7 +170,7 @@ jobs:
 
     - uses: actions/upload-artifact@v3
       with:
-        name: OoliteStarter
+        name: OoliteStarter-Ubuntu
         path: ./target/oolitestarter*.deb
 
   package-windows:
@@ -204,8 +209,9 @@ jobs:
 
     - name: Prepare AppImage for Windows
       run: |
-        jpackage --type app-image --app-version "${{ needs.semver.outputs.GITVERSION_ASSEMBLYSEMVER }}" --copyright Copyright --description "OoliteStarter ${{ needs.semver.outputs.GITVERSION_SEMVER }}" --name "OoliteStarter" --dest target/appimage --temp target/oolite-starter-tmp --vendor "hiran" --verbose --icon oolitestarter/src/main/resources/oolite_logo.ico --input OoliteStarter-${{ needs.semver.outputs.GITVERSION_SEMVER }}/dist --main-jar OoliteStarter-${{ needs.semver.outputs.GITVERSION_SEMVER }}.jar --main-class oolite.starter.MainFrame
+        jpackage --type app-image --app-version "${{ needs.semver.outputs.GITVERSION_ASSEMBLYSEMVER }}" --copyright Copyright --description "OoliteStarter ${{ needs.semver.outputs.GITVERSION_SEMVER }}" --name "OoliteStarter" --dest target/appimage --temp target/oolite-starter-tmp --vendor "hiran" --verbose --icon oolitestarter/src/main/resources/oolite_logo.ico --input OoliteStarter-${{ needs.semver.outputs.GITVERSION_SEMVER }}/dist --main-jar OoliteStarter-${{ needs.semver.outputs.GITVERSION_SEMVER }}.jar --main-class oolite.starter.MainFrame --java-options '-splash:$APPDIR/splash.png'
         # --resource-dir src/jpackage/resources
+        copy oolitestarter\src\main\resources\images\OoliteStarter_Splashscreen_640x360.png target\appimage\OoliteStarter\app\splash.png
 
     - name: Check status 2
       run: |
@@ -222,7 +228,7 @@ jobs:
 
     - uses: actions/upload-artifact@v3
       with:
-        name: OoliteStarter
+        name: OoliteStarter-Windows
         path: ./target/*.exe
 
   package-macos:
@@ -266,7 +272,7 @@ jobs:
         pwd
         find . -not -path "./oolitestarter/.git/*"
         
-    - name: Prepare AppImage
+    - name: Prepare AppImage for MacOS
       run: |
         jpackage \
           --type app-image \
@@ -278,12 +284,18 @@ jobs:
           --icon oolitestarter/src/main/resources/oolite_logo.png \
           --input OoliteStarter-${{ needs.semver.outputs.GITVERSION_SEMVER }}/dist \
           --main-jar OoliteStarter-${{ needs.semver.outputs.GITVERSION_SEMVER }}.jar \
-          --main-class oolite.starter.MainFrame --mac-package-name "OoliteStarter"
+          --main-class oolite.starter.MainFrame --mac-package-name "OoliteStarter" \
+          --java-options '-splash:$APPDIR/splash.png' \
+          --vendor hiran
 
         #  --mac-sign --mac-package-signing-prefix space.oolite.oolitestarter. \
         #  --mac-signing-key-user-name "HiranChaudhuri"
         # --resource-dir src/jpackage/resources
         # --app-version "${{ needs.semver.outputs.GITVERSION_MAJORMINORPATCH }}" \
+
+    - name: Tweak AppImage
+      run: |
+        cp -v "oolitestarter/src/main/resources/images/OoliteStarter_Splashscreen_640x360.png" "target/appimage/OoliteStarter.app/Contents/app/splash.png"
 
     - name: Check status 2
       run: |
@@ -292,14 +304,17 @@ jobs:
         pwd
         find . -not -path "./oolitestarter/.git/*"
 
-    - name: Finish AppImage
+    - name: Finish AppImage for MacOS
       run: |
-        jpackage --verbose --app-image target/appimage/OoliteStarter.app --name "OoliteStarter" --dest target
+        jpackage \
+          --type dmg \
+          --verbose \
+          --app-version "1.0.0" \
+          --app-image target/appimage/OoliteStarter.app \
+          --name "OoliteStarter" \
+          --dest target \
+          --vendor hiran
         #--resource-dir src/jpackage/resources
-
-    - name: Rename result
-      run: |
-        mv ./target/OoliteStarter-1.0.dmg ./target/OoliteStarter-${{ needs.semver.outputs.GITVERSION_SEMVER }}.dmg
 
     - name: Check status 3
       run: |
@@ -308,9 +323,20 @@ jobs:
         pwd
         find . -not -path "./oolitestarter/.git/*"
 
+    - name: Rename result
+      run: |
+        mv ./target/OoliteStarter-1.0.0.dmg ./target/OoliteStarter-${{ needs.semver.outputs.GITVERSION_SEMVER }}.dmg
+
+    - name: Check status 4
+      run: |
+        set
+        echo -n "Current directory: "
+        pwd
+        find . -not -path "./oolitestarter/.git/*"
+
     - uses: actions/upload-artifact@v3
       with:
-        name: OoliteStarter
+        name: OoliteStarter-MacOS
         path: ./target/OoliteStarter*.dmg
 
   release:
@@ -354,9 +380,9 @@ jobs:
         files: |
           artifacts/OoliteStarter-generic/*.zip
           artifacts/OoliteStarter-generic/*.tar.gz
-          artifacts/OoliteStarter/*.deb
-          artifacts/OoliteStarter/*.exe
-          artifacts/OoliteStarter/*.dmg
+          artifacts/OoliteStarter-Ubuntu/*.deb
+          artifacts/OoliteStarter-Windows/*.exe
+          artifacts/OoliteStarter-MacOS/*.dmg
       
     - name: Remove old releases
       if: github.ref == 'refs/heads/master'
@@ -382,6 +408,46 @@ jobs:
         files: |
           artifacts/OoliteStarter-generic/*.zip
           artifacts/OoliteStarter-generic/*.tar.gz
-          artifacts/OoliteStarter/*.deb
-          artifacts/OoliteStarter/*.exe
-          artifacts/OoliteStarter/*.dmg
+          artifacts/OoliteStarter-Ubuntu/*.deb
+          artifacts/OoliteStarter-Windows/*.exe
+          artifacts/OoliteStarter-MacOS/*.dmg
+
+  testdmg:
+    needs: [package-macos]
+    runs-on: macos-latest
+
+    steps:
+    - name: Download artifacts
+      uses: actions/download-artifact@v3
+      with:
+        name: OoliteStarter-MacOS
+        path: artifacts
+
+    - name: Check status
+      run: |
+        set
+        echo -n "Current directory: "
+        pwd
+        find . -not -path "./oolitestarter/.git/*"
+        
+    # inspired from https://macwrench.miraheze.org/wiki/Hdiutil
+    - name: Verify/Install
+      run: |
+        set -x
+        F=$(ls artifacts/*.dmg)
+        
+        echo "Help..."
+        hdiutil verify -help
+        hdiutil imageinfo -help
+        hdiutil hfsanalyze -help
+        hdiutil checksum -help
+        hdiutil info -help
+        hdiutil pmap -help
+        
+        echo "Verifying..."
+        hdiutil verify -verbose "$F"
+        hdiutil imageinfo -verbose "$F"
+        hdiutil hfsanalyze -verbose "$F"
+        hdiutil checksum -type SHA256 -verbose "$F"
+        hdiutil info -verbose
+        hdiutil pmap -verbose "$F"

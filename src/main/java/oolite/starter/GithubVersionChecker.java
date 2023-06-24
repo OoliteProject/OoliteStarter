@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import javax.swing.ImageIcon;
 import javax.swing.JEditorPane;
 import javax.swing.JOptionPane;
 import javax.swing.event.HyperlinkEvent;
@@ -111,8 +112,9 @@ public class GithubVersionChecker {
      * @return the html message
      */
     public String getHtmlUserMessage(String version) {
-        String text = "<html>Looks like the newer release " + version + " is available.<br/>"
-            + "You might want to visit <a href=\"https://github.com/" + owner + "/" + repo + "\">https://github.com/" + owner + "/" + repo + "</a></html>";
+        String text = "<html><body><p>All right threre. We heard rumors the new version " + version + " has been released.</p>"
+            + "<p>You need to check <a href=\"https://github.com/" + owner + "/" + repo + "/releases\">https://github.com/" + owner + "/" + repo + "/releases</a> and report back to me.</p>"
+            + "<p>But don't keep me waiting too long, kid!</p></body></html>";
         return text;
     }
     
@@ -142,7 +144,14 @@ public class GithubVersionChecker {
                                 }
                             }
                         });
-                        JOptionPane.showMessageDialog(parentComponent, jep);
+                        
+                        ImageIcon ii = null;
+                        try {
+                            ii = new ImageIcon(getClass().getResource("/images/Mr_Gimlet.png"));
+                        } catch (Exception e) {
+                            log.warn("Could not load image", e);
+                        }
+                        JOptionPane.showMessageDialog(parentComponent, jep, "Message from Mr Gimlet", JOptionPane.INFORMATION_MESSAGE, ii);
                     }
                 });
             }

@@ -77,6 +77,15 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
             log.warn("Could not update", e);
         }
     }
+    
+    private String constructMessage(String m, Throwable t) {
+        StringBuilder sb = new StringBuilder(m);
+        while (t != null) {
+            sb.append("\n").append(t.getClass().getName()).append(": ").append(t.getMessage());
+            t = t.getCause();
+        }
+        return sb.toString();
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -138,6 +147,8 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
 
         jSplitPane1.setOneTouchExpandable(true);
 
+        jScrollPane1.setMinimumSize(new java.awt.Dimension(300, 16));
+
         jTable1.setAutoCreateRowSorter(true);
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -187,7 +198,7 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
             oolite.run();
         } catch (Exception e) {
             log.error("Could not run game", e);
-            JOptionPane.showMessageDialog(null, "Could not run game");
+            JOptionPane.showMessageDialog(null, constructMessage("Could not run game", e));
         } finally {
             SwingUtilities.getRoot(this).setVisible(true);
         }
@@ -205,7 +216,8 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
             update();
         } catch (Exception e) {
             log.error("Could not run game", e);
-            JOptionPane.showMessageDialog(null, "Could not run game");
+            
+            JOptionPane.showMessageDialog(null, constructMessage("Could not run game", e));
         } finally {
             SwingUtilities.getRoot(this).setVisible(true);
         }

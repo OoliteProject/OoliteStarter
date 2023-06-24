@@ -21,7 +21,7 @@ echo $0 called with $*
 
 case "$1" in
     configure)
-xdg-desktop-menu install /opt/oolitestarter/lib/oolitestarter-OoliteStarter.desktop
+        xdg-desktop-menu install /opt/oolitestarter/lib/oolitestarter-OoliteStarter.desktop
     ;;
 
     abort-upgrade|abort-remove|abort-deconfigure)
