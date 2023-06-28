@@ -19,6 +19,8 @@ import org.apache.logging.log4j.Logger;
 public class InstallationsPanel extends javax.swing.JPanel {
     private static final Logger log = LogManager.getLogger();
 
+    private static final String INSTALLATIONSPANEL_ERROR = "Error";
+    
     private InstallationForm installationForm;
     private InstallationTableModel model;
     private transient TableRowSorter<InstallationTableModel> trw;
@@ -212,8 +214,8 @@ public class InstallationsPanel extends javax.swing.JPanel {
                 model.addRow(installationForm.getData());
             }
         } catch (Exception e) {
-            log.error("Error", e);
-            JOptionPane.showMessageDialog(this, "Error");
+            log.error(INSTALLATIONSPANEL_ERROR, e);
+            JOptionPane.showMessageDialog(this, INSTALLATIONSPANEL_ERROR);
         }
     }//GEN-LAST:event_btAddActionPerformed
 
@@ -239,8 +241,8 @@ public class InstallationsPanel extends javax.swing.JPanel {
                 }
             }
         } catch (Exception e) {
-            log.error("Error", e);
-            JOptionPane.showMessageDialog(this, "Error");
+            log.error(INSTALLATIONSPANEL_ERROR, e);
+            JOptionPane.showMessageDialog(this, INSTALLATIONSPANEL_ERROR);
         }        
     }//GEN-LAST:event_btEditActionPerformed
 
@@ -257,8 +259,8 @@ public class InstallationsPanel extends javax.swing.JPanel {
             
             model.removeRow(rowIndex);
         } catch (Exception e) {
-            log.error("Error", e);
-            JOptionPane.showMessageDialog(this, "Error");
+            log.error(INSTALLATIONSPANEL_ERROR, e);
+            JOptionPane.showMessageDialog(this, INSTALLATIONSPANEL_ERROR);
         }        
     }//GEN-LAST:event_btRemoveActionPerformed
 
