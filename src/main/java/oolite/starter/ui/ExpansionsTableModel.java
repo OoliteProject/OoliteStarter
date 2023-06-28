@@ -18,7 +18,7 @@ import oolite.starter.model.Expansion;
  */
 public class ExpansionsTableModel extends AbstractTableModel implements PropertyChangeListener {
    
-    private List<Expansion> data;
+    private transient List<Expansion> data;
     private Map<String, Integer> siblingCount;
     
     /**

@@ -188,7 +188,6 @@
                         <include>src/main/resources-ext/macos/run-macos.sh</include> 
                         <include>src/main/resources-ext/run.cmd</include> 
                     </includes>
-                    <!--<file>src/main/resources-ext/run.cmd</file>-->
                     <outputDir>target/</outputDir>
                     <replacements>
                         <replacement>

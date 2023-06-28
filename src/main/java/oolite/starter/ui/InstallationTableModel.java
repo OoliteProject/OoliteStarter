@@ -18,7 +18,7 @@ import org.apache.logging.log4j.Logger;
 public class InstallationTableModel extends AbstractTableModel implements PropertyChangeListener {
     private static final Logger log = LogManager.getLogger();
     
-    private Configuration data;
+    private transient Configuration data;
 
     /**
      * Creates a new instance.

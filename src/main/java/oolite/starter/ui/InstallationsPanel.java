@@ -21,8 +21,8 @@ public class InstallationsPanel extends javax.swing.JPanel {
 
     private InstallationForm installationForm;
     private InstallationTableModel model;
-    private TableRowSorter<InstallationTableModel> trw;
-    private Configuration configuration;
+    private transient TableRowSorter<InstallationTableModel> trw;
+    private transient Configuration configuration;
     
     /**
      * Creates new form InstallationsPanel.

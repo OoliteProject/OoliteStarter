@@ -75,10 +75,10 @@ updatable
         }
     }
     
-    private Oolite oolite;
+    private transient Oolite oolite;
     private ExpansionsTableModel model;
-    private TableRowSorter<ExpansionsTableModel> trw;
-    private List<Expansion> expansions;
+    private transient TableRowSorter<ExpansionsTableModel> trw;
+    private transient List<Expansion> expansions;
 
     private ExpansionPanel ep;
 
@@ -505,6 +505,7 @@ updatable
 
     @Override
     public void launched() {
+        // we are not yet interested in this event
     }
 
     @Override

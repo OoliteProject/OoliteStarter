@@ -14,7 +14,7 @@ public class SaveGame {
     public static class ExpansionReference implements Comparable<ExpansionReference> {
 
         public enum Status {
-            ok, missing, surplus
+            OK, MISSING, SURPLUS
         }
 
         public String name;
@@ -55,6 +55,7 @@ public class SaveGame {
      * Creates a new SaveGame.
      */
     public SaveGame() {
+        // no need for init code so far
     }
 
     /**

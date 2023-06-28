@@ -26,7 +26,12 @@ public class AnnotationRenderer implements TableCellRenderer {
     private class MyLayerUI extends LayerUI {
         
         private String indicator = "b";
-        private FontRenderContext frc = new FontRenderContext(new AffineTransform(), false, false);
+        
+        private transient FontRenderContext frc;
+        
+        public MyLayerUI() {
+            frc = new FontRenderContext(new AffineTransform(), false, false);
+        }
         
         public void setIndicator(String indicator) {
             this.indicator = String.valueOf(indicator);

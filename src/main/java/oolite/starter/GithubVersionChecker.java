@@ -19,7 +19,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JEditorPane;
 import javax.swing.JOptionPane;
 import javax.swing.event.HyperlinkEvent;
-import javax.swing.event.HyperlinkListener;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -31,8 +30,8 @@ import org.apache.logging.log4j.Logger;
 public class GithubVersionChecker {
     private static final Logger log = LogManager.getLogger();
 
-    public static final String owner = "HiranChaudhuri";
-    public static final String repo = "OoliteStarter";
+    public static final String OWNER = "HiranChaudhuri";
+    public static final String REPO = "OoliteStarter";
     
     private List<Semver> versions;
     
@@ -43,11 +42,11 @@ public class GithubVersionChecker {
      * @throws MalformedURLException something went wrong
      * @throws IOException something went wrong
      */
-    public void init() throws MalformedURLException, IOException {
+    public void init() throws IOException {
         versions = new ArrayList<>();
-        List releases = new Genson().deserialize(getReleasesURL().openStream(), List.class);
+        List<Object> releases = new Genson().deserialize(getReleasesURL().openStream(), List.class);
         for (Object release: releases) {
-            if (release instanceof Map map) {
+            if (release instanceof Map<?,?> map) {
                 String v = String.valueOf(map.get("tag_name"));
                 if (v.startsWith("v")) {
                     v = v.substring(1);
@@ -67,7 +66,7 @@ public class GithubVersionChecker {
      * @throws MalformedURLException something went wrong
      */
     public URL getReleasesURL() throws MalformedURLException {
-        return new URL("https://api.github.com/repos/" + owner + "/" + repo + "/releases");
+        return new URL("https://api.github.com/repos/" + OWNER + "/" + REPO + "/releases");
     }
     
     /**
@@ -78,7 +77,7 @@ public class GithubVersionChecker {
      * @throws MalformedURLException something went wrong
      * @throws IOException something went wrong
      */
-    public String getLatestVersion() throws MalformedURLException, IOException {
+    public String getLatestVersion() throws IOException {
         if (versions == null) {
             throw new IllegalStateException("versions is null. Use init()");
         }
@@ -112,10 +111,9 @@ public class GithubVersionChecker {
      * @return the html message
      */
     public String getHtmlUserMessage(String version) {
-        String text = "<html><body><p>All right threre. We heard rumors the new version " + version + " has been released.</p>"
-            + "<p>You need to check <a href=\"https://github.com/" + owner + "/" + repo + "/releases\">https://github.com/" + owner + "/" + repo + "/releases</a> and report back to me.</p>"
+        return "<html><body><p>All right threre. We heard rumors the new version " + version + " has been released.</p>"
+            + "<p>You need to check <a href=\"https://github.com/" + OWNER + "/" + REPO + "/releases\">https://github.com/" + OWNER + "/" + REPO + "/releases</a> and report back to me.</p>"
             + "<p>But don't keep me waiting too long, kid!</p></body></html>";
-        return text;
     }
     
     /**
@@ -128,19 +126,15 @@ public class GithubVersionChecker {
             String latest = getLatestVersion();
             if (latest != null) {
                 String message = getHtmlUserMessage(latest);
-                EventQueue.invokeLater(new Runnable() {
-                    public void run() {
+                EventQueue.invokeLater(() -> {
                         JEditorPane jep = new JEditorPane("text/html", message);
                         jep.setEditable(false);
-                        jep.addHyperlinkListener(new HyperlinkListener() {
-                            @Override
-                            public void hyperlinkUpdate(HyperlinkEvent he) {
-                                if (he.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-                                    try {
-                                        Desktop.getDesktop().browse(he.getURL().toURI());
-                                    } catch (Exception e) {
-                                        log.info("Could not open url {}", he.getURL(), e);
-                                    }
+                        jep.addHyperlinkListener(he-> {
+                            if (he.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+                                try {
+                                    Desktop.getDesktop().browse(he.getURL().toURI());
+                                } catch (Exception e) {
+                                    log.info("Could not open url {}", he.getURL(), e);
                                 }
                             }
                         });
@@ -152,7 +146,6 @@ public class GithubVersionChecker {
                             log.warn("Could not load image", e);
                         }
                         JOptionPane.showMessageDialog(parentComponent, jep, "Message from Mr Gimlet", JOptionPane.INFORMATION_MESSAGE, ii);
-                    }
                 });
             }
         } catch (IOException e) {

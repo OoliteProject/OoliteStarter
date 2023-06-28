@@ -26,7 +26,7 @@ public class Installation {
      * Creates a new Installation.
      */
     public Installation() {
-        
+        // no need for init code so far
     }
 
     /**

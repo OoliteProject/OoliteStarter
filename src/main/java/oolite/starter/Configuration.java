@@ -14,7 +14,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
@@ -34,12 +33,9 @@ import org.xml.sax.SAXException;
  * @author hiran
  */
 public class Configuration {
-
-    /**
-     * The file where we load and store configuration data.
-     */
-    private File configFile;
     
+    private static final String CONF_NO_ACTIVE_INSTALLATION = "No active installation";
+
     /**
      * The list of installations on this system.
      */
@@ -59,7 +55,6 @@ public class Configuration {
     public Configuration() throws MalformedURLException {
         expansionManagerURLs = new ArrayList<>();
         expansionManagerURLs.add(new URL("https://addons.oolite.space/api/1.0/overview/"));
-        //expansionManagerURLs.add(new URL("http://addons.oolite.org/api/1.0/overview/"));
         
         installations = new ArrayList<>();
     }
@@ -82,8 +77,6 @@ public class Configuration {
      * @param f the file to load
      */
     public final void loadConfiguration(File f) throws ParserConfigurationException, SAXException, IOException, XPathExpressionException {
-        configFile = f;
-        
         DocumentBuilder db = DocumentBuilderFactory.newDefaultInstance().newDocumentBuilder();
         Document doc = db.parse(f);
         XPath xpath = XPathFactory.newDefaultInstance().newXPath();
@@ -125,7 +118,7 @@ public class Configuration {
      * 
      * @param the file to store into
      */
-    public final void saveConfiguration(File f) throws ParserConfigurationException, TransformerConfigurationException, TransformerException, MalformedURLException {
+    public final void saveConfiguration(File f) throws ParserConfigurationException, TransformerException, MalformedURLException {
         DocumentBuilder db = DocumentBuilderFactory.newDefaultInstance().newDocumentBuilder();
         Document doc = db.newDocument();
         Element root = doc.createElement("OoliteStarter");
@@ -195,15 +188,6 @@ public class Configuration {
     }
     
     /**
-     * Lists all the configured installations.
-     * 
-     * @return a list of identifiers
-     */
-    public List<String> listInstallations() {
-        return null;
-    }
-    
-    /**
      * Returns the installations list.
      * 
      * @return the list
@@ -250,7 +234,7 @@ public class Configuration {
      */
     public File getSaveGameDir() {
         if (activeInstallation == null) {
-            throw new IllegalStateException("No active installation");
+            throw new IllegalStateException(CONF_NO_ACTIVE_INSTALLATION);
         }
         return new File(activeInstallation.getSavegameDir());
     }
@@ -262,7 +246,7 @@ public class Configuration {
      */
     public String getOoliteCommand() {
         if (activeInstallation == null) {
-            throw new IllegalStateException("No active installation");
+            throw new IllegalStateException(CONF_NO_ACTIVE_INSTALLATION);
         }
         return activeInstallation.getExcecutable();
     }
@@ -284,7 +268,7 @@ public class Configuration {
      */
     public File getDeactivatedAddonsDir() {
         if (activeInstallation == null) {
-            throw new IllegalStateException("No active installation");
+            throw new IllegalStateException(CONF_NO_ACTIVE_INSTALLATION);
         }
         return new File(activeInstallation.getDeactivatedAddonDir());
     }
@@ -296,7 +280,7 @@ public class Configuration {
      */
     public File getManagedDeactivatedAddonsDir() {
         if (activeInstallation == null) {
-            throw new IllegalStateException("No active installation");
+            throw new IllegalStateException(CONF_NO_ACTIVE_INSTALLATION);
         }
         return new File(activeInstallation.getManagedDeactivatedAddonDir());
     }
@@ -308,7 +292,7 @@ public class Configuration {
      */
     public File getManagedAddonsDir() {
         if (activeInstallation == null) {
-            throw new IllegalStateException("No active installation");
+            throw new IllegalStateException(CONF_NO_ACTIVE_INSTALLATION);
         }
         return new File(activeInstallation.getManagedAddonDir());
     }
@@ -320,7 +304,7 @@ public class Configuration {
      */
     public File getAddonsDir() {
         if (activeInstallation == null) {
-            throw new IllegalStateException("No active installation");
+            throw new IllegalStateException(CONF_NO_ACTIVE_INSTALLATION);
         }
         return new File(activeInstallation.getAddonDir());
     }
@@ -334,7 +318,7 @@ public class Configuration {
      */
     public List<File> getAddonDirs() {
         if (activeInstallation == null) {
-            throw new IllegalStateException("No active installation");
+            throw new IllegalStateException(CONF_NO_ACTIVE_INSTALLATION);
         }
 
         List<File> result = new ArrayList<>();

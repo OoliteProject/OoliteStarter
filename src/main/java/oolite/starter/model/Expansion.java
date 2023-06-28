@@ -18,6 +18,8 @@ import org.apache.logging.log4j.Logger;
  */
 public class Expansion implements Comparable {
     private static final Logger log = LogManager.getLogger();
+    
+    private static final String EXPANSION_OOLITE_MUST_BE_SET = "oolite must be set before";
 
     private String author;
     private String category;
@@ -410,7 +412,7 @@ public class Expansion implements Comparable {
      */
     public boolean isEnabled() {
         if (oolite == null) {
-            throw new IllegalStateException("oolite must be set before");
+            throw new IllegalStateException(EXPANSION_OOLITE_MUST_BE_SET);
         }
         if (localFile == null) {
             return false;
@@ -520,7 +522,7 @@ public class Expansion implements Comparable {
      */
     public void install() throws IOException {
         if (oolite == null) {
-            throw new IllegalStateException("oolite must be set before");
+            throw new IllegalStateException(EXPANSION_OOLITE_MUST_BE_SET);
         }
         oolite.install(this);
     }
@@ -530,7 +532,7 @@ public class Expansion implements Comparable {
      */
     public void enable() throws IOException {
         if (oolite == null) {
-            throw new IllegalStateException("oolite must be set before");
+            throw new IllegalStateException(EXPANSION_OOLITE_MUST_BE_SET);
         }
         oolite.enable(this);
     }
@@ -540,7 +542,7 @@ public class Expansion implements Comparable {
      */
     public void disable() throws IOException {
         if (oolite == null) {
-            throw new IllegalStateException("oolite must be set before");
+            throw new IllegalStateException(EXPANSION_OOLITE_MUST_BE_SET);
         }
         oolite.disable(this);
     }
@@ -550,7 +552,7 @@ public class Expansion implements Comparable {
      */
     public void remove() throws IOException {
         if (oolite == null) {
-            throw new IllegalStateException("oolite must be set before");
+            throw new IllegalStateException(EXPANSION_OOLITE_MUST_BE_SET);
         }
         oolite.remove(this);
     }
