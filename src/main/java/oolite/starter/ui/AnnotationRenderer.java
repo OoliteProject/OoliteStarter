@@ -47,7 +47,7 @@ public class AnnotationRenderer implements TableCellRenderer {
 //            Rectangle2D r = g.getFont().getStringBounds(indicator, frc);
 //            g.drawString(indicator, (int)(c.getWidth()-r.getWidth()), (int)(c.getHeight() - 1));
         }
-    };
+    }
     
     private TableCellRenderer parent;
     private MyLayerUI layerUI;

@@ -6,6 +6,7 @@ import java.awt.Color;
 import javax.swing.DefaultListModel;
 import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
+import oolite.starter.model.ExpansionReference;
 import oolite.starter.model.SaveGame;
 
 /**
@@ -14,7 +15,7 @@ import oolite.starter.model.SaveGame;
  */
 public class SaveGamePanel extends javax.swing.JPanel {
     
-    private SaveGame data;
+    private transient SaveGame data;
     
     /**
      * Creates new form SaveGamePanel.
@@ -41,7 +42,7 @@ public class SaveGamePanel extends javax.swing.JPanel {
             txtShipKills.setText(String.valueOf(data.getShipKills()));
             txtPilotName.setText(String.valueOf(data.getPlayerName()));
 
-            DefaultListModel dlm = new DefaultListModel<SaveGame.ExpansionReference>();
+            DefaultListModel dlm = new DefaultListModel<ExpansionReference>();
             if (data.getExpansions() != null) {
                 dlm.addAll(data.getExpansions());
                 
@@ -50,11 +51,11 @@ public class SaveGamePanel extends javax.swing.JPanel {
                 }
 
                 Border border = null;
-                for (SaveGame.ExpansionReference er: data.getExpansions()) {
-                    if (er.status == SaveGame.ExpansionReference.Status.SURPLUS && border==null) {
+                for (ExpansionReference er: data.getExpansions()) {
+                    if (er.status == ExpansionReference.Status.SURPLUS && border==null) {
                         border = new LineBorder(Color.orange);
                     }
-                    if (er.status == SaveGame.ExpansionReference.Status.MISSING) {
+                    if (er.status == ExpansionReference.Status.MISSING) {
                         border = new LineBorder(Color.red);
                         break;
                     }
@@ -76,7 +77,7 @@ public class SaveGamePanel extends javax.swing.JPanel {
             txtShipKills.setText("");
             txtPilotName.setText("");
             
-            lsExpansions.setModel(new DefaultListModel<SaveGame.ExpansionReference>());
+            lsExpansions.setModel(new DefaultListModel<ExpansionReference>());
             jScrollPane1.setBorder(null);
         }
     }
@@ -305,7 +306,7 @@ public class SaveGamePanel extends javax.swing.JPanel {
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JList<SaveGame.ExpansionReference> lsExpansions;
+    private javax.swing.JList<ExpansionReference> lsExpansions;
     private javax.swing.JTextField txtCredits;
     private javax.swing.JTextField txtFilename;
     private javax.swing.JTextField txtOoliteVersion;

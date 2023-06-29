@@ -30,7 +30,6 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
@@ -40,6 +39,7 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import oolite.starter.model.Expansion;
+import oolite.starter.model.ExpansionReference;
 import oolite.starter.model.SaveGame;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -163,7 +163,7 @@ public class Oolite {
         String resourcepaths = xpath.evaluate("/plist/dict/key[.='mission_variables']/following-sibling::dict/key[.='mission_ooliteStarter_oxpList']/following-sibling::string", doc);
 
         if (resourcepaths != null && !resourcepaths.isEmpty()) {
-            List<SaveGame.ExpansionReference> expansions = new ArrayList<>();
+            List<ExpansionReference> expansions = new ArrayList<>();
             StringTokenizer st = new StringTokenizer(resourcepaths, ",");
             st.nextToken(); // Resources
             String managedAddOnDir = st.nextToken(); // ManagedAddOns
@@ -195,46 +195,12 @@ public class Oolite {
         return result;
     }
     
-    protected boolean contains(List<SaveGame.ExpansionReference> list, Expansion expansion) {
-        for (SaveGame.ExpansionReference ref: list) {
+    protected boolean contains(List<ExpansionReference> list, Expansion expansion) {
+        for (ExpansionReference ref: list) {
             if (expansion.getLocalFile().getName().endsWith(ref.name)) {
                 return true;
             }
         }
-        
-//            if (resourcepaths != null && !resourcepaths.isEmpty()) {
-//                List<SaveGame.ExpansionReference> expansions = new ArrayList<>();
-//                StringTokenizer st = new StringTokenizer(resourcepaths, ",");
-//                st.nextToken(); // Resources
-//                String managedAddOnDir = st.nextToken(); // ManagedAddOns
-//                String addOnDir = st.nextToken(); // AddOns
-//                String myAddOn = addOnDir + File.separator + OOLITE_EXPANSION_FQN;
-//                String debugAddOn = addOnDir + File.separator + "Basic-debug.oxp";
-//                
-//                while (st.hasMoreTokens()) {
-//                    String token = st.nextToken();
-//                    if (token.startsWith(managedAddOnDir)) {
-//                        String name = token.substring(managedAddOnDir.length()+1);
-//                        expansions.add(getExpansionReference(name));
-//                    } else if (token.equals(debugAddOn)) {
-//                        // do nothing
-//                    } else if (token.equals(myAddOn) || token.endsWith(OOLITE_EXPANSION_FQN)) {
-//                        // do nothing
-//                    } else if (token.startsWith(addOnDir)) {
-//                        String name = token.substring(addOnDir.length()+1);
-//                        expansions.add(getExpansionReference(name));
-//                    } else {
-//                        expansions.add(getExpansionReference(token));
-//                    }
-//                }
-//                
-//                Collections.sort(expansions);
-//                
-//                for (SaveGame.ExpansionReference s: expansions) {
-//                    log.warn("we have {}", s);
-//                }
-//                result.setExpansions(expansions);
-//            }
 
         return false;
     }
@@ -247,23 +213,23 @@ public class Oolite {
      * 
      * @param references 
      */
-    protected void checkSurplusExpansions(List<SaveGame.ExpansionReference> references) {
+    protected void checkSurplusExpansions(List<ExpansionReference> references) {
         if (references == null) {
             throw new IllegalArgumentException("references must not be null");
         }
         List<Expansion> localExpansions = getLocalExpansions();
-        List<SaveGame.ExpansionReference> surplus = new ArrayList<>();
+        List<ExpansionReference> surplus = new ArrayList<>();
         
         for (Expansion expansion: localExpansions) {
             switch (expansion.getIdentifier()) {
-                case "org.oolite.oolite.debug":
+                case OOLITE_EXPANSION_FQN, "org.oolite.oolite.debug":
                     break;
                 default:
                     if (!contains(references, expansion)) {
                         // add a SURPLUS
-                        SaveGame.ExpansionReference ref = new SaveGame.ExpansionReference();
+                        ExpansionReference ref = new ExpansionReference();
                         ref.name = expansion.getIdentifier() + "@" + expansion.getVersion();
-                        ref.status = SaveGame.ExpansionReference.Status.SURPLUS;
+                        ref.status = ExpansionReference.Status.SURPLUS;
                         surplus.add(ref);
                     }
             }
@@ -433,7 +399,7 @@ public class Oolite {
      * @param vc the value context to read
      * @return the Expansion
      */
-    public Expansion createExpansion(PlistParser.ValueContext vc) throws IOException {
+    public Expansion createExpansion(PlistParser.ValueContext vc) {
         log.debug("createExpansion({})", vc);
         return createExpansion(vc.dictionary());
     }
@@ -444,7 +410,7 @@ public class Oolite {
      * @param dc the dictionary context to read
      * @return the Expansion
      */    
-    public Expansion createExpansion(PlistParser.DictionaryContext dc) throws IOException {
+    public Expansion createExpansion(PlistParser.DictionaryContext dc) {
         log.debug("createExpansion({})", dc);
         Expansion result = new Expansion();
         for (PlistParser.KeyvaluepairContext kvc: dc.keyvaluepair()) {
@@ -587,7 +553,7 @@ public class Oolite {
                 }
                 
             } catch (Exception e) {
-                log.warn("Could not read from " + url, e);
+                log.warn("Could not read from {}", url, e);
             }
         }
         
@@ -689,7 +655,7 @@ public class Oolite {
                     InputStream stream = zipFile.getInputStream(entry);
                     return createExpansion(stream, f.getAbsolutePath() + "!" + entry.getName());
                 } else {
-                    // keep quiet log.debug("ignoring zipentry {}", entry.getName());
+                    log.trace("ignoring zipentry {}", entry.getName());
                 }
             }
         }
@@ -916,13 +882,13 @@ public class Oolite {
                 log.error("Don't know how to handle {}", i);
             } else if (expansion.isLocal() && expansion.isEnabled()) {
                 // already here - do nothing
-                log.info("{} is already installed & enabled - doing nothing");
+                log.info("{} is already installed & enabled - doing nothing", i);
             } else if (expansion.isLocal() && !expansion.isEnabled()) {
-                log.info("{} is already installed but disabled - enabling");
+                log.info("{} is already installed but disabled - enabling", i);
                 pm.setNote("enabling "+ i);
                 expansion.enable();
             } else {
-                log.info("{} is not installed - installing");
+                log.info("{} is not installed - installing", i);
                 pm.setNote("installing "+ i);
                 expansion.install();
             }
@@ -937,7 +903,7 @@ public class Oolite {
      * 
      * @param destination the file to write to
      */
-    public void exportEnabledExpansions(File destination) throws IOException, ParserConfigurationException, TransformerConfigurationException, TransformerException {
+    public void exportEnabledExpansions(File destination) throws IOException, ParserConfigurationException, TransformerException {
         List<Expansion> expansions = getAllExpansions();
         
         DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
@@ -971,10 +937,10 @@ public class Oolite {
      * @param expansions the expansions to check
      * @return the list of discrepancies found
      */
-    public List<SaveGame.ExpansionReference> validateDependencies(List<Expansion> expansions) throws IOException {
+    public List<ExpansionReference> validateDependencies(List<Expansion> expansions) {
         log.debug("validateDependencies(...)");
         
-        List<SaveGame.ExpansionReference> result =  new ArrayList<>();
+        List<ExpansionReference> result =  new ArrayList<>();
                 
         for (Expansion expansion: expansions) {
             if (!expansion.isEnabled()) {
@@ -988,8 +954,8 @@ public class Oolite {
                         dependency = dependency.substring(0, idx);
                     }
                     
-                    SaveGame.ExpansionReference er = getExpansionReference(dependency);
-                    if (er.status == SaveGame.ExpansionReference.Status.MISSING) {
+                    ExpansionReference er = getExpansionReference(dependency);
+                    if (er.status == ExpansionReference.Status.MISSING) {
                         result.add(er);
                     }
                 }
@@ -1002,9 +968,9 @@ public class Oolite {
                         dependency = dependency.substring(0, idx);
                     }
 
-                    SaveGame.ExpansionReference er = getExpansionReference(dependency);
-                    if (er.status == SaveGame.ExpansionReference.Status.OK) {
-                        er.status = SaveGame.ExpansionReference.Status.SURPLUS;
+                    ExpansionReference er = getExpansionReference(dependency);
+                    if (er.status == ExpansionReference.Status.OK) {
+                        er.status = ExpansionReference.Status.SURPLUS;
                         result.add(er);
                     }
                 }
@@ -1063,10 +1029,10 @@ public class Oolite {
         FileUtils.deleteDirectory(destDir);
     }
     
-    protected SaveGame.ExpansionReference getExpansionReference(String name) {
-        SaveGame.ExpansionReference result = new SaveGame.ExpansionReference();
+    protected ExpansionReference getExpansionReference(String name) {
+        ExpansionReference result = new ExpansionReference();
         result.name = name;
-        result.status = SaveGame.ExpansionReference.Status.MISSING;
+        result.status = ExpansionReference.Status.MISSING;
         
         // find a direct match
         if (
@@ -1074,7 +1040,7 @@ public class Oolite {
             ||
                 new File(configuration.getManagedAddonsDir(), name).exists()
             ) {
-            result.status = SaveGame.ExpansionReference.Status.OK;
+            result.status = ExpansionReference.Status.OK;
             return result;
         }
         
@@ -1087,14 +1053,14 @@ public class Oolite {
         File[] files = configuration.getAddonsDir().listFiles();
         for (File f: files) {
             if (f.getName().contains(id)) {
-                result.status = SaveGame.ExpansionReference.Status.OK;
+                result.status = ExpansionReference.Status.OK;
                 return result;
             }
         }
         files = configuration.getManagedAddonsDir().listFiles();
         for (File f: files) {
             if (f.getName().contains(id)) {
-                result.status = SaveGame.ExpansionReference.Status.OK;
+                result.status = ExpansionReference.Status.OK;
                 return result;
             }
         }

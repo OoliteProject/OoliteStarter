@@ -142,11 +142,8 @@ public class ExpansionsTableModel extends AbstractTableModel implements Property
         if (pce.getSource() instanceof Expansion e) {
             int index = data.indexOf(e);
 
-            SwingUtilities.invokeLater(new Runnable() {
-                @Override
-                public void run() {
+            SwingUtilities.invokeLater(() -> {
                     fireTableRowsUpdated(index, index);
-                }
             });
         }
     }

@@ -225,6 +225,7 @@ public class ExpansionPanel extends javax.swing.JPanel implements PropertyChange
     }//GEN-LAST:event_btInstallActionPerformed
 
     private void btEnableActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btEnableActionPerformed
+        log.debug("btEnableActionPerformed({})", evt);
         try {
             new ExpansionWorker(data, ExpansionWorker.Action.ENABLE, this).execute();
         } catch (Exception e) {
@@ -233,6 +234,7 @@ public class ExpansionPanel extends javax.swing.JPanel implements PropertyChange
     }//GEN-LAST:event_btEnableActionPerformed
 
     private void btDisableActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btDisableActionPerformed
+        log.debug("btDisableActionPerformed({})", evt);
         try {
             new ExpansionWorker(data, ExpansionWorker.Action.DISABLE, this).execute();
         } catch (Exception e) {
@@ -241,6 +243,7 @@ public class ExpansionPanel extends javax.swing.JPanel implements PropertyChange
     }//GEN-LAST:event_btDisableActionPerformed
 
     private void btRemoveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btRemoveActionPerformed
+        log.debug("btRemoveActionPerformed({})", evt);
         try {
             new ExpansionWorker(data, ExpansionWorker.Action.REMOVE, this).execute();
         } catch (Exception e) {
@@ -269,11 +272,6 @@ public class ExpansionPanel extends javax.swing.JPanel implements PropertyChange
 
     @Override
     public void propertyChange(PropertyChangeEvent pce) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                update();
-            }
-        });
+        SwingUtilities.invokeLater(() -> update() );
     }
 }

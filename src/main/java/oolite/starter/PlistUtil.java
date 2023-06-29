@@ -35,8 +35,7 @@ public class PlistUtil {
             log.error("syntaxError({}, {}, {}, {}, {}, {})", recognizer, offendingSymbol, line, charPositionInLine, msg, e);
 
             String symbol = "";
-            if (offendingSymbol instanceof CommonToken) {
-                CommonToken token = (CommonToken)offendingSymbol;
+            if (offendingSymbol instanceof CommonToken token) {
                 //ModelParser.VOCABULARY
                 symbol = recognizer.getVocabulary().getSymbolicName(token.getType());
             }

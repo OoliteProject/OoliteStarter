@@ -17,8 +17,10 @@ import org.apache.logging.log4j.Logger;
  */
 public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteListener {
     private static final Logger log = LogManager.getLogger();
+
+    private static final String STARTGAMEPANEL_COULD_NOT_RUN_GAME = "Could not run game";
     
-    private Oolite oolite;
+    private transient Oolite oolite;
     private SaveGameTableModel model;
     private SaveGamePanel sgp;
 
@@ -197,8 +199,8 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
             
             oolite.run();
         } catch (Exception e) {
-            log.error("Could not run game", e);
-            JOptionPane.showMessageDialog(null, constructMessage("Could not run game", e));
+            log.error(STARTGAMEPANEL_COULD_NOT_RUN_GAME, e);
+            JOptionPane.showMessageDialog(null, constructMessage(STARTGAMEPANEL_COULD_NOT_RUN_GAME, e));
         } finally {
             SwingUtilities.getRoot(this).setVisible(true);
         }
@@ -215,9 +217,9 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
             
             update();
         } catch (Exception e) {
-            log.error("Could not run game", e);
+            log.error(STARTGAMEPANEL_COULD_NOT_RUN_GAME, e);
             
-            JOptionPane.showMessageDialog(null, constructMessage("Could not run game", e));
+            JOptionPane.showMessageDialog(null, constructMessage(STARTGAMEPANEL_COULD_NOT_RUN_GAME, e));
         } finally {
             SwingUtilities.getRoot(this).setVisible(true);
         }
@@ -248,6 +250,7 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
 
     @Override
     public void launched() {
+        // we are not yet interested in this event
     }
 
     @Override

@@ -11,33 +11,6 @@ import java.util.List;
  */
 public class SaveGame {
     
-    public static class ExpansionReference implements Comparable<ExpansionReference> {
-
-        public enum Status {
-            OK, MISSING, SURPLUS
-        }
-
-        public String name;
-        public Status status;
-        
-        @Override
-        public int compareTo(ExpansionReference other) {
-            if (other == null) {
-                return 1;
-            }
-            if (name == null) {
-                return 1;
-            }
-            return this.name.compareTo(other.name);
-        }
-
-        @Override
-        public String toString() {
-            return "ExpansionReference{" + "name=" + name + ", status=" + status + '}';
-        }
-
-    }
-    
     private String name;
     private File file;
     private String playerName;

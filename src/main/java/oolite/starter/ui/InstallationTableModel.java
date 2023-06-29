@@ -26,6 +26,7 @@ public class InstallationTableModel extends AbstractTableModel implements Proper
      * @param data the data to display
      */
     public InstallationTableModel(Configuration data) {
+        log.debug("InstallationTableModel({})", data);
         this.data = data;
     }
     

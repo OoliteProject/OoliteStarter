@@ -13,7 +13,7 @@ import oolite.starter.model.SaveGame;
  */
 public class SaveGameTableModel extends AbstractTableModel {
     
-    private List<SaveGame> data;
+    private transient List<SaveGame> data;
     
     /**
      * Creates a new SaveGameTableModel.

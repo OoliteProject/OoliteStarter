@@ -8,18 +8,15 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.ListCellRenderer;
-import oolite.starter.model.SaveGame;
+import oolite.starter.model.ExpansionReference;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import static oolite.starter.model.SaveGame.ExpansionReference.Status.OK;
-import static oolite.starter.model.SaveGame.ExpansionReference.Status.MISSING;
-import static oolite.starter.model.SaveGame.ExpansionReference.Status.SURPLUS;
 
 /**
  *
  * @author hiran
  */
-public class ExpansionReferenceCellRenderer  extends JLabel implements ListCellRenderer<SaveGame.ExpansionReference> {
+public class ExpansionReferenceCellRenderer  extends JLabel implements ListCellRenderer<ExpansionReference> {
     private static final Logger log = LogManager.getLogger();
 
         private static final ImageIcon iiOk = new ImageIcon(ExpansionReferenceCellRenderer.class.getResource("/icons/check_circle_FILL0_wght400_GRAD0_opsz24.png"));
@@ -28,11 +25,13 @@ public class ExpansionReferenceCellRenderer  extends JLabel implements ListCellR
 
         @Override
         public Component getListCellRendererComponent(
-                JList<? extends SaveGame.ExpansionReference> list, 
-                SaveGame.ExpansionReference value, 
+                JList<? extends ExpansionReference> list, 
+                ExpansionReference value, 
                 int index, 
                 boolean isSelected, 
                 boolean isFocused) {
+            log.debug("getListCellRendererComponent(...)");
+            
             setText(value.name);
             switch(value.status) {
                 case OK:

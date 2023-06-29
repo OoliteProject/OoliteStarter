@@ -20,14 +20,12 @@ import javax.swing.RowFilter;
 import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.TableRowSorter;
 import oolite.starter.Oolite;
 import oolite.starter.model.Expansion;
-import oolite.starter.model.SaveGame;
+import oolite.starter.model.ExpansionReference;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -43,6 +41,7 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
         private String filterMode;
         
         public MyRowStatusFilter(String filterMode, String filterText) {
+            log.debug("MyRowStatusFilter({}, {})", filterMode, filterText);
             this.filterMode = filterMode;
         }
 
@@ -50,12 +49,8 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
         public boolean include(Entry<? extends ExpansionsTableModel, ? extends Integer> entry) {
             log.debug("include({})", entry);
             
-            ExpansionsTableModel etm = entry.getModel();
             Expansion expansion = model.getRow(entry.getIdentifier());
             
-            /*
-updatable
-            */
             switch(filterMode) {
                 case "installed":
                     return expansion.isLocal();
@@ -89,14 +84,11 @@ updatable
         initComponents();
         setName("Expansions");
         
-        jTable1.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-            @Override
-            public void valueChanged(ListSelectionEvent lse) {
-                log.debug("valueChanged({})", lse);
-                if (!lse.getValueIsAdjusting()) {
-                    // we have a final value - let's render it
-                    showDetailsOfSelection();
-                }
+        jTable1.getSelectionModel().addListSelectionListener(lse -> {
+            log.debug("valueChanged({})", lse);
+            if (!lse.getValueIsAdjusting()) {
+                // we have a final value - let's render it
+                showDetailsOfSelection();
             }
         });
         jTable1.setDefaultRenderer(Object.class, new AnnotationRenderer(jTable1.getDefaultRenderer(Object.class)));
@@ -440,19 +432,20 @@ updatable
     }//GEN-LAST:event_btExportActionPerformed
 
     private void btValidateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btValidateActionPerformed
+        log.debug("btValidateActionPerformed({})", evt);
         try {
             List<Expansion> es = new ArrayList<>();
             for (int i= 0; i< trw.getViewRowCount(); i++) {
                 es.add(model.getRow(jTable1.convertRowIndexToModel(i)));
             }
-            List<SaveGame.ExpansionReference> warnings = oolite.validateDependencies(es);
+            List<ExpansionReference> warnings = oolite.validateDependencies(es);
             
             if (warnings.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "All dependencies resolved.");
             } else {
-                DefaultListModel<SaveGame.ExpansionReference> dlm = new DefaultListModel<>();
+                DefaultListModel<ExpansionReference> dlm = new DefaultListModel<>();
                 dlm.addAll(warnings);
-                JList<SaveGame.ExpansionReference> list = new JList<>(dlm);
+                JList<ExpansionReference> list = new JList<>(dlm);
                 list.setCellRenderer(new ExpansionReferenceCellRenderer());
                 
                 JScrollPane sp = new JScrollPane(list);
@@ -475,6 +468,7 @@ updatable
     }//GEN-LAST:event_btValidateActionPerformed
 
     private void btReloadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btReloadActionPerformed
+        log.debug("btReloadActionPerformed({})", evt);
         try {
             update();
         } catch (Exception e) {
@@ -510,11 +504,8 @@ updatable
 
     @Override
     public void terminated() {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                update();
-            }
+        SwingUtilities.invokeLater(() -> {
+            update();
         });
     }
 }

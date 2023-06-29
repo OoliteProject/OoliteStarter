@@ -405,6 +405,7 @@ public class InstallationForm extends javax.swing.JPanel {
     }//GEN-LAST:event_btExecutableActionPerformed
 
     private void btSavegameDirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btSavegameDirActionPerformed
+        log.debug("btSavegameDirActionPerformed({})", evt);
         try {
             String dir = txtSavegameDir.getText();
             if (dir == null || dir.trim().isEmpty()) {
@@ -465,6 +466,7 @@ public class InstallationForm extends javax.swing.JPanel {
     }//GEN-LAST:event_btManagedAddOnDirActionPerformed
 
     private void btManagedDeactivatedAddOnDirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btManagedDeactivatedAddOnDirActionPerformed
+        log.debug("btManagedDeactivatedAddOnDirActionPerformed({})", evt);
         try {
             String dir = txtManagedDeactivatedAddOnDir.getText();
             if (dir == null || dir.trim().isEmpty()) {

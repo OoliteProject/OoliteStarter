@@ -20,6 +20,8 @@ public class InstallationsPanel extends javax.swing.JPanel {
     private static final Logger log = LogManager.getLogger();
 
     private static final String INSTALLATIONSPANEL_ERROR = "Error";
+    private static final String INSTALLATIONSPANEL_SELECT_ROW = "Please select row";
+    private static final String INSTALLATIONSPANEL_COULD_NOT_SAVE = "Could not save";
     
     private InstallationForm installationForm;
     private InstallationTableModel model;
@@ -56,6 +58,13 @@ public class InstallationsPanel extends javax.swing.JPanel {
                     // we have a final value - let's render it
                     showDetailsOfSelection();
                 }
+            }
+        });
+        jTable1.getSelectionModel().addListSelectionListener(lse -> {
+            log.debug("valueChanged({})", lse);
+            if (!lse.getValueIsAdjusting()) {
+                // we have a final value - let's render it
+                showDetailsOfSelection();
             }
         });
         trw = new TableRowSorter<InstallationTableModel>(model);
@@ -223,7 +232,7 @@ public class InstallationsPanel extends javax.swing.JPanel {
         try {
             int rowIndex = jTable1.getSelectedRow();
             if (rowIndex == -1) {
-                JOptionPane.showConfirmDialog(this, "Please select row");
+                JOptionPane.showConfirmDialog(this, INSTALLATIONSPANEL_SELECT_ROW);
                 return;
             }
             
@@ -250,7 +259,7 @@ public class InstallationsPanel extends javax.swing.JPanel {
         try {
             int rowIndex = jTable1.getSelectedRow();
             if (rowIndex == -1) {
-                JOptionPane.showConfirmDialog(this, "Please select row");
+                JOptionPane.showConfirmDialog(this, INSTALLATIONSPANEL_SELECT_ROW);
                 return;
             }
             
@@ -268,8 +277,8 @@ public class InstallationsPanel extends javax.swing.JPanel {
         try {
             configuration.saveConfiguration(new File(System.getProperty("user.home") + File.separator + ".oolite-starter.conf"));
         } catch (Exception e) {
-            log.error("Could not save", e);
-            JOptionPane.showMessageDialog(this, "Could not save");
+            log.error(INSTALLATIONSPANEL_COULD_NOT_SAVE, e);
+            JOptionPane.showMessageDialog(this, INSTALLATIONSPANEL_COULD_NOT_SAVE);
         }        
     }//GEN-LAST:event_btSaveActionPerformed
 
@@ -277,7 +286,7 @@ public class InstallationsPanel extends javax.swing.JPanel {
         try {
             int rowIndex = jTable1.getSelectedRow();
             if (rowIndex == -1) {
-                JOptionPane.showConfirmDialog(this, "Please select row");
+                JOptionPane.showConfirmDialog(this, INSTALLATIONSPANEL_SELECT_ROW);
                 return;
             }
             
@@ -294,8 +303,8 @@ public class InstallationsPanel extends javax.swing.JPanel {
             model.fireTableDataChanged();
             jTable1.getSelectionModel().setSelectionInterval(rowIndex, rowIndex);
         } catch (Exception e) {
-            log.error("Could not save", e);
-            JOptionPane.showMessageDialog(this, "Could not save");
+            log.error(INSTALLATIONSPANEL_COULD_NOT_SAVE, e);
+            JOptionPane.showMessageDialog(this, INSTALLATIONSPANEL_COULD_NOT_SAVE);
         }        
     }//GEN-LAST:event_btActivateActionPerformed
 

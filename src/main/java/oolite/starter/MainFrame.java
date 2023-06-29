@@ -8,6 +8,7 @@ import java.time.Duration;
 import java.time.Instant;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
+import javax.swing.UnsupportedLookAndFeelException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
 import oolite.starter.ui.ExpansionsPanel;
@@ -57,7 +58,6 @@ public class MainFrame extends javax.swing.JFrame {
 
         InstallationsPanel ip = new InstallationsPanel();
         ip.setConfiguration(configuration);
-        //ip.setOolite(oolite);
         jTabbedPane1.add(ip);
     }
 
@@ -82,13 +82,13 @@ public class MainFrame extends javax.swing.JFrame {
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
-        log.info(MainFrame.class.getPackage().getImplementationTitle() + " " + MainFrame.class.getPackage().getImplementationVersion() + " starting up...");
+    public static void main(String[] args) {
+        log.info("{} {}  starting up...", MainFrame.class.getPackage().getImplementationTitle(), MainFrame.class.getPackage().getImplementationVersion());
 
         Runtime.getRuntime().addShutdownHook(new Thread("Shutdownhook") {
             @Override
             public void run() {
-                log.info(MainFrame.class.getPackage().getImplementationTitle() + " " + MainFrame.class.getPackage().getImplementationVersion() + " shutdown.");
+                log.info("{} {}  shutdown", MainFrame.class.getPackage().getImplementationTitle(), MainFrame.class.getPackage().getImplementationVersion());
             }
             
         });
@@ -109,14 +109,8 @@ public class MainFrame extends javax.swing.JFrame {
             javax.swing.UIManager.setLookAndFeel(new com.formdev.flatlaf.FlatDarkLaf());
             
             
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(MainFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(MainFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(MainFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(MainFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
+            log.info("Could not set look and feel", ex);
         }
         //</editor-fold>
 
@@ -124,37 +118,36 @@ public class MainFrame extends javax.swing.JFrame {
         // react to --version and --help
         
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                try {
-                    Instant i0 = Instant.now();
-                    
-                    MainFrame mf = new MainFrame();
-                    mf.pack();
-                    mf.setLocationRelativeTo(null);
-                    
-                    Instant i1 = Instant.now();
-                    
-                    Duration spent = Duration.between(i0, i1);
-                    long spentSeconds = spent.getSeconds();
-                    
-                    GithubVersionChecker gvc = new GithubVersionChecker();
-                    gvc.init();
-                    
-                    if (spentSeconds < 4) {
-                        Thread.sleep((4 - spentSeconds) * 1000);
-                    }
-                    
-                    mf.setVisible(true);
-                    gvc.maybeAnnounceUpdate(mf);
-                    
-                } catch (Exception e) {
-                    System.out.println("Could not initialize UI");
-                    e.printStackTrace(System.out);
-                    
-                    JOptionPane.showMessageDialog(null, e.getClass().getName() + ":\n" + e.getMessage(), "Fatal Error", JOptionPane.ERROR_MESSAGE);
-                    System.exit(1);
+        java.awt.EventQueue.invokeLater(() -> {
+            try {
+                Instant i0 = Instant.now();
+
+                MainFrame mf = new MainFrame();
+                mf.pack();
+                mf.setLocationRelativeTo(null);
+
+                Instant i1 = Instant.now();
+
+                Duration spent = Duration.between(i0, i1);
+                long spentSeconds = spent.getSeconds();
+
+                GithubVersionChecker gvc = new GithubVersionChecker();
+                gvc.init();
+
+                if (spentSeconds < 4) {
+                    Thread.sleep((4 - spentSeconds) * 1000);
                 }
+
+                mf.setVisible(true);
+                gvc.maybeAnnounceUpdate(mf);
+
+            } catch (InterruptedException e) {
+                log.fatal("Interrupted", e);
+                Thread.currentThread().interrupt();
+            } catch (Exception e) {
+                log.fatal("Could not initialize UI", e);
+                JOptionPane.showMessageDialog(null, e.getClass().getName() + ":\n" + e.getMessage(), "Fatal Error", JOptionPane.ERROR_MESSAGE);
+                System.exit(1);
             }
         });
     }

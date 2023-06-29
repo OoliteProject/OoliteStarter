@@ -3,16 +3,12 @@
 
 package oolite.starter.model;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 /**
  *
  * @author hiran
  */
 public class Installation {
-    private static final Logger log = LogManager.getLogger();
-
+    
     private String homeDir;
     private String version;
     private String excecutable;

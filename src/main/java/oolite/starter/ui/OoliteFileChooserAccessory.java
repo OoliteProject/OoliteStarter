@@ -27,11 +27,6 @@ public class OoliteFileChooserAccessory extends JPanel implements PropertyChange
     private JTextArea jta;
     
     /**
-     * The file we are showing right now.
-     */
-    private File file;
-
-    /**
      * Creates a new OoliteFileChooserAccessory.
      */
     public OoliteFileChooserAccessory(JFileChooser jfc) {
@@ -50,11 +45,12 @@ public class OoliteFileChooserAccessory extends JPanel implements PropertyChange
         log.debug("propertyChange({})", pce);
 
         switch (pce.getPropertyName()) {
-            case JFileChooser.DIRECTORY_CHANGED_PROPERTY:
-            case JFileChooser.SELECTED_FILES_CHANGED_PROPERTY:
-            case JFileChooser.SELECTED_FILE_CHANGED_PROPERTY:
+            case JFileChooser.DIRECTORY_CHANGED_PROPERTY, JFileChooser.SELECTED_FILES_CHANGED_PROPERTY, JFileChooser.SELECTED_FILE_CHANGED_PROPERTY:
                 File f = (File)pce.getNewValue();
                 jta.setText(Oolite.getDescription(Oolite.isOoliteRelevant(f)));
+                break;
+            default:
+                break;
         }
         
     }

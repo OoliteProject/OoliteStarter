@@ -177,5 +177,5 @@ public class SaveGameTest {
         sg.setShipName("shipName");
         assertEquals("SaveGame{file=null, playerName=null, credits=0, currentSystemName=null, ooliteVersion=null, shipKills=0, shipClassName=null, shipName=shipName}", sg.toString());
     }
-
+    
 }

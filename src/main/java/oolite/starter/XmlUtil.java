@@ -21,6 +21,12 @@ import org.xml.sax.SAXException;
  */
 public class XmlUtil {
     private static final Logger log = LogManager.getLogger();
+    
+    /**
+     * Do not create instances. We have all static methods.
+     */
+    private XmlUtil() {
+    }
 
     /**
      * Parses an XML inputstream into a DOM document.
@@ -32,6 +38,8 @@ public class XmlUtil {
      * @throws IOException something went wrong
      */
     public static Document parseXmlStream(InputStream in) throws ParserConfigurationException, SAXException, IOException {
+        log.debug("parseXmlStream(...)");
+        
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         dbf.setValidating(false);
         dbf.setFeature("http://xml.org/sax/features/namespaces", false);
@@ -54,6 +62,8 @@ public class XmlUtil {
      * @throws IOException something went wrong
      */
     public static Document parseXmlFile(File f) throws ParserConfigurationException, SAXException, IOException {
+        log.debug("parseXmlFile({})", f);
+
         InputStream in = new FileInputStream(f);
         return parseXmlStream(in);
     }
