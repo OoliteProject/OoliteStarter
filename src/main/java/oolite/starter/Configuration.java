@@ -214,7 +214,7 @@ public class Configuration {
         if (installations.contains(installation)) {
             activeInstallation = installation;
         } else {
-            activeInstallation = null;
+            throw new IllegalArgumentException("installation must be known");
         }
     }
 
@@ -306,7 +306,11 @@ public class Configuration {
         if (activeInstallation == null) {
             throw new IllegalStateException(CONF_NO_ACTIVE_INSTALLATION);
         }
-        return new File(activeInstallation.getAddonDir());
+        String addonDir =  activeInstallation.getAddonDir();
+        if (addonDir == null) {
+            throw new IllegalStateException("active installation has no addonDir");
+        }
+        return new File(addonDir);
     }
     
     /**

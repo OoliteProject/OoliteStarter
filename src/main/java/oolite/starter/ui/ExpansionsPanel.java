@@ -382,6 +382,7 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
     }//GEN-LAST:event_cbFilterModeItemStateChanged
 
     private void btActivateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btActivateActionPerformed
+        log.debug("btActivateActionPerformed({})", evt);
         try {
             JFileChooser jfc = new JFileChooser();
             FileFilter filter = new FileNameExtensionFilter("Oolite Expansion Set (*.oolite-es)", "oolite-es");
@@ -399,6 +400,7 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
     }//GEN-LAST:event_btActivateActionPerformed
 
     private void btExportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btExportActionPerformed
+        log.debug("btExportActionPerformed({})", evt);
         try {
             JFileChooser jfc = new JFileChooser();
             FileFilter filter = new FileNameExtensionFilter("Oolite Expansion Set (*.oolite-es)", "oolite-es");
@@ -410,17 +412,17 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
                 File f = jfc.getSelectedFile();
                 
                 // Java does not automatically add the extension
-                if (jfc.getFileFilter() instanceof FileNameExtensionFilter fnef) {
-                    if (!fnef.accept(f)) {
-                        // attach extension
-                        f = new File(f.getAbsolutePath() + "." + fnef.getExtensions()[0]);
-                    }
+                if (jfc.getFileFilter() instanceof FileNameExtensionFilter fnef
+                        && !fnef.accept(f)
+                ) {
+                    // attach extension
+                    f = new File(f.getAbsolutePath() + "." + fnef.getExtensions()[0]);
                 }
                 
-                if (f.exists()) {
-                    if (JOptionPane.showConfirmDialog(this, String.format("File %s exists. Do you want to overwrite?", f.getAbsolutePath())) != JOptionPane.OK_OPTION) {
-                        return;
-                    }
+                if (f.exists()
+                    && JOptionPane.showConfirmDialog(this, String.format("File %s exists. Do you want to overwrite?", f.getAbsolutePath())) != JOptionPane.OK_OPTION
+                ) {
+                    return;
                 }
                 
                 oolite.exportEnabledExpansions(f);

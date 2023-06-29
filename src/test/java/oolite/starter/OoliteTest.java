@@ -5,18 +5,16 @@ package oolite.starter;
 import com.chaudhuri.plist.PlistParser;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.ConnectException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
 import oolite.starter.model.Expansion;
+import oolite.starter.model.Installation;
 import oolite.starter.model.SaveGame;
-import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.AfterEach;
@@ -254,5 +252,42 @@ public class OoliteTest {
         List<Expansion> expansions = oolite.getLocalExpansions();
         assertEquals(1, expansions.size());
     }
+    
+    @Test
+    public void testOoliteListener() throws IOException, InterruptedException {
+        log.info("testOoliteListener");
+ 
+        Oolite.OoliteListener listener = Mockito.mock(Oolite.OoliteListener.class);
+        Oolite oolite = new Oolite();
+        
+        Mockito.verify(listener, Mockito.times(0)).launched();
+        Mockito.verify(listener, Mockito.times(0)).terminated();
+        
+        oolite.fireLaunched();
+        Mockito.verify(listener, Mockito.times(0)).launched();
+        Mockito.verify(listener, Mockito.times(0)).terminated();
 
+        oolite.fireTerminated();
+        Mockito.verify(listener, Mockito.times(0)).launched();
+        Mockito.verify(listener, Mockito.times(0)).terminated();
+
+        oolite.addOoliteListener(listener);
+
+        oolite.fireLaunched();
+        Mockito.verify(listener, Mockito.times(1)).launched();
+        Mockito.verify(listener, Mockito.times(0)).terminated();
+
+        oolite.fireTerminated();
+        Mockito.verify(listener, Mockito.times(1)).launched();
+        Mockito.verify(listener, Mockito.times(1)).terminated();
+
+        oolite.removeOoliteListener(listener);
+        oolite.fireLaunched();
+        Mockito.verify(listener, Mockito.times(1)).launched();
+        Mockito.verify(listener, Mockito.times(1)).terminated();
+
+        oolite.fireTerminated();
+        Mockito.verify(listener, Mockito.times(1)).launched();
+        Mockito.verify(listener, Mockito.times(1)).terminated();
+    }
 }

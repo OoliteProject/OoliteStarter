@@ -21,6 +21,9 @@ public class ExpansionReference implements Comparable<ExpansionReference> {
         if (other == null) {
             return 1;
         }
+        if (other == this) {
+            return 0;
+        }
         if (name == null) {
             return 1;
         }

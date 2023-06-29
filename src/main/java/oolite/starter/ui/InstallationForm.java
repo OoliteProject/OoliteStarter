@@ -3,7 +3,9 @@
 package oolite.starter.ui;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import oolite.starter.model.Installation;
@@ -305,6 +307,74 @@ public class InstallationForm extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    void maybeFillVersion(File homeDir) throws FileNotFoundException, IOException {
+        if (txtVersion.getText().isBlank()) {
+            File releaseTxt = new File(homeDir, "release.txt");
+            if (releaseTxt.isFile()) {
+                txtVersion.setText(IOUtils.toString(new FileReader(releaseTxt)).trim());
+            }
+        }
+    }
+
+    void maybeFillExecutable(File homeDir) {
+        if (txtExecutable.getText().isBlank()) {
+            File executable = new File(homeDir, "oolite.app/oolite-wrapper");
+            if (!executable.exists()) {
+                executable = new File(homeDir, "oolite.app/oolite.exe");
+            }
+            if (!executable.exists()) {
+                executable = new File(homeDir, "oolite.app/oolite");
+            }
+
+            if (executable.isFile()) {
+                txtExecutable.setText(executable.getAbsolutePath());
+            }
+        }
+    }
+
+    void maybeFillSavegameDir(File homeDir) {
+        if (txtSavegameDir.getText().isBlank()) {
+            File d = new File(homeDir, "oolite.app/oolite-saves");
+            if (d.isDirectory()) {
+                txtSavegameDir.setText(d.getAbsolutePath());
+            }
+        }
+        if (txtSavegameDir.getText().isBlank()) {
+            File d = new File(new File(System.getProperty(INSTALLATIONFORM_USER_HOME)), "oolite-saves");
+            if (d.isDirectory()) {
+                txtSavegameDir.setText(d.getAbsolutePath());
+            }
+        }
+    }
+    
+    void maybeFillAddonDir(File homeDir) throws IOException {
+        if (txtAddOnDir.getText().isBlank()) {
+            File d = new File(homeDir, "AddOns");
+            if (d.isDirectory()) {
+                txtAddOnDir.setText(d.getAbsolutePath());
+            }
+
+            if (txtDeactivatedAddOnDir.getText().isBlank()) {
+                File dd = new File(d, "../DeactivatedAddOns");
+                txtDeactivatedAddOnDir.setText(dd.getCanonicalPath());
+            }
+        }
+    }
+
+    void maybeFillManagedAddonDir(File homeDir) throws IOException {
+        if (txtManagedAddOnDir.getText().isBlank()) {
+            File d = new File(new File(System.getProperty(INSTALLATIONFORM_USER_HOME)), "GNUstep/Library/ApplicationSupport/Oolite/ManagedAddOns");
+            if (d.isDirectory()) {
+                txtManagedAddOnDir.setText(d.getAbsolutePath());
+            }
+
+            if (txtManagedDeactivatedAddOnDir.getText().isBlank()) {
+                File dd = new File(d, "../ManagedDeactivatedAddOns");
+                txtManagedDeactivatedAddOnDir.setText(dd.getCanonicalPath());
+            }
+        }
+    }
+    
     private void btHomeDirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btHomeDirActionPerformed
         try {
             String dir = txtHomeDir.getText();
@@ -320,63 +390,11 @@ public class InstallationForm extends javax.swing.JPanel {
                 txtHomeDir.setText(jfc.getSelectedFile().getAbsolutePath());
                 
                 // check which other fields we want to populate
-                if (txtVersion.getText().isBlank()) {
-                    File releaseTxt = new File(jfc.getSelectedFile(), "release.txt");
-                    if (releaseTxt.isFile()) {
-                        txtVersion.setText(IOUtils.toString(new FileReader(releaseTxt)).trim());
-                    }
-                }
-                
-                if (txtExecutable.getText().isBlank()) {
-                    File executable = new File(jfc.getSelectedFile(), "oolite.app/oolite-wrapper");
-                    if (!executable.exists()) {
-                        executable = new File(jfc.getSelectedFile(), "oolite.app/oolite.exe");
-                    }
-                    if (!executable.exists()) {
-                        executable = new File(jfc.getSelectedFile(), "oolite.app/oolite");
-                    }
-
-                    if (executable.isFile()) {
-                        txtExecutable.setText(executable.getAbsolutePath());
-                    }
-                }
-
-                if (txtSavegameDir.getText().isBlank()) {
-                    File d = new File(jfc.getSelectedFile(), "oolite.app/oolite-saves");
-                    if (d.isDirectory()) {
-                        txtSavegameDir.setText(d.getAbsolutePath());
-                    }
-                }
-                if (txtSavegameDir.getText().isBlank()) {
-                    File d = new File(new File(System.getProperty(INSTALLATIONFORM_USER_HOME)), "oolite-saves");
-                    if (d.isDirectory()) {
-                        txtSavegameDir.setText(d.getAbsolutePath());
-                    }
-                }
-                
-                if (txtAddOnDir.getText().isBlank()) {
-                    File d = new File(jfc.getSelectedFile(), "AddOns");
-                    if (d.isDirectory()) {
-                        txtAddOnDir.setText(d.getAbsolutePath());
-                    }
-                    
-                    if (txtDeactivatedAddOnDir.getText().isBlank()) {
-                        File dd = new File(d, "../DeactivatedAddOns");
-                        txtDeactivatedAddOnDir.setText(dd.getCanonicalPath());
-                    }
-                }
-                
-                if (txtManagedAddOnDir.getText().isBlank()) {
-                    File d = new File(new File(System.getProperty(INSTALLATIONFORM_USER_HOME)), "GNUstep/Library/ApplicationSupport/Oolite/ManagedAddOns");
-                    if (d.isDirectory()) {
-                        txtManagedAddOnDir.setText(d.getAbsolutePath());
-                    }
-                    
-                    if (txtManagedDeactivatedAddOnDir.getText().isBlank()) {
-                        File dd = new File(d, "../ManagedDeactivatedAddOns");
-                        txtManagedDeactivatedAddOnDir.setText(dd.getCanonicalPath());
-                    }
-                }
+                maybeFillVersion(jfc.getSelectedFile());
+                maybeFillExecutable(jfc.getSelectedFile());
+                maybeFillSavegameDir(jfc.getSelectedFile());
+                maybeFillAddonDir(jfc.getSelectedFile());
+                maybeFillManagedAddonDir(jfc.getSelectedFile());
             }
         } catch (Exception e) {
             log.error("Could not set home dir", e);

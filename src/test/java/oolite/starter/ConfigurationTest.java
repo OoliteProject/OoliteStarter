@@ -9,6 +9,7 @@ import java.net.MalformedURLException;
 import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
+import oolite.starter.model.Installation;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -84,4 +85,29 @@ public class ConfigurationTest {
         assertEquals("/home/user/oolite-saves", String.valueOf(c.getSaveGameDir()));
     }
 
+    @Test
+    public void testActivateInstallation_String() throws MalformedURLException {
+        log.info("testActivateInstallation_String");
+        Configuration c = new Configuration();
+        try {
+            c.activateInstallation((String)null);
+            fail("expected exception");
+        } catch (UnsupportedOperationException e) {
+            assertEquals("not yet implemented", e.getMessage());
+            log.debug("caught expected exception");
+        }
+    }
+
+    @Test
+    public void testActivateInstallation_Installation() throws MalformedURLException {
+        log.info("testActivateInstallation_Installation");
+        Configuration c = new Configuration();
+        try {
+            c.activateInstallation((Installation)null);
+            fail("expected exception");
+        } catch (IllegalArgumentException e) {
+            assertEquals("installation must be known", e.getMessage());
+            log.debug("caught expected exception");
+        }
+    }
 }

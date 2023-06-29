@@ -75,6 +75,36 @@ public class ExpansionsTableModel extends AbstractTableModel implements Property
         }
     }
     
+    String getStatusString(Expansion row) {
+        String result = "";
+        if (row.isOnline()) {
+            result += "O";
+        } else {
+            result += "o";
+        }
+        if (row.isLocal()) {
+            result += "L";
+        } else {
+            result += "l";
+        }
+        if (row.isEnabled()) {
+            result += "E";
+        } else {
+            result += "e";
+        }
+        if (row.getRequiresOxps() !=null && row.getRequiresOxps().size()>0) {
+            result += "R";
+        } else {
+            result += "r";
+        }
+        if (row.getConflictOxps() !=null && row.getConflictOxps().size()>0) {
+            result += "C";
+        } else {
+            result += "c";
+        }
+        return result;
+    }
+    
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
         Expansion row = data.get(rowIndex);
@@ -84,35 +114,7 @@ public class ExpansionsTableModel extends AbstractTableModel implements Property
             case 2: return row.getTitle();
             case 3: return row.getCategory();
             case 4: return row.getTags();
-            case 5: {
-                String s = "";
-                if (row.isOnline()) {
-                    s += "O";
-                } else {
-                    s += "o";
-                }
-                if (row.isLocal()) {
-                    s += "L";
-                } else {
-                    s += "l";
-                }
-                if (row.isEnabled()) {
-                    s += "E";
-                } else {
-                    s += "e";
-                }
-                if (row.getRequiresOxps() !=null && row.getRequiresOxps().size()>0) {
-                    s += "R";
-                } else {
-                    s += "r";
-                }
-                if (row.getConflictOxps() !=null && row.getConflictOxps().size()>0) {
-                    s += "C";
-                } else {
-                    s += "c";
-                }
-                return s;
-            }
+            case 5: return getStatusString(row);
             default: return "n/a";
         }
     }

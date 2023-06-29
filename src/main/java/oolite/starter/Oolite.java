@@ -221,17 +221,15 @@ public class Oolite {
         List<ExpansionReference> surplus = new ArrayList<>();
         
         for (Expansion expansion: localExpansions) {
-            switch (expansion.getIdentifier()) {
-                case OOLITE_EXPANSION_FQN, "org.oolite.oolite.debug":
-                    break;
-                default:
-                    if (!contains(references, expansion)) {
-                        // add a SURPLUS
-                        ExpansionReference ref = new ExpansionReference();
-                        ref.name = expansion.getIdentifier() + "@" + expansion.getVersion();
-                        ref.status = ExpansionReference.Status.SURPLUS;
-                        surplus.add(ref);
-                    }
+            if (!OOLITE_EXPANSION_FQN.equals(expansion.getIdentifier()) 
+                && !"org.oolite.oolite.debug".equals(expansion.getIdentifier())
+                && !contains(references, expansion)
+            ) {
+                // add a SURPLUS
+                ExpansionReference ref = new ExpansionReference();
+                ref.name = expansion.getIdentifier() + "@" + expansion.getVersion();
+                ref.status = ExpansionReference.Status.SURPLUS;
+                surplus.add(ref);
             }
         }
         
@@ -266,43 +264,17 @@ public class Oolite {
      */
     public void run() throws IOException, InterruptedException {
         log.debug("run()");
-        
-        injectExpansion();
-        
-        try {
-            List<String> cmd = new ArrayList<>();
-            cmd.add(configuration.getOoliteCommand());
-            File dir = new File(configuration.getOoliteCommand()).getParentFile();
-            log.info("executing {} in {}", cmd, dir);
-            
-            ProcessBuilder pb = new ProcessBuilder(cmd);
-            pb.directory(dir);
-            pb.redirectOutput(ProcessBuilder.Redirect.INHERIT);
-            pb.redirectError(ProcessBuilder.Redirect.INHERIT);
-            Process p = pb.start();
 
-            for (OoliteListener l: listeners) {
-                try {
-                    l.launched();
-                } catch (Exception e) {
-                    log.warn("Listener threw exception", e);
-                }
-            }
-            p.waitFor();
-            for (OoliteListener l: listeners) {
-                try {
-                    l.terminated();
-                } catch (Exception e) {
-                    log.warn("Listener threw exception", e);
-                }
-            }
-        } finally {
-            try {
-                removeExpansion();
-            } catch (Exception e) {
-                log.info("Could not cleanup OoliteStarter.oxp after Oolite run.", e);
-            }
+        String executable = configuration.getOoliteCommand();
+        if (executable == null) {
+            throw new IllegalStateException("active installation has no executable");
         }
+
+        List<String> command = new ArrayList<>();
+        command.add(executable);
+        File dir = new File(executable).getParentFile();
+        
+        run(command, dir);
     }
     
     /**
@@ -315,14 +287,36 @@ public class Oolite {
     public void run(SaveGame savegame) throws IOException, InterruptedException {
         log.debug("run({})", savegame);
 
+        List<String> command = new ArrayList<>();
+        command.add(configuration.getOoliteCommand());
+        command.add("-load");
+        command.add(savegame.getFile().getAbsolutePath());
+        File dir = new File(configuration.getOoliteCommand()).getParentFile();
+
+        run(command, dir);
+    }
+    
+    void fireLaunched() {
+        for (OoliteListener l: listeners) {
+            l.launched();
+        }
+    }
+    
+    void fireTerminated() {
+        for (OoliteListener l: listeners) {
+            l.terminated();
+        }
+    }
+    
+    /**
+     * Runs Oolite using the specified command in the specified directory.
+     */
+    public void run(List<String> command, File dir) throws IOException, InterruptedException {
+        log.debug("run({}, {})", command, dir);
+
         injectExpansion();
         
         try {
-            List<String> command = new ArrayList<>();
-            command.add(configuration.getOoliteCommand());
-            command.add("-load");
-            command.add(savegame.getFile().getAbsolutePath());
-            File dir = new File(configuration.getOoliteCommand()).getParentFile();
             log.info("executing {} in {}", command, dir);
 
             ProcessBuilder pb = new ProcessBuilder(command);
@@ -331,13 +325,15 @@ public class Oolite {
             pb.redirectError(ProcessBuilder.Redirect.INHERIT);
             Process p = pb.start();
 
-            for (OoliteListener l: listeners) {
-                l.launched();
-            }
+            fireLaunched();
             p.waitFor();
-            for (OoliteListener l: listeners) {
-                l.terminated();
+            fireTerminated();
+            
+            log.info("Process exited with code {}", p.exitValue());
+            if (p.exitValue() != 0) {
+                throw new RuntimeException(String.format("Oolite terminated with code %d", p.exitValue()));
             }
+            
         } finally {
             try {
                 removeExpansion();
@@ -1021,6 +1017,8 @@ public class Oolite {
      * @throws IOException something went wrong
      */
     public void removeExpansion() throws IOException {
+        log.debug("removeExpansion()");
+        
         File destDir = new File(configuration.getAddonsDir(), OOLITE_EXPANSION_FQN);
         if (! destDir.exists()) {
             return;
