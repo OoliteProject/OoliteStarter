@@ -19,10 +19,10 @@ public class ExpansionWorker extends SwingWorker<Object, Void> { // first is ret
     private static final Logger log = LogManager.getLogger();
     
     public enum Action {
-        install,
-        remove,
-        enable,
-        disable
+        INSTALL,
+        REMOVE,
+        ENABLE,
+        DISABLE
     }
     
     private List<Expansion> expansions;
@@ -34,7 +34,7 @@ public class ExpansionWorker extends SwingWorker<Object, Void> { // first is ret
     /**
      * Creates a new InstallWorker thread.
      * 
-     * @param expansion the expansion to install
+     * @param expansion the expansion to INSTALL
      */
     public ExpansionWorker(Expansion expansion, Action action, JComponent component) {
         this.expansions = new ArrayList<>();
@@ -46,7 +46,7 @@ public class ExpansionWorker extends SwingWorker<Object, Void> { // first is ret
     /**
      * Creates a new InstallWorker thread.
      * 
-     * @param expansions the expansions to install
+     * @param expansions the expansions to INSTALL
      */
     public ExpansionWorker(List<Expansion> expansions, Action action) {
         this.expansions = expansions;
@@ -60,16 +60,16 @@ public class ExpansionWorker extends SwingWorker<Object, Void> { // first is ret
             for (Expansion expansion: expansions) {
                 log.debug("executing {} on {}:{} ...", action, expansion.getIdentifier(), expansion.getVersion());
                 switch (action) {
-                    case install:
+                    case INSTALL:
                         expansion.install();
                         break;
-                    case remove:
+                    case REMOVE:
                         expansion.remove();
                         break;
-                    case disable:
+                    case DISABLE:
                         expansion.disable();
                         break;
-                    case enable:
+                    case ENABLE:
                         expansion.enable();
                         break;
                 }

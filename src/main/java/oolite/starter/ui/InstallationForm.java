@@ -17,8 +17,12 @@ import org.apache.logging.log4j.Logger;
  */
 public class InstallationForm extends javax.swing.JPanel {
     private static final Logger log = LogManager.getLogger();
+
+    private static final String INSTALLATIONFORM_USER_HOME = "user.home";
+    private static final String INSTALLATIONFORM_SELECT = "Select";
+    private static final String INSTALLATIONFORM_ERROR = "Error";
     
-    private Installation data;
+    private transient Installation data;
 
     /**
      * Creates new InstallationForm.
@@ -305,12 +309,14 @@ public class InstallationForm extends javax.swing.JPanel {
         try {
             String dir = txtHomeDir.getText();
             if (dir == null || dir.trim().isEmpty()) {
-                System.getProperty("user.home");
+                System.getProperty(INSTALLATIONFORM_USER_HOME);
             }
             
             JFileChooser jfc = new JFileChooser(new File(dir));
+            jfc.setAccessory(new OoliteFileChooserAccessory(jfc));
+            jfc.setFileView(new OoliteFileView());
             jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-            if (jfc.showDialog(this, "Select") == JFileChooser.APPROVE_OPTION) {
+            if (jfc.showDialog(this, INSTALLATIONFORM_SELECT) == JFileChooser.APPROVE_OPTION) {
                 txtHomeDir.setText(jfc.getSelectedFile().getAbsolutePath());
                 
                 // check which other fields we want to populate
@@ -336,7 +342,13 @@ public class InstallationForm extends javax.swing.JPanel {
                 }
 
                 if (txtSavegameDir.getText().isBlank()) {
-                    File d = new File(new File(System.getProperty("user.home")), "oolite-saves");
+                    File d = new File(jfc.getSelectedFile(), "oolite.app/oolite-saves");
+                    if (d.isDirectory()) {
+                        txtSavegameDir.setText(d.getAbsolutePath());
+                    }
+                }
+                if (txtSavegameDir.getText().isBlank()) {
+                    File d = new File(new File(System.getProperty(INSTALLATIONFORM_USER_HOME)), "oolite-saves");
                     if (d.isDirectory()) {
                         txtSavegameDir.setText(d.getAbsolutePath());
                     }
@@ -355,7 +367,7 @@ public class InstallationForm extends javax.swing.JPanel {
                 }
                 
                 if (txtManagedAddOnDir.getText().isBlank()) {
-                    File d = new File(new File(System.getProperty("user.home")), "GNUstep/Library/ApplicationSupport/Oolite/ManagedAddOns");
+                    File d = new File(new File(System.getProperty(INSTALLATIONFORM_USER_HOME)), "GNUstep/Library/ApplicationSupport/Oolite/ManagedAddOns");
                     if (d.isDirectory()) {
                         txtManagedAddOnDir.setText(d.getAbsolutePath());
                     }
@@ -368,7 +380,7 @@ public class InstallationForm extends javax.swing.JPanel {
             }
         } catch (Exception e) {
             log.error("Could not set home dir", e);
-            JOptionPane.showMessageDialog(this, "Error");
+            JOptionPane.showMessageDialog(this, INSTALLATIONFORM_ERROR);
         }
     }//GEN-LAST:event_btHomeDirActionPerformed
 
@@ -376,17 +388,19 @@ public class InstallationForm extends javax.swing.JPanel {
         try {
             String dir = txtExecutable.getText();
             if (dir == null || dir.trim().isEmpty()) {
-                System.getProperty("user.home");
+                System.getProperty(INSTALLATIONFORM_USER_HOME);
             }
             
             JFileChooser jfc = new JFileChooser(new File(dir));
+            jfc.setAccessory(new OoliteFileChooserAccessory(jfc));
+            jfc.setFileView(new OoliteFileView());
             jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
-            if (jfc.showDialog(this, "Select") == JFileChooser.APPROVE_OPTION) {
+            if (jfc.showDialog(this, INSTALLATIONFORM_SELECT) == JFileChooser.APPROVE_OPTION) {
                 txtExecutable.setText(jfc.getSelectedFile().getAbsolutePath());
             }
         } catch (Exception e) {
             log.error("Could not set executable", e);
-            JOptionPane.showMessageDialog(this, "Error");
+            JOptionPane.showMessageDialog(this, INSTALLATIONFORM_ERROR);
         }
     }//GEN-LAST:event_btExecutableActionPerformed
 
@@ -394,17 +408,19 @@ public class InstallationForm extends javax.swing.JPanel {
         try {
             String dir = txtSavegameDir.getText();
             if (dir == null || dir.trim().isEmpty()) {
-                System.getProperty("user.home");
+                System.getProperty(INSTALLATIONFORM_USER_HOME);
             }
             
             JFileChooser jfc = new JFileChooser(new File(dir));
+            jfc.setAccessory(new OoliteFileChooserAccessory(jfc));
+            jfc.setFileView(new OoliteFileView());
             jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-            if (jfc.showDialog(this, "Select") == JFileChooser.APPROVE_OPTION) {
+            if (jfc.showDialog(this, INSTALLATIONFORM_SELECT) == JFileChooser.APPROVE_OPTION) {
                 txtSavegameDir.setText(jfc.getSelectedFile().getAbsolutePath());
             }
         } catch (Exception e) {
             log.error("Could not set savegame dir", e);
-            JOptionPane.showMessageDialog(this, "Error");
+            JOptionPane.showMessageDialog(this, INSTALLATIONFORM_ERROR);
         }
     }//GEN-LAST:event_btSavegameDirActionPerformed
 
@@ -412,17 +428,19 @@ public class InstallationForm extends javax.swing.JPanel {
         try {
             String dir = txtAddOnDir.getText();
             if (dir == null || dir.trim().isEmpty()) {
-                System.getProperty("user.home");
+                System.getProperty(INSTALLATIONFORM_USER_HOME);
             }
             
             JFileChooser jfc = new JFileChooser(new File(dir));
+            jfc.setAccessory(new OoliteFileChooserAccessory(jfc));
+            jfc.setFileView(new OoliteFileView());
             jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-            if (jfc.showDialog(this, "Select") == JFileChooser.APPROVE_OPTION) {
+            if (jfc.showDialog(this, INSTALLATIONFORM_SELECT) == JFileChooser.APPROVE_OPTION) {
                 txtAddOnDir.setText(jfc.getSelectedFile().getAbsolutePath());
             }
         } catch (Exception e) {
             log.error("Could not set addon dir", e);
-            JOptionPane.showMessageDialog(this, "Error");
+            JOptionPane.showMessageDialog(this, INSTALLATIONFORM_ERROR);
         }
     }//GEN-LAST:event_btAddOnDirActionPerformed
 
@@ -430,17 +448,19 @@ public class InstallationForm extends javax.swing.JPanel {
         try {
             String dir = txtManagedAddOnDir.getText();
             if (dir == null || dir.trim().isEmpty()) {
-                System.getProperty("user.home");
+                System.getProperty(INSTALLATIONFORM_USER_HOME);
             }
             
             JFileChooser jfc = new JFileChooser(new File(dir));
+            jfc.setAccessory(new OoliteFileChooserAccessory(jfc));
+            jfc.setFileView(new OoliteFileView());
             jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-            if (jfc.showDialog(this, "Select") == JFileChooser.APPROVE_OPTION) {
+            if (jfc.showDialog(this, INSTALLATIONFORM_SELECT) == JFileChooser.APPROVE_OPTION) {
                 txtManagedAddOnDir.setText(jfc.getSelectedFile().getAbsolutePath());
             }
         } catch (Exception e) {
             log.error("Could not set managed addon dir", e);
-            JOptionPane.showMessageDialog(this, "Error");
+            JOptionPane.showMessageDialog(this, INSTALLATIONFORM_ERROR);
         }
     }//GEN-LAST:event_btManagedAddOnDirActionPerformed
 
@@ -448,17 +468,19 @@ public class InstallationForm extends javax.swing.JPanel {
         try {
             String dir = txtManagedDeactivatedAddOnDir.getText();
             if (dir == null || dir.trim().isEmpty()) {
-                System.getProperty("user.home");
+                System.getProperty(INSTALLATIONFORM_USER_HOME);
             }
             
             JFileChooser jfc = new JFileChooser(new File(dir));
+            jfc.setAccessory(new OoliteFileChooserAccessory(jfc));
+            jfc.setFileView(new OoliteFileView());
             jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-            if (jfc.showDialog(this, "Select") == JFileChooser.APPROVE_OPTION) {
+            if (jfc.showDialog(this, INSTALLATIONFORM_SELECT) == JFileChooser.APPROVE_OPTION) {
                 txtManagedDeactivatedAddOnDir.setText(jfc.getSelectedFile().getAbsolutePath());
             }
         } catch (Exception e) {
             log.error("Could not set managed deactivated addon dir", e);
-            JOptionPane.showMessageDialog(this, "Error");
+            JOptionPane.showMessageDialog(this, INSTALLATIONFORM_ERROR);
         }
     }//GEN-LAST:event_btManagedDeactivatedAddOnDirActionPerformed
 
@@ -466,17 +488,19 @@ public class InstallationForm extends javax.swing.JPanel {
         try {
             String dir = txtDeactivatedAddOnDir.getText();
             if (dir == null || dir.trim().isEmpty()) {
-                System.getProperty("user.home");
+                System.getProperty(INSTALLATIONFORM_USER_HOME);
             }
             
             JFileChooser jfc = new JFileChooser(new File(dir));
+            jfc.setAccessory(new OoliteFileChooserAccessory(jfc));
+            jfc.setFileView(new OoliteFileView());
             jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-            if (jfc.showDialog(this, "Select") == JFileChooser.APPROVE_OPTION) {
+            if (jfc.showDialog(this, INSTALLATIONFORM_SELECT) == JFileChooser.APPROVE_OPTION) {
                 txtDeactivatedAddOnDir.setText(jfc.getSelectedFile().getAbsolutePath());
             }
         } catch (Exception e) {
             log.error("Could not set deactivated addon dir", e);
-            JOptionPane.showMessageDialog(this, "Error");
+            JOptionPane.showMessageDialog(this, INSTALLATIONFORM_ERROR);
         }
     }//GEN-LAST:event_btDeactivatedAddOnDirActionPerformed
 

@@ -4,15 +4,28 @@
     <Console name="Console" target="SYSTEM_OUT">
       <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
     </Console>
+    <RollingFile name="RollingFile" fileName="${sys:user.home}/.Oolite/Logs/oolite-starter.log"
+                 filePattern="${sys:user.home}/.Oolite/Logs/oolite-starter-%i.log.gz">
+      <PatternLayout>
+        <Pattern>%d %p %c{1.} [%t] %m%n</Pattern>
+      </PatternLayout>
+      <Policies>
+        <OnStartupTriggeringPolicy />
+      </Policies>
+      <DefaultRolloverStrategy max="5" fileIndex="min"/>
+    </RollingFile>    
   </Appenders>
   <Loggers>
         <!-- error, warn, info, debug, trace -->
     <Logger level="info" name="oolite.starter.Oolite"/>
+    <Logger level="info" name="oolite.starter.GithubVersionChecker"/>
     <Logger level="info" name="oolite.starter.ui.ExpansionsPanel"/>
     <Logger level="info" name="oolite.starter.ui.StartGamePanel"/>
+    <Logger level="info" name="oolite.starter.ui.OoliteFileChooserAccessory"/>
     
     <Root level="TRACE">
       <AppenderRef ref="Console"/>
+      <AppenderRef ref="RollingFile"/>
     </Root>
   </Loggers>
 </Configuration>

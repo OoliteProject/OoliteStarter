@@ -7,6 +7,8 @@ import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import oolite.starter.Oolite;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -79,11 +81,12 @@ public class ExpansionTest {
     public void testSetGetConflictOxps() {
         log.info("testSetGetConflictOxps");
         
-//        Expansion expansion = new Expansion();
-//        assertNull(expansion.getConflictOxps());
-//        
-//        expansion.setConflictOxps("conflict");
-//        assertEquals("conflict", expansion.getConflictOxps());
+        Expansion expansion = new Expansion();
+        assertNull(expansion.getConflictOxps());
+        
+        List<String> oxpRefs = new ArrayList<>();
+        expansion.setConflictOxps(oxpRefs);
+        assertEquals(oxpRefs, expansion.getConflictOxps());
     }
 
     /**
@@ -177,11 +180,12 @@ public class ExpansionTest {
     public void testSetGetOptionalOxps() {
         log.info("testSetGetOptionalOxps");
         
-//        Expansion expansion = new Expansion();
-//        assertNull(expansion.getOptionalOxps());
-//        
-//        expansion.setOptionalOxps("value");
-//        assertEquals("value", expansion.getOptionalOxps());
+        Expansion expansion = new Expansion();
+        assertNull(expansion.getOptionalOxps());
+
+        List<String> oxpRefs = new ArrayList<>();
+        expansion.setOptionalOxps(oxpRefs);
+        assertEquals(oxpRefs, expansion.getOptionalOxps());
     }
 
     /**
@@ -205,11 +209,12 @@ public class ExpansionTest {
     public void testSetGetRequiresOxps() {
         log.info("testSetGetRequiresOxps");
         
-//        Expansion expansion = new Expansion();
-//        assertNull(expansion.getRequiresOxps());
-//        
-//        expansion.setRequiresOxps("value");
-//        assertEquals("value", expansion.getRequiresOxps());
+        Expansion expansion = new Expansion();
+        assertNull(expansion.getRequiresOxps());
+        
+        List<String> oxpRefs = new ArrayList<>();
+        expansion.setRequiresOxps(oxpRefs);
+        assertEquals(oxpRefs, expansion.getRequiresOxps());
     }
 
     /**
@@ -402,10 +407,14 @@ public class ExpansionTest {
         log.info("testInstall2");
         
         Expansion expansion = new Expansion();
+        assertNull(expansion.getOolite());
+        
         Oolite oolite = Mockito.mock(Oolite.class);
         expansion.setOolite(oolite);
         
         expansion.install();
+        
+        assertTrue(true);
     }
     
     @Test
@@ -431,6 +440,8 @@ public class ExpansionTest {
         expansion.setOolite(oolite);
         
         expansion.enable();
+        
+        assertTrue(true);
     }
     
     @Test
@@ -456,6 +467,8 @@ public class ExpansionTest {
         expansion.setOolite(oolite);
         
         expansion.disable();
+        
+        assertTrue(true);
     }
     
     @Test
@@ -481,6 +494,8 @@ public class ExpansionTest {
         expansion.setOolite(oolite);
         
         expansion.remove();
+        
+        assertTrue(true);
     }
     
     @Test

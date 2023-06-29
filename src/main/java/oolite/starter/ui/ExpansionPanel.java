@@ -16,7 +16,7 @@ import org.apache.logging.log4j.Logger;
 public class ExpansionPanel extends javax.swing.JPanel implements PropertyChangeListener {
     private static final Logger log = LogManager.getLogger();
 
-    private Expansion data;
+    private transient Expansion data;
     
     /**
      * Creates new form ExpansionPanel.
@@ -216,8 +216,9 @@ public class ExpansionPanel extends javax.swing.JPanel implements PropertyChange
     }// </editor-fold>//GEN-END:initComponents
 
     private void btInstallActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btInstallActionPerformed
+        log.debug("btInstallActionPerformed({})", evt);
         try {
-            new ExpansionWorker(data, ExpansionWorker.Action.install, this).execute();
+            new ExpansionWorker(data, ExpansionWorker.Action.INSTALL, this).execute();
         } catch (Exception e) {
             log.error("Could not trigger install", e);
         }
@@ -225,7 +226,7 @@ public class ExpansionPanel extends javax.swing.JPanel implements PropertyChange
 
     private void btEnableActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btEnableActionPerformed
         try {
-            new ExpansionWorker(data, ExpansionWorker.Action.enable, this).execute();
+            new ExpansionWorker(data, ExpansionWorker.Action.ENABLE, this).execute();
         } catch (Exception e) {
             log.error("Could not trigger enable", e);
         }
@@ -233,7 +234,7 @@ public class ExpansionPanel extends javax.swing.JPanel implements PropertyChange
 
     private void btDisableActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btDisableActionPerformed
         try {
-            new ExpansionWorker(data, ExpansionWorker.Action.disable, this).execute();
+            new ExpansionWorker(data, ExpansionWorker.Action.DISABLE, this).execute();
         } catch (Exception e) {
             log.error("Could not trigger disable", e);
         }
@@ -241,7 +242,7 @@ public class ExpansionPanel extends javax.swing.JPanel implements PropertyChange
 
     private void btRemoveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btRemoveActionPerformed
         try {
-            new ExpansionWorker(data, ExpansionWorker.Action.remove, this).execute();
+            new ExpansionWorker(data, ExpansionWorker.Action.REMOVE, this).execute();
         } catch (Exception e) {
             log.error("Could not trigger remove", e);
         }

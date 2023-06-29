@@ -18,7 +18,7 @@ import org.apache.logging.log4j.Logger;
 public class InstallationTableModel extends AbstractTableModel implements PropertyChangeListener {
     private static final Logger log = LogManager.getLogger();
     
-    private Configuration data;
+    private transient Configuration data;
 
     /**
      * Creates a new instance.
@@ -87,7 +87,7 @@ public class InstallationTableModel extends AbstractTableModel implements Proper
     @Override
     public Class<?> getColumnClass(int columnIndex) {
         switch (columnIndex) {
-            case 2: return Boolean.class;
+            case 20: return Boolean.class;
             default:
                 return super.getColumnClass(columnIndex);
         }
@@ -114,7 +114,12 @@ public class InstallationTableModel extends AbstractTableModel implements Proper
         switch (columnIndex) {
             case 0: return row.getHomeDir();
             case 1: return row.getVersion();
-            case 2: return row == data.getActiveInstallation();
+            case 2: 
+                if (row == data.getActiveInstallation()) {
+                    return "active";
+                } else {
+                    return "";
+                }
             default:
                 return "n/a";
         }

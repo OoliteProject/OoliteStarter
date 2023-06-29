@@ -9,11 +9,11 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.ListCellRenderer;
 import oolite.starter.model.SaveGame;
-import static oolite.starter.model.SaveGame.ExpansionReference.Status.missing;
-import static oolite.starter.model.SaveGame.ExpansionReference.Status.ok;
-import static oolite.starter.model.SaveGame.ExpansionReference.Status.surplus;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import static oolite.starter.model.SaveGame.ExpansionReference.Status.OK;
+import static oolite.starter.model.SaveGame.ExpansionReference.Status.MISSING;
+import static oolite.starter.model.SaveGame.ExpansionReference.Status.SURPLUS;
 
 /**
  *
@@ -35,13 +35,13 @@ public class ExpansionReferenceCellRenderer  extends JLabel implements ListCellR
                 boolean isFocused) {
             setText(value.name);
             switch(value.status) {
-                case ok:
+                case OK:
                     setIcon(iiOk);
                     break;
-                case missing:
+                case MISSING:
                     setIcon(iiMissing);
                     break;
-                case surplus:
+                case SURPLUS:
                     setIcon(iiSurplus);
                     break;
             }

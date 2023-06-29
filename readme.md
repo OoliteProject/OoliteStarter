@@ -4,7 +4,7 @@ The Oolite Starter allows users to more comfortably preconfigure Oolite
 for various missions. It's main purpose is to ease OXP management, Oolite versions
 and manage save games.
 
-## Requirements (generic package)
+## Requirements (generic package only)
 
 * You need to have Java SDK 17 or newer installed. 
   If you are unfamiliar with installing Java on Linux, follow
@@ -16,6 +16,41 @@ and manage save games.
 * You need to have a copy of the generic Oolite Starter unzipped in a directory of
   your choice. Just in case, you can download it from
   https://github.com/HiranChaudhuri/OoliteStarter/releases
+
+## Installation and Uninstallation
+
+### Generic Package
+
+Download the .tar.gz or the .zip file and extract in a directory of your choice.
+You likely want to create a shortcut to run.sh or run.cmd.
+
+To remove the software, just delete the directory you have created.
+
+### Linux (.deb)
+
+Download the .deb file. Run
+
+    sudo apt install <path to downloaded .deb>
+
+After that you should see a new icon in your desktop environment.
+
+To remove the software, run
+
+    sudo apt remove oolitestarter
+
+### MacOS (.dmg)
+
+The .dmg download has not yet been successfully installed. If you manage to
+succeed, please give a shout.
+
+### Windows (.exe)
+
+Download the .exe file. Tell Windows you want to keep the file regardless of
+warnings. Then run the installer. It will automatically install OoliteStarter
+and create menu and desktop shortcuts.
+
+To remove the software, go to control panel/apps. Search for OoliteStarter
+and choose to uninstall.
 
 ## Configuration (Installations)
 

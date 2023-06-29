@@ -55,7 +55,6 @@ public class ActivationWorker extends SwingWorker<Object, Void> {
     @Override
     protected void done() {
         log.info("done()");
-        //JOptionPane.showMessageDialog(component, "Finished activating " + file.getName());
         if (component instanceof ExpansionsPanel ep) {
             ep.update();
         }
