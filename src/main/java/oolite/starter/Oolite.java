@@ -1088,6 +1088,12 @@ public class Oolite {
         
         File app = new File(f, "oolite.app");
         if (app.isDirectory()) {
+            // this works for Windows and Linux
+            return OoliteDirectoryType.HOME_DIR;
+        }
+        app = new File(f, "Oolite.app/Contents");
+        if (app.isDirectory()) {
+            // this works on MacOS
             return OoliteDirectoryType.HOME_DIR;
         }
         
