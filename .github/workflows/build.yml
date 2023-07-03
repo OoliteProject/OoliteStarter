@@ -316,6 +316,10 @@ jobs:
           --vendor hiran
         #--resource-dir src/jpackage/resources
 
+    - name: Create ZIP distribution
+      run: |
+         zip ./target/OoliteStarter-${{ needs.semver.outputs.GITVERSION_SEMVER }}-MacOS.zip  ./target/appimage/*
+
     - name: Check status 3
       run: |
         set
@@ -337,7 +341,9 @@ jobs:
     - uses: actions/upload-artifact@v3
       with:
         name: OoliteStarter-MacOS
-        path: ./target/OoliteStarter*.dmg
+        path: |
+          ./target/OoliteStarter*.dmg
+          ./target/OoliteStarter-${{ needs.semver.outputs.GITVERSION_SEMVER }}-MacOS.zip
 
   release:
     needs: [semver,package-linux,package-windows,package-macos]
