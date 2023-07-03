@@ -6,7 +6,6 @@ package oolite.starter;
 import com.owlike.genson.Genson;
 import com.vdurmont.semver4j.Semver;
 import java.awt.Component;
-import java.awt.Desktop;
 import java.awt.EventQueue;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -15,10 +14,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import javax.swing.ImageIcon;
-import javax.swing.JEditorPane;
-import javax.swing.JOptionPane;
-import javax.swing.event.HyperlinkEvent;
+import oolite.starter.ui.MrGimlet;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -111,7 +107,7 @@ public class GithubVersionChecker {
      * @return the html message
      */
     public String getHtmlUserMessage(String version) {
-        return "<html><body><p>All right threre. We heard rumors the new version " + version + " has been released.</p>"
+        return "<html><body><p>All right there. We heard rumors the new version " + version + " has been released.</p>"
             + "<p>You need to check <a href=\"https://github.com/" + OWNER + "/" + REPO + "/releases\">https://github.com/" + OWNER + "/" + REPO + "/releases</a> and report back to me.</p>"
             + "<p>But don't keep me waiting too long, kid!</p></body></html>";
     }
@@ -126,27 +122,7 @@ public class GithubVersionChecker {
             String latest = getLatestVersion();
             if (latest != null) {
                 String message = getHtmlUserMessage(latest);
-                EventQueue.invokeLater(() -> {
-                        JEditorPane jep = new JEditorPane("text/html", message);
-                        jep.setEditable(false);
-                        jep.addHyperlinkListener(he-> {
-                            if (he.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-                                try {
-                                    Desktop.getDesktop().browse(he.getURL().toURI());
-                                } catch (Exception e) {
-                                    log.info("Could not open url {}", he.getURL(), e);
-                                }
-                            }
-                        });
-                        
-                        ImageIcon ii = null;
-                        try {
-                            ii = new ImageIcon(getClass().getResource("/images/Mr_Gimlet.png"));
-                        } catch (Exception e) {
-                            log.warn("Could not load image", e);
-                        }
-                        JOptionPane.showMessageDialog(parentComponent, jep, "Message from Mr Gimlet", JOptionPane.INFORMATION_MESSAGE, ii);
-                });
+                EventQueue.invokeLater(() -> MrGimlet.showMessage(parentComponent, message) );
             }
         } catch (IOException e) {
             log.info("Could not check for update", e);

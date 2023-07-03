@@ -4,8 +4,6 @@ package oolite.starter.ui;
 
 import java.io.File;
 import javax.swing.JOptionPane;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableRowSorter;
 import oolite.starter.Configuration;
 import oolite.starter.model.Installation;
@@ -50,14 +48,11 @@ public class InstallationsPanel extends javax.swing.JPanel {
 
         model = new InstallationTableModel(configuration);
         jTable1.setModel(model);
-        jTable1.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-            @Override
-            public void valueChanged(ListSelectionEvent lse) {
-                log.debug("valueChanged({})", lse);
-                if (!lse.getValueIsAdjusting()) {
-                    // we have a final value - let's render it
-                    showDetailsOfSelection();
-                }
+        jTable1.getSelectionModel().addListSelectionListener(lse -> {
+            log.debug("valueChanged({})", lse);
+            if (!lse.getValueIsAdjusting()) {
+                // we have a final value - let's render it
+                showDetailsOfSelection();
             }
         });
         jTable1.getSelectionModel().addListSelectionListener(lse -> {
@@ -84,19 +79,17 @@ public class InstallationsPanel extends javax.swing.JPanel {
     
     private void ensureDirectoryExists(String dirName, String dirPath) {
         File dir = new File(dirPath);
-        if (!dir.isDirectory()) {
-            if (JOptionPane.showOptionDialog(
-                    this, 
-                    "Directory \n" + dirPath + "\ndoes not exist. Would you like it created?",
-                    dirName + " missing",
-                    JOptionPane.YES_NO_OPTION,
-                    JOptionPane.QUESTION_MESSAGE,
-                    null,
-                    null,
-                    null
-            ) == JOptionPane.OK_OPTION) {
-                dir.mkdirs();
-            }
+        if (!dir.isDirectory() && JOptionPane.showOptionDialog(
+                this, 
+                "Directory \n" + dirPath + "\ndoes not exist. Would you like it created?",
+                dirName + " missing",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                null,
+                null
+        ) == JOptionPane.OK_OPTION) {
+            dir.mkdirs();
         }
     }
 
@@ -120,7 +113,7 @@ public class InstallationsPanel extends javax.swing.JPanel {
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
 
-        setName("Installations"); // NOI18N
+        setName("Oolite Versions"); // NOI18N
         setLayout(new java.awt.BorderLayout());
 
         btAdd.setText("Add...");
@@ -219,7 +212,7 @@ public class InstallationsPanel extends javax.swing.JPanel {
     private void btAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btAddActionPerformed
         try {
             InstallationForm installationForm = new InstallationForm();
-            if (JOptionPane.showOptionDialog(this, installationForm, "Add Installation...", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, null, null) == JOptionPane.OK_OPTION) {
+            if (JOptionPane.showOptionDialog(this, installationForm, "Add Oolite version...", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, null, null) == JOptionPane.OK_OPTION) {
                 model.addRow(installationForm.getData());
             }
         } catch (Exception e) {
@@ -275,7 +268,21 @@ public class InstallationsPanel extends javax.swing.JPanel {
 
     private void btSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btSaveActionPerformed
         try {
-            configuration.saveConfiguration(new File(System.getProperty("user.home") + File.separator + ".oolite-starter.conf"));
+            File f = new File(System.getProperty("user.home") + File.separator + ".oolite-starter.conf");
+            configuration.saveConfiguration(f);
+            
+            //JOptionPane.showMessageDialog(this, "Stored configuration in " + f.getAbsolutePath(), "Save", JOptionPane.INFORMATION_MESSAGE);
+            
+            StringBuilder sb = new StringBuilder("<html>");
+            if (configuration.getActiveInstallation() == null) {
+                sb.append("<p>Nice try, kiddo!</p><p>Your configuration was stored in ").append(f.getAbsolutePath()).append(".</p>");
+                sb.append("<p>But... you still ain't got an active Oolite version. Expect trouble to follow your pants.</p>");
+            } else {
+                sb.append("<p>Smart move, kiddo!</p><p>Your configuration was stored in ").append(f.getAbsolutePath()).append(".</p>");
+                sb.append("<p>Next time we won't have to fasten these screws again.</p>");
+            }
+            sb.append("</html>");
+            MrGimlet.showMessage(this, sb.toString());
         } catch (Exception e) {
             log.error(INSTALLATIONSPANEL_COULD_NOT_SAVE, e);
             JOptionPane.showMessageDialog(this, INSTALLATIONSPANEL_COULD_NOT_SAVE);

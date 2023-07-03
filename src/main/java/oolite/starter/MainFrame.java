@@ -13,6 +13,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
 import oolite.starter.ui.ExpansionsPanel;
 import oolite.starter.ui.InstallationsPanel;
+import oolite.starter.ui.MrGimlet;
 import oolite.starter.ui.StartGamePanel;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -25,6 +26,9 @@ import org.xml.sax.SAXException;
  */
 public class MainFrame extends javax.swing.JFrame {
     private static final Logger log = LogManager.getLogger();
+    
+    private transient Oolite oolite;
+    private transient Configuration configuration;
 
     /**
      * Creates new form MainFrame.
@@ -34,18 +38,19 @@ public class MainFrame extends javax.swing.JFrame {
         setTitle(MainFrame.class.getPackage().getImplementationTitle() + " " + MainFrame.class.getPackage().getImplementationVersion());
         setIconImage(new ImageIcon(getClass().getResource("/oolite_logo.png")).getImage());
 
-        Configuration configuration = null;
         File confFile = new File(System.getProperty("oolite.starter.configuration", System.getProperty("user.home") + "/.oolite-starter.conf"));
         if (confFile.exists()) {
             configuration = new Configuration(confFile);
         } else {
-            String msg = String.format("Configuration file %s not found. Loading defaults.", confFile.getAbsolutePath());
+            String msg = String.format("<p>Heho, Kid! You've got a problem here that is technical, not financial.</p><p>The configuration file %s was not found.</p><p>I’m a busy frog, I can’t stay here all day to watch you get it right. So let's use defaults.", confFile.getAbsolutePath());
             log.warn(msg);
-            JOptionPane.showMessageDialog(null, msg);
+            
+            MrGimlet.showMessage(null, msg);
+            
             configuration = new Configuration();
         }
 
-        Oolite oolite = new Oolite();
+        oolite = new Oolite();
         oolite.setConfiguration(configuration);
         
         StartGamePanel sgp = new StartGamePanel();
@@ -139,7 +144,23 @@ public class MainFrame extends javax.swing.JFrame {
                 }
 
                 mf.setVisible(true);
-                gvc.maybeAnnounceUpdate(mf);
+                
+                if (mf.configuration.getActiveInstallation() == null) {
+                    // point user to creating an active installation
+                    mf.jTabbedPane1.setSelectedIndex(2);
+                    
+                    StringBuilder message = new StringBuilder("<html>");
+                    message.append("<p>I see a lot of blanks on this here board... Kid, you gotta do something about it.</p>");
+                    message.append("<p>Have at least one active Oolite version. You need to. In fact, everyone must have it!<br/>");
+                    message.append("Hit the Add button and fill in the form, at least once to add Oolite versions.<br/>");
+                    message.append("Do not forget to select one of them and hit the Activate button.</p>");
+                    message.append("<p>Only then try to juggle OXPs or start the game. Right... Ah, remember to gently touch the Save button eventually.</p>");
+                    message.append("</html>");
+
+                    MrGimlet.showMessage(mf, message.toString());
+                } else {
+                    gvc.maybeAnnounceUpdate(mf);
+                }
 
             } catch (InterruptedException e) {
                 log.fatal("Interrupted", e);

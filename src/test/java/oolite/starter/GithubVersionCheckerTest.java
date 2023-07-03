@@ -103,7 +103,7 @@ public class GithubVersionCheckerTest {
         System.out.println("getHtmlUserMessage");
 
         GithubVersionChecker instance = new GithubVersionChecker();
-        assertEquals("<html><body><p>All right threre. We heard rumors the new version vX has been released.</p><p>You need to check <a href=\"https://github.com/HiranChaudhuri/OoliteStarter/releases\">https://github.com/HiranChaudhuri/OoliteStarter/releases</a> and report back to me.</p><p>But don't keep me waiting too long, kid!</p></body></html>", instance.getHtmlUserMessage("vX"));
+        assertEquals("<html><body><p>All right there. We heard rumors the new version vX has been released.</p><p>You need to check <a href=\"https://github.com/HiranChaudhuri/OoliteStarter/releases\">https://github.com/HiranChaudhuri/OoliteStarter/releases</a> and report back to me.</p><p>But don't keep me waiting too long, kid!</p></body></html>", instance.getHtmlUserMessage("vX"));
     }
 
 }

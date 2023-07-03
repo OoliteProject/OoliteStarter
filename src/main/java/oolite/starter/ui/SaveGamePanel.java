@@ -25,6 +25,57 @@ public class SaveGamePanel extends javax.swing.JPanel {
         lsExpansions.setCellRenderer(new ExpansionReferenceCellRenderer());
     }
     
+    private void updateFields() {
+        txtFilename.setText(String.valueOf(data.getFile()));
+        txtOoliteVersion.setText(String.valueOf(data.getOoliteVersion()));
+        txtShipName.setText(String.valueOf(data.getShipName()));
+        txtShipClass.setText(String.valueOf(data.getShipClassName()));
+        txtStarSystem.setText(String.valueOf(data.getCurrentSystemName()));
+        txtCredits.setText(String.valueOf(data.getCredits()));
+        txtShipKills.setText(String.valueOf(data.getShipKills()));
+        txtPilotName.setText(String.valueOf(data.getPlayerName()));
+
+        DefaultListModel dlm = new DefaultListModel<ExpansionReference>();
+        if (data.getExpansions() != null) {
+            dlm.addAll(data.getExpansions());
+
+            if (dlm.size()==0) {
+                // indicate we have no data?
+            }
+
+            Border border = null;
+            for (ExpansionReference er: data.getExpansions()) {
+                if (er.status == ExpansionReference.Status.SURPLUS && border==null) {
+                    border = new LineBorder(Color.orange);
+                }
+                if (er.status == ExpansionReference.Status.MISSING) {
+                    border = new LineBorder(Color.red);
+                    break;
+                }
+            }
+
+            jScrollPane1.setBorder(border);
+        } else {
+                // indicate we have no data?
+                jScrollPane1.setBorder(null);
+        }
+        lsExpansions.setModel(dlm);
+    }
+    
+    private void emptyFields() {
+        txtFilename.setText("");
+        txtOoliteVersion.setText("");
+        txtShipName.setText("");
+        txtShipClass.setText("");
+        txtStarSystem.setText("");
+        txtCredits.setText("");
+        txtShipKills.setText("");
+        txtPilotName.setText("");
+
+        lsExpansions.setModel(new DefaultListModel<ExpansionReference>());
+        jScrollPane1.setBorder(null);
+    }
+    
     /**
      * Sets the data to be rendered by this panel.
      * 
@@ -33,52 +84,9 @@ public class SaveGamePanel extends javax.swing.JPanel {
     public void setData(SaveGame data) {
         this.data = data;
         if (data != null) {
-            txtFilename.setText(String.valueOf(data.getFile()));
-            txtOoliteVersion.setText(String.valueOf(data.getOoliteVersion()));
-            txtShipName.setText(String.valueOf(data.getShipName()));
-            txtShipClass.setText(String.valueOf(data.getShipClassName()));
-            txtStarSystem.setText(String.valueOf(data.getCurrentSystemName()));
-            txtCredits.setText(String.valueOf(data.getCredits()));
-            txtShipKills.setText(String.valueOf(data.getShipKills()));
-            txtPilotName.setText(String.valueOf(data.getPlayerName()));
-
-            DefaultListModel dlm = new DefaultListModel<ExpansionReference>();
-            if (data.getExpansions() != null) {
-                dlm.addAll(data.getExpansions());
-                
-                if (dlm.size()==0) {
-                    // indicate we have no data?
-                }
-
-                Border border = null;
-                for (ExpansionReference er: data.getExpansions()) {
-                    if (er.status == ExpansionReference.Status.SURPLUS && border==null) {
-                        border = new LineBorder(Color.orange);
-                    }
-                    if (er.status == ExpansionReference.Status.MISSING) {
-                        border = new LineBorder(Color.red);
-                        break;
-                    }
-                }
-                
-                jScrollPane1.setBorder(border);
-            } else {
-                // indicate we have no data?
-                jScrollPane1.setBorder(null);
-            }
-            lsExpansions.setModel(dlm);
+            updateFields();
         } else {
-            txtFilename.setText("");
-            txtOoliteVersion.setText("");
-            txtShipName.setText("");
-            txtShipClass.setText("");
-            txtStarSystem.setText("");
-            txtCredits.setText("");
-            txtShipKills.setText("");
-            txtPilotName.setText("");
-            
-            lsExpansions.setModel(new DefaultListModel<ExpansionReference>());
-            jScrollPane1.setBorder(null);
+            emptyFields();
         }
     }
 

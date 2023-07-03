@@ -6,7 +6,6 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ItemEvent;
 import java.io.File;
-import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.DefaultListModel;
@@ -82,7 +81,6 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
      */
     public ExpansionsPanel() {
         initComponents();
-        setName("Expansions");
         
         jTable1.getSelectionModel().addListSelectionListener(lse -> {
             log.debug("valueChanged({})", lse);
@@ -152,7 +150,7 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
      * @throws ParserConfigurationException something went wrong
      * @throws XPathExpressionException  something went wrong
      */
-    public void setOolite(Oolite oolite) throws MalformedURLException {
+    public void setOolite(Oolite oolite) {
         if (this.oolite != null) {
             this.oolite.removeOoliteListener(this);
         }
@@ -172,7 +170,7 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
             jTable1.setRowSorter(null);
             jTable1.setModel(model);
             
-            trw = new TableRowSorter<ExpansionsTableModel>(model);
+            trw = new TableRowSorter<>(model);
             jTable1.setRowSorter(trw);
             applyFilter();
             
@@ -208,6 +206,7 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
         jPanel1 = new javax.swing.JPanel();
         txtStatus = new javax.swing.JLabel();
 
+        setName("OXPs/OXZs"); // NOI18N
         setLayout(new java.awt.BorderLayout());
 
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Filter"));

@@ -170,8 +170,6 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
 
         add(jSplitPane1, java.awt.BorderLayout.CENTER);
 
-        txtStatus.setText("jLabel1");
-
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
@@ -179,7 +177,7 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(txtStatus)
-                .addContainerGap(507, Short.MAX_VALUE))
+                .addContainerGap(553, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

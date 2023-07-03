@@ -17,6 +17,10 @@ jobs:
       GITVERSION_SEMVER: ${{ steps.output1.outputs.GITVERSION_SEMVER }}
       GITVERSION_ASSEMBLYSEMVER: ${{ steps.output1.outputs.GITVERSION_ASSEMBLYSEMVER }}
       GITVERSION_MAJORMINORPATCH: ${{ steps.output1.outputs.GITVERSION_MAJORMINORPATCH }}
+      GITVERSION_MAJOR: ${{ steps.output1.outputs.GITVERSION_MAJOR }}
+      GITVERSION_MINOR: ${{ steps.output1.outputs.GITVERSION_MINOR }}
+      GITVERSION_PATCH: ${{ steps.output1.outputs.GITVERSION_PATCH }}
+      MACOS_MAJORMINORPATCH: ${{ steps.output1.outputs.MACOS_MAJORMINORPATCH }}
       DEBIAN_PKGVERSION: ${{ steps.output1.outputs.DEBIAN_PKGVERSION }}
     steps:
     - name: Checkout project
@@ -35,10 +39,21 @@ jobs:
       
     - id: output1
       run: |
+        set -x
         set | grep GITVERSION | sort
         echo "GITVERSION_SEMVER=${GITVERSION_SEMVER}" >> "$GITHUB_OUTPUT"
         echo "GITVERSION_ASSEMBLYSEMVER=${GITVERSION_ASSEMBLYSEMVER}" >> "$GITHUB_OUTPUT"
         echo "GITVERSION_MAJORMINORPATCH=${GITVERSION_MAJORMINORPATCH}" >> "$GITHUB_OUTPUT"
+        echo "GITVERSION_MAJOR=${GITVERSION_MAJOR}" >> "$GITHUB_OUTPUT"
+        echo "GITVERSION_MINOR=${GITVERSION_MINOR}" >> "$GITHUB_OUTPUT"
+        echo "GITVERSION_PATCH=${GITVERSION_PATCH}" >> "$GITHUB_OUTPUT"
+        echo "DEBIAN_PKGVERSION=${GITVERSION_MAJOR}.${GITVERSION_MINOR}-${GITVERSION_PATCH}" >> "$GITHUB_OUTPUT"
+        if [ "${GITVERSION_MAJOR}" == "0" ]
+        then
+          echo "MACOS_MAJORMINORPATCH=1.${GITVERSION_MINOR}.${GITVERSION_PATCH}" >> "$GITHUB_OUTPUT"
+        else
+          echo "MACOS_MAJORMINORPATCH=${GITVERSION_MAJORMINORPATCH}" >> "$GITHUB_OUTPUT"
+        fi
         echo "DEBIAN_PKGVERSION=${GITVERSION_MAJOR}.${GITVERSION_MINOR}-${GITVERSION_PATCH}" >> "$GITHUB_OUTPUT"
         
 
@@ -226,6 +241,14 @@ jobs:
       run: |
         get-childitem . -Recurse | where {!$_.PSIsContainer} | select-object FullName
 
+    - name: Rename result (target\OoliteStarter 0.1.13-1.0.exe)
+      run: |
+        ren "target\OoliteStarter ${{ needs.semver.outputs.GITVERSION_SEMVER }}-1.0.exe" OoliteStarter.${{ needs.semver.outputs.GITVERSION_SEMVER }}-1.0-Windows.exe
+
+    - name: Check status 4
+      run: |
+        get-childitem . -Recurse | where {!$_.PSIsContainer} | select-object FullName
+
     - uses: actions/upload-artifact@v3
       with:
         name: OoliteStarter-Windows
@@ -276,7 +299,7 @@ jobs:
       run: |
         jpackage \
           --type app-image \
-          --app-version "1.0.0" \
+          --app-version "${{ needs.semver.outputs.MACOS_MAJORMINORPATCH }}" \
           --copyright Copyright \
           --description "OoliteStarter ${{ needs.semver.outputs.GITVERSION_SEMVER }}" \
           --name "OoliteStarter" --dest target/appimage \
@@ -307,9 +330,9 @@ jobs:
     - name: Finish AppImage for MacOS
       run: |
         jpackage \
-          --type dmg \
+          --type pkg \
           --verbose \
-          --app-version "1.0.0" \
+          --app-version "${{ needs.semver.outputs.MACOS_MAJORMINORPATCH }}" \
           --app-image target/appimage/OoliteStarter.app \
           --name "OoliteStarter" \
           --dest target \
@@ -318,7 +341,8 @@ jobs:
 
     - name: Create ZIP distribution
       run: |
-         zip ./target/OoliteStarter-${{ needs.semver.outputs.GITVERSION_SEMVER }}-MacOS.zip  ./target/appimage/*
+        cd target/appimage
+        zip -r ../OoliteStarter-${{ needs.semver.outputs.GITVERSION_SEMVER }}-MacOS.zip  *
 
     - name: Check status 3
       run: |
@@ -329,7 +353,7 @@ jobs:
 
     - name: Rename result
       run: |
-        mv ./target/OoliteStarter-1.0.0.dmg ./target/OoliteStarter-${{ needs.semver.outputs.GITVERSION_SEMVER }}.dmg
+        mv ./target/OoliteStarter-${{ needs.semver.outputs.MACOS_MAJORMINORPATCH }}.pkg ./target/OoliteStarter-${{ needs.semver.outputs.GITVERSION_SEMVER }}-MacOS.pkg
 
     - name: Check status 4
       run: |
@@ -341,9 +365,7 @@ jobs:
     - uses: actions/upload-artifact@v3
       with:
         name: OoliteStarter-MacOS
-        path: |
-          ./target/OoliteStarter*.dmg
-          ./target/OoliteStarter-${{ needs.semver.outputs.GITVERSION_SEMVER }}-MacOS.zip
+        path: target/OoliteStarter*
 
   release:
     needs: [semver,package-linux,package-windows,package-macos]
@@ -368,7 +390,7 @@ jobs:
       with:
         #repo: <owner>/<repoName> # defaults to current repo
         keep_latest: 5
-        delete_tag_pattern: v\d+\.\d+\.\d+-.*
+        #delete_tag_pattern: v\d+\.\d+\.\d+-.*
         delete_type: 'prerelease'
         #delete_branch: '${{ github.ref_name }}'
       env:
@@ -388,7 +410,7 @@ jobs:
           artifacts/OoliteStarter-generic/*.tar.gz
           artifacts/OoliteStarter-Ubuntu/*.deb
           artifacts/OoliteStarter-Windows/*.exe
-          artifacts/OoliteStarter-MacOS/*.dmg
+          artifacts/OoliteStarter-MacOS/OoliteStarter-*
       
     - name: Remove old releases
       if: github.ref == 'refs/heads/master'
@@ -396,7 +418,7 @@ jobs:
       with:
         #repo: <owner>/<repoName> # defaults to current repo
         keep_latest: 3
-        delete_tag_pattern: v\d+\.\d+\.\d+
+        #delete_tag_pattern: v\d+\.\d+\.\d+
         delete_type: 'release'
         #delete_branch: 'main'
       env:
@@ -416,44 +438,46 @@ jobs:
           artifacts/OoliteStarter-generic/*.tar.gz
           artifacts/OoliteStarter-Ubuntu/*.deb
           artifacts/OoliteStarter-Windows/*.exe
-          artifacts/OoliteStarter-MacOS/*.dmg
+          artifacts/OoliteStarter-MacOS/OoliteStarter-*
 
-  testdmg:
-    needs: [package-macos]
-    runs-on: macos-latest
-
-    steps:
-    - name: Download artifacts
-      uses: actions/download-artifact@v3
-      with:
-        name: OoliteStarter-MacOS
-        path: artifacts
-
-    - name: Check status
-      run: |
-        set
-        echo -n "Current directory: "
-        pwd
-        find . -not -path "./oolitestarter/.git/*"
-        
-    # inspired from https://macwrench.miraheze.org/wiki/Hdiutil
-    - name: Verify/Install
-      run: |
-        set -x
-        F=$(ls artifacts/*.dmg)
-        
-        echo "Help..."
-        hdiutil verify -help
-        hdiutil imageinfo -help
-        hdiutil hfsanalyze -help
-        hdiutil checksum -help
-        hdiutil info -help
-        hdiutil pmap -help
-        
-        echo "Verifying..."
-        hdiutil verify -verbose "$F"
-        hdiutil imageinfo -verbose "$F"
-        hdiutil hfsanalyze -verbose "$F"
-        hdiutil checksum -type SHA256 -verbose "$F"
-        hdiutil info -verbose
-        hdiutil pmap -verbose "$F"
+# No longer required as we do not provide a dmg
+#
+#  testdmg:
+#    needs: [package-macos]
+#    runs-on: macos-latest
+#
+#    steps:
+#    - name: Download artifacts
+#      uses: actions/download-artifact@v3
+#      with:
+#        name: OoliteStarter-MacOS
+#        path: artifacts
+#
+#    - name: Check status
+#      run: |
+#        set
+#        echo -n "Current directory: "
+#        pwd
+#        find . -not -path "./oolitestarter/.git/*"
+#        
+#    # inspired from https://macwrench.miraheze.org/wiki/Hdiutil
+#    - name: Verify/Install
+#      run: |
+#        set -x
+#        F=$(ls artifacts/*.dmg)
+#        
+#        echo "Help..."
+#        hdiutil verify -help
+#        hdiutil imageinfo -help
+#        hdiutil hfsanalyze -help
+#        hdiutil checksum -help
+#        hdiutil info -help
+#        hdiutil pmap -help
+#        
+#        echo "Verifying..."
+#        hdiutil verify -verbose "$F"
+#        hdiutil imageinfo -verbose "$F"
+#        hdiutil hfsanalyze -verbose "$F"
+#        hdiutil checksum -type SHA256 -verbose "$F"
+#        hdiutil info -verbose
+#        hdiutil pmap -verbose "$F"

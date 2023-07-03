@@ -56,8 +56,9 @@ public class ActivationWorker extends SwingWorker<Object, Void> {
     protected void done() {
         log.info("done()");
         /*
+        TODO
          We are not fully decided: How is the user informed about ongoing background activity?
-        JOptionPane.showMessageDialog(component, "Finished " + expansions.size() + "");
+        JOptionPane to showMessageDialog(component, "Finished " + expansions.size() + "");
          */
         if (component instanceof ExpansionsPanel ep) {
             ep.update();

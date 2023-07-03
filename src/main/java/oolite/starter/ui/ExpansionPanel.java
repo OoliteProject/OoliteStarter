@@ -272,6 +272,6 @@ public class ExpansionPanel extends javax.swing.JPanel implements PropertyChange
 
     @Override
     public void propertyChange(PropertyChangeEvent pce) {
-        SwingUtilities.invokeLater(() -> update() );
+        SwingUtilities.invokeLater(this::update);
     }
 }

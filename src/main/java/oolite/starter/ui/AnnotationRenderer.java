@@ -23,7 +23,7 @@ import org.apache.logging.log4j.Logger;
 public class AnnotationRenderer implements TableCellRenderer {
     private static final Logger log = LogManager.getLogger();
     
-    private class MyLayerUI extends LayerUI {
+    private class MyLayerUI extends LayerUI<JComponent> {
         
         private String indicator = "b";
         
@@ -39,7 +39,7 @@ public class AnnotationRenderer implements TableCellRenderer {
         
         @Override
         public void paint(Graphics g, JComponent c) {
-            //log.debug("layerUI.paint");
+            log.trace("layerUI.paint(...)");
             super.paint(g, c);
 
 //            g.setColor(Color.red);
@@ -69,7 +69,11 @@ public class AnnotationRenderer implements TableCellRenderer {
         JComponent c = (JComponent)parent.getTableCellRendererComponent(jtable, value, isSelected, hasFocus, rowIndex, columnIndex);
         if (columnIndex == 1 && jtable.getModel() instanceof ExpansionsTableModel etm) {
             int modelIndex = jtable.convertRowIndexToModel(rowIndex);
-            //Expansion row = etm.getRow(modelIndex);
+            
+            /*
+            todo: calculate the real value based on the row
+            Expansion row = etm.getRow(modelIndex);
+            */
             layerUI.setIndicator(
                     String.valueOf(etm.getValueAt(modelIndex, 0))
             );

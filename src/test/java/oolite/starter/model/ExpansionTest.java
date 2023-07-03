@@ -561,7 +561,8 @@ public class ExpansionTest {
         assertFalse(e1.equals("Hallo"));
         
         Expansion e2 = new Expansion();
-        assertTrue(e1.equals(e2));
+        Boolean result = e1.equals(e2);
+        assertTrue(result);
     }
     
     private class TestPropertyChangeListener implements PropertyChangeListener {

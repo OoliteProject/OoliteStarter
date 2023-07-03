@@ -132,7 +132,7 @@
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="txtStatus" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace pref="507" max="32767" attributes="0"/>
+                  <EmptySpace pref="553" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -148,9 +148,6 @@
       </Layout>
       <SubComponents>
         <Component class="javax.swing.JLabel" name="txtStatus">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="jLabel1"/>
-          </Properties>
         </Component>
       </SubComponents>
     </Container>

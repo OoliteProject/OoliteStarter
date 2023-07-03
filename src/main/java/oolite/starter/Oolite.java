@@ -927,6 +927,39 @@ public class Oolite {
         t.transform(new DOMSource(doc), new StreamResult(destination));
     }
     
+    void validateRequirements(Expansion expansion, List<ExpansionReference> result) {
+        if (expansion.getRequiresOxps() != null) {
+            for (String dependency: expansion.getRequiresOxps()) {
+                int idx = dependency.indexOf(":");
+                if (idx >= 0) {
+                    dependency = dependency.substring(0, idx);
+                }
+
+                ExpansionReference er = getExpansionReference(dependency);
+                if (er.status == ExpansionReference.Status.MISSING) {
+                    result.add(er);
+                }
+            }
+        }
+    }
+    
+    void validateConflicts(Expansion expansion, List<ExpansionReference> result) {
+        if (expansion.getConflictOxps() != null) {
+            for (String dependency: expansion.getConflictOxps()) {
+                int idx = dependency.indexOf(":");
+                if (idx >= 0) {
+                    dependency = dependency.substring(0, idx);
+                }
+
+                ExpansionReference er = getExpansionReference(dependency);
+                if (er.status == ExpansionReference.Status.OK) {
+                    er.status = ExpansionReference.Status.SURPLUS;
+                    result.add(er);
+                }
+            }
+        }
+    }
+    
     /**
      * Validates whether the list of expansions is acceptable in itself.
      * 
@@ -943,34 +976,8 @@ public class Oolite {
                 continue;
             }                
             
-            if (expansion.getRequiresOxps() != null) {
-                for (String dependency: expansion.getRequiresOxps()) {
-                    int idx = dependency.indexOf(":");
-                    if (idx >= 0) {
-                        dependency = dependency.substring(0, idx);
-                    }
-                    
-                    ExpansionReference er = getExpansionReference(dependency);
-                    if (er.status == ExpansionReference.Status.MISSING) {
-                        result.add(er);
-                    }
-                }
-            }
-
-            if (expansion.getConflictOxps() != null) {
-                for (String dependency: expansion.getConflictOxps()) {
-                    int idx = dependency.indexOf(":");
-                    if (idx >= 0) {
-                        dependency = dependency.substring(0, idx);
-                    }
-
-                    ExpansionReference er = getExpansionReference(dependency);
-                    if (er.status == ExpansionReference.Status.OK) {
-                        er.status = ExpansionReference.Status.SURPLUS;
-                        result.add(er);
-                    }
-                }
-            }
+            validateRequirements(expansion, result);
+            validateConflicts(expansion, result);
         }
         
         return result;
@@ -1076,6 +1083,50 @@ public class Oolite {
     }
     
     /**
+     * Return true if we detect an Oolite home directory.
+     * 
+     * @param f the directory to inspect
+     * @return true if and only if it is a home directory
+     */
+    static boolean isOoliteHomeDirectory(File f) {
+        File app = new File(f, "oolite.app");
+        if (app.isDirectory()) {
+            return true;
+        }
+        app = new File(f, "Oolite.app/Contents");
+        
+        return app.isDirectory();
+    }
+    
+    static boolean isOoliteExpansionDirectory(File f) {
+        File[] children = f.listFiles();
+        if (children != null) {
+            for (File child: children) {
+                if (child.getName().endsWith(".oxz")) {
+                    return true;
+                }
+                
+                if (child.getName().endsWith(".oxp") && new File(child, "Config").isDirectory()) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    
+    static boolean isOoliteSaveGameDirectory(File f) {
+        File[] children = f.listFiles();
+        if (children != null) {
+            for (File child: children) {
+                if (child.getName().endsWith(".oolite-save")) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    
+    /**
      * Determines the type of a directory for Oolite.
      * 
      * @param f
@@ -1085,34 +1136,20 @@ public class Oolite {
         if (f == null) {
             return null;
         }
-        
-        File app = new File(f, "oolite.app");
-        if (app.isDirectory()) {
+
+        if (isOoliteHomeDirectory(f)) {
             // this works for Windows and Linux
             return OoliteDirectoryType.HOME_DIR;
         }
-        app = new File(f, "Oolite.app/Contents");
-        if (app.isDirectory()) {
-            // this works on MacOS
-            return OoliteDirectoryType.HOME_DIR;
+        
+        if (isOoliteExpansionDirectory(f)) {
+            // this works for Windows and Linux
+            return OoliteDirectoryType.EXPANSION_DIR;
         }
         
-        // do we have an expansion folder?
-        File[] children = f.listFiles();
-        if (children != null) {
-            for (File child: children) {
-                if (child.getName().endsWith(".oolite-save")) {
-                    return OoliteDirectoryType.SAVEGAME_DIR;
-                }
-                
-                if (child.getName().endsWith(".oxz")) {
-                    return OoliteDirectoryType.EXPANSION_DIR;
-                }
-                
-                if (child.getName().endsWith(".oxp") && new File(child, "Config").isDirectory()) {
-                    return OoliteDirectoryType.EXPANSION_DIR;
-                }
-            }
+        if (isOoliteSaveGameDirectory(f)) {
+            // this works for Windows and Linux
+            return OoliteDirectoryType.SAVEGAME_DIR;
         }
         
         return null;

@@ -87,8 +87,8 @@ public class ExpansionWorker extends SwingWorker<Object, Void> { // first is ret
         log.debug("done()");
         
         /*
-         We are not fully decided: How is the user informed about ongoing background activity?
-        JOptionPane.showMessageDialog(component, "Finished " + expansions.size() + "");
+        TODO: We are not fully decided: How is the user informed about ongoing background activity?
+        JOptionPane to showMessageDialog(component, "Finished " + expansions.size() + "");
          */
         if (component instanceof ExpansionsPanel ep) {
             ep.update();
