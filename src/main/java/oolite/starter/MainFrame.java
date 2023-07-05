@@ -42,7 +42,7 @@ public class MainFrame extends javax.swing.JFrame {
         if (confFile.exists()) {
             configuration = new Configuration(confFile);
         } else {
-            String msg = String.format("<p>Heho, Kid! You've got a problem here that is technical, not financial.</p><p>The configuration file %s was not found.</p><p>I’m a busy frog, I can’t stay here all day to watch you get it right. So let's use defaults.", confFile.getAbsolutePath());
+            String msg = String.format("<html><p>Heho, Kid! You've got a problem here that is technical, not financial.</p><p>The configuration file %s was not found.</p><p>I’m a busy frog, I can’t stay here all day to watch you get it right. So let's use defaults.</p></html>", confFile.getAbsolutePath());
             log.warn(msg);
             
             MrGimlet.showMessage(null, msg);
@@ -154,7 +154,7 @@ public class MainFrame extends javax.swing.JFrame {
                     message.append("<p>Have at least one active Oolite version. You need to. In fact, everyone must have it!<br/>");
                     message.append("Hit the Add button and fill in the form, at least once to add Oolite versions.<br/>");
                     message.append("Do not forget to select one of them and hit the Activate button.</p>");
-                    message.append("<p>Only then try to juggle OXPs or start the game. Right... Ah, remember to gently touch the Save button eventually.</p>");
+                    message.append("<p>Only then try to juggle OXPs or start the game. Right... Ah, remember to gently touch<br/>the Save button before you leave the area.</p>");
                     message.append("</html>");
 
                     MrGimlet.showMessage(mf, message.toString());
