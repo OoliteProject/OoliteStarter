@@ -4,8 +4,6 @@ package oolite.starter.ui;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import oolite.starter.Oolite;
 import oolite.starter.model.SaveGame;
 import org.apache.logging.log4j.LogManager;
@@ -44,18 +42,15 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
     public void setOolite(Oolite oolite) {
         this.oolite = oolite;
         
-        jTable1.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-            @Override
-            public void valueChanged(ListSelectionEvent lse) {
-                log.debug("valueChanged({})", lse);
-                if (!lse.getValueIsAdjusting()) {
-                    // we have a final value - let's render it
-                    int rowIndex = jTable1.getSelectedRow();
-                    if (rowIndex >=0 ) {
-                        rowIndex = jTable1.convertRowIndexToModel(rowIndex);
-                        SaveGame row = model.getRow(rowIndex);
-                        sgp.setData(row);
-                    }
+        jTable1.getSelectionModel().addListSelectionListener(lse -> {
+            log.debug("valueChanged({})", lse);
+            if (!lse.getValueIsAdjusting()) {
+                // we have a final value - let's render it
+                int rowIndex = jTable1.getSelectedRow();
+                if (rowIndex >=0 ) {
+                    rowIndex = jTable1.convertRowIndexToModel(rowIndex);
+                    SaveGame row = model.getRow(rowIndex);
+                    sgp.setData(row);
                 }
             }
         });
@@ -191,6 +186,7 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
     }// </editor-fold>//GEN-END:initComponents
 
     private void btNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btNewActionPerformed
+        log.debug("btNewActionPerformed({})", evt);
         // new game button
         try {
             SwingUtilities.getRoot(this).setVisible(false);

@@ -505,8 +505,6 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
 
     @Override
     public void terminated() {
-        SwingUtilities.invokeLater(() -> {
-            update();
-        });
+        SwingUtilities.invokeLater(this::update);
     }
 }

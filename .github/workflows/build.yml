@@ -461,6 +461,7 @@ jobs:
 #        find . -not -path "./oolitestarter/.git/*"
 #        
 #    # inspired from https://macwrench.miraheze.org/wiki/Hdiutil
+#    #          and https://stackoverflow.com/questions/18017687/how-to-check-whether-an-app-or-dmg-is-signed-or-not
 #    - name: Verify/Install
 #      run: |
 #        set -x
@@ -473,6 +474,7 @@ jobs:
 #        hdiutil checksum -help
 #        hdiutil info -help
 #        hdiutil pmap -help
+#        codesign -help
 #        
 #        echo "Verifying..."
 #        hdiutil verify -verbose "$F"
@@ -481,3 +483,4 @@ jobs:
 #        hdiutil checksum -type SHA256 -verbose "$F"
 #        hdiutil info -verbose
 #        hdiutil pmap -verbose "$F"
+#        codesign --verify --verbose "$F"

@@ -21,7 +21,7 @@ public class InstallationsPanel extends javax.swing.JPanel {
     private static final String INSTALLATIONSPANEL_SELECT_ROW = "Please select row";
     private static final String INSTALLATIONSPANEL_COULD_NOT_SAVE = "Could not save";
     
-    private InstallationForm installationForm;
+    private InstallationForm installationDetails;
     private InstallationTableModel model;
     private transient TableRowSorter<InstallationTableModel> trw;
     private transient Configuration configuration;
@@ -33,9 +33,9 @@ public class InstallationsPanel extends javax.swing.JPanel {
         initComponents();
         btScan.setVisible(false);
         
-        installationForm = new InstallationForm();
-        installationForm.setEnabled(false);
-        jSplitPane1.setRightComponent(installationForm);
+        installationDetails = new InstallationForm();
+        installationDetails.setEnabled(false);
+        jSplitPane1.setRightComponent(installationDetails);
     }
     
     /**
@@ -71,9 +71,9 @@ public class InstallationsPanel extends javax.swing.JPanel {
         if (rowIndex >=0) {
             rowIndex = jTable1.convertRowIndexToModel(rowIndex);
             Installation row = model.getRow(rowIndex);
-            installationForm.setData(row);
+            installationDetails.setData(row);
         } else {
-            installationForm.setData(null);
+            installationDetails.setData(null);
         }
     }
     
@@ -206,10 +206,12 @@ public class InstallationsPanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btScanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btScanActionPerformed
-        // TODO add your handling code here:
+        log.debug("btScanActionPerformed({})", evt);
     }//GEN-LAST:event_btScanActionPerformed
 
     private void btAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btAddActionPerformed
+        log.debug("btAddActionPerformed({})", evt);
+        
         try {
             InstallationForm installationForm = new InstallationForm();
             if (JOptionPane.showOptionDialog(this, installationForm, "Add Oolite version...", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, null, null) == JOptionPane.OK_OPTION) {
@@ -222,6 +224,8 @@ public class InstallationsPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_btAddActionPerformed
 
     private void btEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btEditActionPerformed
+        log.debug("btEditActionPerformed({})", evt);
+        
         try {
             int rowIndex = jTable1.getSelectedRow();
             if (rowIndex == -1) {
@@ -239,7 +243,7 @@ public class InstallationsPanel extends javax.swing.JPanel {
                 Installation data = installationForm.getData();
                 model.updateRow(data);
                 if (model.getRow(jTable1.getSelectedRow()) == data) {
-                    this.installationForm.setData(data);
+                    this.installationDetails.setData(data);
                 }
             }
         } catch (Exception e) {
@@ -249,6 +253,8 @@ public class InstallationsPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_btEditActionPerformed
 
     private void btRemoveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btRemoveActionPerformed
+        log.debug("btRemoveActionPerformed({})", evt);
+        
         try {
             int rowIndex = jTable1.getSelectedRow();
             if (rowIndex == -1) {
@@ -267,6 +273,8 @@ public class InstallationsPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_btRemoveActionPerformed
 
     private void btSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btSaveActionPerformed
+        log.debug("btSaveActionPerformed({})", evt);
+        
         try {
             File f = new File(System.getProperty("user.home") + File.separator + ".oolite-starter.conf");
             configuration.saveConfiguration(f);
@@ -290,6 +298,8 @@ public class InstallationsPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_btSaveActionPerformed
 
     private void btActivateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btActivateActionPerformed
+        log.debug("btActivateActionPerformed({})", evt);
+        
         try {
             int rowIndex = jTable1.getSelectedRow();
             if (rowIndex == -1) {

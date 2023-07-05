@@ -45,10 +45,10 @@ public class SaveGamePanel extends javax.swing.JPanel {
 
             Border border = null;
             for (ExpansionReference er: data.getExpansions()) {
-                if (er.status == ExpansionReference.Status.SURPLUS && border==null) {
+                if (er.getStatus() == ExpansionReference.Status.SURPLUS && border==null) {
                     border = new LineBorder(Color.orange);
                 }
-                if (er.status == ExpansionReference.Status.MISSING) {
+                if (er.getStatus() == ExpansionReference.Status.MISSING) {
                     border = new LineBorder(Color.red);
                     break;
                 }

@@ -465,6 +465,12 @@ public class Expansion implements Comparable<Expansion> {
     }
 
     @Override
+    public int hashCode() {
+        String s = "" + getIdentifier() + getVersion();
+        return s.hashCode();
+    }
+    
+    @Override
     public boolean equals(Object obj) {
         if (obj instanceof Expansion o) {
             return compareTo(o) == 0;

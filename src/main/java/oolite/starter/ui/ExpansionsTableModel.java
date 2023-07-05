@@ -54,10 +54,10 @@ public class ExpansionsTableModel extends AbstractTableModel implements Property
 
     @Override
     public Class<?> getColumnClass(int columnIndex) {
-        switch (columnIndex) {
-            case 1: return LocalDateTime.class;
-            default:
-                return super.getColumnClass(columnIndex);
+        if (columnIndex == 1) {
+            return LocalDateTime.class;
+        } else {
+            return super.getColumnClass(columnIndex);
         }
     }
 
@@ -92,12 +92,12 @@ public class ExpansionsTableModel extends AbstractTableModel implements Property
         } else {
             result += "e";
         }
-        if (row.getRequiresOxps() !=null && row.getRequiresOxps().size()>0) {
+        if (row.getRequiresOxps() !=null && !row.getRequiresOxps().isEmpty()) {
             result += "R";
         } else {
             result += "r";
         }
-        if (row.getConflictOxps() !=null && row.getConflictOxps().size()>0) {
+        if (row.getConflictOxps() !=null && !row.getConflictOxps().isEmpty()) {
             result += "C";
         } else {
             result += "c";
@@ -144,9 +144,7 @@ public class ExpansionsTableModel extends AbstractTableModel implements Property
         if (pce.getSource() instanceof Expansion e) {
             int index = data.indexOf(e);
 
-            SwingUtilities.invokeLater(() -> {
-                    fireTableRowsUpdated(index, index);
-            });
+            SwingUtilities.invokeLater(() -> fireTableRowsUpdated(index, index) );
         }
     }
 }

@@ -197,7 +197,7 @@ public class Oolite {
     
     protected boolean contains(List<ExpansionReference> list, Expansion expansion) {
         for (ExpansionReference ref: list) {
-            if (expansion.getLocalFile().getName().endsWith(ref.name)) {
+            if (expansion.getLocalFile().getName().endsWith(ref.getName())) {
                 return true;
             }
         }
@@ -227,8 +227,8 @@ public class Oolite {
             ) {
                 // add a SURPLUS
                 ExpansionReference ref = new ExpansionReference();
-                ref.name = expansion.getIdentifier() + "@" + expansion.getVersion();
-                ref.status = ExpansionReference.Status.SURPLUS;
+                ref.setName(expansion.getIdentifier() + "@" + expansion.getVersion());
+                ref.setStatus(ExpansionReference.Status.SURPLUS);
                 surplus.add(ref);
             }
         }
@@ -262,7 +262,7 @@ public class Oolite {
     /**
      * Runs Oolite.
      */
-    public void run() throws IOException, InterruptedException {
+    public void run() throws IOException, InterruptedException, ProcessRunException {
         log.debug("run()");
 
         String executable = configuration.getOoliteCommand();
@@ -284,7 +284,7 @@ public class Oolite {
      * 
      * @param savegame the game to run
      */
-    public void run(SaveGame savegame) throws IOException, InterruptedException {
+    public void run(SaveGame savegame) throws IOException, InterruptedException, ProcessRunException {
         log.debug("run({})", savegame);
 
         List<String> command = new ArrayList<>();
@@ -311,7 +311,7 @@ public class Oolite {
     /**
      * Runs Oolite using the specified command in the specified directory.
      */
-    public void run(List<String> command, File dir) throws IOException, InterruptedException {
+    public void run(List<String> command, File dir) throws IOException, InterruptedException, ProcessRunException {
         log.debug("run({}, {})", command, dir);
 
         injectExpansion();
@@ -331,7 +331,7 @@ public class Oolite {
             
             log.info("Process exited with code {}", p.exitValue());
             if (p.exitValue() != 0) {
-                throw new RuntimeException(String.format("Oolite terminated with code %d", p.exitValue()));
+                throw new ProcessRunException(String.format("Oolite terminated with code %d", p.exitValue()));
             }
             
         } finally {
@@ -936,7 +936,7 @@ public class Oolite {
                 }
 
                 ExpansionReference er = getExpansionReference(dependency);
-                if (er.status == ExpansionReference.Status.MISSING) {
+                if (er.getStatus() == ExpansionReference.Status.MISSING) {
                     result.add(er);
                 }
             }
@@ -952,8 +952,8 @@ public class Oolite {
                 }
 
                 ExpansionReference er = getExpansionReference(dependency);
-                if (er.status == ExpansionReference.Status.OK) {
-                    er.status = ExpansionReference.Status.SURPLUS;
+                if (er.getStatus() == ExpansionReference.Status.OK) {
+                    er.setStatus(ExpansionReference.Status.SURPLUS);
                     result.add(er);
                 }
             }
@@ -1036,8 +1036,8 @@ public class Oolite {
     
     protected ExpansionReference getExpansionReference(String name) {
         ExpansionReference result = new ExpansionReference();
-        result.name = name;
-        result.status = ExpansionReference.Status.MISSING;
+        result.setName(name);
+        result.setStatus(ExpansionReference.Status.MISSING);
         
         // find a direct match
         if (
@@ -1045,7 +1045,7 @@ public class Oolite {
             ||
                 new File(configuration.getManagedAddonsDir(), name).exists()
             ) {
-            result.status = ExpansionReference.Status.OK;
+            result.setStatus(ExpansionReference.Status.OK);
             return result;
         }
         
@@ -1058,14 +1058,14 @@ public class Oolite {
         File[] files = configuration.getAddonsDir().listFiles();
         for (File f: files) {
             if (f.getName().contains(id)) {
-                result.status = ExpansionReference.Status.OK;
+                result.setStatus(ExpansionReference.Status.OK);
                 return result;
             }
         }
         files = configuration.getManagedAddonsDir().listFiles();
         for (File f: files) {
             if (f.getName().contains(id)) {
-                result.status = ExpansionReference.Status.OK;
+                result.setStatus(ExpansionReference.Status.OK);
                 return result;
             }
         }

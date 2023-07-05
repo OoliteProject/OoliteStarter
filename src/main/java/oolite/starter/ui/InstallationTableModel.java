@@ -87,10 +87,10 @@ public class InstallationTableModel extends AbstractTableModel implements Proper
 
     @Override
     public Class<?> getColumnClass(int columnIndex) {
-        switch (columnIndex) {
-            case 20: return Boolean.class;
-            default:
-                return super.getColumnClass(columnIndex);
+        if (columnIndex == 20) {
+            return Boolean.class;
+        } else {
+            return super.getColumnClass(columnIndex);
         }
     }
     

@@ -21,6 +21,13 @@ public class MrGimlet {
     private static final Logger log = LogManager.getLogger();
 
     /**
+     * Prevent instances from being created.
+     */
+    private MrGimlet() {
+        
+    }
+    
+    /**
      * Shows a message in Mr Gimlet style.
      * 
      * @param parentComponent the parent window that should be blocked by this modal dialog

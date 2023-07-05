@@ -32,8 +32,8 @@ public class ExpansionReferenceCellRenderer  extends JLabel implements ListCellR
                 boolean isFocused) {
             log.debug("getListCellRendererComponent(...)");
             
-            setText(value.name);
-            switch(value.status) {
+            setText(value.getName());
+            switch(value.getStatus()) {
                 case OK:
                     setIcon(iiOk);
                     break;

@@ -82,9 +82,9 @@ public class ExpansionReferenceTest {
         log.info("testCompareTo4");
 
         ExpansionReference one = new ExpansionReference();
-        one.name = "foo";
+        one.setName("foo");
         ExpansionReference other = new ExpansionReference();
-        other.name = "bar";
+        other.setName("bar");
         
         assertEquals(4, one.compareTo(other));
         assertEquals(-4, other.compareTo(one));
