@@ -23,7 +23,6 @@ public class InstallationsPanel extends javax.swing.JPanel {
     
     private InstallationForm installationDetails;
     private InstallationTableModel model;
-    private transient TableRowSorter<InstallationTableModel> trw;
     private transient Configuration configuration;
     
     /**
@@ -62,7 +61,7 @@ public class InstallationsPanel extends javax.swing.JPanel {
                 showDetailsOfSelection();
             }
         });
-        trw = new TableRowSorter<InstallationTableModel>(model);
+        TableRowSorter<InstallationTableModel> trw = new TableRowSorter<>(model);
         jTable1.setRowSorter(trw);
     }
     
@@ -263,8 +262,6 @@ public class InstallationsPanel extends javax.swing.JPanel {
             }
             
             rowIndex = jTable1.convertRowIndexToModel(rowIndex);
-            Installation i = model.getRow(rowIndex);
-            
             model.removeRow(rowIndex);
         } catch (Exception e) {
             log.error(INSTALLATIONSPANEL_ERROR, e);

@@ -22,7 +22,6 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
     private transient Oolite oolite;
     private SaveGameTableModel model;
     private SaveGamePanel sgp;
-    private transient TableRowSorter<SaveGameTableModel> trw;
 
     /**
      * Creates new form StartGamePanel.
@@ -68,7 +67,7 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
             model = new SaveGameTableModel(oolite.getSaveGames());
             jTable1.clearSelection();
             jTable1.setModel(model);
-            trw = new TableRowSorter<>(model);
+            TableRowSorter<SaveGameTableModel> trw = new TableRowSorter<>(model);
             jTable1.setRowSorter(trw);
             sgp.setData(null);
             
@@ -195,6 +194,9 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
             SwingUtilities.getRoot(this).setVisible(false);
             
             oolite.run();
+        } catch (InterruptedException e) {
+            log.error(STARTGAMEPANEL_COULD_NOT_RUN_GAME, e);
+            Thread.currentThread().interrupt();
         } catch (Exception e) {
             log.error(STARTGAMEPANEL_COULD_NOT_RUN_GAME, e);
             JOptionPane.showMessageDialog(null, constructMessage(STARTGAMEPANEL_COULD_NOT_RUN_GAME, e));
@@ -215,6 +217,9 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
             oolite.run(row);
             
             update();
+        } catch (InterruptedException e) {
+            log.error(STARTGAMEPANEL_COULD_NOT_RUN_GAME, e);
+            Thread.currentThread().interrupt();
         } catch (Exception e) {
             log.error(STARTGAMEPANEL_COULD_NOT_RUN_GAME, e);
             
@@ -225,6 +230,8 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
     }//GEN-LAST:event_btResumeActionPerformed
 
     private void btReloadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btReloadActionPerformed
+        log.debug("btReloadActionPerformed({})", evt);
+
         try {
             update();
         } catch (Exception e) {

@@ -33,20 +33,6 @@ public class OoliteFileView extends FileView {
     }
         
     /**
-     * Returns a description of the file. The intent is to describe individual 
-     * files more specifically. A common implementation of this method returns 
-     * null to indicate that the look and feel should figure it out.
-     * 
-     * @param f
-     * @return 
-     */
-    @Override
-    public String getDescription(File f) {
-        //return super.getDescription(f);
-        return "Description";
-    }
-
-    /**
      * Returns an icon representing the file or its type.
      * Huge images are accepted but will increase the space needed for each
      * file entry.
@@ -61,29 +47,6 @@ public class OoliteFileView extends FileView {
         } else {
             return super.getIcon(f);
         }
-    }
-
-    /**
-     * Returns the name of the file. Most implementations of this method should 
-     * return null to indicate that the look and feel should figure it out. 
-     * Another common implementation returns f.getName().
-     * 
-     * @param f
-     * @return 
-     */
-    @Override
-    public String getName(File f) {
-        return null;
-    }
-
-    @Override
-    public String getTypeDescription(File f) {
-        return super.getTypeDescription(f);
-    }
-
-    @Override
-    public Boolean isTraversable(File f) {
-        return super.isTraversable(f);
     }
     
 }

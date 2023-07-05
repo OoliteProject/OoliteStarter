@@ -44,12 +44,23 @@ public class OoliteFileChooserAccessory extends JPanel implements PropertyChange
     public void propertyChange(PropertyChangeEvent pce) {
         log.debug("propertyChange({})", pce);
 
-        if (pce.getPropertyName() == JFileChooser.DIRECTORY_CHANGED_PROPERTY
-                || pce.getPropertyName()== JFileChooser.SELECTED_FILES_CHANGED_PROPERTY
-                || pce.getPropertyName()== JFileChooser.SELECTED_FILE_CHANGED_PROPERTY
+        if (JFileChooser.DIRECTORY_CHANGED_PROPERTY.equals(pce.getPropertyName())
+                || JFileChooser.SELECTED_FILES_CHANGED_PROPERTY.equals(pce.getPropertyName())
+                || JFileChooser.SELECTED_FILE_CHANGED_PROPERTY.equals(pce.getPropertyName()) 
         ) {
             File f = (File)pce.getNewValue();
-            jta.setText(Oolite.getDescription(Oolite.isOoliteRelevant(f)));
+            Oolite.OoliteDirectoryType oor = Oolite.isOoliteRelevant(f);
+            if (oor != null) {
+                jta.setText(Oolite.getDescription(oor));
+            } else if (f == null) {
+                jta.setText("");
+            } else if (f.canExecute()) {
+                jta.setText("Executable");
+            } else if (f.isDirectory()) {
+                jta.setText("Directory");
+            } else {
+                jta.setText("");
+            }
         }
     }
     

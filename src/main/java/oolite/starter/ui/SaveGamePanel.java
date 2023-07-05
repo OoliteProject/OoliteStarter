@@ -35,7 +35,7 @@ public class SaveGamePanel extends javax.swing.JPanel {
         txtShipKills.setText(String.valueOf(data.getShipKills()));
         txtPilotName.setText(String.valueOf(data.getPlayerName()));
 
-        DefaultListModel dlm = new DefaultListModel<ExpansionReference>();
+        DefaultListModel<ExpansionReference> dlm = new DefaultListModel<>();
         if (data.getExpansions() != null) {
             dlm.addAll(data.getExpansions());
 
@@ -72,7 +72,7 @@ public class SaveGamePanel extends javax.swing.JPanel {
         txtShipKills.setText("");
         txtPilotName.setText("");
 
-        lsExpansions.setModel(new DefaultListModel<ExpansionReference>());
+        lsExpansions.setModel(new DefaultListModel<>());
         jScrollPane1.setBorder(null);
     }
     
