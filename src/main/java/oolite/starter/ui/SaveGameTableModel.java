@@ -54,7 +54,7 @@ public class SaveGameTableModel extends AbstractTableModel {
             case 1:
                 return Long.class;
             case 2:
-                return String.class;
+                return Date.class;
             default:
                 return String.class;
         }

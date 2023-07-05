@@ -4,6 +4,7 @@ package oolite.starter.ui;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
+import javax.swing.table.TableRowSorter;
 import oolite.starter.Oolite;
 import oolite.starter.model.SaveGame;
 import org.apache.logging.log4j.LogManager;
@@ -21,6 +22,7 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
     private transient Oolite oolite;
     private SaveGameTableModel model;
     private SaveGamePanel sgp;
+    private transient TableRowSorter<SaveGameTableModel> trw;
 
     /**
      * Creates new form StartGamePanel.
@@ -56,7 +58,6 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
         });
         
         sgp = new SaveGamePanel();
-        //add(sgp, BorderLayout.SOUTH);
         jSplitPane1.setRightComponent(sgp);
         
         update();
@@ -67,6 +68,8 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
             model = new SaveGameTableModel(oolite.getSaveGames());
             jTable1.clearSelection();
             jTable1.setModel(model);
+            trw = new TableRowSorter<>(model);
+            jTable1.setRowSorter(trw);
             sgp.setData(null);
             
             txtStatus.setText(String.format("%d save games", model.getRowCount()));
@@ -201,6 +204,8 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
     }//GEN-LAST:event_btNewActionPerformed
 
     private void btResumeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btResumeActionPerformed
+        log.debug("btResumeActionPerformed({})", evt);
+
         // run savegame
         try {
             int rowIndex = jTable1.convertRowIndexToModel(jTable1.getSelectedRow());
