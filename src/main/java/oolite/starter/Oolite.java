@@ -1089,13 +1089,34 @@ public class Oolite {
      * @return true if and only if it is a home directory
      */
     static boolean isOoliteHomeDirectory(File f) {
-        File app = new File(f, "oolite.app");
-        if (app.isDirectory()) {
-            return true;
+        String fname = f.getName();
+        if ("oolite.app".equals(fname)) {
+            // check linux directory
+            // check windows directory
+            
+            File app = null;
+            app = new File(f, "oolite.exe");
+            if (app.isFile()) {
+                // we found oolite.exe on Windows!
+                return true;
+            }
+            app = new File(f, "oolite");
+            if (app.isFile()) {
+                // we found oolite on Linux!
+                return true;
+            }
         }
-        app = new File(f, "Oolite.app/Contents");
+        if ("Oolite.app".equals(fname)) {
+            // check MacOS directory
+            File app = null;
+            app = new File(f, "Contents/MacOS/Oolite");
+            if (app.isFile()) {
+                // we found oolite.exe on Windows!
+                return true;
+            }
+        }
         
-        return app.isDirectory();
+        return false;
     }
     
     static boolean isOoliteExpansionDirectory(File f) {
