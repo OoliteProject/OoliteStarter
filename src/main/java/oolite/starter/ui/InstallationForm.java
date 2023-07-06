@@ -377,7 +377,7 @@ public class InstallationForm extends javax.swing.JPanel {
             // check Linux, Windows
             File d = new File(homeDir, "../AddOns");
             if (d.isDirectory()) {
-                txtAddOnDir.setText(d.getAbsolutePath());
+                txtAddOnDir.setText(d.getCanonicalPath());
             }
 
             if (txtDeactivatedAddOnDir.getText().isBlank()) {
