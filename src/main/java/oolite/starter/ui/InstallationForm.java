@@ -7,6 +7,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import oolite.starter.Oolite;
 import oolite.starter.model.Installation;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
@@ -306,23 +307,39 @@ public class InstallationForm extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    void maybeFillVersion(File homeDir) throws IOException {
+    void maybeFillVersion(File homeDir) {
         if (txtVersion.getText().isBlank()) {
-            File releaseTxt = new File(homeDir, "release.txt");
+            // check Linux
+            File releaseTxt = new File(homeDir, "../release.txt");
             if (releaseTxt.isFile()) {
-                txtVersion.setText(IOUtils.toString(new FileReader(releaseTxt)).trim());
+                try {
+                    txtVersion.setText(IOUtils.toString(new FileReader(releaseTxt)).trim());
+                } catch (Exception e) {
+                    log.info("Could not read version from {}", releaseTxt, e);
+                }
+            }
+            releaseTxt = new File(homeDir, "Contents/Info.plist");
+            if (releaseTxt.isFile()) {
+                try {
+                    txtVersion.setText(Oolite.getVersionFromInfoPlist(releaseTxt));
+                } catch (Exception e) {
+                    log.info("Could not read version from {}", releaseTxt, e);
+                }
             }
         }
     }
 
     void maybeFillExecutable(File homeDir) {
         if (txtExecutable.getText().isBlank()) {
-            File executable = new File(homeDir, "oolite.app/oolite-wrapper");
+            File executable = new File(homeDir, "oolite-wrapper");
             if (!executable.exists()) {
-                executable = new File(homeDir, "oolite.app/oolite.exe");
+                executable = new File(homeDir, "oolite.exe");
             }
             if (!executable.exists()) {
-                executable = new File(homeDir, "oolite.app/oolite");
+                executable = new File(homeDir, "oolite");
+            }
+            if (!executable.exists()) {
+                executable = new File(homeDir, "Contents/MacOS/Oolite");
             }
 
             if (executable.isFile()) {
@@ -333,13 +350,22 @@ public class InstallationForm extends javax.swing.JPanel {
 
     void maybeFillSavegameDir(File homeDir) {
         if (txtSavegameDir.getText().isBlank()) {
-            File d = new File(homeDir, "oolite.app/oolite-saves");
+            // check Windows
+            File d = new File(homeDir, "oolite-saves");
             if (d.isDirectory()) {
                 txtSavegameDir.setText(d.getAbsolutePath());
             }
         }
         if (txtSavegameDir.getText().isBlank()) {
+            // check Linux
             File d = new File(new File(System.getProperty(INSTALLATIONFORM_USER_HOME)), "oolite-saves");
+            if (d.isDirectory()) {
+                txtSavegameDir.setText(d.getAbsolutePath());
+            }
+        }
+        if (txtSavegameDir.getText().isBlank()) {
+            // check MacOS
+            File d = new File(new File(System.getProperty(INSTALLATIONFORM_USER_HOME)), "Documents");
             if (d.isDirectory()) {
                 txtSavegameDir.setText(d.getAbsolutePath());
             }
@@ -348,7 +374,8 @@ public class InstallationForm extends javax.swing.JPanel {
     
     void maybeFillAddonDir(File homeDir) throws IOException {
         if (txtAddOnDir.getText().isBlank()) {
-            File d = new File(homeDir, "AddOns");
+            // check Linux, Windows
+            File d = new File(homeDir, "../AddOns");
             if (d.isDirectory()) {
                 txtAddOnDir.setText(d.getAbsolutePath());
             }
@@ -358,12 +385,25 @@ public class InstallationForm extends javax.swing.JPanel {
                 txtDeactivatedAddOnDir.setText(dd.getCanonicalPath());
             }
         }
+        if (txtAddOnDir.getText().isBlank()) {
+            // check MacOS
+            File d = new File(new File(System.getProperty(INSTALLATIONFORM_USER_HOME)), "Library/Application Support/Oolite/Addons");
+            if (d.isDirectory()) {
+                txtAddOnDir.setText(d.getAbsolutePath());
+            }
+
+            if (txtDeactivatedAddOnDir.getText().isBlank()) {
+                File dd = new File(new File(System.getProperty(INSTALLATIONFORM_USER_HOME)), "Library/Application Support/Oolite/DeactivatedAddOns");
+                txtDeactivatedAddOnDir.setText(dd.getCanonicalPath());
+            }
+        }
     }
 
     void maybeFillManagedAddonDir(File homeDir) throws IOException {
         log.debug("maybeFillManagedAddonDir({})", homeDir);
         
         if (txtManagedAddOnDir.getText().isBlank()) {
+            // check Linux
             File d = new File(new File(System.getProperty(INSTALLATIONFORM_USER_HOME)), "GNUstep/Library/ApplicationSupport/Oolite/ManagedAddOns");
             if (d.isDirectory()) {
                 txtManagedAddOnDir.setText(d.getAbsolutePath());
@@ -371,6 +411,18 @@ public class InstallationForm extends javax.swing.JPanel {
 
             if (txtManagedDeactivatedAddOnDir.getText().isBlank()) {
                 File dd = new File(d, "../ManagedDeactivatedAddOns");
+                txtManagedDeactivatedAddOnDir.setText(dd.getCanonicalPath());
+            }
+        }
+        if (txtManagedAddOnDir.getText().isBlank()) {
+            // check MacOS
+            File d = new File(new File(System.getProperty(INSTALLATIONFORM_USER_HOME)), "Library/Application Support/Oolite/ManagedAddons");
+            if (d.isDirectory()) {
+                txtManagedAddOnDir.setText(d.getAbsolutePath());
+            }
+
+            if (txtManagedDeactivatedAddOnDir.getText().isBlank()) {
+                File dd = new File(new File(System.getProperty(INSTALLATIONFORM_USER_HOME)), "Library/Application Support/Oolite/ManagedDeactivatedAddOns");
                 txtManagedDeactivatedAddOnDir.setText(dd.getCanonicalPath());
             }
         }

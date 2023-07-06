@@ -1198,4 +1198,24 @@ public class Oolite {
                 return "";
         }
     }
+
+    /**
+     * Extracts the Oolite version from Info.plist.
+     * 
+     * @param f the Info.plist file to read
+     * @return the version number found
+     * @throws ParserConfigurationException something went wrong
+     * @throws SAXException something went wrong
+     * @throws IOException something went wrong
+     * @throws XPathExpressionException something went wrong
+     */
+    public static String getVersionFromInfoPlist(File f) throws ParserConfigurationException, SAXException, IOException, XPathExpressionException {
+        Document info = XmlUtil.parseXmlFile(f);
+        
+        XPathFactory xpf = XPathFactory.newInstance();
+        XPath xp = xpf.newXPath();
+        
+        return xp.evaluate("/plist/dict/key[text()='CFBundleVersion']/following-sibling::string[1]", info);
+    }
+    
 }
