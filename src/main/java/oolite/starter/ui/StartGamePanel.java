@@ -210,7 +210,12 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
 
         // run savegame
         try {
-            int rowIndex = jTable1.convertRowIndexToModel(jTable1.getSelectedRow());
+            int rowIndex = jTable1.getSelectedRow();
+            if (rowIndex == -1) {
+                throw new Exception("Which savegame you want to start?");
+            }
+            
+            rowIndex = jTable1.convertRowIndexToModel(rowIndex);
             SaveGame row = model.getRow(rowIndex);
 
             SwingUtilities.getRoot(this).setVisible(false);
