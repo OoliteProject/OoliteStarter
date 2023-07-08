@@ -42,6 +42,7 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import oolite.starter.model.Expansion;
 import oolite.starter.model.ExpansionReference;
+import oolite.starter.model.Installation;
 import oolite.starter.model.SaveGame;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -1416,5 +1417,54 @@ public class Oolite implements PropertyChangeListener {
             fireActivatedInstallation();
         }
     }
-    
+
+    /**
+     * Populates an Installation with good guesses based on the home directory.
+     * 
+     * @param homeDir the home directory
+     * @return the installation
+     */
+    public static Installation populateFromHomeDir(File homeDir) {
+        log.warn("populateFromHomeDir({})", homeDir);
+        
+        Installation i = new Installation();
+        i.setHomeDir(homeDir.getAbsolutePath());
+        try {
+            i.setVersion(Oolite.getVersionFromHomeDir(homeDir));
+        } catch (IOException e) {
+            log.warn("Cannot read version for {}", homeDir, e);
+        }
+        try {
+            i.setExcecutable(Oolite.getExecutable(homeDir).getCanonicalPath());
+        } catch (IOException e) {
+            log.warn("Cannot get executable for {}", homeDir, e);
+        }
+        try {
+            i.setSavegameDir(Oolite.getSavegameDir(homeDir).getCanonicalPath());
+        } catch (IOException e) {
+            log.warn("Cannot get savegame dir for {}", homeDir, e);
+        }
+        try {
+            i.setAddonDir(Oolite.getAddOnDir(homeDir).getCanonicalPath());
+        } catch (IOException e) {
+            log.warn("Cannot get AddOns dir for {}", homeDir, e);
+        }
+        try {
+            i.setDeactivatedAddonDir(Oolite.getDeactivatedAddOnDir(homeDir).getCanonicalPath());
+        } catch (IOException e) {
+            log.warn("Cannot get Deactivated AddOns dir for {}", homeDir, e);
+        }
+        try {
+            i.setManagedAddonDir(Oolite.getManagedAddOnDir(homeDir).getCanonicalPath());
+        } catch (IOException e) {
+            log.warn("Cannot get Managed AddOns dir for {}", homeDir, e);
+        }
+        try {
+            i.setManagedDeactivatedAddonDir(Oolite.getManagedDeactivatedAddOnDir(homeDir).getCanonicalPath());
+        } catch (IOException e) {
+            log.warn("Cannot get Managed Deactivated AddOns dir for {}", homeDir, e);
+        }
+        
+        return i;
+    }
 }

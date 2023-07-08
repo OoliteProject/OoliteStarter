@@ -391,7 +391,7 @@ public class InstallationsPanel extends javax.swing.JPanel {
 
             @Override
             protected void done() {
-                //log.debug("done()");
+                log.debug("done()");
                 //monitor.close();
                 ip.stopScan();
                 ip.setNote("Scanning finished.");
@@ -418,47 +418,13 @@ public class InstallationsPanel extends javax.swing.JPanel {
                 log.info("something was selected - we want this value {}", ip.getSelectedInstallation());
                 
                 File homeDir = new File(ip.getSelectedInstallation());
-                Installation i = new Installation();
-                i.setHomeDir(homeDir.getAbsolutePath());
-                try {
-                    i.setVersion(Oolite.getVersionFromHomeDir(homeDir));
-                } catch (IOException e) {
-                    log.warn("Cannot read version for {}", ip.getSelectedInstallation(), e);
-                }
-                try {
-                    i.setExcecutable(Oolite.getExecutable(homeDir).getCanonicalPath());
-                } catch (IOException e) {
-                    log.warn("Cannot get executable for {}", ip.getSelectedInstallation(), e);
-                }
-                try {
-                    i.setSavegameDir(Oolite.getSavegameDir(homeDir).getCanonicalPath());
-                } catch (IOException e) {
-                    log.warn("Cannot get savegame dir for {}", ip.getSelectedInstallation(), e);
-                }
-                try {
-                    i.setAddonDir(Oolite.getAddOnDir(homeDir).getCanonicalPath());
-                } catch (IOException e) {
-                    log.warn("Cannot get AddOns dir for {}", ip.getSelectedInstallation(), e);
-                }
-                try {
-                    i.setDeactivatedAddonDir(Oolite.getDeactivatedAddOnDir(homeDir).getCanonicalPath());
-                } catch (IOException e) {
-                    log.warn("Cannot get Deactivated AddOns dir for {}", ip.getSelectedInstallation(), e);
-                }
-                try {
-                    i.setManagedAddonDir(Oolite.getManagedAddOnDir(homeDir).getCanonicalPath());
-                } catch (IOException e) {
-                    log.warn("Cannot get Managed AddOns dir for {}", ip.getSelectedInstallation(), e);
-                }
-                try {
-                    i.setManagedDeactivatedAddonDir(Oolite.getManagedDeactivatedAddOnDir(homeDir).getCanonicalPath());
-                } catch (IOException e) {
-                    log.warn("Cannot get Managed Deactivated AddOns dir for {}", ip.getSelectedInstallation(), e);
-                }
+                Installation i = Oolite.populateFromHomeDir(homeDir);
                 
+                log.info("offering for edit {}", i);
                 InstallationForm installationForm = new InstallationForm();
                 installationForm.setData(i);
                 if (JOptionPane.showOptionDialog(InstallationsPanel.this, installationForm, "Add Oolite version...", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, null, null) == JOptionPane.OK_OPTION) {
+                    log.info("adding installation...");
                     model.addRow(installationForm.getData());
                     setConfigDirty(true);
                 }
