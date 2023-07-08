@@ -43,7 +43,8 @@ public class InstallationsPanel extends javax.swing.JPanel {
     private transient Configuration configuration;
     
     private boolean configDirty;
-    
+    private final Color clickMe = new Color(160, 80, 0);
+
     /**
      * Creates new form InstallationsPanel.
      */
@@ -121,32 +122,21 @@ public class InstallationsPanel extends javax.swing.JPanel {
         Color defaultBackground = uidefaults.getColor("Button.background");
 
         if (model != null && model.getRowCount()==0) {
-            btAdd.setBackground(Color.red);
+            btAdd.setBackground(clickMe);
             btActivate.setBackground(defaultBackground);
         } else {
             btAdd.setBackground(defaultBackground);
 
             if (configuration != null && configuration.getActiveInstallation() == null) {
-                btActivate.setBackground(Color.red);
+                btActivate.setBackground(clickMe);
             } else {
                 btActivate.setBackground(defaultBackground);
             }
         }
         
-        
         if (configDirty) {
-            btSave.setBackground(Color.red);
+            btSave.setBackground(clickMe);
         } else {
-            
-//            for (Enumeration enumm = uidefaults.keys(); enumm.hasMoreElements(); ) {
-//                Object key = enumm.nextElement();
-//                Object value = uidefaults.get(key);
-//                
-//                if (String.valueOf(key).startsWith("Button.background")) {
-//                    log.warn("have key '{}'={}", key, value);
-//                }
-//            }
-            
             btSave.setBackground(defaultBackground);
         }
     }
