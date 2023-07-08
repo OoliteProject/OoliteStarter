@@ -23,6 +23,7 @@ import javax.swing.UIDefaults;
 import javax.swing.UIManager;
 import javax.swing.table.TableRowSorter;
 import oolite.starter.Configuration;
+import oolite.starter.Oolite;
 import oolite.starter.model.Installation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -123,9 +124,11 @@ public class InstallationsPanel extends javax.swing.JPanel {
 
         if (model != null && model.getRowCount()==0) {
             btAdd.setBackground(clickMe);
+            btScan.setBackground(clickMe);
             btActivate.setBackground(defaultBackground);
         } else {
             btAdd.setBackground(defaultBackground);
+            btScan.setBackground(defaultBackground);
 
             if (configuration != null && configuration.getActiveInstallation() == null) {
                 btActivate.setBackground(clickMe);
@@ -263,7 +266,7 @@ public class InstallationsPanel extends javax.swing.JPanel {
         log.debug("btScanActionPerformed({})", evt);
 
         JFrame f2 = (JFrame) SwingUtilities.getWindowAncestor(this);
-        JDialog ipd = new JDialog(f2, "Select Oolite installation", true);
+        JDialog ipd = new JDialog(f2, "Select Oolite Home Directory", true);
         InstallationPicker ip = new InstallationPicker();
         ipd.add(ip);
         ipd.pack();
@@ -413,6 +416,52 @@ public class InstallationsPanel extends javax.swing.JPanel {
                 worker.cancel(true);
                 
                 log.info("something was selected - we want this value {}", ip.getSelectedInstallation());
+                
+                File homeDir = new File(ip.getSelectedInstallation());
+                Installation i = new Installation();
+                i.setHomeDir(homeDir.getAbsolutePath());
+                try {
+                    i.setVersion(Oolite.getVersionFromHomeDir(homeDir));
+                } catch (IOException e) {
+                    log.warn("Cannot read version for {}", ip.getSelectedInstallation(), e);
+                }
+                try {
+                    i.setExcecutable(Oolite.getExecutable(homeDir).getCanonicalPath());
+                } catch (IOException e) {
+                    log.warn("Cannot get executable for {}", ip.getSelectedInstallation(), e);
+                }
+                try {
+                    i.setSavegameDir(Oolite.getSavegameDir(homeDir).getCanonicalPath());
+                } catch (IOException e) {
+                    log.warn("Cannot get savegame dir for {}", ip.getSelectedInstallation(), e);
+                }
+                try {
+                    i.setAddonDir(Oolite.getAddOnDir(homeDir).getCanonicalPath());
+                } catch (IOException e) {
+                    log.warn("Cannot get AddOns dir for {}", ip.getSelectedInstallation(), e);
+                }
+                try {
+                    i.setDeactivatedAddonDir(Oolite.getDeactivatedAddOnDir(homeDir).getCanonicalPath());
+                } catch (IOException e) {
+                    log.warn("Cannot get Deactivated AddOns dir for {}", ip.getSelectedInstallation(), e);
+                }
+                try {
+                    i.setManagedAddonDir(Oolite.getManagedAddOnDir(homeDir).getCanonicalPath());
+                } catch (IOException e) {
+                    log.warn("Cannot get Managed AddOns dir for {}", ip.getSelectedInstallation(), e);
+                }
+                try {
+                    i.setManagedDeactivatedAddonDir(Oolite.getManagedDeactivatedAddOnDir(homeDir).getCanonicalPath());
+                } catch (IOException e) {
+                    log.warn("Cannot get Managed Deactivated AddOns dir for {}", ip.getSelectedInstallation(), e);
+                }
+                
+                InstallationForm installationForm = new InstallationForm();
+                installationForm.setData(i);
+                if (JOptionPane.showOptionDialog(InstallationsPanel.this, installationForm, "Add Oolite version...", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, null, null) == JOptionPane.OK_OPTION) {
+                    model.addRow(installationForm.getData());
+                    setConfigDirty(true);
+                }
                 
             }
         });

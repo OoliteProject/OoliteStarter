@@ -345,16 +345,7 @@ public class InstallationForm extends javax.swing.JPanel {
 
     void maybeFillExecutable(File homeDir) {
         if (txtExecutable.getText().isBlank()) {
-            File executable = new File(homeDir, "oolite-wrapper");
-            if (!executable.exists()) {
-                executable = new File(homeDir, "oolite.exe");
-            }
-            if (!executable.exists()) {
-                executable = new File(homeDir, "oolite");
-            }
-            if (!executable.exists()) {
-                executable = new File(homeDir, "Contents/MacOS/Oolite");
-            }
+            File executable = Oolite.getExecutable(homeDir);
 
             if (executable.isFile()) {
                 txtExecutable.setText(executable.getAbsolutePath());
@@ -364,51 +355,23 @@ public class InstallationForm extends javax.swing.JPanel {
 
     void maybeFillSavegameDir(File homeDir) {
         if (txtSavegameDir.getText().isBlank()) {
-            // check Windows
-            File d = new File(homeDir, "oolite-saves");
-            if (d.isDirectory()) {
-                txtSavegameDir.setText(d.getAbsolutePath());
-            }
-        }
-        if (txtSavegameDir.getText().isBlank()) {
-            // check Linux
-            File d = new File(new File(System.getProperty(INSTALLATIONFORM_USER_HOME)), "oolite-saves");
-            if (d.isDirectory()) {
-                txtSavegameDir.setText(d.getAbsolutePath());
-            }
-        }
-        if (txtSavegameDir.getText().isBlank()) {
-            // check MacOS
-            File d = new File(new File(System.getProperty(INSTALLATIONFORM_USER_HOME)), "Documents");
-            if (d.isDirectory()) {
-                txtSavegameDir.setText(d.getAbsolutePath());
-            }
+            File d = Oolite.getSavegameDir(homeDir);
+            txtSavegameDir.setText(d.getAbsolutePath());
         }
     }
     
     void maybeFillAddonDir(File homeDir) throws IOException {
         if (txtAddOnDir.getText().isBlank()) {
-            // check Linux, Windows
-            File d = new File(homeDir, "../AddOns");
-            if (d.isDirectory()) {
+            File d = Oolite.getAddOnDir(homeDir);
+            if (d != null) {
                 txtAddOnDir.setText(d.getCanonicalPath());
             }
 
             if (txtDeactivatedAddOnDir.getText().isBlank()) {
                 File dd = new File(d, "../DeactivatedAddOns");
-                txtDeactivatedAddOnDir.setText(dd.getCanonicalPath());
-            }
-        }
-        if (txtAddOnDir.getText().isBlank()) {
-            // check MacOS
-            File d = new File(new File(System.getProperty(INSTALLATIONFORM_USER_HOME)), "Library/Application Support/Oolite/Addons");
-            if (d.isDirectory()) {
-                txtAddOnDir.setText(d.getAbsolutePath());
-            }
-
-            if (txtDeactivatedAddOnDir.getText().isBlank()) {
-                File dd = new File(new File(System.getProperty(INSTALLATIONFORM_USER_HOME)), "Library/Application Support/Oolite/DeactivatedAddOns");
-                txtDeactivatedAddOnDir.setText(dd.getCanonicalPath());
+                if (dd != null) {
+                    txtDeactivatedAddOnDir.setText(dd.getCanonicalPath());
+                }
             }
         }
     }
@@ -417,27 +380,14 @@ public class InstallationForm extends javax.swing.JPanel {
         log.debug("maybeFillManagedAddonDir({})", homeDir);
         
         if (txtManagedAddOnDir.getText().isBlank()) {
-            // check Linux
-            File d = new File(new File(System.getProperty(INSTALLATIONFORM_USER_HOME)), "GNUstep/Library/ApplicationSupport/Oolite/ManagedAddOns");
-            if (d.isDirectory()) {
+            File d = Oolite.getManagedAddOnDir(homeDir);
+            if (d != null) {
                 txtManagedAddOnDir.setText(d.getAbsolutePath());
-            }
 
-            if (txtManagedDeactivatedAddOnDir.getText().isBlank()) {
-                File dd = new File(d, "../ManagedDeactivatedAddOns");
-                txtManagedDeactivatedAddOnDir.setText(dd.getCanonicalPath());
-            }
-        }
-        if (txtManagedAddOnDir.getText().isBlank()) {
-            // check MacOS
-            File d = new File(new File(System.getProperty(INSTALLATIONFORM_USER_HOME)), "Library/Application Support/Oolite/ManagedAddons");
-            if (d.isDirectory()) {
-                txtManagedAddOnDir.setText(d.getAbsolutePath());
-            }
-
-            if (txtManagedDeactivatedAddOnDir.getText().isBlank()) {
-                File dd = new File(new File(System.getProperty(INSTALLATIONFORM_USER_HOME)), "Library/Application Support/Oolite/ManagedDeactivatedAddOns");
-                txtManagedDeactivatedAddOnDir.setText(dd.getCanonicalPath());
+                if (txtManagedDeactivatedAddOnDir.getText().isBlank()) {
+                    File dd = Oolite.getManagedDeactivatedAddOnDir(homeDir);
+                    txtManagedDeactivatedAddOnDir.setText(dd.getCanonicalPath());
+                }
             }
         }
     }

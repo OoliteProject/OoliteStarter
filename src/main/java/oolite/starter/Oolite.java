@@ -62,6 +62,7 @@ public class Oolite implements PropertyChangeListener {
     private static final String OOLITE_CONFIGURATION_MUST_NOT_BE_NULL = "configuration must not be null";
     private static final String OOLITE_EXPANSION_FQN = "org.oolite.hiran.OoliteStarter.oxp";
     private static final String OOLITE_IDENTIFIER = "identifier";
+    private static final String OOLITE_USER_HOME = "user.home";
     private static final String OOLITE_VERSION = "version";
 
     public interface OoliteListener {
@@ -1264,6 +1265,148 @@ public class Oolite implements PropertyChangeListener {
 
             return null;
         }
+    }
+    
+    /**
+     * Extracts the Oolite version for this installation.
+     * 
+     * @param homeDir the installation's home directory
+     * @return the version number found
+     * @throws ParserConfigurationException something went wrong
+     * @throws SAXException something went wrong
+     * @throws IOException something went wrong
+     * @throws XPathExpressionException something went wrong
+     */
+    public static String getVersionFromHomeDir(File homeDir) throws IOException {
+        File manifest = new File(homeDir, "Resources/manifest.plist");
+        if (!manifest.exists()) {
+            manifest = new File(homeDir, "Contents/Resources/manifest.plist");
+        }
+        return getVersionFromManifest(manifest);
+    }
+    
+    /**
+     * Returns the reasonable addons directory for a given home directory.
+     * 
+     * @param homeDir the home directory
+     * @return the addons directory, or null if not found
+     */
+    public static File getAddOnDir(File homeDir) {
+        log.debug("getAddOnDir({})", homeDir);
+
+        // check Linux, Windows
+        File d = new File(homeDir, "../AddOns");
+        if (d.isDirectory()) {
+            return d;
+        }
+
+        // check MacOS
+        d = new File(new File(System.getProperty(OOLITE_USER_HOME)), "Library/Application Support/Oolite/Addons");
+        if (d.isDirectory()) {
+            return d;
+        }
+        
+        return null;
+    }
+
+    /**
+     * Returns the reasonable deactivated addons directory for a given home directory.
+     * 
+     * @param homeDir the home directory
+     * @return the deactivated addons directory
+     */
+    public static File getDeactivatedAddOnDir(File homeDir) {
+        log.debug("getDeactivatedAddOnDir({})", homeDir);
+
+        if (Util.isMac()) {
+            return new File(new File(System.getProperty(OOLITE_USER_HOME)), "Library/Application Support/Oolite/DeactivatedAddOns");
+        } else {
+            return new File(homeDir, "../DeactivatedAddOns");
+        }
+    }
+
+    /**
+     * Returns the reasonable managed addons directory for a given home directory.
+     * 
+     * @param homeDir the home directory
+     * @return the managed addons directory, or null if not found
+     */
+    public static File getManagedAddOnDir(File homeDir) {
+        log.debug("getManagedAddOnDir({})", homeDir);
+
+        // check Linux
+        File d = new File(new File(System.getProperty(OOLITE_USER_HOME)), "GNUstep/Library/ApplicationSupport/Oolite/ManagedAddOns");
+        if (d.isDirectory()) {
+            return d;
+        }
+
+
+        // check MacOS
+        d = new File(new File(System.getProperty(OOLITE_USER_HOME)), "Library/Application Support/Oolite/ManagedAddons");
+        if (d.isDirectory()) {
+            return d;
+        }
+        
+        return null;
+    }
+    
+    /**
+     * Returns the reasonable managed deactivated addons directory for a given home directory.
+     * 
+     * @param homeDir the home directory
+     * @return the managed deactivated addons directory
+     */
+    public static File getManagedDeactivatedAddOnDir(File homeDir) {
+        return new File(getManagedAddOnDir(homeDir), "../ManagedDeactivatedAddOns");
+    }
+    
+    /**
+     * Returns the reasonable executable for a given home directory.
+     * 
+     * @param homeDir the home directory
+     * @return the executable
+     */
+    public static File getExecutable(File homeDir) {
+            File executable = new File(homeDir, "oolite-wrapper");
+            if (!executable.exists()) {
+                executable = new File(homeDir, "oolite.exe");
+            }
+            if (!executable.exists()) {
+                executable = new File(homeDir, "oolite");
+            }
+            if (!executable.exists()) {
+                executable = new File(homeDir, "Contents/MacOS/Oolite");
+            }
+
+            return executable;
+    }
+    
+    /**
+     * Returns the reasonable savegame directory for a given home directory.
+     * 
+     * @param homeDir the home directory
+     * @return the savegame directory
+     */
+    public static File getSavegameDir(File homeDir) {
+        // check Windows
+        File d = new File(homeDir, "oolite-saves");
+        if (d.isDirectory()) {
+            return d;
+        } else {
+            // check Linux
+            d = new File(new File(System.getProperty(OOLITE_USER_HOME)), "oolite-saves");
+            if (d.isDirectory()) {
+                return d;
+            } else {
+                // check MacOS
+                d = new File(new File(System.getProperty(OOLITE_USER_HOME)), "Documents");
+                if (d.isDirectory()) {
+                    return d;
+                }
+            }
+        }
+        
+        return null;
     }
 
     @Override
