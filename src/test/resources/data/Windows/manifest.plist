@@ -1,0 +1,11 @@
+{
+	title = "Oolite core";
+	identifier = "org.oolite.oolite";
+	
+	version = "1.90";
+	required_oolite_version = "1.90";
+	
+	license = "GPL 2+ / CC-BY-NC-SA 3.0 - see LICENSE.TXT for details";
+	author = "Giles Williams, Jens Ayton and contributors";
+	information_url = "http://www.oolite.org/";
+}

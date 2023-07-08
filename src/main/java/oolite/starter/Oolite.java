@@ -1218,4 +1218,33 @@ public class Oolite {
         return xp.evaluate("/plist/dict/key[text()='CFBundleVersion']/following-sibling::string[1]", info);
     }
     
+    /**
+     * Extracts the Oolite version from Resources/manifest.plist.
+     * 
+     * @param f the plist file to read
+     * @return the version number found
+     * @throws ParserConfigurationException something went wrong
+     * @throws SAXException something went wrong
+     * @throws IOException something went wrong
+     * @throws XPathExpressionException something went wrong
+     */
+    public static String getVersionFromManifest(File f) throws IOException {
+        log.debug("getVersionFromManifest({})", f);
+        
+        try (InputStream in = new FileInputStream(f)) {
+            PlistParser.DictionaryContext dc = PlistUtil.parsePListDict(in, f.getAbsolutePath());
+
+            for (PlistParser.KeyvaluepairContext kvc: dc.keyvaluepair()) {
+                String key = kvc.STRING().getText();
+                String value = kvc.value().getText();
+                
+                log.trace("looking at key {} value {}", key, value);
+                if ("version".equals(key)) {
+                    return value;
+                }
+            }
+
+            return null;
+        }
+    }
 }

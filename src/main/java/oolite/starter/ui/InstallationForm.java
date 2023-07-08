@@ -308,8 +308,8 @@ public class InstallationForm extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     void maybeFillVersion(File homeDir) {
+        // check Linux
         if (txtVersion.getText().isBlank()) {
-            // check Linux
             File releaseTxt = new File(homeDir, "../release.txt");
             if (releaseTxt.isFile()) {
                 try {
@@ -318,10 +318,24 @@ public class InstallationForm extends javax.swing.JPanel {
                     log.info("Could not read version from {}", releaseTxt, e);
                 }
             }
-            releaseTxt = new File(homeDir, "Contents/Info.plist");
+        }
+        // check MacOS
+        if (txtVersion.getText().isBlank()) {
+            File releaseTxt = new File(homeDir, "Contents/Info.plist");
             if (releaseTxt.isFile()) {
                 try {
                     txtVersion.setText(Oolite.getVersionFromInfoPlist(releaseTxt));
+                } catch (Exception e) {
+                    log.info("Could not read version from {}", releaseTxt, e);
+                }
+            }
+        }
+        // check Windows
+        if (txtVersion.getText().isBlank()) {
+            File releaseTxt = new File(homeDir, "Resources/manifest.plist");
+            if (releaseTxt.isFile()) {
+                try {
+                    txtVersion.setText(Oolite.getVersionFromManifest(releaseTxt));
                 } catch (Exception e) {
                     log.info("Could not read version from {}", releaseTxt, e);
                 }

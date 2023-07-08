@@ -292,6 +292,8 @@ public class OoliteTest {
     
     @Test
     public void testGetVersionFromInfoPlist() throws ParserConfigurationException, SAXException, IOException, XPathExpressionException {
+        log.info("testGetVersionFromInfoPlist");
+        
         File infoPlist = new File("src/test/resources/data/MacOS/Info.plist");
         log.warn("reading {}", infoPlist);
         
@@ -299,4 +301,17 @@ public class OoliteTest {
         
         assertEquals("1.90", v);
     }
+    
+    @Test
+    public void testGetVersionFromManifest() throws ParserConfigurationException, SAXException, IOException, XPathExpressionException {
+        log.info("getVersionFromManifest");
+        
+        File infoPlist = new File("src/test/resources/data/Windows/manifest.plist");
+        log.warn("reading {}", infoPlist);
+        
+        String v = Oolite.getVersionFromManifest(infoPlist);
+        
+        assertEquals("1.90", v);
+    }
+    
 }
