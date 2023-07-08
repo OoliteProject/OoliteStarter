@@ -1429,42 +1429,50 @@ public class Oolite implements PropertyChangeListener {
         
         Installation i = new Installation();
         i.setHomeDir(homeDir.getAbsolutePath());
+        log.info("version");
         try {
             i.setVersion(Oolite.getVersionFromHomeDir(homeDir));
         } catch (IOException e) {
             log.warn("Cannot read version for {}", homeDir, e);
         }
+        log.info("executable");
         try {
             i.setExcecutable(Oolite.getExecutable(homeDir).getCanonicalPath());
         } catch (IOException e) {
             log.warn("Cannot get executable for {}", homeDir, e);
         }
+        log.info("savegamedir");
         try {
             i.setSavegameDir(Oolite.getSavegameDir(homeDir).getCanonicalPath());
         } catch (IOException e) {
             log.warn("Cannot get savegame dir for {}", homeDir, e);
         }
+        log.info("addondir");
         try {
             i.setAddonDir(Oolite.getAddOnDir(homeDir).getCanonicalPath());
         } catch (IOException e) {
             log.warn("Cannot get AddOns dir for {}", homeDir, e);
         }
+        log.info("deactivatedaddondir");
         try {
             i.setDeactivatedAddonDir(Oolite.getDeactivatedAddOnDir(homeDir).getCanonicalPath());
         } catch (IOException e) {
             log.warn("Cannot get Deactivated AddOns dir for {}", homeDir, e);
         }
+        log.info("managedaddondir");
         try {
             i.setManagedAddonDir(Oolite.getManagedAddOnDir(homeDir).getCanonicalPath());
         } catch (IOException e) {
             log.warn("Cannot get Managed AddOns dir for {}", homeDir, e);
         }
+        log.info("manageddeactivatedaddondir");
         try {
             i.setManagedDeactivatedAddonDir(Oolite.getManagedDeactivatedAddOnDir(homeDir).getCanonicalPath());
         } catch (IOException e) {
             log.warn("Cannot get Managed Deactivated AddOns dir for {}", homeDir, e);
         }
-        
+
+        log.info("population done");
         return i;
     }
 }
