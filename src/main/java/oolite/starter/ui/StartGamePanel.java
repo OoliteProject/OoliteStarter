@@ -76,7 +76,10 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
             jTable1.setModel(model);
             TableRowSorter<SaveGameTableModel> trw = new TableRowSorter<>(model);
             jTable1.setRowSorter(trw);
-            sgp.setData(null);
+            
+            if (sgp != null) {
+                sgp.setData(null);
+            }
             
             txtStatus.setText(String.format("%d save games", model.getRowCount()));
             
