@@ -41,7 +41,12 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
      * @throws XPathExpressionException  something went wrong
      */
     public void setOolite(Oolite oolite) {
+        if (this.oolite != null) {
+            this.oolite.removeOoliteListener(this);
+        }
         this.oolite = oolite;
+        update();
+        oolite.addOoliteListener(this);
         
         jTable1.getSelectionModel().addListSelectionListener(lse -> {
             log.debug("valueChanged({})", lse);
@@ -53,6 +58,8 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
                     SaveGame row = model.getRow(rowIndex);
                     sgp.setData(row);
                 }
+
+                btResume.setEnabled(jTable1.getSelectedRow() != -1);
             }
         });
         
@@ -72,6 +79,8 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
             sgp.setData(null);
             
             txtStatus.setText(String.format("%d save games", model.getRowCount()));
+            
+            btResume.setEnabled(jTable1.getSelectedRow() != -1);
         } catch (Exception e) {
             log.warn("Could not update", e);
         }
@@ -267,5 +276,16 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
     @Override
     public void terminated() {
         update();
+    }
+
+    @Override
+    public void activatedInstallation() {
+        log.error("activatedInstallation()");
+        try {
+            update();
+        } catch (Exception e) {
+            log.error("Could not reload", e);
+            JOptionPane.showMessageDialog(null, "Could not reload");
+        }
     }
 }

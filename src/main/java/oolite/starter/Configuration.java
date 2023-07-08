@@ -2,6 +2,9 @@
  */
 package oolite.starter;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -23,6 +26,8 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import oolite.starter.model.Installation;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -33,9 +38,12 @@ import org.xml.sax.SAXException;
  * @author hiran
  */
 public class Configuration {
+    private static final Logger log = LogManager.getLogger();
     
     private static final String CONF_NO_ACTIVE_INSTALLATION = "No active installation";
 
+    private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+    
     /**
      * The list of installations on this system.
      */
@@ -110,7 +118,10 @@ public class Configuration {
                 activeInstallation = inst;
             }
         }
+
+        List<Installation> oldInstallations = installations;
         installations = insts;
+        pcs.firePropertyChange("installations", installations, insts);
     }
     
     /**
@@ -212,7 +223,16 @@ public class Configuration {
      */
     public void activateInstallation(Installation installation) {
         if (installations.contains(installation)) {
-            activeInstallation = installation;
+            if (activeInstallation != installation) {
+                Installation oldInstallation = installation;
+                activeInstallation = installation;
+                log.debug("firing propertyChange activeInstallation to {} listeners: {}", pcs.getPropertyChangeListeners().length, pcs.getPropertyChangeListeners());
+                PropertyChangeEvent pce = new PropertyChangeEvent(this, "activeInstallation", oldInstallation, installation);
+                for (PropertyChangeListener pcl: pcs.getPropertyChangeListeners()) {
+                    pcl.propertyChange(pce);
+                }
+                //pcs.firePropertyChange("activeInstallation", oldInstallation, installation);
+            }
         } else {
             throw new IllegalArgumentException("installation must be known");
         }
@@ -334,5 +354,25 @@ public class Configuration {
         result.add(getDeactivatedAddonsDir());
         
         return result;
+    }
+    
+    /**
+     * Adds a PropertyChangeListener to be notified upon property changes.
+     * 
+     * @param l the listener
+     */
+    public void addPropertyChangeListener(PropertyChangeListener l) {
+        log.debug("addPropertyChangeListener({})", l);
+        pcs.addPropertyChangeListener(l);
+    }
+    
+    /**
+     * Removes a PropertyChangeListener to no longer be notified upon property changes.
+     * 
+     * @param l the listener
+     */
+    public void removePropertyChangeListener(PropertyChangeListener l) {
+        log.debug("removePropertyChangeListener({})", l);
+        pcs.removePropertyChangeListener(l);
     }
 }

@@ -3,6 +3,8 @@
 package oolite.starter;
 
 import com.chaudhuri.plist.PlistParser;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -54,14 +56,14 @@ import org.xml.sax.SAXException;
  *
  * @author hiran
  */
-public class Oolite {
+public class Oolite implements PropertyChangeListener {
     private static final Logger log = LogManager.getLogger();
     
     private static final String OOLITE_CONFIGURATION_MUST_NOT_BE_NULL = "configuration must not be null";
     private static final String OOLITE_EXPANSION_FQN = "org.oolite.hiran.OoliteStarter.oxp";
     private static final String OOLITE_IDENTIFIER = "identifier";
     private static final String OOLITE_VERSION = "version";
-    
+
     public interface OoliteListener {
         
         /**
@@ -73,7 +75,11 @@ public class Oolite {
          * Will be called whenever Oolite has terminated.
          */
         public void terminated();
-        
+
+        /**
+         * Will be called whenever a new configuration has been activated.
+         */
+        public void activatedInstallation();
     }
     
     private List<OoliteListener> listeners;
@@ -111,7 +117,13 @@ public class Oolite {
      */
     public void setConfiguration(Configuration configuration) {
         log.debug("setConfiguration({})", configuration);
+        if (this.configuration != null) {
+            this.configuration.removePropertyChangeListener(this);
+        }
         this.configuration = configuration;
+        if (configuration != null) {
+            this.configuration.addPropertyChangeListener(this);
+        }
     }
     
     /**
@@ -305,6 +317,12 @@ public class Oolite {
     void fireTerminated() {
         for (OoliteListener l: listeners) {
             l.terminated();
+        }
+    }
+    
+    void fireActivatedInstallation() {
+        for (OoliteListener l: listeners) {
+            l.activatedInstallation();
         }
     }
     
@@ -1247,4 +1265,13 @@ public class Oolite {
             return null;
         }
     }
+
+    @Override
+    public void propertyChange(PropertyChangeEvent pce) {
+        log.debug("propertyChange({})", pce);
+        if ("activeInstallation".equals(pce.getPropertyName())) {
+            fireActivatedInstallation();
+        }
+    }
+    
 }

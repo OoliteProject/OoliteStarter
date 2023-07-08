@@ -450,7 +450,7 @@ public class InstallationsPanel extends javax.swing.JPanel {
         try {
             int rowIndex = jTable1.getSelectedRow();
             if (rowIndex == -1) {
-                JOptionPane.showConfirmDialog(this, INSTALLATIONSPANEL_SELECT_ROW);
+                JOptionPane.showMessageDialog(this, INSTALLATIONSPANEL_SELECT_ROW);
                 return;
             }
             
@@ -480,7 +480,7 @@ public class InstallationsPanel extends javax.swing.JPanel {
         try {
             int rowIndex = jTable1.getSelectedRow();
             if (rowIndex == -1) {
-                JOptionPane.showConfirmDialog(this, INSTALLATIONSPANEL_SELECT_ROW);
+                JOptionPane.showMessageDialog(this, INSTALLATIONSPANEL_SELECT_ROW);
                 return;
             }
             
@@ -527,7 +527,7 @@ public class InstallationsPanel extends javax.swing.JPanel {
         try {
             int rowIndex = jTable1.getSelectedRow();
             if (rowIndex == -1) {
-                JOptionPane.showConfirmDialog(this, INSTALLATIONSPANEL_SELECT_ROW);
+                JOptionPane.showMessageDialog(this, INSTALLATIONSPANEL_SELECT_ROW);
                 return;
             }
             
