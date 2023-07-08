@@ -2,8 +2,25 @@
  */
 package oolite.starter.ui;
 
+import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
+import javax.swing.SwingWorker;
+import javax.swing.UIDefaults;
+import javax.swing.UIManager;
 import javax.swing.table.TableRowSorter;
 import oolite.starter.Configuration;
 import oolite.starter.model.Installation;
@@ -25,16 +42,21 @@ public class InstallationsPanel extends javax.swing.JPanel {
     private InstallationTableModel model;
     private transient Configuration configuration;
     
+    private boolean configDirty;
+    
     /**
      * Creates new form InstallationsPanel.
      */
     public InstallationsPanel() {
         initComponents();
-        btScan.setVisible(false);
         
         installationDetails = new InstallationForm();
         installationDetails.setEnabled(false);
         jSplitPane1.setRightComponent(installationDetails);
+        
+        configDirty = false;
+        
+        setButtonColors();
     }
     
     /**
@@ -63,6 +85,8 @@ public class InstallationsPanel extends javax.swing.JPanel {
         });
         TableRowSorter<InstallationTableModel> trw = new TableRowSorter<>(model);
         jTable1.setRowSorter(trw);
+        
+        setButtonColors();
     }
     
     private void showDetailsOfSelection() {
@@ -90,6 +114,47 @@ public class InstallationsPanel extends javax.swing.JPanel {
         ) == JOptionPane.OK_OPTION) {
             dir.mkdirs();
         }
+    }
+    
+    private void setButtonColors() {
+        UIDefaults uidefaults = UIManager.getLookAndFeelDefaults();
+        Color defaultBackground = uidefaults.getColor("Button.background");
+
+        if (model != null && model.getRowCount()==0) {
+            btAdd.setBackground(Color.red);
+            btActivate.setBackground(defaultBackground);
+        } else {
+            btAdd.setBackground(defaultBackground);
+
+            if (configuration != null && configuration.getActiveInstallation() == null) {
+                btActivate.setBackground(Color.red);
+            } else {
+                btActivate.setBackground(defaultBackground);
+            }
+        }
+        
+        
+        if (configDirty) {
+            btSave.setBackground(Color.red);
+        } else {
+            
+//            for (Enumeration enumm = uidefaults.keys(); enumm.hasMoreElements(); ) {
+//                Object key = enumm.nextElement();
+//                Object value = uidefaults.get(key);
+//                
+//                if (String.valueOf(key).startsWith("Button.background")) {
+//                    log.warn("have key '{}'={}", key, value);
+//                }
+//            }
+            
+            btSave.setBackground(defaultBackground);
+        }
+    }
+    
+    private void setConfigDirty(boolean configDirty) {
+        this.configDirty = configDirty;
+        
+        setButtonColors();
     }
 
     /**
@@ -206,6 +271,172 @@ public class InstallationsPanel extends javax.swing.JPanel {
 
     private void btScanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btScanActionPerformed
         log.debug("btScanActionPerformed({})", evt);
+
+        JFrame f2 = (JFrame) SwingUtilities.getWindowAncestor(this);
+        JDialog ipd = new JDialog(f2, "Select Oolite installation", true);
+        InstallationPicker ip = new InstallationPicker();
+        ipd.add(ip);
+        ipd.pack();
+        ipd.setLocationRelativeTo(f2);
+        
+        SwingWorker<List<String>, String> worker = new SwingWorker<List<String>, String>() {
+            
+            private List<Pattern> skipPatterns = new ArrayList<>();
+            private List<Pattern> goodPatterns = new ArrayList<>();
+            private List<String> result;
+            private HashSet<String> scannedFiles;
+            private int totalFiles;
+            
+            private void scan(File f) throws IOException {
+                log.trace("scan({})", f);
+                log.trace("already scanned {}/{} files", scannedFiles.size(), totalFiles);
+
+                publish (f.getAbsolutePath());
+                
+                if (scannedFiles.contains(f.getCanonicalPath())) {
+                    return;
+                }
+                scannedFiles.add(f.getCanonicalPath());
+
+                for (Pattern p: skipPatterns) {
+                    if (p.matcher(f.getAbsolutePath()).matches()) {
+                        return;
+                    }
+                }
+                
+                for (Pattern p: goodPatterns) {
+                    Matcher m = p.matcher(f.getAbsolutePath());
+                    if (m.matches()) {
+                        //String s = f.getAbsolutePath();
+                        String s = m.group(1);
+                        result.add(s);
+                        
+                        // add to installations panel
+                        ip.addInstallation(s);
+                        publish(s);
+                    }
+                }
+                        
+                if (f.isDirectory()) {
+                    File[] entries = f.listFiles();
+                    if (entries != null) {
+                        totalFiles += entries.length;
+                        for (File entry: entries ) {
+                            scan(entry);
+                            
+                            if (isCancelled() ) {
+                            //if (isCancelled() || monitor.isCanceled()) {
+                                return;
+                            }
+                        }
+                    }
+                }
+            }
+            
+            /**
+             * Entry point for this SwingWorker.
+             * Scans the filesystem, then returns the collected results.
+             */
+            @Override
+            protected List<String> doInBackground() throws Exception {
+                log.debug("doInBackground()");
+                ip.startScan();
+                
+                scannedFiles = new HashSet<>();
+
+                skipPatterns.add(Pattern.compile("^/proc/.*"));
+                skipPatterns.add(Pattern.compile("^/sys/.*"));
+                skipPatterns.add(Pattern.compile(".*/proc/self/.*"));
+                skipPatterns.add(Pattern.compile(".*/proc/thread-self/.*"));
+                skipPatterns.add(Pattern.compile(".*/proc/\\d+/.*"));
+                skipPatterns.add(Pattern.compile(".*/cwd/proc/.*/cwd/proc/.*"));
+                skipPatterns.add(Pattern.compile(".*/cwd/sys/class/.*"));
+                skipPatterns.add(Pattern.compile(".*/cwd/sys/devices/.*"));
+                skipPatterns.add(Pattern.compile(".*/cwd/sys/dev/.*"));
+                skipPatterns.add(Pattern.compile(".*/sys/class/.*"));
+                skipPatterns.add(Pattern.compile(".*/sys/devices/.*"));
+                skipPatterns.add(Pattern.compile(".*/sys/dev/.*"));
+                skipPatterns.add(Pattern.compile(".*/sys/bus/.*"));
+                skipPatterns.add(Pattern.compile(".*/sys/block/.*"));
+                skipPatterns.add(Pattern.compile(".*/sys/module/.*"));
+                
+                // Linux version
+                goodPatterns.add(Pattern.compile("(.*/oolite.app)/oolite-wrapper"));
+                // Mac OS version
+                goodPatterns.add(Pattern.compile("(.*\\.app)/Contents/MacOS/Oolite"));
+                // Windows version
+                goodPatterns.add(Pattern.compile("(.*\\\\oolite.app)\\\\oolite.exe"));
+                
+                try {
+                    result = new ArrayList<>();
+
+                    totalFiles += File.listRoots().length + 1;
+                    
+                    scan(new File(System.getProperty("user.home")));
+                    
+                    for(File f: File.listRoots()) {
+                        scan(f);
+                    }
+
+                    return result;
+                } catch (Exception e) {
+                    log.error("could not scan", e);
+                    throw new Exception("could not scan", e);
+                }
+            }
+
+            @Override
+            protected void process(List<String> chunks) {
+                log.trace("process({})", chunks);
+                
+                // can we read something from the amount of chunks?
+                
+                if (!chunks.isEmpty()) {
+                    ip.setNote(chunks.get(0));
+                }
+            }
+
+            @Override
+            protected void done() {
+                //log.debug("done()");
+                //monitor.close();
+                ip.stopScan();
+                ip.setNote("Scanning finished.");
+                btScan.setEnabled(true);
+                
+                log.debug("Found {} installations {}", result.size(), result);
+            }
+            
+        };
+
+        ip.addCancelListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                ipd.setVisible(false);
+                worker.cancel(true);
+            }
+        });
+        ip.addOkListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                ipd.setVisible(false);
+                worker.cancel(true);
+                
+                log.info("something was selected - we want this value {}", ip.getSelectedInstallation());
+                
+            }
+        });
+
+        worker.execute();
+        ipd.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                worker.cancel(true);
+            }
+
+        });
+        ipd.setVisible(true);
+        
     }//GEN-LAST:event_btScanActionPerformed
 
     private void btAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btAddActionPerformed
@@ -215,6 +446,7 @@ public class InstallationsPanel extends javax.swing.JPanel {
             InstallationForm installationForm = new InstallationForm();
             if (JOptionPane.showOptionDialog(this, installationForm, "Add Oolite version...", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, null, null) == JOptionPane.OK_OPTION) {
                 model.addRow(installationForm.getData());
+                setConfigDirty(true);
             }
         } catch (Exception e) {
             log.error(INSTALLATIONSPANEL_ERROR, e);
@@ -244,6 +476,7 @@ public class InstallationsPanel extends javax.swing.JPanel {
                 if (model.getRow(jTable1.getSelectedRow()) == data) {
                     this.installationDetails.setData(data);
                 }
+                setConfigDirty(true);
             }
         } catch (Exception e) {
             log.error(INSTALLATIONSPANEL_ERROR, e);
@@ -263,6 +496,8 @@ public class InstallationsPanel extends javax.swing.JPanel {
             
             rowIndex = jTable1.convertRowIndexToModel(rowIndex);
             model.removeRow(rowIndex);
+
+            setConfigDirty(true);
         } catch (Exception e) {
             log.error(INSTALLATIONSPANEL_ERROR, e);
             JOptionPane.showMessageDialog(this, INSTALLATIONSPANEL_ERROR);
@@ -288,6 +523,8 @@ public class InstallationsPanel extends javax.swing.JPanel {
             }
             sb.append("</html>");
             MrGimlet.showMessage(this, sb.toString());
+            
+            setConfigDirty(false);
         } catch (Exception e) {
             log.error(INSTALLATIONSPANEL_COULD_NOT_SAVE, e);
             JOptionPane.showMessageDialog(this, INSTALLATIONSPANEL_COULD_NOT_SAVE);
@@ -316,6 +553,8 @@ public class InstallationsPanel extends javax.swing.JPanel {
             configuration.activateInstallation(i);
             model.fireTableDataChanged();
             jTable1.getSelectionModel().setSelectionInterval(rowIndex, rowIndex);
+
+            setConfigDirty(true);
         } catch (Exception e) {
             log.error(INSTALLATIONSPANEL_COULD_NOT_SAVE, e);
             JOptionPane.showMessageDialog(this, INSTALLATIONSPANEL_COULD_NOT_SAVE);
