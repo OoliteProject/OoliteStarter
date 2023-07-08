@@ -1335,20 +1335,20 @@ public class Oolite implements PropertyChangeListener {
     public static File getManagedAddOnDir(File homeDir) {
         log.debug("getManagedAddOnDir({})", homeDir);
 
-        // check Linux
-        File d = new File(new File(System.getProperty(OOLITE_USER_HOME)), "GNUstep/Library/ApplicationSupport/Oolite/ManagedAddOns");
-        if (d.isDirectory()) {
-            return d;
+        File d = null;
+
+        switch (Util.getOperatingSystemType()) {
+            case MacOS:
+                return new File(new File(System.getProperty(OOLITE_USER_HOME)), "Library/Application Support/Oolite/ManagedAddons");
+            case Linux:
+                return new File(new File(System.getProperty(OOLITE_USER_HOME)), "GNUstep/Library/ApplicationSupport/Oolite/ManagedAddOns");
+            case Windows:
+                return new File(homeDir, "Library/Application Support/Oolite/ManagedAddons");
+            default:
+                log.warn("Could not find managed addon dir");
+                return null;
         }
 
-
-        // check MacOS
-        d = new File(new File(System.getProperty(OOLITE_USER_HOME)), "Library/Application Support/Oolite/ManagedAddons");
-        if (d.isDirectory()) {
-            return d;
-        }
-        
-        return null;
     }
     
     /**
