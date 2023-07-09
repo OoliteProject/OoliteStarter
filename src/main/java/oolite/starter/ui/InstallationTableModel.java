@@ -44,12 +44,14 @@ public class InstallationTableModel extends AbstractTableModel implements Proper
      * Adds a row to this tablemodel.
      * 
      * @param row the row to add 
+     * @return the index of the new row
      */
-    public void addRow(Installation row) {
+    public int addRow(Installation row) {
         data.getInstallations().add(row);
         int rowIndex = data.getInstallations().indexOf(row);
         
         fireTableRowsInserted(rowIndex, rowIndex);
+        return rowIndex;
     }
 
     /**

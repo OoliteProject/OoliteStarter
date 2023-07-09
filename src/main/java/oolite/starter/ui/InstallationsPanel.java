@@ -405,30 +405,39 @@ public class InstallationsPanel extends javax.swing.JPanel {
         ip.addCancelListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
-                ipd.setVisible(false);
-                worker.cancel(true);
+                try {
+                    ipd.setVisible(false);
+                    worker.cancel(true);
+                } catch (Exception e) {
+                    log.error("Could not cleanup after cancel", e);
+                }
             }
         });
         ip.addOkListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
-                ipd.setVisible(false);
-                worker.cancel(true);
-                
-                log.info("something was selected - we want this value {}", ip.getSelectedInstallation());
-                
-                File homeDir = new File(ip.getSelectedInstallation());
-                Installation i = Oolite.populateFromHomeDir(homeDir);
-                
-                log.info("offering for edit {}", i);
-                InstallationForm installationForm = new InstallationForm();
-                installationForm.setData(i);
-                if (JOptionPane.showOptionDialog(InstallationsPanel.this, installationForm, "Add Oolite version...", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, null, null) == JOptionPane.OK_OPTION) {
-                    log.info("adding installation...");
-                    model.addRow(installationForm.getData());
-                    setConfigDirty(true);
+                try {
+                    ipd.setVisible(false);
+                    worker.cancel(true);
+
+                    log.info("something was selected - we want this value {}", ip.getSelectedInstallation());
+
+                    File homeDir = new File(ip.getSelectedInstallation());
+                    Installation i = Oolite.populateFromHomeDir(homeDir);
+
+                    log.info("offering for edit {}", i);
+                    InstallationForm installationForm = new InstallationForm();
+                    installationForm.setData(i);
+                    if (JOptionPane.showOptionDialog(InstallationsPanel.this, installationForm, "Add Oolite version...", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, null, null) == JOptionPane.OK_OPTION) {
+                        log.info("adding installation...");
+                        int rowIndex = model.addRow(installationForm.getData());
+                        rowIndex = jTable1.convertRowIndexToView(rowIndex);
+                        jTable1.getSelectionModel().setSelectionInterval(rowIndex, rowIndex);
+                        setConfigDirty(true);
+                    }
+                } catch (Exception e) {
+                    log.error("Could not act after ok", e);
                 }
-                
             }
         });
 
@@ -450,7 +459,9 @@ public class InstallationsPanel extends javax.swing.JPanel {
         try {
             InstallationForm installationForm = new InstallationForm();
             if (JOptionPane.showOptionDialog(this, installationForm, "Add Oolite version...", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, null, null) == JOptionPane.OK_OPTION) {
-                model.addRow(installationForm.getData());
+                int rowIndex = model.addRow(installationForm.getData());
+                rowIndex = jTable1.convertRowIndexToView(rowIndex);
+                jTable1.getSelectionModel().setSelectionInterval(rowIndex, rowIndex);
                 setConfigDirty(true);
             }
         } catch (Exception e) {
