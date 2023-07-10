@@ -1389,24 +1389,27 @@ public class Oolite implements PropertyChangeListener {
      * @return the savegame directory
      */
     public static File getSavegameDir(File homeDir) {
-        // check Windows
-        File d = new File(homeDir, "oolite-saves");
-        if (d.isDirectory()) {
-            return d;
-        } else {
-            // check Linux
-            d = new File(new File(System.getProperty(OOLITE_USER_HOME)), "oolite-saves");
-            if (d.isDirectory()) {
-                return d;
-            } else {
-                // check MacOS
+        File d = null;
+        switch (Util.getOperatingSystemType()) {
+            case MacOS:
                 d = new File(new File(System.getProperty(OOLITE_USER_HOME)), "Documents");
                 if (d.isDirectory()) {
                     return d;
                 }
-            }
+                break;
+            case Linux:
+                d = new File(new File(System.getProperty(OOLITE_USER_HOME)), "oolite-saves");
+                if (d.isDirectory()) {
+                    return d;
+                }
+                break;
+            case Windows:
+                d = new File(homeDir, "oolite-saves");
+                if (d.isDirectory()) {
+                    return d;
+                }
+                break;
         }
-        
         return null;
     }
 
