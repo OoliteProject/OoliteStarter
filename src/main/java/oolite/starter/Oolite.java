@@ -1398,11 +1398,7 @@ public class Oolite implements PropertyChangeListener {
                 }
                 break;
             case Linux:
-                d = new File(new File(System.getProperty(OOLITE_USER_HOME)), "oolite-saves");
-                if (d.isDirectory()) {
-                    return d;
-                }
-                break;
+                return new File(new File(System.getProperty(OOLITE_USER_HOME)), "oolite-saves");
             case Windows:
                 d = new File(homeDir, "oolite-saves");
                 if (d.isDirectory()) {
