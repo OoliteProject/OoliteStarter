@@ -13,7 +13,6 @@ import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
 import oolite.starter.model.Expansion;
-import oolite.starter.model.Installation;
 import oolite.starter.model.SaveGame;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -290,4 +289,29 @@ public class OoliteTest {
         Mockito.verify(listener, Mockito.times(1)).launched();
         Mockito.verify(listener, Mockito.times(1)).terminated();
     }
+    
+    @Test
+    public void testGetVersionFromInfoPlist() throws ParserConfigurationException, SAXException, IOException, XPathExpressionException {
+        log.info("testGetVersionFromInfoPlist");
+        
+        File infoPlist = new File("src/test/resources/data/MacOS/Info.plist");
+        log.warn("reading {}", infoPlist);
+        
+        String v = Oolite.getVersionFromInfoPlist(infoPlist);
+        
+        assertEquals("1.90", v);
+    }
+    
+    @Test
+    public void testGetVersionFromManifest() throws ParserConfigurationException, SAXException, IOException, XPathExpressionException {
+        log.info("getVersionFromManifest");
+        
+        File infoPlist = new File("src/test/resources/data/Windows/manifest.plist");
+        log.warn("reading {}", infoPlist);
+        
+        String v = Oolite.getVersionFromManifest(infoPlist);
+        
+        assertEquals("1.90", v);
+    }
+    
 }

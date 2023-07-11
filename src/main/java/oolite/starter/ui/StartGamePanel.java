@@ -41,7 +41,12 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
      * @throws XPathExpressionException  something went wrong
      */
     public void setOolite(Oolite oolite) {
+        if (this.oolite != null) {
+            this.oolite.removeOoliteListener(this);
+        }
         this.oolite = oolite;
+        update();
+        oolite.addOoliteListener(this);
         
         jTable1.getSelectionModel().addListSelectionListener(lse -> {
             log.debug("valueChanged({})", lse);
@@ -53,6 +58,8 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
                     SaveGame row = model.getRow(rowIndex);
                     sgp.setData(row);
                 }
+
+                btResume.setEnabled(jTable1.getSelectedRow() != -1);
             }
         });
         
@@ -69,9 +76,14 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
             jTable1.setModel(model);
             TableRowSorter<SaveGameTableModel> trw = new TableRowSorter<>(model);
             jTable1.setRowSorter(trw);
-            sgp.setData(null);
+            
+            if (sgp != null) {
+                sgp.setData(null);
+            }
             
             txtStatus.setText(String.format("%d save games", model.getRowCount()));
+            
+            btResume.setEnabled(jTable1.getSelectedRow() != -1);
         } catch (Exception e) {
             log.warn("Could not update", e);
         }
@@ -210,7 +222,12 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
 
         // run savegame
         try {
-            int rowIndex = jTable1.convertRowIndexToModel(jTable1.getSelectedRow());
+            int rowIndex = jTable1.getSelectedRow();
+            if (rowIndex == -1) {
+                throw new Exception("Which savegame you want to start?");
+            }
+            
+            rowIndex = jTable1.convertRowIndexToModel(rowIndex);
             SaveGame row = model.getRow(rowIndex);
 
             SwingUtilities.getRoot(this).setVisible(false);
@@ -262,5 +279,16 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
     @Override
     public void terminated() {
         update();
+    }
+
+    @Override
+    public void activatedInstallation() {
+        log.error("activatedInstallation()");
+        try {
+            update();
+        } catch (Exception e) {
+            log.error("Could not reload", e);
+            JOptionPane.showMessageDialog(null, "Could not reload");
+        }
     }
 }

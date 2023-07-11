@@ -27,7 +27,7 @@
               </Group>
               <EmptySpace type="separate" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="txtLocalFile" pref="294" max="32767" attributes="0"/>
+                  <Component id="txtLocalFile" pref="288" max="32767" attributes="0"/>
                   <Component id="txtRequires" max="32767" attributes="0"/>
                   <Component id="txtConflicts" max="32767" attributes="0"/>
                   <Component id="txtOptional" max="32767" attributes="0"/>
@@ -151,7 +151,7 @@
         <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
           <Image iconType="3" name="/icons/delete_forever_FILL0_wght400_GRAD0_opsz24.png"/>
         </Property>
-        <Property name="text" type="java.lang.String" value="Remove"/>
+        <Property name="text" type="java.lang.String" value="Delete"/>
         <Property name="horizontalAlignment" type="int" value="2"/>
       </Properties>
       <Events>

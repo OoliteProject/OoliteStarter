@@ -7,6 +7,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import oolite.starter.Oolite;
 import oolite.starter.model.Installation;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
@@ -149,42 +150,42 @@ public class InstallationForm extends javax.swing.JPanel {
 
         jLabel7.setText("Managed Deactivated AddOn Directory");
 
-        btHomeDir.setText("...");
+        btHomeDir.setText("Browse");
         btHomeDir.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btHomeDirActionPerformed(evt);
             }
         });
 
-        btExecutable.setText("...");
+        btExecutable.setText("Browse");
         btExecutable.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btExecutableActionPerformed(evt);
             }
         });
 
-        btSavegameDir.setText("...");
+        btSavegameDir.setText("Browse");
         btSavegameDir.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btSavegameDirActionPerformed(evt);
             }
         });
 
-        btAddOnDir.setText("...");
+        btAddOnDir.setText("Browse");
         btAddOnDir.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btAddOnDirActionPerformed(evt);
             }
         });
 
-        btManagedAddOnDir.setText("...");
+        btManagedAddOnDir.setText("Browse");
         btManagedAddOnDir.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btManagedAddOnDirActionPerformed(evt);
             }
         });
 
-        btManagedDeactivatedAddOnDir.setText("...");
+        btManagedDeactivatedAddOnDir.setText("Browse");
         btManagedDeactivatedAddOnDir.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btManagedDeactivatedAddOnDirActionPerformed(evt);
@@ -193,7 +194,7 @@ public class InstallationForm extends javax.swing.JPanel {
 
         jLabel8.setText("Deactivated AddOn Directory");
 
-        btDeactivatedAddOnDir.setText("...");
+        btDeactivatedAddOnDir.setText("Browse");
         btDeactivatedAddOnDir.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btDeactivatedAddOnDirActionPerformed(evt);
@@ -216,7 +217,7 @@ public class InstallationForm extends javax.swing.JPanel {
                             .addComponent(jLabel1))
                         .addGap(131, 131, 131)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txtVersion, javax.swing.GroupLayout.DEFAULT_SIZE, 319, Short.MAX_VALUE)
+                            .addComponent(txtVersion, javax.swing.GroupLayout.DEFAULT_SIZE, 263, Short.MAX_VALUE)
                             .addComponent(txtSavegameDir, javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(txtAddOnDir, javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(txtExecutable, javax.swing.GroupLayout.Alignment.TRAILING)
@@ -306,24 +307,45 @@ public class InstallationForm extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    void maybeFillVersion(File homeDir) throws IOException {
+    void maybeFillVersion(File homeDir) {
+        // check Linux
         if (txtVersion.getText().isBlank()) {
-            File releaseTxt = new File(homeDir, "release.txt");
+            File releaseTxt = new File(homeDir, "../release.txt");
             if (releaseTxt.isFile()) {
-                txtVersion.setText(IOUtils.toString(new FileReader(releaseTxt)).trim());
+                try {
+                    txtVersion.setText(IOUtils.toString(new FileReader(releaseTxt)).trim());
+                } catch (Exception e) {
+                    log.info("Could not read version from {}", releaseTxt, e);
+                }
+            }
+        }
+        // check MacOS
+        if (txtVersion.getText().isBlank()) {
+            File releaseTxt = new File(homeDir, "Contents/Info.plist");
+            if (releaseTxt.isFile()) {
+                try {
+                    txtVersion.setText(Oolite.getVersionFromInfoPlist(releaseTxt));
+                } catch (Exception e) {
+                    log.info("Could not read version from {}", releaseTxt, e);
+                }
+            }
+        }
+        // check Windows
+        if (txtVersion.getText().isBlank()) {
+            File releaseTxt = new File(homeDir, "Resources/manifest.plist");
+            if (releaseTxt.isFile()) {
+                try {
+                    txtVersion.setText(Oolite.getVersionFromManifest(releaseTxt));
+                } catch (Exception e) {
+                    log.info("Could not read version from {}", releaseTxt, e);
+                }
             }
         }
     }
 
     void maybeFillExecutable(File homeDir) {
         if (txtExecutable.getText().isBlank()) {
-            File executable = new File(homeDir, "oolite.app/oolite-wrapper");
-            if (!executable.exists()) {
-                executable = new File(homeDir, "oolite.app/oolite.exe");
-            }
-            if (!executable.exists()) {
-                executable = new File(homeDir, "oolite.app/oolite");
-            }
+            File executable = Oolite.getExecutable(homeDir);
 
             if (executable.isFile()) {
                 txtExecutable.setText(executable.getAbsolutePath());
@@ -333,29 +355,23 @@ public class InstallationForm extends javax.swing.JPanel {
 
     void maybeFillSavegameDir(File homeDir) {
         if (txtSavegameDir.getText().isBlank()) {
-            File d = new File(homeDir, "oolite.app/oolite-saves");
-            if (d.isDirectory()) {
-                txtSavegameDir.setText(d.getAbsolutePath());
-            }
-        }
-        if (txtSavegameDir.getText().isBlank()) {
-            File d = new File(new File(System.getProperty(INSTALLATIONFORM_USER_HOME)), "oolite-saves");
-            if (d.isDirectory()) {
-                txtSavegameDir.setText(d.getAbsolutePath());
-            }
+            File d = Oolite.getSavegameDir(homeDir);
+            txtSavegameDir.setText(d.getAbsolutePath());
         }
     }
     
     void maybeFillAddonDir(File homeDir) throws IOException {
         if (txtAddOnDir.getText().isBlank()) {
-            File d = new File(homeDir, "AddOns");
-            if (d.isDirectory()) {
-                txtAddOnDir.setText(d.getAbsolutePath());
+            File d = Oolite.getAddOnDir(homeDir);
+            if (d != null) {
+                txtAddOnDir.setText(d.getCanonicalPath());
             }
 
             if (txtDeactivatedAddOnDir.getText().isBlank()) {
                 File dd = new File(d, "../DeactivatedAddOns");
-                txtDeactivatedAddOnDir.setText(dd.getCanonicalPath());
+                if (dd != null) {
+                    txtDeactivatedAddOnDir.setText(dd.getCanonicalPath());
+                }
             }
         }
     }
@@ -364,14 +380,14 @@ public class InstallationForm extends javax.swing.JPanel {
         log.debug("maybeFillManagedAddonDir({})", homeDir);
         
         if (txtManagedAddOnDir.getText().isBlank()) {
-            File d = new File(new File(System.getProperty(INSTALLATIONFORM_USER_HOME)), "GNUstep/Library/ApplicationSupport/Oolite/ManagedAddOns");
-            if (d.isDirectory()) {
+            File d = Oolite.getManagedAddOnDir(homeDir);
+            if (d != null) {
                 txtManagedAddOnDir.setText(d.getAbsolutePath());
-            }
 
-            if (txtManagedDeactivatedAddOnDir.getText().isBlank()) {
-                File dd = new File(d, "../ManagedDeactivatedAddOns");
-                txtManagedDeactivatedAddOnDir.setText(dd.getCanonicalPath());
+                if (txtManagedDeactivatedAddOnDir.getText().isBlank()) {
+                    File dd = Oolite.getManagedDeactivatedAddOnDir(homeDir);
+                    txtManagedDeactivatedAddOnDir.setText(dd.getCanonicalPath());
+                }
             }
         }
     }

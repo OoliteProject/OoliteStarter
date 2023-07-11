@@ -79,7 +79,7 @@ public class GithubVersionChecker {
         }
         
         String v = getClass().getPackage().getImplementationVersion();
-        if (v==null) { // this is the case when running from the IDE
+        if (v==null || v.contains("SNAPSHOT")) { // this is the case when running from the IDE
             v = "0.1.10";
         }
         Semver me = new Semver(v);

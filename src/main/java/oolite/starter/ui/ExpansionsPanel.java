@@ -34,7 +34,7 @@ import org.apache.logging.log4j.Logger;
  */
 public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.OoliteListener {
     private static final Logger log = LogManager.getLogger();
-    
+
     class MyRowStatusFilter extends RowFilter<ExpansionsTableModel, Integer> {
         
         private String filterMode;
@@ -180,6 +180,17 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
         }
     }
 
+    @Override
+    public void activatedInstallation() {
+        log.error("activatedInstallation()");
+        try {
+            update();
+        } catch (Exception e) {
+            log.error("Could not reload", e);
+            JOptionPane.showMessageDialog(null, "Could not reload");
+        }
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always

@@ -3,6 +3,8 @@
 package oolite.starter;
 
 import com.chaudhuri.plist.PlistParser;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -40,6 +42,7 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import oolite.starter.model.Expansion;
 import oolite.starter.model.ExpansionReference;
+import oolite.starter.model.Installation;
 import oolite.starter.model.SaveGame;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -54,14 +57,15 @@ import org.xml.sax.SAXException;
  *
  * @author hiran
  */
-public class Oolite {
+public class Oolite implements PropertyChangeListener {
     private static final Logger log = LogManager.getLogger();
     
     private static final String OOLITE_CONFIGURATION_MUST_NOT_BE_NULL = "configuration must not be null";
     private static final String OOLITE_EXPANSION_FQN = "org.oolite.hiran.OoliteStarter.oxp";
     private static final String OOLITE_IDENTIFIER = "identifier";
+    private static final String OOLITE_USER_HOME = "user.home";
     private static final String OOLITE_VERSION = "version";
-    
+
     public interface OoliteListener {
         
         /**
@@ -73,7 +77,11 @@ public class Oolite {
          * Will be called whenever Oolite has terminated.
          */
         public void terminated();
-        
+
+        /**
+         * Will be called whenever a new configuration has been activated.
+         */
+        public void activatedInstallation();
     }
     
     private List<OoliteListener> listeners;
@@ -111,7 +119,13 @@ public class Oolite {
      */
     public void setConfiguration(Configuration configuration) {
         log.debug("setConfiguration({})", configuration);
+        if (this.configuration != null) {
+            this.configuration.removePropertyChangeListener(this);
+        }
         this.configuration = configuration;
+        if (configuration != null) {
+            this.configuration.addPropertyChangeListener(this);
+        }
     }
     
     /**
@@ -305,6 +319,12 @@ public class Oolite {
     void fireTerminated() {
         for (OoliteListener l: listeners) {
             l.terminated();
+        }
+    }
+    
+    void fireActivatedInstallation() {
+        for (OoliteListener l: listeners) {
+            l.activatedInstallation();
         }
     }
     
@@ -1089,13 +1109,34 @@ public class Oolite {
      * @return true if and only if it is a home directory
      */
     static boolean isOoliteHomeDirectory(File f) {
-        File app = new File(f, "oolite.app");
-        if (app.isDirectory()) {
-            return true;
+        String fname = f.getName();
+        if ("oolite.app".equals(fname)) {
+            // check linux directory
+            // check windows directory
+            
+            File app = null;
+            app = new File(f, "oolite.exe");
+            if (app.isFile()) {
+                // we found oolite.exe on Windows!
+                return true;
+            }
+            app = new File(f, "oolite");
+            if (app.isFile()) {
+                // we found oolite on Linux!
+                return true;
+            }
         }
-        app = new File(f, "Oolite.app/Contents");
         
-        return app.isDirectory();
+        if (Util.isMac() && fname.endsWith(".app")) {
+            // check MacOS directory
+            File app = new File(f, "Contents/MacOS/Oolite");
+            if (app.isFile()) {
+                // we found oolite on MacOS
+                return true;
+            }
+        }
+        
+        return false;
     }
     
     static boolean isOoliteExpansionDirectory(File f) {
@@ -1176,5 +1217,261 @@ public class Oolite {
             default:
                 return "";
         }
+    }
+
+    /**
+     * Extracts the Oolite version from Info.plist.
+     * 
+     * @param f the Info.plist file to read
+     * @return the version number found
+     * @throws ParserConfigurationException something went wrong
+     * @throws SAXException something went wrong
+     * @throws IOException something went wrong
+     * @throws XPathExpressionException something went wrong
+     */
+    public static String getVersionFromInfoPlist(File f) throws ParserConfigurationException, SAXException, IOException, XPathExpressionException {
+        Document info = XmlUtil.parseXmlFile(f);
+        
+        XPathFactory xpf = XPathFactory.newInstance();
+        XPath xp = xpf.newXPath();
+        
+        return xp.evaluate("/plist/dict/key[text()='CFBundleVersion']/following-sibling::string[1]", info);
+    }
+    
+    /**
+     * Extracts the Oolite version from Resources/manifest.plist.
+     * 
+     * @param f the plist file to read
+     * @return the version number found
+     * @throws ParserConfigurationException something went wrong
+     * @throws SAXException something went wrong
+     * @throws IOException something went wrong
+     * @throws XPathExpressionException something went wrong
+     */
+    public static String getVersionFromManifest(File f) throws IOException {
+        log.debug("getVersionFromManifest({})", f);
+        
+        try (InputStream in = new FileInputStream(f)) {
+            PlistParser.DictionaryContext dc = PlistUtil.parsePListDict(in, f.getAbsolutePath());
+
+            for (PlistParser.KeyvaluepairContext kvc: dc.keyvaluepair()) {
+                String key = kvc.STRING().getText();
+                String value = kvc.value().getText();
+                
+                log.trace("looking at key {} value {}", key, value);
+                if ("version".equals(key)) {
+                    return value;
+                }
+            }
+
+            return null;
+        }
+    }
+    
+    /**
+     * Extracts the Oolite version for this installation.
+     * 
+     * @param homeDir the installation's home directory
+     * @return the version number found
+     * @throws ParserConfigurationException something went wrong
+     * @throws SAXException something went wrong
+     * @throws IOException something went wrong
+     * @throws XPathExpressionException something went wrong
+     */
+    public static String getVersionFromHomeDir(File homeDir) throws IOException {
+        File manifest = new File(homeDir, "Resources/manifest.plist");
+        if (!manifest.exists()) {
+            manifest = new File(homeDir, "Contents/Resources/manifest.plist");
+        }
+        return getVersionFromManifest(manifest);
+    }
+    
+    /**
+     * Returns the reasonable addons directory for a given home directory.
+     * 
+     * @param homeDir the home directory
+     * @return the addons directory, or null if not found
+     */
+    public static File getAddOnDir(File homeDir) {
+        log.debug("getAddOnDir({})", homeDir);
+
+        // check Linux, Windows
+        File d = new File(homeDir, "../AddOns");
+        if (d.isDirectory()) {
+            return d;
+        }
+
+        // check MacOS
+        d = new File(new File(System.getProperty(OOLITE_USER_HOME)), "Library/Application Support/Oolite/Addons");
+        if (d.isDirectory()) {
+            return d;
+        }
+        
+        return null;
+    }
+
+    /**
+     * Returns the reasonable deactivated addons directory for a given home directory.
+     * 
+     * @param homeDir the home directory
+     * @return the deactivated addons directory
+     */
+    public static File getDeactivatedAddOnDir(File homeDir) {
+        log.debug("getDeactivatedAddOnDir({})", homeDir);
+
+        if (Util.isMac()) {
+            return new File(new File(System.getProperty(OOLITE_USER_HOME)), "Library/Application Support/Oolite/DeactivatedAddOns");
+        } else {
+            return new File(homeDir, "../DeactivatedAddOns");
+        }
+    }
+
+    /**
+     * Returns the reasonable managed addons directory for a given home directory.
+     * 
+     * @param homeDir the home directory
+     * @return the managed addons directory, or null if not found
+     */
+    public static File getManagedAddOnDir(File homeDir) {
+        log.debug("getManagedAddOnDir({})", homeDir);
+
+        File d = null;
+
+        switch (Util.getOperatingSystemType()) {
+            case MacOS:
+                return new File(new File(System.getProperty(OOLITE_USER_HOME)), "Library/Application Support/Oolite/ManagedAddons");
+            case Linux:
+                return new File(new File(System.getProperty(OOLITE_USER_HOME)), "GNUstep/Library/ApplicationSupport/Oolite/ManagedAddOns");
+            case Windows:
+                return new File(homeDir, "Library/Application Support/Oolite/ManagedAddons");
+            default:
+                log.warn("Could not find managed addon dir");
+                return null;
+        }
+
+    }
+    
+    /**
+     * Returns the reasonable managed deactivated addons directory for a given home directory.
+     * 
+     * @param homeDir the home directory
+     * @return the managed deactivated addons directory
+     */
+    public static File getManagedDeactivatedAddOnDir(File homeDir) {
+        return new File(getManagedAddOnDir(homeDir), "../ManagedDeactivatedAddOns");
+    }
+    
+    /**
+     * Returns the reasonable executable for a given home directory.
+     * 
+     * @param homeDir the home directory
+     * @return the executable
+     */
+    public static File getExecutable(File homeDir) {
+            File executable = new File(homeDir, "oolite-wrapper");
+            if (!executable.exists()) {
+                executable = new File(homeDir, "oolite.exe");
+            }
+            if (!executable.exists()) {
+                executable = new File(homeDir, "oolite");
+            }
+            if (!executable.exists()) {
+                executable = new File(homeDir, "Contents/MacOS/Oolite");
+            }
+
+            return executable;
+    }
+    
+    /**
+     * Returns the reasonable savegame directory for a given home directory.
+     * 
+     * @param homeDir the home directory
+     * @return the savegame directory
+     */
+    public static File getSavegameDir(File homeDir) {
+        File d = null;
+        switch (Util.getOperatingSystemType()) {
+            case MacOS:
+                d = new File(new File(System.getProperty(OOLITE_USER_HOME)), "Documents");
+                if (d.isDirectory()) {
+                    return d;
+                }
+                break;
+            case Linux:
+                return new File(new File(System.getProperty(OOLITE_USER_HOME)), "oolite-saves");
+            case Windows:
+                d = new File(homeDir, "oolite-saves");
+                if (d.isDirectory()) {
+                    return d;
+                }
+                break;
+        }
+        return null;
+    }
+
+    @Override
+    public void propertyChange(PropertyChangeEvent pce) {
+        log.debug("propertyChange({})", pce);
+        if ("activeInstallation".equals(pce.getPropertyName())) {
+            fireActivatedInstallation();
+        }
+    }
+
+    /**
+     * Populates an Installation with good guesses based on the home directory.
+     * 
+     * @param homeDir the home directory
+     * @return the installation
+     */
+    public static Installation populateFromHomeDir(File homeDir) {
+        log.warn("populateFromHomeDir({})", homeDir);
+        
+        Installation i = new Installation();
+        i.setHomeDir(homeDir.getAbsolutePath());
+        log.info("version");
+        try {
+            i.setVersion(Oolite.getVersionFromHomeDir(homeDir));
+        } catch (IOException e) {
+            log.warn("Cannot read version for {}", homeDir, e);
+        }
+        log.info("executable");
+        try {
+            i.setExcecutable(Oolite.getExecutable(homeDir).getCanonicalPath());
+        } catch (IOException e) {
+            log.warn("Cannot get executable for {}", homeDir, e);
+        }
+        log.info("savegamedir");
+        try {
+            i.setSavegameDir(Oolite.getSavegameDir(homeDir).getCanonicalPath());
+        } catch (IOException e) {
+            log.warn("Cannot get savegame dir for {}", homeDir, e);
+        }
+        log.info("addondir");
+        try {
+            i.setAddonDir(Oolite.getAddOnDir(homeDir).getCanonicalPath());
+        } catch (IOException e) {
+            log.warn("Cannot get AddOns dir for {}", homeDir, e);
+        }
+        log.info("deactivatedaddondir");
+        try {
+            i.setDeactivatedAddonDir(Oolite.getDeactivatedAddOnDir(homeDir).getCanonicalPath());
+        } catch (IOException e) {
+            log.warn("Cannot get Deactivated AddOns dir for {}", homeDir, e);
+        }
+        log.info("managedaddondir");
+        try {
+            i.setManagedAddonDir(Oolite.getManagedAddOnDir(homeDir).getCanonicalPath());
+        } catch (IOException e) {
+            log.warn("Cannot get Managed AddOns dir for {}", homeDir, e);
+        }
+        log.info("manageddeactivatedaddondir");
+        try {
+            i.setManagedDeactivatedAddonDir(Oolite.getManagedDeactivatedAddOnDir(homeDir).getCanonicalPath());
+        } catch (IOException e) {
+            log.warn("Cannot get Managed Deactivated AddOns dir for {}", homeDir, e);
+        }
+
+        log.info("population done");
+        return i;
     }
 }
