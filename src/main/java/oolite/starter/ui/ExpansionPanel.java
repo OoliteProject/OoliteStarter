@@ -129,7 +129,7 @@ public class ExpansionPanel extends javax.swing.JPanel implements PropertyChange
         });
 
         btRemove.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/delete_forever_FILL0_wght400_GRAD0_opsz24.png"))); // NOI18N
-        btRemove.setText("Remove");
+        btRemove.setText("Delete");
         btRemove.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         btRemove.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -167,7 +167,7 @@ public class ExpansionPanel extends javax.swing.JPanel implements PropertyChange
                     .addComponent(jLabel5))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(txtLocalFile, javax.swing.GroupLayout.DEFAULT_SIZE, 294, Short.MAX_VALUE)
+                    .addComponent(txtLocalFile, javax.swing.GroupLayout.DEFAULT_SIZE, 288, Short.MAX_VALUE)
                     .addComponent(txtRequires)
                     .addComponent(txtConflicts)
                     .addComponent(txtOptional)

@@ -150,42 +150,42 @@ public class InstallationForm extends javax.swing.JPanel {
 
         jLabel7.setText("Managed Deactivated AddOn Directory");
 
-        btHomeDir.setText("...");
+        btHomeDir.setText("Browse");
         btHomeDir.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btHomeDirActionPerformed(evt);
             }
         });
 
-        btExecutable.setText("...");
+        btExecutable.setText("Browse");
         btExecutable.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btExecutableActionPerformed(evt);
             }
         });
 
-        btSavegameDir.setText("...");
+        btSavegameDir.setText("Browse");
         btSavegameDir.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btSavegameDirActionPerformed(evt);
             }
         });
 
-        btAddOnDir.setText("...");
+        btAddOnDir.setText("Browse");
         btAddOnDir.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btAddOnDirActionPerformed(evt);
             }
         });
 
-        btManagedAddOnDir.setText("...");
+        btManagedAddOnDir.setText("Browse");
         btManagedAddOnDir.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btManagedAddOnDirActionPerformed(evt);
             }
         });
 
-        btManagedDeactivatedAddOnDir.setText("...");
+        btManagedDeactivatedAddOnDir.setText("Browse");
         btManagedDeactivatedAddOnDir.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btManagedDeactivatedAddOnDirActionPerformed(evt);
@@ -194,7 +194,7 @@ public class InstallationForm extends javax.swing.JPanel {
 
         jLabel8.setText("Deactivated AddOn Directory");
 
-        btDeactivatedAddOnDir.setText("...");
+        btDeactivatedAddOnDir.setText("Browse");
         btDeactivatedAddOnDir.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btDeactivatedAddOnDirActionPerformed(evt);
@@ -217,7 +217,7 @@ public class InstallationForm extends javax.swing.JPanel {
                             .addComponent(jLabel1))
                         .addGap(131, 131, 131)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txtVersion, javax.swing.GroupLayout.DEFAULT_SIZE, 319, Short.MAX_VALUE)
+                            .addComponent(txtVersion, javax.swing.GroupLayout.DEFAULT_SIZE, 263, Short.MAX_VALUE)
                             .addComponent(txtSavegameDir, javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(txtAddOnDir, javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(txtExecutable, javax.swing.GroupLayout.Alignment.TRAILING)

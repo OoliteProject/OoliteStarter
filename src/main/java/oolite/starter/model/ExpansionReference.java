@@ -10,7 +10,26 @@ package oolite.starter.model;
 public class ExpansionReference implements Comparable<ExpansionReference> {
 
     public enum Status {
-        OK, MISSING, SURPLUS
+        /**
+         * This expansion is happy. All requirements are met and no conflicts detected.
+         */
+        OK, 
+        /**
+         * This expansion is missing. It was in the list wanted OXPs but is not installed.
+         */
+        MISSING, 
+        /**
+         * This expansion is surplus. It is installed despite it was not wanted.
+         */
+        SURPLUS,
+        /**
+         * This expansion is required by another expansion, yet it is not installed.
+         */
+        REQUIRED_MISSING,
+        /**
+         * This expansion is installed and conflicts with another installed expansion.
+         */
+        CONFLICT
     }
 
     private String name;
