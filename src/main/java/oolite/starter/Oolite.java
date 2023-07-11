@@ -1126,12 +1126,12 @@ public class Oolite implements PropertyChangeListener {
                 return true;
             }
         }
-        if ("Oolite.app".equals(fname)) {
+        
+        if (Util.isMac() && fname.endsWith(".app")) {
             // check MacOS directory
-            File app = null;
-            app = new File(f, "Contents/MacOS/Oolite");
+            File app = new File(f, "Contents/MacOS/Oolite");
             if (app.isFile()) {
-                // we found oolite.exe on Windows!
+                // we found oolite on MacOS
                 return true;
             }
         }

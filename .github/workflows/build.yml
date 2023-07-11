@@ -224,7 +224,7 @@ jobs:
 
     - name: Prepare AppImage for Windows
       run: |
-        jpackage --type app-image --app-version "${{ needs.semver.outputs.GITVERSION_ASSEMBLYSEMVER }}" --copyright Copyright --description "OoliteStarter ${{ needs.semver.outputs.GITVERSION_SEMVER }}" --name "OoliteStarter" --dest target/appimage --temp target/oolite-starter-tmp --vendor "hiran" --verbose --icon oolitestarter/src/main/resources/images/Mr_Gimlet_transparent.png --input OoliteStarter-${{ needs.semver.outputs.GITVERSION_SEMVER }}/dist --main-jar OoliteStarter-${{ needs.semver.outputs.GITVERSION_SEMVER }}.jar --main-class oolite.starter.MainFrame --java-options '-splash:$APPDIR/splash.png'
+        jpackage --type app-image --app-version "${{ needs.semver.outputs.GITVERSION_ASSEMBLYSEMVER }}" --copyright Copyright --description "OoliteStarter ${{ needs.semver.outputs.GITVERSION_SEMVER }}" --name "OoliteStarter" --dest target/appimage --temp target/oolite-starter-tmp --vendor "hiran" --verbose --icon oolitestarter/src/main/resources/images/Mr_Gimlet_transparent.ico --input OoliteStarter-${{ needs.semver.outputs.GITVERSION_SEMVER }}/dist --main-jar OoliteStarter-${{ needs.semver.outputs.GITVERSION_SEMVER }}.jar --main-class oolite.starter.MainFrame --java-options '-splash:$APPDIR/splash.png'
         # --resource-dir src/jpackage/resources
         copy oolitestarter\src\main\resources\images\OoliteStarter_Splashscreen_640x360.png target\appimage\OoliteStarter\app\splash.png
 
@@ -234,7 +234,7 @@ jobs:
 
     - name: Finish AppImage for Windows
       run: |
-        jpackage --verbose --app-image target/appimage/OoliteStarter --name "OoliteStarter ${{ needs.semver.outputs.GITVERSION_SEMVER }}" --dest target --win-shortcut --icon oolitestarter/src/main/resources/images/Mr_Gimlet_transparent.png --win-shortcut --win-menu --win-menu-group Oolite
+        jpackage --verbose --app-image target/appimage/OoliteStarter --name "OoliteStarter ${{ needs.semver.outputs.GITVERSION_SEMVER }}" --dest target --win-shortcut --icon oolitestarter/src/main/resources/images/Mr_Gimlet_transparent.ico --win-shortcut --win-menu --win-menu-group Oolite
         #--resource-dir src/jpackage/resources
 
     - name: Check status 3
