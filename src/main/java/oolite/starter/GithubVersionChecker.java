@@ -40,18 +40,22 @@ public class GithubVersionChecker {
      */
     public void init() throws IOException {
         versions = new ArrayList<>();
-        List<Object> releases = new Genson().deserialize(getReleasesURL().openStream(), List.class);
-        for (Object release: releases) {
-            if (release instanceof Map<?,?> map) {
-                String v = String.valueOf(map.get("tag_name"));
-                if (v.startsWith("v")) {
-                    v = v.substring(1);
+        try {
+            List<Object> releases = new Genson().deserialize(getReleasesURL().openStream(), List.class);
+            for (Object release: releases) {
+                if (release instanceof Map<?,?> map) {
+                    String v = String.valueOf(map.get("tag_name"));
+                    if (v.startsWith("v")) {
+                        v = v.substring(1);
+                    }
+                    versions.add(new Semver(v));
+                } else {
+                    log.debug("class {}", release.getClass());
+                    log.debug("release {}", release);
                 }
-                versions.add(new Semver(v));
-            } else {
-                log.debug("class {}", release.getClass());
-                log.debug("release {}", release);
             }
+        } catch (Exception e) {
+            log.info("Could not check for new versions", e);
         }
     }
     
