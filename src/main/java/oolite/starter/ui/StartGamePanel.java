@@ -339,13 +339,25 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
         
         final String text = sb.toString();
         
-        SwingUtilities.invokeLater(() -> {
-            waitPanel.setText(text);
-            
-            JFrame f = (JFrame)SwingUtilities.getRoot(this);
-            previousWindowState = f.getState();
-            f.setState(java.awt.Frame.ICONIFIED);
-        });
+        
+        new Thread(() -> {
+            try {
+                SwingUtilities.invokeAndWait(() -> {
+                    waitPanel.setText(text);
+                });
+                Thread.sleep(2000);
+            } catch (InterruptedException ex) {
+                log.debug("interrupted", ex);
+                Thread.currentThread().interrupt();
+            } catch (Exception e) {
+                log.error("Could not set text", e);
+            }
+            SwingUtilities.invokeLater(() -> {
+                JFrame f = (JFrame)SwingUtilities.getRoot(this);
+                previousWindowState = f.getState();
+                f.setState(java.awt.Frame.ICONIFIED);
+            });
+        }).start();
         
     }
 
@@ -353,11 +365,22 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
     public void terminated() {
         update();
         
-        SwingUtilities.invokeLater(() -> {
-            JFrame d = (JFrame)SwingUtilities.getWindowAncestor(waitPanel);
-            d.getGlassPane().setVisible(false);
-            d.setState(previousWindowState);
-        });
+        new Thread(() -> {
+            SwingUtilities.invokeLater(() -> {
+                JFrame d = (JFrame)SwingUtilities.getWindowAncestor(waitPanel);
+                d.setState(previousWindowState);
+            });
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException ex) {
+                log.debug("interrupted", ex);
+                Thread.currentThread().interrupt();
+            }
+            SwingUtilities.invokeLater(() -> {
+                JFrame d = (JFrame)SwingUtilities.getWindowAncestor(waitPanel);
+                d.getGlassPane().setVisible(false);
+            });
+        }).start();
         
     }
 
