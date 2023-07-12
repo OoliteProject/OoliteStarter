@@ -2,6 +2,10 @@
  */
 package oolite.starter;
 
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics2D;
+import java.awt.SplashScreen;
 import java.io.File;
 import java.io.IOException;
 import java.time.Duration;
@@ -84,11 +88,34 @@ public class MainFrame extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private static void customizeSplashScreen() {
+        SplashScreen ss = SplashScreen.getSplashScreen();
+        if (ss != null) {
+            Graphics2D g = ss.createGraphics();
+
+            String text = MainFrame.class.getPackage().getImplementationTitle()
+                    + " " + MainFrame.class.getPackage().getImplementationVersion();
+
+            g.setFont(g.getFont().deriveFont(Font.BOLD, 22.0f));
+            g.setColor(Color.white);
+            g.drawString(text, 31, 51);
+            //g.setColor(Configuration.COLOR_ATTENTION);
+            //g.setColor(new Color(23, 32, 41));
+            g.setColor(new Color(46, 64, 82));
+            //g.setColor(new Color(92, 128, 164));
+            g.drawString(text, 30, 50);
+            
+            ss.update();
+        }
+    }
+    
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
         log.info("{} {}  starting up...", MainFrame.class.getPackage().getImplementationTitle(), MainFrame.class.getPackage().getImplementationVersion());
+        
+        customizeSplashScreen();
 
         Runtime.getRuntime().addShutdownHook(new Thread("Shutdownhook") {
             @Override

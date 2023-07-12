@@ -56,6 +56,7 @@ public class GithubVersionChecker {
             }
         } catch (Exception e) {
             log.info("Could not check for new versions", e);
+            versions.add(new Semver("0.1.11"));
         }
     }
     
