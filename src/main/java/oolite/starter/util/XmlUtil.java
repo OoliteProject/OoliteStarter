@@ -1,7 +1,7 @@
 /*
  */
 
-package oolite.starter;
+package oolite.starter.util;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -39,6 +39,9 @@ public class XmlUtil {
      */
     public static Document parseXmlStream(InputStream in) throws ParserConfigurationException, SAXException, IOException {
         log.debug("parseXmlStream(...)");
+        if (in == null) {
+            throw new IllegalArgumentException("in must not be null");
+        }
         
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         dbf.setValidating(false);
@@ -63,6 +66,9 @@ public class XmlUtil {
      */
     public static Document parseXmlFile(File f) throws ParserConfigurationException, SAXException, IOException {
         log.debug("parseXmlFile({})", f);
+        if (f == null) {
+            throw new IllegalArgumentException("f must not be null");
+        }
 
         InputStream in = new FileInputStream(f);
         return parseXmlStream(in);

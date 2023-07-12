@@ -1,6 +1,6 @@
 /*
  */
-package oolite.starter;
+package oolite.starter.util;
 
 import java.io.IOException;
 import java.util.Locale;
@@ -43,6 +43,14 @@ public class Util {
      * @throws IOException something went wrong
      */
     public static String execReadToString(String execCommand) throws IOException {
+        log.debug("execReadToString({})", execCommand);
+        if (execCommand == null) {
+            throw new IllegalArgumentException("execCommand must not be null");
+        }
+        if (execCommand.isBlank()) {
+            throw new IllegalArgumentException("execCommand must contain something");
+        }
+        
         try (Scanner s = new Scanner(Runtime.getRuntime().exec(execCommand).getInputStream()).useDelimiter("\\A")) {
             return s.hasNext() ? s.next() : "";
         }

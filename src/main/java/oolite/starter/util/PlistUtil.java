@@ -1,6 +1,6 @@
 /*
  */
-package oolite.starter;
+package oolite.starter.util;
 
 import com.chaudhuri.plist.PlistLexer;
 import com.chaudhuri.plist.PlistParser;
@@ -64,6 +64,11 @@ public class PlistUtil {
      * @throws IOException something went wrong
      */
     public static PlistParser.ListContext parsePListList(InputStream in, String sourceName) throws IOException {
+        log.debug("parsePListList({}, {})", in, sourceName);
+        if (in == null) {
+            throw new IllegalArgumentException("in must not be null");
+        }
+        
         ThrowingErrorListener errorListener = new ThrowingErrorListener();
         
         ReadableByteChannel channel = Channels.newChannel(in);
@@ -93,6 +98,11 @@ public class PlistUtil {
      * @throws IOException something went wrong
      */
     public static PlistParser.DictionaryContext parsePListDict(InputStream in, String sourceName) throws IOException {
+        log.debug("parsePListDict({}, {})", in, sourceName);
+        if (in == null) {
+            throw new IllegalArgumentException("in must not be null");
+        }
+        
         ThrowingErrorListener errorListener = new ThrowingErrorListener();
         
         ReadableByteChannel channel = Channels.newChannel(in);

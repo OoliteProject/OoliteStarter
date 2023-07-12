@@ -2,6 +2,7 @@
  */
 package oolite.starter;
 
+import oolite.starter.util.PlistUtil;
 import com.chaudhuri.plist.PlistParser;
 import java.io.File;
 import java.io.IOException;
@@ -83,6 +84,31 @@ public class OoliteTest {
 
         List<SaveGame> sgs = instance.getSaveGames();
         assertEquals(0, sgs.size());
+    }
+
+    /**
+     * Test of setConfiguration method, of class Oolite.
+     */
+    @Test
+    public void testSetConfiguration3() throws IOException, ParserConfigurationException, SAXException, XPathExpressionException {
+        log.info("testSetConfiguration3");
+
+        Oolite instance = new Oolite();
+        Configuration configuration = Mockito.mock(Configuration.class);
+        Mockito.when(configuration.getSaveGameDir()).thenReturn(new File("target/test/savegames"));
+        instance.setConfiguration(configuration);
+
+        List<SaveGame> sgs = instance.getSaveGames();
+        assertEquals(0, sgs.size());
+        
+        instance.setConfiguration(null);
+        try {
+            instance.getSaveGames();
+            fail("expected exception");
+        } catch (IllegalStateException e) {
+            assertEquals("configuration must not be null", e.getMessage());
+            log.debug("caught expected exception", e);
+        }
     }
 
     @Test

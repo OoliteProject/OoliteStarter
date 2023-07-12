@@ -2,6 +2,9 @@
  */
 package oolite.starter;
 
+import oolite.starter.util.PlistUtil;
+import oolite.starter.util.Util;
+import oolite.starter.util.XmlUtil;
 import com.chaudhuri.plist.PlistParser;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;

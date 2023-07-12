@@ -561,8 +561,9 @@ public class ExpansionTest {
         assertFalse(e1.equals("Hallo"));
         
         Expansion e2 = new Expansion();
-        Boolean result = e1.equals(e2);
-        assertTrue(result);
+        assertTrue(e1.equals(e2));
+
+        assertTrue(e1.equals(e1));
     }
     
     private class TestPropertyChangeListener implements PropertyChangeListener {
@@ -596,5 +597,19 @@ public class ExpansionTest {
         expansion.removePropertyChangeListener(l);
         expansion.setLocalFile(new File("dummy2"));
         assertEquals(1, l.getCount());
+    }
+    
+    @Test
+    public void testHashCode() {
+        log.info("testHashCode");
+        
+        Expansion expansion = new Expansion();
+        assertEquals(-1905561714, expansion.hashCode());
+        
+        expansion.setIdentifier("id");
+        assertEquals(-1193161438, expansion.hashCode());
+        
+        expansion.setVersion("v1");
+        assertEquals(3227862, expansion.hashCode());
     }
 }
