@@ -362,8 +362,6 @@ public class Oolite implements PropertyChangeListener {
 
             ProcessBuilder pb = new ProcessBuilder(command);
             pb.directory(dir);
-            //pb.redirectOutput(ProcessBuilder.Redirect.INHERIT);
-            //pb.redirectError(ProcessBuilder.Redirect.INHERIT);
             Process p = pb.start();
             
             StreamGobbler outputGobbler = new StreamGobbler(p.getInputStream(), logOolite::info);
@@ -1152,21 +1150,21 @@ public class Oolite implements PropertyChangeListener {
             File app = null;
             app = new File(f, "oolite.exe");
             if (app.isFile()) {
-                // we found oolite.exe on Windows!
+                // we found oolite.exe on WINDOWS!
                 return true;
             }
             app = new File(f, "oolite");
             if (app.isFile()) {
-                // we found oolite on Linux!
+                // we found oolite on LINUX!
                 return true;
             }
         }
         
         if (Util.isMac() && fname.endsWith(".app")) {
-            // check MacOS directory
+            // check MACOS directory
             File app = new File(f, "Contents/MacOS/Oolite");
             if (app.isFile()) {
-                // we found oolite on MacOS
+                // we found oolite on MACOS
                 return true;
             }
         }
@@ -1214,17 +1212,17 @@ public class Oolite implements PropertyChangeListener {
         }
 
         if (isOoliteHomeDirectory(f)) {
-            // this works for Windows and Linux
+            // this works for WINDOWS and LINUX
             return OoliteDirectoryType.HOME_DIR;
         }
         
         if (isOoliteExpansionDirectory(f)) {
-            // this works for Windows and Linux
+            // this works for WINDOWS and LINUX
             return OoliteDirectoryType.EXPANSION_DIR;
         }
         
         if (isOoliteSaveGameDirectory(f)) {
-            // this works for Windows and Linux
+            // this works for WINDOWS and LINUX
             return OoliteDirectoryType.SAVEGAME_DIR;
         }
         
@@ -1294,7 +1292,7 @@ public class Oolite implements PropertyChangeListener {
                 String value = kvc.value().getText();
                 
                 log.trace("looking at key {} value {}", key, value);
-                if ("version".equals(key)) {
+                if (OOLITE_VERSION.equals(key)) {
                     return value;
                 }
             }
@@ -1330,13 +1328,13 @@ public class Oolite implements PropertyChangeListener {
     public static File getAddOnDir(File homeDir) {
         log.debug("getAddOnDir({})", homeDir);
 
-        // check Linux, Windows
+        // check LINUX, WINDOWS
         File d = new File(homeDir, "../AddOns");
         if (d.isDirectory()) {
             return d;
         }
 
-        // check MacOS
+        // check MACOS
         d = new File(new File(System.getProperty(OOLITE_USER_HOME)), "Library/Application Support/Oolite/Addons");
         if (d.isDirectory()) {
             return d;
@@ -1370,14 +1368,12 @@ public class Oolite implements PropertyChangeListener {
     public static File getManagedAddOnDir(File homeDir) {
         log.debug("getManagedAddOnDir({})", homeDir);
 
-        File d = null;
-
         switch (Util.getOperatingSystemType()) {
-            case MacOS:
+            case MACOS:
                 return new File(new File(System.getProperty(OOLITE_USER_HOME)), "Library/Application Support/Oolite/ManagedAddons");
-            case Linux:
+            case LINUX:
                 return new File(new File(System.getProperty(OOLITE_USER_HOME)), "GNUstep/Library/ApplicationSupport/Oolite/ManagedAddOns");
-            case Windows:
+            case WINDOWS:
                 return new File(homeDir, "Library/Application Support/Oolite/ManagedAddons");
             default:
                 log.warn("Could not find managed addon dir");
@@ -1426,19 +1422,21 @@ public class Oolite implements PropertyChangeListener {
     public static File getSavegameDir(File homeDir) {
         File d = null;
         switch (Util.getOperatingSystemType()) {
-            case MacOS:
+            case MACOS:
                 d = new File(new File(System.getProperty(OOLITE_USER_HOME)), "Documents");
                 if (d.isDirectory()) {
                     return d;
                 }
                 break;
-            case Linux:
+            case LINUX:
                 return new File(new File(System.getProperty(OOLITE_USER_HOME)), "oolite-saves");
-            case Windows:
+            case WINDOWS:
                 d = new File(homeDir, "oolite-saves");
                 if (d.isDirectory()) {
                     return d;
                 }
+                break;
+            default:
                 break;
         }
         return null;
@@ -1463,7 +1461,7 @@ public class Oolite implements PropertyChangeListener {
         
         Installation i = new Installation();
         i.setHomeDir(homeDir.getAbsolutePath());
-        log.info("version");
+        log.info(OOLITE_VERSION);
         try {
             i.setVersion(Oolite.getVersionFromHomeDir(homeDir));
         } catch (IOException e) {
@@ -1477,13 +1475,19 @@ public class Oolite implements PropertyChangeListener {
         }
         log.info("savegamedir");
         try {
-            i.setSavegameDir(Oolite.getSavegameDir(homeDir).getCanonicalPath());
+            File h = Oolite.getSavegameDir(homeDir);
+            if (h != null) {
+                i.setSavegameDir(h.getCanonicalPath());
+            }
         } catch (IOException e) {
             log.warn("Cannot get savegame dir for {}", homeDir, e);
         }
         log.info("addondir");
         try {
-            i.setAddonDir(Oolite.getAddOnDir(homeDir).getCanonicalPath());
+            File a = Oolite.getAddOnDir(homeDir);
+            if (a != null) {
+                i.setAddonDir(a.getCanonicalPath());
+            }
         } catch (IOException e) {
             log.warn("Cannot get AddOns dir for {}", homeDir, e);
         }
@@ -1495,7 +1499,10 @@ public class Oolite implements PropertyChangeListener {
         }
         log.info("managedaddondir");
         try {
-            i.setManagedAddonDir(Oolite.getManagedAddOnDir(homeDir).getCanonicalPath());
+            File m = Oolite.getManagedAddOnDir(homeDir);
+            if (m != null) {
+                i.setManagedAddonDir(m.getCanonicalPath());
+            }
         } catch (IOException e) {
             log.warn("Cannot get Managed AddOns dir for {}", homeDir, e);
         }

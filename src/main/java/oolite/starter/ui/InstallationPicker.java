@@ -4,8 +4,6 @@ package oolite.starter.ui;
 
 import java.awt.event.ActionListener;
 import javax.swing.DefaultListModel;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -25,12 +23,9 @@ public class InstallationPicker extends javax.swing.JPanel {
         initComponents();
         model = new DefaultListModel<>();
         jList1.setModel(model);
-        jList1.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-            @Override
-            public void valueChanged(ListSelectionEvent lse) {
-                log.debug("valueChanged(...)");
-                btOk.setEnabled(jList1.getSelectedIndices().length == 1);
-            }
+        jList1.getSelectionModel().addListSelectionListener(lse -> {
+            log.debug("valueChanged(...)");
+            btOk.setEnabled(jList1.getSelectedIndices().length == 1);
         });
     }
     
@@ -53,9 +48,6 @@ public class InstallationPicker extends javax.swing.JPanel {
      * Sets a note to show to the user as scan progress.
      */
     public void setNote(String note) {
-//        if ((note != null) != lbNote.isVisible()) {
-//            lbNote.setVisible(note != null);
-//        }
         tfNote.setText(note);
         tfNote.setCaretPosition(0);
     }

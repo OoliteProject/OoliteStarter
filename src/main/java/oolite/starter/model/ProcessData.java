@@ -39,6 +39,8 @@ public class ProcessData {
      * @param pid the pid
      */
     public ProcessData(File cwd, List<String> command, long pid) {
+        log.debug("ProcessData({}, {}, {})", cwd, command, pid);
+        
         this.cwd = cwd;
         this.command = command;
         this.pid = pid;

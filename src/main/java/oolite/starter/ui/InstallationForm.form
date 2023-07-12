@@ -41,7 +41,7 @@
                       </Group>
                       <EmptySpace min="-2" pref="131" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="txtVersion" alignment="0" pref="263" max="32767" attributes="0"/>
+                          <Component id="txtVersion" alignment="0" pref="225" max="32767" attributes="0"/>
                           <Component id="txtSavegameDir" alignment="1" max="32767" attributes="0"/>
                           <Component id="txtAddOnDir" alignment="1" max="32767" attributes="0"/>
                           <Component id="txtExecutable" alignment="1" max="32767" attributes="0"/>
@@ -212,7 +212,9 @@
     </Component>
     <Component class="javax.swing.JButton" name="btHomeDir">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Browse"/>
+        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+          <Connection code="INSTALLATIONFORM_BROWSE" type="code"/>
+        </Property>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btHomeDirActionPerformed"/>
@@ -220,7 +222,9 @@
     </Component>
     <Component class="javax.swing.JButton" name="btExecutable">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Browse"/>
+        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+          <Connection code="INSTALLATIONFORM_BROWSE" type="code"/>
+        </Property>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btExecutableActionPerformed"/>
@@ -228,7 +232,9 @@
     </Component>
     <Component class="javax.swing.JButton" name="btSavegameDir">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Browse"/>
+        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+          <Connection code="INSTALLATIONFORM_BROWSE" type="code"/>
+        </Property>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btSavegameDirActionPerformed"/>
@@ -236,7 +242,9 @@
     </Component>
     <Component class="javax.swing.JButton" name="btAddOnDir">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Browse"/>
+        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+          <Connection code="INSTALLATIONFORM_BROWSE" type="code"/>
+        </Property>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btAddOnDirActionPerformed"/>
@@ -244,7 +252,9 @@
     </Component>
     <Component class="javax.swing.JButton" name="btManagedAddOnDir">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Browse"/>
+        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+          <Connection code="INSTALLATIONFORM_BROWSE" type="code"/>
+        </Property>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btManagedAddOnDirActionPerformed"/>
@@ -252,7 +262,9 @@
     </Component>
     <Component class="javax.swing.JButton" name="btManagedDeactivatedAddOnDir">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Browse"/>
+        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+          <Connection code="INSTALLATIONFORM_BROWSE" type="code"/>
+        </Property>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btManagedDeactivatedAddOnDirActionPerformed"/>
@@ -265,7 +277,9 @@
     </Component>
     <Component class="javax.swing.JButton" name="btDeactivatedAddOnDir">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Browse"/>
+        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+          <Connection code="INSTALLATIONFORM_BROWSE" type="code"/>
+        </Property>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btDeactivatedAddOnDirActionPerformed"/>

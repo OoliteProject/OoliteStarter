@@ -35,6 +35,8 @@ import org.apache.logging.log4j.Logger;
  */
 public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.OoliteListener {
     private static final Logger log = LogManager.getLogger();
+    
+    private static final String EXPANSIONSPANEL_COULD_NOT_RELOAD = "Could not reload";
 
     class MyRowStatusFilter extends RowFilter<ExpansionsTableModel, Integer> {
         
@@ -109,7 +111,6 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
         });
         
         ep = new ExpansionPanel();
-        //add(ep, BorderLayout.EAST);
         jSplitPane1.setRightComponent(ep);
     }
     
@@ -174,8 +175,6 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
             trw = new TableRowSorter<>(model);
             jTable1.setRowSorter(trw);
             applyFilter();
-            
-            //showDetailsOfSelection();
         } catch (Exception e) {
             log.warn("Could not update", e);
         }
@@ -187,8 +186,8 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
         try {
             update();
         } catch (Exception e) {
-            log.error("Could not reload", e);
-            JOptionPane.showMessageDialog(null, "Could not reload");
+            log.error(EXPANSIONSPANEL_COULD_NOT_RELOAD, e);
+            JOptionPane.showMessageDialog(null, EXPANSIONSPANEL_COULD_NOT_RELOAD);
         }
     }
     
@@ -485,8 +484,8 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
         try {
             update();
         } catch (Exception e) {
-            log.error("Could not reload", e);
-            JOptionPane.showMessageDialog(null, "Could not reload");
+            log.error(EXPANSIONSPANEL_COULD_NOT_RELOAD, e);
+            JOptionPane.showMessageDialog(null, EXPANSIONSPANEL_COULD_NOT_RELOAD);
         }
     }//GEN-LAST:event_btReloadActionPerformed
 

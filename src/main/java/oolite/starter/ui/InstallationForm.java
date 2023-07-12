@@ -23,6 +23,8 @@ public class InstallationForm extends javax.swing.JPanel {
     private static final String INSTALLATIONFORM_USER_HOME = "user.home";
     private static final String INSTALLATIONFORM_SELECT = "Select";
     private static final String INSTALLATIONFORM_ERROR = "Error";
+    private static final String INSTALLATIONFORM_BROWSE = "Browse";
+    private static final String INSTALLATIONFORM_COULD_NOT_READ_VERSION = "Could not read version from {}";
     
     private transient Installation data;
 
@@ -150,42 +152,42 @@ public class InstallationForm extends javax.swing.JPanel {
 
         jLabel7.setText("Managed Deactivated AddOn Directory");
 
-        btHomeDir.setText("Browse");
+        btHomeDir.setText(INSTALLATIONFORM_BROWSE);
         btHomeDir.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btHomeDirActionPerformed(evt);
             }
         });
 
-        btExecutable.setText("Browse");
+        btExecutable.setText(INSTALLATIONFORM_BROWSE);
         btExecutable.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btExecutableActionPerformed(evt);
             }
         });
 
-        btSavegameDir.setText("Browse");
+        btSavegameDir.setText(INSTALLATIONFORM_BROWSE);
         btSavegameDir.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btSavegameDirActionPerformed(evt);
             }
         });
 
-        btAddOnDir.setText("Browse");
+        btAddOnDir.setText(INSTALLATIONFORM_BROWSE);
         btAddOnDir.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btAddOnDirActionPerformed(evt);
             }
         });
 
-        btManagedAddOnDir.setText("Browse");
+        btManagedAddOnDir.setText(INSTALLATIONFORM_BROWSE);
         btManagedAddOnDir.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btManagedAddOnDirActionPerformed(evt);
             }
         });
 
-        btManagedDeactivatedAddOnDir.setText("Browse");
+        btManagedDeactivatedAddOnDir.setText(INSTALLATIONFORM_BROWSE);
         btManagedDeactivatedAddOnDir.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btManagedDeactivatedAddOnDirActionPerformed(evt);
@@ -194,7 +196,7 @@ public class InstallationForm extends javax.swing.JPanel {
 
         jLabel8.setText("Deactivated AddOn Directory");
 
-        btDeactivatedAddOnDir.setText("Browse");
+        btDeactivatedAddOnDir.setText(INSTALLATIONFORM_BROWSE);
         btDeactivatedAddOnDir.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btDeactivatedAddOnDirActionPerformed(evt);
@@ -217,7 +219,7 @@ public class InstallationForm extends javax.swing.JPanel {
                             .addComponent(jLabel1))
                         .addGap(131, 131, 131)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txtVersion, javax.swing.GroupLayout.DEFAULT_SIZE, 263, Short.MAX_VALUE)
+                            .addComponent(txtVersion, javax.swing.GroupLayout.DEFAULT_SIZE, 225, Short.MAX_VALUE)
                             .addComponent(txtSavegameDir, javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(txtAddOnDir, javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(txtExecutable, javax.swing.GroupLayout.Alignment.TRAILING)
@@ -309,36 +311,32 @@ public class InstallationForm extends javax.swing.JPanel {
 
     void maybeFillVersion(File homeDir) {
         // check Linux
-        if (txtVersion.getText().isBlank()) {
-            File releaseTxt = new File(homeDir, "../release.txt");
-            if (releaseTxt.isFile()) {
-                try {
-                    txtVersion.setText(IOUtils.toString(new FileReader(releaseTxt)).trim());
-                } catch (Exception e) {
-                    log.info("Could not read version from {}", releaseTxt, e);
-                }
+        File releaseTxt = new File(homeDir, "../release.txt");
+        if (txtVersion.getText().isBlank() && releaseTxt.isFile()) {
+            try {
+                txtVersion.setText(IOUtils.toString(new FileReader(releaseTxt)).trim());
+            } catch (Exception e) {
+                log.info(INSTALLATIONFORM_COULD_NOT_READ_VERSION, releaseTxt, e);
             }
         }
+        
         // check MacOS
-        if (txtVersion.getText().isBlank()) {
-            File releaseTxt = new File(homeDir, "Contents/Info.plist");
-            if (releaseTxt.isFile()) {
-                try {
-                    txtVersion.setText(Oolite.getVersionFromInfoPlist(releaseTxt));
-                } catch (Exception e) {
-                    log.info("Could not read version from {}", releaseTxt, e);
-                }
+        releaseTxt = new File(homeDir, "Contents/Info.plist");
+        if (txtVersion.getText().isBlank() && releaseTxt.isFile()) {
+            try {
+                txtVersion.setText(Oolite.getVersionFromInfoPlist(releaseTxt));
+            } catch (Exception e) {
+                log.info(INSTALLATIONFORM_COULD_NOT_READ_VERSION, releaseTxt, e);
             }
         }
+        
         // check Windows
-        if (txtVersion.getText().isBlank()) {
-            File releaseTxt = new File(homeDir, "Resources/manifest.plist");
-            if (releaseTxt.isFile()) {
-                try {
-                    txtVersion.setText(Oolite.getVersionFromManifest(releaseTxt));
-                } catch (Exception e) {
-                    log.info("Could not read version from {}", releaseTxt, e);
-                }
+        releaseTxt = new File(homeDir, "Resources/manifest.plist");
+        if (txtVersion.getText().isBlank() && releaseTxt.isFile()) {
+            try {
+                txtVersion.setText(Oolite.getVersionFromManifest(releaseTxt));
+            } catch (Exception e) {
+                log.info(INSTALLATIONFORM_COULD_NOT_READ_VERSION, releaseTxt, e);
             }
         }
     }
@@ -369,9 +367,7 @@ public class InstallationForm extends javax.swing.JPanel {
 
             if (txtDeactivatedAddOnDir.getText().isBlank()) {
                 File dd = new File(d, "../DeactivatedAddOns");
-                if (dd != null) {
-                    txtDeactivatedAddOnDir.setText(dd.getCanonicalPath());
-                }
+                txtDeactivatedAddOnDir.setText(dd.getCanonicalPath());
             }
         }
     }

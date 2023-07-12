@@ -14,6 +14,12 @@ import org.apache.logging.log4j.Logger;
  */
 public class Util {
     public static final Logger log = LogManager.getLogger();
+
+    /**
+     * Prevent creating instances.
+     */
+    private Util() {
+    }
     
     /**
      * Returns the operating system's hostname.
@@ -21,15 +27,8 @@ public class Util {
      * @return the hostname
      */
     public static String getHostname() {
-
-        String os = System.getProperty("os.name").toLowerCase();
-
         try {
-            if (os.contains("win")) {
-                return execReadToString("hostname");
-            } else if (os.contains("nix") || os.contains("nux") || os.contains("mac os x")) {
-                return execReadToString("hostname");
-            }
+            return execReadToString("hostname");
         } catch (Exception e) {
             log.info("Could not get hostname", e);
         }
@@ -52,9 +51,9 @@ public class Util {
     /**
      * Types of Operating Systems.
      */
-    public static enum OSType {
-        Windows, MacOS, Linux, Other
-    };
+    public enum OSType {
+        WINDOWS, MACOS, LINUX, OTHER
+    }
     
     /**
      * Detect the operating system from the os.name System property and cache
@@ -64,25 +63,25 @@ public class Util {
      */
     public static OSType getOperatingSystemType() {
         OSType detectedOS = null;
-        String OS = System.getProperty("os.name", "generic").toLowerCase(Locale.ENGLISH);
-        if ((OS.indexOf("mac") >= 0) || (OS.indexOf("darwin") >= 0)) {
-            detectedOS = OSType.MacOS;
-        } else if (OS.indexOf("win") >= 0) {
-            detectedOS = OSType.Windows;
-        } else if (OS.indexOf("nux") >= 0) {
-            detectedOS = OSType.Linux;
+        String os = System.getProperty("os.name", "generic").toLowerCase(Locale.ENGLISH);
+        if ((os.indexOf("mac") >= 0) || (os.indexOf("darwin") >= 0)) {
+            detectedOS = OSType.MACOS;
+        } else if (os.indexOf("win") >= 0) {
+            detectedOS = OSType.WINDOWS;
+        } else if (os.indexOf("nux") >= 0) {
+            detectedOS = OSType.LINUX;
         } else {
-            detectedOS = OSType.Other;
+            detectedOS = OSType.OTHER;
         }
         return detectedOS;
     }
   
     /**
-     * Return true if the current operating system is MacOS, otherwise false.
+     * Return true if the current operating system is MACOS, otherwise false.
      * 
      * @return true if we are on a Mac.
      */
     public static boolean isMac() {
-        return OSType.MacOS == getOperatingSystemType();
+        return OSType.MACOS == getOperatingSystemType();
     }
 }

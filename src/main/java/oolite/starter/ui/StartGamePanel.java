@@ -28,6 +28,7 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
     private static final Logger log = LogManager.getLogger();
 
     private static final String STARTGAMEPANEL_COULD_NOT_RUN_GAME = "Could not run game";
+    private static final String STARTGAMEPANEL_COULD_NOT_RELOAD = "Could not reload";
     
     private transient Oolite oolite;
     private SaveGameTableModel model;
@@ -216,8 +217,6 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
     private void btNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btNewActionPerformed
         log.debug("btNewActionPerformed({})", evt);
 
-        JFrame f = (JFrame) SwingUtilities.getWindowAncestor(this);
-
         showWaitPanel();
         
         try {
@@ -226,6 +225,9 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
                 public void run() {
                     try {
                         oolite.run();
+                    } catch (InterruptedException e) {
+                        log.error("Interrupted", e);
+                        Thread.currentThread().interrupt();
                     } catch (Exception e) {
                         log.error(STARTGAMEPANEL_COULD_NOT_RUN_GAME, e);
                     }
@@ -234,21 +236,18 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
         } catch (Exception e) {
             log.error(STARTGAMEPANEL_COULD_NOT_RUN_GAME, e);
             JOptionPane.showMessageDialog(null, constructMessage(STARTGAMEPANEL_COULD_NOT_RUN_GAME, e));
-        } finally {
         }
     }//GEN-LAST:event_btNewActionPerformed
 
     private void btResumeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btResumeActionPerformed
         log.debug("btResumeActionPerformed({})", evt);
 
-        JFrame f = (JFrame) SwingUtilities.getWindowAncestor(this);
-        
         showWaitPanel();
         
         try {
             int rowIndex = jTable1.getSelectedRow();
             if (rowIndex == -1) {
-                throw new Exception("Which savegame you want to start?");
+                throw new IllegalStateException("Which savegame you want to start?");
             }
             
             rowIndex = jTable1.convertRowIndexToModel(rowIndex);
@@ -259,19 +258,18 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
                 public void run() {
                     try {
                         oolite.run(row);
+                    } catch (InterruptedException e) {
+                        log.error("Interrupted", e);
+                        Thread.currentThread().interrupt();
                     } catch (Exception e) {
                         log.error(STARTGAMEPANEL_COULD_NOT_RUN_GAME, e);
                     }
                 }
             }.start();
-        } catch (InterruptedException e) {
-            log.error(STARTGAMEPANEL_COULD_NOT_RUN_GAME, e);
-            Thread.currentThread().interrupt();
         } catch (Exception e) {
             log.error(STARTGAMEPANEL_COULD_NOT_RUN_GAME, e);
             
             JOptionPane.showMessageDialog(null, constructMessage(STARTGAMEPANEL_COULD_NOT_RUN_GAME, e));
-        } finally {
         }
     }//GEN-LAST:event_btResumeActionPerformed
 
@@ -281,8 +279,8 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
         try {
             update();
         } catch (Exception e) {
-            log.error("Could not reload", e);
-            JOptionPane.showMessageDialog(null, "Could not reload");
+            log.error(STARTGAMEPANEL_COULD_NOT_RELOAD, e);
+            JOptionPane.showMessageDialog(null, STARTGAMEPANEL_COULD_NOT_RELOAD);
         }
     }//GEN-LAST:event_btReloadActionPerformed
 
@@ -346,7 +344,7 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
             
             JFrame f = (JFrame)SwingUtilities.getRoot(this);
             previousWindowState = f.getState();
-            f.setState(JFrame.ICONIFIED);
+            f.setState(java.awt.Frame.ICONIFIED);
         });
         
     }
@@ -369,8 +367,8 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
         try {
             update();
         } catch (Exception e) {
-            log.error("Could not reload", e);
-            JOptionPane.showMessageDialog(null, "Could not reload");
+            log.error(STARTGAMEPANEL_COULD_NOT_RELOAD, e);
+            JOptionPane.showMessageDialog(null, STARTGAMEPANEL_COULD_NOT_RELOAD);
         }
     }
 }

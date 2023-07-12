@@ -3,8 +3,6 @@
 package oolite.starter.ui;
 
 import java.awt.Color;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
@@ -300,7 +298,6 @@ public class InstallationsPanel extends javax.swing.JPanel {
                 for (Pattern p: goodPatterns) {
                     Matcher m = p.matcher(f.getAbsolutePath());
                     if (m.matches()) {
-                        //String s = f.getAbsolutePath();
                         String s = m.group(1);
                         result.add(s);
                         
@@ -318,7 +315,6 @@ public class InstallationsPanel extends javax.swing.JPanel {
                             scan(entry);
                             
                             if (isCancelled() ) {
-                            //if (isCancelled() || monitor.isCanceled()) {
                                 return;
                             }
                         }
@@ -392,7 +388,6 @@ public class InstallationsPanel extends javax.swing.JPanel {
             @Override
             protected void done() {
                 log.debug("done()");
-                //monitor.close();
                 ip.stopScan();
                 ip.setNote("Scanning finished.");
                 btScan.setEnabled(true);
@@ -402,42 +397,36 @@ public class InstallationsPanel extends javax.swing.JPanel {
             
         };
 
-        ip.addCancelListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent ae) {
-                try {
-                    ipd.setVisible(false);
-                    worker.cancel(true);
-                } catch (Exception e) {
-                    log.error("Could not cleanup after cancel", e);
-                }
+        ip.addCancelListener(ae -> {
+            try {
+                ipd.setVisible(false);
+                worker.cancel(true);
+            } catch (Exception e) {
+                log.error("Could not cleanup after cancel", e);
             }
         });
-        ip.addOkListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent ae) {
-                try {
-                    ipd.setVisible(false);
-                    worker.cancel(true);
+        ip.addOkListener((ae) -> {
+            try {
+                ipd.setVisible(false);
+                worker.cancel(true);
 
-                    log.info("something was selected - we want this value {}", ip.getSelectedInstallation());
+                log.info("something was selected - we want this value {}", ip.getSelectedInstallation());
 
-                    File homeDir = new File(ip.getSelectedInstallation());
-                    Installation i = Oolite.populateFromHomeDir(homeDir);
+                File homeDir = new File(ip.getSelectedInstallation());
+                Installation i = Oolite.populateFromHomeDir(homeDir);
 
-                    log.info("offering for edit {}", i);
-                    InstallationForm installationForm = new InstallationForm();
-                    installationForm.setData(i);
-                    if (JOptionPane.showOptionDialog(InstallationsPanel.this, installationForm, "Add Oolite version...", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, null, null) == JOptionPane.OK_OPTION) {
-                        log.info("adding installation...");
-                        int rowIndex = model.addRow(installationForm.getData());
-                        rowIndex = jTable1.convertRowIndexToView(rowIndex);
-                        jTable1.getSelectionModel().setSelectionInterval(rowIndex, rowIndex);
-                        setConfigDirty(true);
-                    }
-                } catch (Exception e) {
-                    log.error("Could not act after ok", e);
+                log.info("offering for edit {}", i);
+                InstallationForm installationForm = new InstallationForm();
+                installationForm.setData(i);
+                if (JOptionPane.showOptionDialog(InstallationsPanel.this, installationForm, "Add Oolite version...", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, null, null) == JOptionPane.OK_OPTION) {
+                    log.info("adding installation...");
+                    int rowIndex = model.addRow(installationForm.getData());
+                    rowIndex = jTable1.convertRowIndexToView(rowIndex);
+                    jTable1.getSelectionModel().setSelectionInterval(rowIndex, rowIndex);
+                    setConfigDirty(true);
                 }
+            } catch (Exception e) {
+                log.error("Could not act after ok", e);
             }
         });
 

@@ -35,7 +35,6 @@ public class OoliteFileChooserAccessory extends JPanel implements PropertyChange
         jta.setLineWrap(true);
         jta.setWrapStyleWord(true);
         add(new JScrollPane(jta), BorderLayout.CENTER);
-        //setBorder(new LineBorder(Color.red));
         
         jfc.addPropertyChangeListener(this);
     }

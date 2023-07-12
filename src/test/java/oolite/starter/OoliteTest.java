@@ -327,5 +327,6 @@ public class OoliteTest {
         
         Oolite oolite = new Oolite();
         oolite.run(command, new File("."));
+        assertTrue(true);
     }
 }

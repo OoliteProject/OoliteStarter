@@ -123,7 +123,7 @@ public class Configuration {
 
         List<Installation> oldInstallations = installations;
         installations = insts;
-        pcs.firePropertyChange("installations", installations, insts);
+        pcs.firePropertyChange("installations", oldInstallations, insts);
     }
     
     /**
@@ -233,7 +233,7 @@ public class Configuration {
                 for (PropertyChangeListener pcl: pcs.getPropertyChangeListeners()) {
                     pcl.propertyChange(pce);
                 }
-                //pcs.firePropertyChange("activeInstallation", oldInstallation, installation);
+                // for some reason this simple call was not enough: pcs.firePropertyChange("activeInstallation", oldInstallation, installation);
             }
         } else {
             throw new IllegalArgumentException("installation must be known");
