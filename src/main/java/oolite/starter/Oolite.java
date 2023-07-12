@@ -5,11 +5,13 @@ package oolite.starter;
 import com.chaudhuri.plist.PlistParser;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -23,6 +25,7 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
+import java.util.function.Consumer;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
@@ -59,6 +62,7 @@ import org.xml.sax.SAXException;
  */
 public class Oolite implements PropertyChangeListener {
     private static final Logger log = LogManager.getLogger();
+    private static final Logger logOolite = LogManager.getLogger("Oolite");
     
     private static final String OOLITE_CONFIGURATION_MUST_NOT_BE_NULL = "configuration must not be null";
     private static final String OOLITE_EXPANSION_FQN = "org.oolite.hiran.OoliteStarter.oxp";
@@ -328,23 +332,45 @@ public class Oolite implements PropertyChangeListener {
         }
     }
     
+    private class StreamGobbler implements Runnable {
+        private InputStream inputStream;
+        private Consumer<String> consumeInputLine;
+
+        public StreamGobbler(InputStream inputStream, Consumer<String> consumeInputLine) {
+            this.inputStream = inputStream;
+            this.consumeInputLine = consumeInputLine;
+        }
+
+        public void run() {
+            new BufferedReader(new InputStreamReader(inputStream)).lines().forEach(consumeInputLine);
+        }
+    }
+    
     /**
      * Runs Oolite using the specified command in the specified directory.
      */
     public void run(List<String> command, File dir) throws IOException, InterruptedException, ProcessRunException {
         log.debug("run({}, {})", command, dir);
 
-        injectExpansion();
+        if (configuration != null) {
+            injectExpansion();
+        }
         
         try {
             log.info("executing {} in {}", command, dir);
 
             ProcessBuilder pb = new ProcessBuilder(command);
             pb.directory(dir);
-            pb.redirectOutput(ProcessBuilder.Redirect.INHERIT);
-            pb.redirectError(ProcessBuilder.Redirect.INHERIT);
+            //pb.redirectOutput(ProcessBuilder.Redirect.INHERIT);
+            //pb.redirectError(ProcessBuilder.Redirect.INHERIT);
             Process p = pb.start();
+            
+            StreamGobbler outputGobbler = new StreamGobbler(p.getInputStream(), logOolite::warn);
+            StreamGobbler errorGobbler = new StreamGobbler(p.getInputStream(), logOolite::error);
 
+            new Thread(outputGobbler).start();
+            new Thread(errorGobbler).start();
+            
             fireLaunched();
             p.waitFor();
             fireTerminated();
@@ -355,10 +381,12 @@ public class Oolite implements PropertyChangeListener {
             }
             
         } finally {
-            try {
-                removeExpansion();
-            } catch (Exception e) {
-                log.info("Could not cleanup OoliteStarter.oxp after Oolite run.", e);
+            if (configuration != null) {
+                try {
+                    removeExpansion();
+                } catch (Exception e) {
+                    log.info("Could not cleanup OoliteStarter.oxp after Oolite run.", e);
+                }
             }
         }            
     }
@@ -1008,7 +1036,7 @@ public class Oolite implements PropertyChangeListener {
      */
     public void injectExpansion() throws IOException {
         log.debug("injectExpansion()");
-        
+
         // just to be sure we do not rely on old stuff
         removeExpansion();
         

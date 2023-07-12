@@ -313,5 +313,15 @@ public class OoliteTest {
         
         assertEquals("1.90", v);
     }
-    
+
+    @Test
+    public void testRun() throws IOException, InterruptedException, ProcessRunException {
+        log.info("testRun()");
+        
+        List<String> command = new ArrayList<>();
+        command.add("/usr/bin/ls");
+        
+        Oolite oolite = new Oolite();
+        oolite.run(command, new File("."));
+    }
 }
