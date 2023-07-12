@@ -2,6 +2,7 @@
  */
 package oolite.starter;
 
+import java.awt.Color;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -41,6 +42,7 @@ public class Configuration {
     private static final Logger log = LogManager.getLogger();
     
     private static final String CONF_NO_ACTIVE_INSTALLATION = "No active installation";
+    public static final Color COLOR_ATTENTION = new Color(160, 80, 0);
 
     private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
     

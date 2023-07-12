@@ -2,10 +2,20 @@
  */
 package oolite.starter.ui;
 
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.MouseAdapter;
+import java.io.File;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.table.TableRowSorter;
 import oolite.starter.Oolite;
+import oolite.starter.model.ProcessData;
 import oolite.starter.model.SaveGame;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -22,6 +32,10 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
     private transient Oolite oolite;
     private SaveGameTableModel model;
     private SaveGamePanel sgp;
+    
+    private int previousWindowState;
+    
+    private WaitPanel waitPanel;
 
     /**
      * Creates new form StartGamePanel.
@@ -201,26 +215,36 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
 
     private void btNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btNewActionPerformed
         log.debug("btNewActionPerformed({})", evt);
-        // new game button
+
+        JFrame f = (JFrame) SwingUtilities.getWindowAncestor(this);
+
+        showWaitPanel();
+        
         try {
-            SwingUtilities.getRoot(this).setVisible(false);
-            
-            oolite.run();
-        } catch (InterruptedException e) {
-            log.error(STARTGAMEPANEL_COULD_NOT_RUN_GAME, e);
-            Thread.currentThread().interrupt();
+            new Thread() {
+                @Override
+                public void run() {
+                    try {
+                        oolite.run();
+                    } catch (Exception e) {
+                        log.error(STARTGAMEPANEL_COULD_NOT_RUN_GAME, e);
+                    }
+                }
+            }.start();
         } catch (Exception e) {
             log.error(STARTGAMEPANEL_COULD_NOT_RUN_GAME, e);
             JOptionPane.showMessageDialog(null, constructMessage(STARTGAMEPANEL_COULD_NOT_RUN_GAME, e));
         } finally {
-            SwingUtilities.getRoot(this).setVisible(true);
         }
     }//GEN-LAST:event_btNewActionPerformed
 
     private void btResumeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btResumeActionPerformed
         log.debug("btResumeActionPerformed({})", evt);
 
-        // run savegame
+        JFrame f = (JFrame) SwingUtilities.getWindowAncestor(this);
+        
+        showWaitPanel();
+        
         try {
             int rowIndex = jTable1.getSelectedRow();
             if (rowIndex == -1) {
@@ -230,10 +254,16 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
             rowIndex = jTable1.convertRowIndexToModel(rowIndex);
             SaveGame row = model.getRow(rowIndex);
 
-            SwingUtilities.getRoot(this).setVisible(false);
-            oolite.run(row);
-            
-            update();
+            new Thread() {
+                @Override
+                public void run() {
+                    try {
+                        oolite.run(row);
+                    } catch (Exception e) {
+                        log.error(STARTGAMEPANEL_COULD_NOT_RUN_GAME, e);
+                    }
+                }
+            }.start();
         } catch (InterruptedException e) {
             log.error(STARTGAMEPANEL_COULD_NOT_RUN_GAME, e);
             Thread.currentThread().interrupt();
@@ -242,7 +272,6 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
             
             JOptionPane.showMessageDialog(null, constructMessage(STARTGAMEPANEL_COULD_NOT_RUN_GAME, e));
         } finally {
-            SwingUtilities.getRoot(this).setVisible(true);
         }
     }//GEN-LAST:event_btResumeActionPerformed
 
@@ -271,14 +300,67 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
     private javax.swing.JLabel txtStatus;
     // End of variables declaration//GEN-END:variables
 
+    private void showWaitPanel() {
+
+        JFrame f = (JFrame) SwingUtilities.getWindowAncestor(this);
+        if (waitPanel == null) {
+            JPanel glassPane = new JPanel() {
+                @Override
+                protected void paintComponent(Graphics g) {
+                    g.setColor(new Color(0, 0, 0, 150));
+                    g.fillRect(0, 0, getWidth(), getHeight());
+                }
+            };
+            glassPane.setLayout(new GridBagLayout());
+            waitPanel = new WaitPanel();
+            glassPane.add(waitPanel, new GridBagConstraints(1, 1, 1, 1, 1.0d, 1.0d, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(50, 50, 50, 50), 0, 0));
+            glassPane.addMouseListener(new MouseAdapter() {
+            });
+            f.setGlassPane(glassPane);
+        }
+        
+        f.getGlassPane().setVisible(true);
+    }
+    
     @Override
-    public void launched() {
-        // we are not yet interested in this event
+    public void launched(ProcessData pd) {
+        log.warn("launched({})", pd);
+        
+        File logfile = new File(System.getProperty("user.home"), ".Oolite/Logs");
+
+        StringBuilder sb = new StringBuilder("<html><p>Launched process <tt>");
+        sb.append(pd.getPid());
+        sb.append("</tt> with command line</p><p><tt>");
+        sb.append(String.valueOf(pd.getCommand()));
+        sb.append("</tt></p><p>in directory</p><p><tt>");
+        sb.append(pd.getCwd().getAbsolutePath());
+        sb.append("</tt></p><p>Currently we are waiting for this process to finish.</p>");
+        sb.append("<p>If you do not see Oolite showing up, consider taking a look at the <a href=\"file://");
+        sb.append(logfile).append("\">logfiles</a>. More help may be available at <a href=\"http://aegidian.org/bb/viewtopic.php?f=9&t=21405\">the forum</a>.</p>");
+        sb.append("</html>");
+        
+        final String text = sb.toString();
+        
+        SwingUtilities.invokeLater(() -> {
+            waitPanel.setText(text);
+            
+            JFrame f = (JFrame)SwingUtilities.getRoot(this);
+            previousWindowState = f.getState();
+            f.setState(JFrame.ICONIFIED);
+        });
+        
     }
 
     @Override
     public void terminated() {
         update();
+        
+        SwingUtilities.invokeLater(() -> {
+            JFrame d = (JFrame)SwingUtilities.getWindowAncestor(waitPanel);
+            d.getGlassPane().setVisible(false);
+            d.setState(previousWindowState);
+        });
+        
     }
 
     @Override

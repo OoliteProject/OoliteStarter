@@ -25,6 +25,7 @@ import javax.swing.table.TableRowSorter;
 import oolite.starter.Oolite;
 import oolite.starter.model.Expansion;
 import oolite.starter.model.ExpansionReference;
+import oolite.starter.model.ProcessData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -510,7 +511,7 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
     // End of variables declaration//GEN-END:variables
 
     @Override
-    public void launched() {
+    public void launched(ProcessData pd) {
         // we are not yet interested in this event
     }
 

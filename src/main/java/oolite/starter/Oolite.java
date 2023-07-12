@@ -46,6 +46,7 @@ import javax.xml.xpath.XPathFactory;
 import oolite.starter.model.Expansion;
 import oolite.starter.model.ExpansionReference;
 import oolite.starter.model.Installation;
+import oolite.starter.model.ProcessData;
 import oolite.starter.model.SaveGame;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -75,7 +76,7 @@ public class Oolite implements PropertyChangeListener {
         /**
          * Will be called whenever Oolite is started.
          */
-        public void launched();
+        public void launched(ProcessData pd);
         
         /**
          * Will be called whenever Oolite has terminated.
@@ -314,9 +315,9 @@ public class Oolite implements PropertyChangeListener {
         run(command, dir);
     }
     
-    void fireLaunched() {
+    void fireLaunched(ProcessData pd) {
         for (OoliteListener l: listeners) {
-            l.launched();
+            l.launched(pd);
         }
     }
     
@@ -357,7 +358,7 @@ public class Oolite implements PropertyChangeListener {
         }
         
         try {
-            log.info("executing {} in {}", command, dir);
+            log.warn("executing {} in {}", command, dir);
 
             ProcessBuilder pb = new ProcessBuilder(command);
             pb.directory(dir);
@@ -365,14 +366,20 @@ public class Oolite implements PropertyChangeListener {
             //pb.redirectError(ProcessBuilder.Redirect.INHERIT);
             Process p = pb.start();
             
-            StreamGobbler outputGobbler = new StreamGobbler(p.getInputStream(), logOolite::warn);
+            StreamGobbler outputGobbler = new StreamGobbler(p.getInputStream(), logOolite::info);
             StreamGobbler errorGobbler = new StreamGobbler(p.getErrorStream(), logOolite::error);
 
-            new Thread(outputGobbler).start();
-            new Thread(errorGobbler).start();
+            Thread t1 = new Thread(outputGobbler);
+            Thread t2 = new Thread(errorGobbler);
+            t1.start();
+            t2.start();
             
-            fireLaunched();
+            fireLaunched(new ProcessData(dir, command, p.pid()));
             p.waitFor();
+            
+            t1.join(2000);
+            t2.join(2000);
+            
             fireTerminated();
             
             log.info("Process exited with code {}", p.exitValue());
