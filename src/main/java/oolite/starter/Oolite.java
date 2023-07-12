@@ -366,7 +366,7 @@ public class Oolite implements PropertyChangeListener {
             Process p = pb.start();
             
             StreamGobbler outputGobbler = new StreamGobbler(p.getInputStream(), logOolite::warn);
-            StreamGobbler errorGobbler = new StreamGobbler(p.getInputStream(), logOolite::error);
+            StreamGobbler errorGobbler = new StreamGobbler(p.getErrorStream(), logOolite::error);
 
             new Thread(outputGobbler).start();
             new Thread(errorGobbler).start();
