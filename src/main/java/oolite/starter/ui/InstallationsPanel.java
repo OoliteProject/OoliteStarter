@@ -3,6 +3,7 @@
 package oolite.starter.ui;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
@@ -12,13 +13,17 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.UIDefaults;
 import javax.swing.UIManager;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableRowSorter;
 import oolite.starter.Configuration;
 import oolite.starter.Oolite;
@@ -36,6 +41,8 @@ public class InstallationsPanel extends javax.swing.JPanel {
     private static final String INSTALLATIONSPANEL_ERROR = "Error";
     private static final String INSTALLATIONSPANEL_SELECT_ROW = "Please select row";
     private static final String INSTALLATIONSPANEL_COULD_NOT_SAVE = "Could not save";
+    
+    private static final ImageIcon icon_star = new ImageIcon(InstallationsPanel.class.getResource("/icons/star_FILL0_wght400_GRAD0_opsz24.png"));
     
     private InstallationForm installationDetails;
     private InstallationTableModel model;
@@ -56,6 +63,24 @@ public class InstallationsPanel extends javax.swing.JPanel {
         configDirty = false;
         
         setButtonColors();
+        
+        jTable1.setDefaultRenderer(Boolean.class, new DefaultTableCellRenderer(){
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/OverriddenMethodBody
+                if (c instanceof JLabel l) {
+                    l.setText("");
+                    l.setHorizontalAlignment(CENTER);
+                    if (Boolean.TRUE.equals(value)) {
+                        l.setIcon(icon_star);
+                    } else {
+                        l.setIcon(null);
+                    }
+                }
+                return c;
+            }
+            
+        });
     }
     
     /**
@@ -170,6 +195,7 @@ public class InstallationsPanel extends javax.swing.JPanel {
         setName("Oolite Versions"); // NOI18N
         setLayout(new java.awt.BorderLayout());
 
+        btAdd.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/add_FILL0_wght400_GRAD0_opsz24.png"))); // NOI18N
         btAdd.setText("Add...");
         btAdd.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -177,6 +203,7 @@ public class InstallationsPanel extends javax.swing.JPanel {
             }
         });
 
+        btEdit.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/edit_FILL0_wght400_GRAD0_opsz24.png"))); // NOI18N
         btEdit.setText("Edit...");
         btEdit.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -184,13 +211,15 @@ public class InstallationsPanel extends javax.swing.JPanel {
             }
         });
 
-        btRemove.setText("Remove");
+        btRemove.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/delete_forever_FILL0_wght400_GRAD0_opsz24.png"))); // NOI18N
+        btRemove.setText("Delete");
         btRemove.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btRemoveActionPerformed(evt);
             }
         });
 
+        btScan.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/search_FILL0_wght400_GRAD0_opsz24.png"))); // NOI18N
         btScan.setText("Scan...");
         btScan.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -198,6 +227,7 @@ public class InstallationsPanel extends javax.swing.JPanel {
             }
         });
 
+        btSave.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/save_FILL0_wght400_GRAD0_opsz24.png"))); // NOI18N
         btSave.setText("Save");
         btSave.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -205,7 +235,8 @@ public class InstallationsPanel extends javax.swing.JPanel {
             }
         });
 
-        btActivate.setText("Activate");
+        btActivate.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/star_FILL0_wght400_GRAD0_opsz24.png"))); // NOI18N
+        btActivate.setText("Select");
         btActivate.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btActivateActionPerformed(evt);

@@ -79,6 +79,7 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
                 }
 
                 btResume.setEnabled(jTable1.getSelectedRow() != -1);
+                btDelete.setEnabled(jTable1.getSelectedRow() != -1);
             }
         });
         
@@ -103,6 +104,7 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
             txtStatus.setText(String.format("%d save games", model.getRowCount()));
             
             btResume.setEnabled(jTable1.getSelectedRow() != -1);
+            btDelete.setEnabled(jTable1.getSelectedRow() != -1);
         } catch (Exception e) {
             log.warn("Could not update", e);
         }
@@ -127,12 +129,15 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        java.awt.GridBagConstraints gridBagConstraints;
 
         jPanel1 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         btReload = new javax.swing.JButton();
         btNew = new javax.swing.JButton();
         btResume = new javax.swing.JButton();
+        filler1 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(30, 0), new java.awt.Dimension(32767, 0));
+        btDelete = new javax.swing.JButton();
         jSplitPane1 = new javax.swing.JSplitPane();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
@@ -144,7 +149,7 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
         jPanel1.setLayout(new java.awt.GridBagLayout());
         add(jPanel1, java.awt.BorderLayout.LINE_END);
 
-        jPanel2.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
+        jPanel2.setLayout(new java.awt.GridBagLayout());
 
         btReload.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/refresh_FILL0_wght400_GRAD0_opsz48.png"))); // NOI18N
         btReload.setText("Reload");
@@ -153,7 +158,12 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
                 btReloadActionPerformed(evt);
             }
         });
-        jPanel2.add(btReload);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 2);
+        jPanel2.add(btReload, gridBagConstraints);
 
         btNew.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/play_arrow_FILL0_wght400_GRAD0_opsz48.png"))); // NOI18N
         btNew.setText("New");
@@ -163,7 +173,12 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
                 btNewActionPerformed(evt);
             }
         });
-        jPanel2.add(btNew);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 2, 5, 2);
+        jPanel2.add(btNew, gridBagConstraints);
 
         btResume.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/resume_FILL0_wght400_GRAD0_opsz48.png"))); // NOI18N
         btResume.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
@@ -173,7 +188,32 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
                 btResumeActionPerformed(evt);
             }
         });
-        jPanel2.add(btResume);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 2, 5, 5);
+        jPanel2.add(btResume, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 4;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        jPanel2.add(filler1, gridBagConstraints);
+
+        btDelete.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/delete_forever_FILL0_wght400_GRAD0_opsz48.png"))); // NOI18N
+        btDelete.setText("Delete");
+        btDelete.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btDeleteActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 5;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel2.add(btDelete, gridBagConstraints);
 
         add(jPanel2, java.awt.BorderLayout.PAGE_START);
 
@@ -207,7 +247,7 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(txtStatus)
-                .addContainerGap(553, Short.MAX_VALUE))
+                .addContainerGap(570, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -295,11 +335,32 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
         }
     }//GEN-LAST:event_btReloadActionPerformed
 
+    private void btDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btDeleteActionPerformed
+        try {
+            int rowIndex = jTable1.getSelectedRow();
+            if (rowIndex == -1) {
+                throw new IllegalStateException("Which savegame you want to delete?");
+            }
+            
+            rowIndex = jTable1.convertRowIndexToModel(rowIndex);
+            SaveGame row = model.getRow(rowIndex);
+
+            row.getFile().delete();
+            update();
+        } catch (Exception e) {
+            log.error("Could not delete", e);
+            JOptionPane.showMessageDialog(null, constructMessage("Could not delete", e));
+        }
+
+    }//GEN-LAST:event_btDeleteActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btDelete;
     private javax.swing.JButton btNew;
     private javax.swing.JButton btReload;
     private javax.swing.JButton btResume;
+    private javax.swing.Box.Filler filler1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
