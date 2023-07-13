@@ -34,9 +34,13 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
     private SaveGameTableModel model;
     private SaveGamePanel sgp;
     
+    private enum RunState {
+        idle, running
+    }
+
     private int previousWindowState;
-    
     private WaitPanel waitPanel;
+    private RunState runState = RunState.idle;
 
     /**
      * Creates new form StartGamePanel.
@@ -110,6 +114,8 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
             sb.append("\n").append(t.getClass().getName()).append(": ").append(t.getMessage());
             t = t.getCause();
         }
+        
+        sb.append("\n\nYou better check the logfiles in $HOME/.Oolite/Logs now.");
         return sb.toString();
     }
 
@@ -230,12 +236,15 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
                         Thread.currentThread().interrupt();
                     } catch (Exception e) {
                         log.error(STARTGAMEPANEL_COULD_NOT_RUN_GAME, e);
+                        hideWaitPanel();
+                        JOptionPane.showMessageDialog(StartGamePanel.this, constructMessage(STARTGAMEPANEL_COULD_NOT_RUN_GAME, e), "Error on Oolite", JOptionPane.ERROR_MESSAGE);
                     }
                 }
             }.start();
         } catch (Exception e) {
             log.error(STARTGAMEPANEL_COULD_NOT_RUN_GAME, e);
-            JOptionPane.showMessageDialog(null, constructMessage(STARTGAMEPANEL_COULD_NOT_RUN_GAME, e));
+            hideWaitPanel();
+            JOptionPane.showMessageDialog(this, constructMessage(STARTGAMEPANEL_COULD_NOT_RUN_GAME, e));
         }
     }//GEN-LAST:event_btNewActionPerformed
 
@@ -263,12 +272,14 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
                         Thread.currentThread().interrupt();
                     } catch (Exception e) {
                         log.error(STARTGAMEPANEL_COULD_NOT_RUN_GAME, e);
+                        hideWaitPanel();
+                        JOptionPane.showMessageDialog(StartGamePanel.this, constructMessage(STARTGAMEPANEL_COULD_NOT_RUN_GAME, e), "Error on Oolite", JOptionPane.ERROR_MESSAGE);
                     }
                 }
             }.start();
         } catch (Exception e) {
             log.error(STARTGAMEPANEL_COULD_NOT_RUN_GAME, e);
-            
+            hideWaitPanel();
             JOptionPane.showMessageDialog(null, constructMessage(STARTGAMEPANEL_COULD_NOT_RUN_GAME, e));
         }
     }//GEN-LAST:event_btResumeActionPerformed
@@ -320,9 +331,30 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
         f.getGlassPane().setVisible(true);
     }
     
+    private void hideWaitPanel() {
+        new Thread(() -> {
+            SwingUtilities.invokeLater(() -> {
+                JFrame d = (JFrame)SwingUtilities.getWindowAncestor(waitPanel);
+                d.setState(previousWindowState);
+            });
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException ex) {
+                log.debug("interrupted", ex);
+                Thread.currentThread().interrupt();
+            }
+            SwingUtilities.invokeLater(() -> {
+                JFrame d = (JFrame)SwingUtilities.getWindowAncestor(waitPanel);
+                d.getGlassPane().setVisible(false);
+            });
+        }).start();
+    }
+    
     @Override
     public void launched(ProcessData pd) {
         log.warn("launched({})", pd);
+
+        runState = RunState.running;
         
         File logfile = new File(System.getProperty("user.home"), ".Oolite/Logs");
 
@@ -353,9 +385,11 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
                 log.error("Could not set text", e);
             }
             SwingUtilities.invokeLater(() -> {
-                JFrame f = (JFrame)SwingUtilities.getRoot(this);
-                previousWindowState = f.getState();
-                f.setState(java.awt.Frame.ICONIFIED);
+                if (runState == RunState.running) {
+                    JFrame f = (JFrame)SwingUtilities.getRoot(this);
+                    previousWindowState = f.getState();
+                    f.setState(java.awt.Frame.ICONIFIED);
+                }
             });
         }).start();
         
@@ -363,25 +397,10 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
 
     @Override
     public void terminated() {
+        log.warn("terminated()");
+        runState = RunState.idle;
         update();
-        
-        new Thread(() -> {
-            SwingUtilities.invokeLater(() -> {
-                JFrame d = (JFrame)SwingUtilities.getWindowAncestor(waitPanel);
-                d.setState(previousWindowState);
-            });
-            try {
-                Thread.sleep(2000);
-            } catch (InterruptedException ex) {
-                log.debug("interrupted", ex);
-                Thread.currentThread().interrupt();
-            }
-            SwingUtilities.invokeLater(() -> {
-                JFrame d = (JFrame)SwingUtilities.getWindowAncestor(waitPanel);
-                d.getGlassPane().setVisible(false);
-            });
-        }).start();
-        
+        hideWaitPanel();
     }
 
     @Override
