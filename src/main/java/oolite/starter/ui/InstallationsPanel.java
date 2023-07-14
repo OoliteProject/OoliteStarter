@@ -478,7 +478,12 @@ public class InstallationsPanel extends javax.swing.JPanel {
         
         try {
             InstallationForm installationForm = new InstallationForm();
-            if (JOptionPane.showOptionDialog(this, installationForm, "Add Oolite version...", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, null, null) == JOptionPane.OK_OPTION) {
+            JOptionPane pane = new JOptionPane(installationForm, JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION, null);
+            JDialog dialog = pane.createDialog(this, "Add Oolite version...");
+            dialog.setResizable(true);
+            
+            dialog.setVisible(true);
+            if (((Integer)pane.getValue()).intValue() == JOptionPane.OK_OPTION) {
                 int rowIndex = model.addRow(installationForm.getData());
                 rowIndex = jTable1.convertRowIndexToView(rowIndex);
                 jTable1.getSelectionModel().setSelectionInterval(rowIndex, rowIndex);
@@ -506,7 +511,12 @@ public class InstallationsPanel extends javax.swing.JPanel {
             InstallationForm installationForm = new InstallationForm();
             installationForm.setData(i);
             
-            if (JOptionPane.showOptionDialog(this, installationForm, "Add Installation...", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, null, null) == JOptionPane.OK_OPTION) {
+            JOptionPane pane = new JOptionPane(installationForm, JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION, null);
+            JDialog dialog = pane.createDialog(this, "Edit Oolite version...");
+            dialog.setResizable(true);
+            
+            dialog.setVisible(true);
+            if (((Integer)pane.getValue()).intValue() == JOptionPane.OK_OPTION) {
                 Installation data = installationForm.getData();
                 model.updateRow(data);
                 if (model.getRow(jTable1.getSelectedRow()) == data) {
@@ -514,6 +524,7 @@ public class InstallationsPanel extends javax.swing.JPanel {
                 }
                 setConfigDirty(true);
             }
+
         } catch (Exception e) {
             log.error(INSTALLATIONSPANEL_ERROR, e);
             JOptionPane.showMessageDialog(this, INSTALLATIONSPANEL_ERROR);
