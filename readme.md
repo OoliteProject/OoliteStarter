@@ -155,6 +155,31 @@ Loads data freshly from disk. This is similar to pressing reload in your web
 browser. OoliteStarter reloads the data automatically when a change is likely to
 have happened. If you still feel the data might be outdated just click here.
 
+#### Export Expansion Set
+
+With the above use cases you can assemble a bunch of expansions that you may
+want to backup or share with other players. This export function allows you to
+list all the enabled expansions in a file.
+
+Keep it as backup information, or send it to others as you like.
+
+#### Activate Expansion Set
+
+If you have an expansion set file - as it was created with the Export function
+- you can recreate that setup by activating it. OoliteStarter will
+disable expansions that should not be there, enable those that are required and
+available locally. Finally it will download and install those that are still 
+missing.
+
+Regardless what you had before, after this function has run your setup should be
+exactly what was defined in the file.
+expansion set file.
+
+#### Validate Expansion Set
+
+This use case checks each of the enabled expansions' requires and conflict lists.
+If something sticks out you will be informed.
+
 ### Oolite Versions Management
 
 ![](https://www.plantuml.com/plantuml/svg/JP2_2eD03CRtF4LmzmKSYWuT74f1QVTm5yhHCnOJNKhVlQSk6N_v_doGLeqMMwSC7mflUZ5MzpadOtpoecaMnHj9kKyiLY4fzb8YEPCL4R-0k2e7KiOkHaTZ874uy3HllEU7tfslCPcl29OsiiFNUTz86yCFe7aeBmtMzMMVStZiUHvwH-UE3tlrR8UM9PP7_040)
