@@ -48,6 +48,47 @@ public class ScanOolitesSwingWorker extends SwingWorker<List<String>, String> {
         public void setNote(String s);
     }
 
+    /**
+     * Thrown if problems during scanning are detected.
+     */
+    public static class ScanOoliteException extends Exception {
+
+        /**
+         * Creates a new exception.
+         */
+        public ScanOoliteException() {
+        }
+
+        /**
+         * Creates a new exception.
+         * 
+         * @param message an additional message
+         */
+        public ScanOoliteException(String message) {
+            super(message);
+        }
+
+        /**
+         * Creates a new exception.
+         * 
+         * @param message an additional message
+         * @param cause an additional cause
+         */
+        public ScanOoliteException(String message, Throwable cause) {
+            super(message, cause);
+        }
+
+        /**
+         * Creates a new exception.
+         * 
+         * @param cause an additional cause
+         */
+        public ScanOoliteException(Throwable cause) {
+            super(cause);
+        }
+        
+    }
+
     private List<Pattern> skipPatterns = new ArrayList<>();
     private List<Pattern> goodPatterns = new ArrayList<>();
     private List<String> result;
@@ -210,7 +251,8 @@ public class ScanOolitesSwingWorker extends SwingWorker<List<String>, String> {
             return result;
         } catch (Exception e) {
             log.error("could not scan", e);
-            throw new Exception("could not scan", e);
+            fireSetNote(String.format("Error during scan: %s", e.getMessage()));
+            throw new ScanOoliteException("could not scan", e);
         }
     }
 
@@ -234,4 +276,4 @@ public class ScanOolitesSwingWorker extends SwingWorker<List<String>, String> {
         log.debug("Found {} installations {}", result.size(), result);
     }
             
-};
+}

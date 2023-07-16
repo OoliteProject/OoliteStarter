@@ -296,7 +296,7 @@ public class InstallationsPanel extends javax.swing.JPanel {
 
         ScanOolitesSwingWorker worker = new ScanOolitesSwingWorker(ip);
 
-        ip.addCancelListener((ae) -> {
+        ip.addCancelListener(ae -> {
             try {
                 ipd.setVisible(false);
                 worker.cancel(true);
@@ -304,7 +304,7 @@ public class InstallationsPanel extends javax.swing.JPanel {
                 log.error("Could not cleanup after cancel", e);
             }
         });
-        ip.addOkListener((ae) -> {
+        ip.addOkListener(ae -> {
             try {
                 ipd.setVisible(false);
                 worker.cancel(true);
@@ -425,8 +425,6 @@ public class InstallationsPanel extends javax.swing.JPanel {
         try {
             File f = new File(System.getProperty("user.home") + File.separator + ".oolite-starter.conf");
             configuration.saveConfiguration(f);
-            
-            //JOptionPane.showMessageDialog(this, "Stored configuration in " + f.getAbsolutePath(), "Save", JOptionPane.INFORMATION_MESSAGE);
             
             StringBuilder sb = new StringBuilder("<html>");
             if (configuration.getActiveInstallation() == null) {

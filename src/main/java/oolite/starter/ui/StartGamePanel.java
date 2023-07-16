@@ -9,6 +9,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.MouseAdapter;
 import java.io.File;
+import java.nio.file.Files;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -336,6 +337,8 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
     }//GEN-LAST:event_btReloadActionPerformed
 
     private void btDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btDeleteActionPerformed
+        log.debug("btDeleteActionPerformed({})", evt);
+
         try {
             int rowIndex = jTable1.getSelectedRow();
             if (rowIndex == -1) {
@@ -345,7 +348,7 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
             rowIndex = jTable1.convertRowIndexToModel(rowIndex);
             SaveGame row = model.getRow(rowIndex);
 
-            row.getFile().delete();
+            Files.delete(row.getFile().toPath());
             update();
         } catch (Exception e) {
             log.error("Could not delete", e);
@@ -435,9 +438,7 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
         
         new Thread(() -> {
             try {
-                SwingUtilities.invokeAndWait(() -> {
-                    waitPanel.setText(text);
-                });
+                SwingUtilities.invokeAndWait(() -> waitPanel.setText(text) );
                 Thread.sleep(2000);
             } catch (InterruptedException ex) {
                 log.debug("interrupted", ex);
