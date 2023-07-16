@@ -94,7 +94,18 @@ In the following you will find detailed description of each of these use cases:
 
 ### SaveGames
 
+Here is what you can do:
+
 ![](https://www.plantuml.com/plantuml/svg/SoWkIImgAStDuIf8JCvEJ4zL24uiItLFp4qjLgZcKb0eBKvDJYnELV1BBKVY1QKMb-Qc8WcufEQabgIYgCZ9JqpXgkNYiWejJYsoKj3LjGCRWk32J468m8n1YC3CuN98pKi1kX80)
+
+This is what it looks like:
+
+![](src/main/resources-ext/images/screenshots/SaveGames.png)
+
+In case OoliteStarter triggered Oolite and is waiting for the process to finish
+it looks like this:
+
+![](src/main/resources-ext/images/screenshots/Running.png)
 
 #### New
 
@@ -118,7 +129,13 @@ have happened. If you still feel the data might be outdated just click here.
 
 ### Expansion Management
 
+Here is what you can do:
+
 ![](https://www.plantuml.com/plantuml/svg/LOr1gi9G34NdMKNel1leuDD2t-0Fd1HSG6Y35DEqD7aYY7lNXw9nUC-vkMdDQVUy26mqdkd4MANhHchpgdWWVPA5rIiamw-u0M8s7iaO_zMSH0BfMTYvNFGfu6xq-K8lqQMVFhrLW0FBIbFf3Wdk0CtHU6-mhly-7mFgKqnTJ64-qB8ABUkK5ta0)
+
+This is what it looks like:
+
+![](src/main/resources-ext/images/screenshots/OxXPsOXZs.png)
 
 Expansions follow this lifecycle. It should explain why in Oolite Versions 
 Management so many directories need to be configured.
@@ -182,7 +199,13 @@ If something sticks out you will be informed.
 
 ### Oolite Versions Management
 
+Here is what you can do:
+
 ![](https://www.plantuml.com/plantuml/svg/JP2_2eD03CRtF4LmzmKSYWuT74f1QVTm5yhHCnOJNKhVlQSk6N_v_doGLeqMMwSC7mflUZ5MzpadOtpoecaMnHj9kKyiLY4fzb8YEPCL4R-0k2e7KiOkHaTZ874uy3HllEU7tfslCPcl29OsiiFNUTz86yCFe7aeBmtMzMMVStZiUHvwH-UE3tlrR8UM9PP7_040)
+
+This is what it looks like:
+
+![](src/main/resources-ext/images/screenshots/OoliteVersions.png)
 
 #### Add
 
@@ -193,7 +216,11 @@ to be added to the list of versions.
 #### Scan
 
 In case you want OoliteStarter to search for Oolite on your behalf just click
-this button. While the search is running you can already accept one of the 
+this button. 
+
+![](src/main/resources-ext/images/screenshots/Scanning.png)
+
+While the search is running you can already accept one of the 
 Oolite home directories found so far. As soon as you click Ok the system
 switches to Add mode allowing you to tweak the settings before they are added
 to the list of versions.
