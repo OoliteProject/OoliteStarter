@@ -106,6 +106,29 @@ public class ScanOolitesSwingWorker extends SwingWorker<List<String>, String> {
             l.addInstallation(s);
         }
     }
+    
+    private boolean shouldSkip(File f) {
+        for (Pattern p: skipPatterns) {
+            if (p.matcher(f.getAbsolutePath()).matches()) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    private void checkMatch(File f) {
+        for (Pattern p: goodPatterns) {
+            Matcher m = p.matcher(f.getAbsolutePath());
+            if (m.matches()) {
+                String s = m.group(1);
+                result.add(s);
+
+                // add to installations panel
+                fireAddInstallation(s);
+                publish(s);
+            }
+        }
+    }
             
     private void scan(File f) throws IOException {
         log.trace("scan({})", f);
@@ -118,23 +141,11 @@ public class ScanOolitesSwingWorker extends SwingWorker<List<String>, String> {
         }
         scannedFiles.add(f.getCanonicalPath());
 
-        for (Pattern p: skipPatterns) {
-            if (p.matcher(f.getAbsolutePath()).matches()) {
-                return;
-            }
+        if (shouldSkip(f)) {
+            return;
         }
-                
-        for (Pattern p: goodPatterns) {
-            Matcher m = p.matcher(f.getAbsolutePath());
-            if (m.matches()) {
-                String s = m.group(1);
-                result.add(s);
-
-                // add to installations panel
-                fireAddInstallation(s);
-                publish(s);
-            }
-        }
+          
+        checkMatch(f);
                         
         if (f.isDirectory()) {
             File[] entries = f.listFiles();
