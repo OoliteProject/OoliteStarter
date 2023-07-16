@@ -71,6 +71,20 @@ public class GithubVersionChecker {
     }
     
     /**
+     * Provides the URL for a human to download a release.
+     * 
+     * @param releaseTag the name the release was tagged with (e.g. v0.1.16-yard.9)
+     * @return the URL
+     * @throws MalformedURLException something went wrong
+     */
+    public URL getHtmlReleaseURL(String releaseTag) throws MalformedURLException {
+        if (!releaseTag.startsWith("v")) {
+            releaseTag = "v" + releaseTag;
+        }
+        return new URL("https://github.com/" + OWNER + "/" + REPO + "/releases/tag/" + releaseTag);
+    }
+    
+    /**
      * Checks if there is a later version online and returns it.
      * 
      * @return the new version number, or null if there is none
@@ -111,9 +125,10 @@ public class GithubVersionChecker {
      * @param version the latest version
      * @return the html message
      */
-    public String getHtmlUserMessage(String version) {
+    public String getHtmlUserMessage(String version) throws MalformedURLException {
+        URL url = getHtmlReleaseURL(version);
         return "<html><body><p>All right there. We heard rumors the new version " + version + " has been released.</p>"
-            + "<p>You need to check <a href=\"https://github.com/" + OWNER + "/" + REPO + "/releases\">https://github.com/" + OWNER + "/" + REPO + "/releases</a> and report back to me.</p>"
+            + "<p>You need to check <a href=\"" + url + "\">" + url + "</a> and report back to me.</p>"
             + "<p>But don't keep me waiting too long, kid!</p></body></html>";
     }
     
