@@ -40,7 +40,7 @@ public class MainFrame extends javax.swing.JFrame {
     public MainFrame() throws IOException, SAXException, ParserConfigurationException, XPathExpressionException {
         initComponents();
         setTitle(MainFrame.class.getPackage().getImplementationTitle() + " " + MainFrame.class.getPackage().getImplementationVersion());
-        setIconImage(new ImageIcon(getClass().getResource("/oolite_logo.png")).getImage());
+        setIconImage(new ImageIcon(getClass().getResource("/images/Mr_Gimlet_transparent.png")).getImage());
 
         File confFile = new File(System.getProperty("oolite.starter.configuration", System.getProperty("user.home") + "/.oolite-starter.conf"));
         if (confFile.exists()) {
