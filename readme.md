@@ -102,10 +102,22 @@ This is what it looks like:
 
 ![](src/main/resources-ext/images/screenshots/SaveGames.png)
 
+What you see here is a panel showing the list of your save games. You can sort
+the list by clicking the column headers. One of the savegames is selected. The 
+right hand side provides more information about the selected one. The box in the
+lower right lists all expansions that were in use when the game was saved. Now
+it is marked with color as there are some discrepancies between the required and
+the installed expansions.
+
 In case OoliteStarter triggered Oolite and is waiting for the process to finish
-it looks like this:
+it looks like this (usually OoliteStarter tries not to be in your way and 
+automatically minimizes itself. If you need it back just click the window to
+bring it back):
 
 ![](src/main/resources-ext/images/screenshots/Running.png)
+
+OoliteStarter tries to let you know some details what it is waiting for. If you
+believe this is wrong check the logfiles. Or file a bug.
 
 #### New
 
@@ -136,6 +148,36 @@ Here is what you can do:
 This is what it looks like:
 
 ![](src/main/resources-ext/images/screenshots/OxXPsOXZs.png)
+
+In this tab on the left you can see the list of known expansions. Usually this
+consists of all the expansions found on your computer plus the list of the
+Expansion Manager that is hosted on the https://oolite.space website - currently
+this is a list of 750 expansions (displayed in the bottom left).
+
+One of the expansions is selected, and the right hand side gives you additional
+information about the selection. It also allows to change the status using the
+buttons Install, Enable, Disable and Delete.
+
+In the top right you find buttons to manage Expansion Sets and the Reload button.
+
+You can sort the list of expansions by clicking the column headers. Filtering
+can be done using the Filter elements in the top of the screen. Note the Status
+dropdown filter and the Status column in the table.
+
+There are several flags that are displayed in a compressed way in the status
+column. While you always have the letters OLERC, a capital letter stands for
+'yes' while a small letter stands for 'no'. The letters themselves mean:
+
+ - O the expansion is online available and can be downloaded anytime
+   o the expansion is not available online
+ - L the expansion is on the local disk
+   l the expansion is not on the local disk
+ - E the expansion is enabled
+   e the expansion is not enabled (=disabled or not installed)
+ - R the expansion requires other expansions
+   r the expansion does not require other expansions
+ - C the expansion can conflict with other expansions
+   c the expansion has no conflicts
 
 Expansions follow this lifecycle. It should explain why in Oolite Versions 
 Management so many directories need to be configured.
@@ -207,11 +249,30 @@ This is what it looks like:
 
 ![](src/main/resources-ext/images/screenshots/OoliteVersions.png)
 
+On the left side you can see all configured Oolite versions. You can sort the
+list by clicking the column headers. One of the versions is selected. The right
+side reveals more details about the version.
+
+On the top you see the actions that you can trigger and that are described in 
+the following.
+
 #### Add
 
 Brings up a configuration dialog that allows you entering all the relevant
 directory paths for Oolite. Once you press Ok you can see the new version
 to be added to the list of versions.
+
+When browsing the filesystem to search for the correct file or folder, note
+that some files are displayed with an Oolite icon.
+
+![](src/main/resources-ext/images/screenshots/SelectHomeDir.png)
+
+The icon shall indicate that the file or folder is relevant to OoliteStarter,
+and in the right area it tries to explain why. This shall help find the correct 
+entries.
+
+Hint: Put special effort on finding the Oolite home directory. OoliteStarter
+will try to autodetect the other values as much as possible.
 
 #### Scan
 
