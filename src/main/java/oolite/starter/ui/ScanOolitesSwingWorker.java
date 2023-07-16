@@ -219,7 +219,7 @@ public class ScanOolitesSwingWorker extends SwingWorker<List<String>, String> {
         skipPatterns.add(Pattern.compile(".*/proc/self/.*"));
         skipPatterns.add(Pattern.compile(".*/proc/thread-self/.*"));
         skipPatterns.add(Pattern.compile(".*/proc/\\d+/.*"));
-        skipPatterns.add(Pattern.compile(".*/cwd/proc/.*/cwd/proc/.*"));
+        skipPatterns.add(Pattern.compile(".*/cwd/proc/.*"));
         skipPatterns.add(Pattern.compile(".*/cwd/sys/class/.*"));
         skipPatterns.add(Pattern.compile(".*/cwd/sys/devices/.*"));
         skipPatterns.add(Pattern.compile(".*/cwd/sys/dev/.*"));
