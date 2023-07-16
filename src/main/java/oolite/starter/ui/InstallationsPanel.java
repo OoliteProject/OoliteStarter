@@ -7,12 +7,6 @@ import java.awt.Component;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -20,7 +14,6 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
-import javax.swing.SwingWorker;
 import javax.swing.UIDefaults;
 import javax.swing.UIManager;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -300,135 +293,10 @@ public class InstallationsPanel extends javax.swing.JPanel {
         ipd.add(ip);
         ipd.pack();
         ipd.setLocationRelativeTo(f2);
-        
-        SwingWorker<List<String>, String> worker = new SwingWorker<List<String>, String>() {
-            
-            private List<Pattern> skipPatterns = new ArrayList<>();
-            private List<Pattern> goodPatterns = new ArrayList<>();
-            private List<String> result;
-            private HashSet<String> scannedFiles;
-            private int totalFiles;
-            
-            private void scan(File f) throws IOException {
-                log.trace("scan({})", f);
-                log.trace("already scanned {}/{} files", scannedFiles.size(), totalFiles);
 
-                publish (f.getAbsolutePath());
-                
-                if (scannedFiles.contains(f.getCanonicalPath())) {
-                    return;
-                }
-                scannedFiles.add(f.getCanonicalPath());
+        ScanOolitesSwingWorker worker = new ScanOolitesSwingWorker(ip);
 
-                for (Pattern p: skipPatterns) {
-                    if (p.matcher(f.getAbsolutePath()).matches()) {
-                        return;
-                    }
-                }
-                
-                for (Pattern p: goodPatterns) {
-                    Matcher m = p.matcher(f.getAbsolutePath());
-                    if (m.matches()) {
-                        String s = m.group(1);
-                        result.add(s);
-                        
-                        // add to installations panel
-                        ip.addInstallation(s);
-                        publish(s);
-                    }
-                }
-                        
-                if (f.isDirectory()) {
-                    File[] entries = f.listFiles();
-                    if (entries != null) {
-                        totalFiles += entries.length;
-                        for (File entry: entries ) {
-                            scan(entry);
-                            
-                            if (isCancelled() ) {
-                                return;
-                            }
-                        }
-                    }
-                }
-            }
-            
-            /**
-             * Entry point for this SwingWorker.
-             * Scans the filesystem, then returns the collected results.
-             */
-            @Override
-            protected List<String> doInBackground() throws Exception {
-                log.debug("doInBackground()");
-                ip.startScan();
-                
-                scannedFiles = new HashSet<>();
-
-                skipPatterns.add(Pattern.compile("^/proc/.*"));
-                skipPatterns.add(Pattern.compile("^/sys/.*"));
-                skipPatterns.add(Pattern.compile(".*/proc/self/.*"));
-                skipPatterns.add(Pattern.compile(".*/proc/thread-self/.*"));
-                skipPatterns.add(Pattern.compile(".*/proc/\\d+/.*"));
-                skipPatterns.add(Pattern.compile(".*/cwd/proc/.*/cwd/proc/.*"));
-                skipPatterns.add(Pattern.compile(".*/cwd/sys/class/.*"));
-                skipPatterns.add(Pattern.compile(".*/cwd/sys/devices/.*"));
-                skipPatterns.add(Pattern.compile(".*/cwd/sys/dev/.*"));
-                skipPatterns.add(Pattern.compile(".*/sys/class/.*"));
-                skipPatterns.add(Pattern.compile(".*/sys/devices/.*"));
-                skipPatterns.add(Pattern.compile(".*/sys/dev/.*"));
-                skipPatterns.add(Pattern.compile(".*/sys/bus/.*"));
-                skipPatterns.add(Pattern.compile(".*/sys/block/.*"));
-                skipPatterns.add(Pattern.compile(".*/sys/module/.*"));
-                
-                // Linux version
-                goodPatterns.add(Pattern.compile("(.*/oolite.app)/oolite-wrapper"));
-                // Mac OS version
-                goodPatterns.add(Pattern.compile("(.*\\.app)/Contents/MacOS/Oolite"));
-                // Windows version
-                goodPatterns.add(Pattern.compile("(.*\\\\oolite.app)\\\\oolite.exe"));
-                
-                try {
-                    result = new ArrayList<>();
-
-                    totalFiles += File.listRoots().length + 1;
-                    
-                    scan(new File(System.getProperty("user.home")));
-                    
-                    for(File f: File.listRoots()) {
-                        scan(f);
-                    }
-
-                    return result;
-                } catch (Exception e) {
-                    log.error("could not scan", e);
-                    throw new Exception("could not scan", e);
-                }
-            }
-
-            @Override
-            protected void process(List<String> chunks) {
-                log.trace("process({})", chunks);
-                
-                // can we read something from the amount of chunks?
-                
-                if (!chunks.isEmpty()) {
-                    ip.setNote(chunks.get(0));
-                }
-            }
-
-            @Override
-            protected void done() {
-                log.debug("done()");
-                ip.stopScan();
-                ip.setNote("Scanning finished.");
-                btScan.setEnabled(true);
-                
-                log.debug("Found {} installations {}", result.size(), result);
-            }
-            
-        };
-
-        ip.addCancelListener(ae -> {
+        ip.addCancelListener((ae) -> {
             try {
                 ipd.setVisible(false);
                 worker.cancel(true);
@@ -460,8 +328,7 @@ public class InstallationsPanel extends javax.swing.JPanel {
                 log.error("Could not act after ok", e);
             }
         });
-
-        worker.execute();
+        
         ipd.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
@@ -469,7 +336,8 @@ public class InstallationsPanel extends javax.swing.JPanel {
             }
 
         });
-        ipd.setVisible(true);
+        worker.execute();
+        ipd.setVisible(true); // this one blocks until the dialog gets hidden
         
     }//GEN-LAST:event_btScanActionPerformed
 

@@ -35,12 +35,12 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
     private SaveGamePanel sgp;
     
     private enum RunState {
-        idle, running
+        IDLE, RUNNING
     }
 
     private int previousWindowState;
     private WaitPanel waitPanel;
-    private RunState runState = RunState.idle;
+    private RunState runState = RunState.IDLE;
 
     /**
      * Creates new form StartGamePanel.
@@ -415,7 +415,7 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
     public void launched(ProcessData pd) {
         log.warn("launched({})", pd);
 
-        runState = RunState.running;
+        runState = RunState.RUNNING;
         
         File logfile = new File(System.getProperty("user.home"), ".Oolite/Logs");
 
@@ -446,7 +446,7 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
                 log.error("Could not set text", e);
             }
             SwingUtilities.invokeLater(() -> {
-                if (runState == RunState.running) {
+                if (runState == RunState.RUNNING) {
                     JFrame f = (JFrame)SwingUtilities.getRoot(this);
                     previousWindowState = f.getState();
                     f.setState(java.awt.Frame.ICONIFIED);
@@ -459,7 +459,7 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
     @Override
     public void terminated() {
         log.warn("terminated()");
-        runState = RunState.idle;
+        runState = RunState.IDLE;
         update();
         hideWaitPanel();
     }

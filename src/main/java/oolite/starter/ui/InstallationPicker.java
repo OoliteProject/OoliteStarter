@@ -11,7 +11,7 @@ import org.apache.logging.log4j.Logger;
  *
  * @author hiran
  */
-public class InstallationPicker extends javax.swing.JPanel {
+public class InstallationPicker extends javax.swing.JPanel implements ScanOolitesSwingWorker.ScanOoliteSwingWorkerListener {
     private static final Logger log = LogManager.getLogger();
     
     private DefaultListModel<String> model;

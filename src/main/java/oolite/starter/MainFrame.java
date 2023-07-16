@@ -99,10 +99,7 @@ public class MainFrame extends javax.swing.JFrame {
             g.setFont(g.getFont().deriveFont(Font.BOLD, 22.0f));
             g.setColor(Color.white);
             g.drawString(text, 31, 51);
-            //g.setColor(Configuration.COLOR_ATTENTION);
-            //g.setColor(new Color(23, 32, 41));
             g.setColor(new Color(46, 64, 82));
-            //g.setColor(new Color(92, 128, 164));
             g.drawString(text, 30, 50);
             
             ss.update();
