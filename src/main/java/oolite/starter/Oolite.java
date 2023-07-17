@@ -1247,7 +1247,7 @@ public class Oolite implements PropertyChangeListener {
             case EXPANSION_DIR:
                 return "This directory contains Oolite expansions.";
             case HOME_DIR:
-                return "This directory contains an Oolite installation.";
+                return "This is an Oolite home directory.";
             case SAVEGAME_DIR:
                 return "This directory contains Oolite save games.";
             default:

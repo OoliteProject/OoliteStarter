@@ -1,0 +1,31 @@
+name: adventure-in-space
+title: Adventure In Space
+version: '0.1.16-yard.12'
+summary: A space adventure based on Oolite engine.
+description: |
+  A distant universe. Lots of civilized planets. Fly around, dodge
+  pirates and tune your ship or buy better after you earned it.
+  
+  Here is a space simulation based on the Oolite engine.
+
+base: core22
+confinement: devmode
+
+parts:
+  adventure-in-space:
+    plugin: dump
+    source: https://github.com/HiranChaudhuri/OoliteStarter/releases/download/v0.1.16-yard.9/oolitestarter_0.1-16-1_amd64.deb
+
+apps:
+  adventure-in-space:
+    command: opt/oolitestarter/bin/OoliteStarter
+    extensions:
+      - gnome
+    environment:
+#      JAVA_HOME: $SNAP/usr/lib/jvm/java-17-openjdk-amd64
+#      PATH: $JAVA_HOME/jre/bin:$PATH
+    plugs:
+      - home
+      - network
+      - cups-control
+
