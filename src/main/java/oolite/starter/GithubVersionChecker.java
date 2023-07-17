@@ -40,18 +40,23 @@ public class GithubVersionChecker {
      */
     public void init() throws IOException {
         versions = new ArrayList<>();
-        List<Object> releases = new Genson().deserialize(getReleasesURL().openStream(), List.class);
-        for (Object release: releases) {
-            if (release instanceof Map<?,?> map) {
-                String v = String.valueOf(map.get("tag_name"));
-                if (v.startsWith("v")) {
-                    v = v.substring(1);
+        try {
+            List<Object> releases = new Genson().deserialize(getReleasesURL().openStream(), List.class);
+            for (Object release: releases) {
+                if (release instanceof Map<?,?> map) {
+                    String v = String.valueOf(map.get("tag_name"));
+                    if (v.startsWith("v")) {
+                        v = v.substring(1);
+                    }
+                    versions.add(new Semver(v));
+                } else {
+                    log.debug("class {}", release.getClass());
+                    log.debug("release {}", release);
                 }
-                versions.add(new Semver(v));
-            } else {
-                log.debug("class {}", release.getClass());
-                log.debug("release {}", release);
             }
+        } catch (Exception e) {
+            log.info("Could not check for new versions", e);
+            versions.add(new Semver("0.1.11"));
         }
     }
     
@@ -63,6 +68,20 @@ public class GithubVersionChecker {
      */
     public URL getReleasesURL() throws MalformedURLException {
         return new URL("https://api.github.com/repos/" + OWNER + "/" + REPO + "/releases");
+    }
+    
+    /**
+     * Provides the URL for a human to download a release.
+     * 
+     * @param releaseTag the name the release was tagged with (e.g. v0.1.16-yard.9)
+     * @return the URL
+     * @throws MalformedURLException something went wrong
+     */
+    public URL getHtmlReleaseURL(String releaseTag) throws MalformedURLException {
+        if (!releaseTag.startsWith("v")) {
+            releaseTag = "v" + releaseTag;
+        }
+        return new URL("https://github.com/" + OWNER + "/" + REPO + "/releases/tag/" + releaseTag);
     }
     
     /**
@@ -106,9 +125,10 @@ public class GithubVersionChecker {
      * @param version the latest version
      * @return the html message
      */
-    public String getHtmlUserMessage(String version) {
+    public String getHtmlUserMessage(String version) throws MalformedURLException {
+        URL url = getHtmlReleaseURL(version);
         return "<html><body><p>All right there. We heard rumors the new version " + version + " has been released.</p>"
-            + "<p>You need to check <a href=\"https://github.com/" + OWNER + "/" + REPO + "/releases\">https://github.com/" + OWNER + "/" + REPO + "/releases</a> and report back to me.</p>"
+            + "<p>You need to check <a href=\"" + url + "\">" + url + "</a> and report back to me.</p>"
             + "<p>But don't keep me waiting too long, kid!</p></body></html>";
     }
     

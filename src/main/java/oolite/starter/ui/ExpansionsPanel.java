@@ -25,6 +25,7 @@ import javax.swing.table.TableRowSorter;
 import oolite.starter.Oolite;
 import oolite.starter.model.Expansion;
 import oolite.starter.model.ExpansionReference;
+import oolite.starter.model.ProcessData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -34,6 +35,8 @@ import org.apache.logging.log4j.Logger;
  */
 public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.OoliteListener {
     private static final Logger log = LogManager.getLogger();
+    
+    private static final String EXPANSIONSPANEL_COULD_NOT_RELOAD = "Could not reload";
 
     class MyRowStatusFilter extends RowFilter<ExpansionsTableModel, Integer> {
         
@@ -108,7 +111,6 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
         });
         
         ep = new ExpansionPanel();
-        //add(ep, BorderLayout.EAST);
         jSplitPane1.setRightComponent(ep);
     }
     
@@ -173,8 +175,6 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
             trw = new TableRowSorter<>(model);
             jTable1.setRowSorter(trw);
             applyFilter();
-            
-            //showDetailsOfSelection();
         } catch (Exception e) {
             log.warn("Could not update", e);
         }
@@ -186,8 +186,8 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
         try {
             update();
         } catch (Exception e) {
-            log.error("Could not reload", e);
-            JOptionPane.showMessageDialog(null, "Could not reload");
+            log.error(EXPANSIONSPANEL_COULD_NOT_RELOAD, e);
+            JOptionPane.showMessageDialog(null, EXPANSIONSPANEL_COULD_NOT_RELOAD);
         }
     }
     
@@ -210,6 +210,7 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
         btActivate = new javax.swing.JButton();
         btExport = new javax.swing.JButton();
         btValidate = new javax.swing.JButton();
+        jPanel4 = new javax.swing.JPanel();
         btReload = new javax.swing.JButton();
         jSplitPane1 = new javax.swing.JSplitPane();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -248,7 +249,7 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txtFilterText, javax.swing.GroupLayout.PREFERRED_SIZE, 212, Short.MAX_VALUE)
+                .addComponent(txtFilterText, javax.swing.GroupLayout.DEFAULT_SIZE, 318, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
@@ -265,6 +266,7 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
 
         jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("Expansion Set"));
 
+        btActivate.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/upload_FILL0_wght400_GRAD0_opsz24.png"))); // NOI18N
         btActivate.setText("Activate...");
         btActivate.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -272,6 +274,7 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
             }
         });
 
+        btExport.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/download_FILL0_wght400_GRAD0_opsz24.png"))); // NOI18N
         btExport.setText("Export...");
         btExport.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -279,6 +282,7 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
             }
         });
 
+        btValidate.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/checklist_FILL0_wght400_GRAD0_opsz24.png"))); // NOI18N
         btValidate.setText("Validate");
         btValidate.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -291,12 +295,13 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap()
                 .addComponent(btActivate)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btExport)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btValidate))
+                .addComponent(btValidate)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -309,6 +314,8 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
+        jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder("Misc"));
+
         btReload.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/refresh_FILL0_wght400_GRAD0_opsz24.png"))); // NOI18N
         btReload.setText("Reload");
         btReload.addActionListener(new java.awt.event.ActionListener() {
@@ -317,6 +324,23 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
             }
         });
 
+        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btReload)
+                .addContainerGap())
+        );
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(btReload)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
         javax.swing.GroupLayout jpToolbarLayout = new javax.swing.GroupLayout(jpToolbar);
         jpToolbar.setLayout(jpToolbarLayout);
         jpToolbarLayout.setHorizontalGroup(
@@ -324,20 +348,19 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
             .addGroup(jpToolbarLayout.createSequentialGroup()
                 .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 374, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btReload)
+                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
         jpToolbarLayout.setVerticalGroup(
             jpToolbarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jpToolbarLayout.createSequentialGroup()
-                .addGroup(jpToolbarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jpToolbarLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(btReload, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(jpToolbarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jpToolbarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jPanel3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(0, 6, Short.MAX_VALUE))
         );
 
@@ -371,7 +394,7 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(txtStatus)
-                .addContainerGap(917, Short.MAX_VALUE))
+                .addContainerGap(1133, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -484,8 +507,8 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
         try {
             update();
         } catch (Exception e) {
-            log.error("Could not reload", e);
-            JOptionPane.showMessageDialog(null, "Could not reload");
+            log.error(EXPANSIONSPANEL_COULD_NOT_RELOAD, e);
+            JOptionPane.showMessageDialog(null, EXPANSIONSPANEL_COULD_NOT_RELOAD);
         }
     }//GEN-LAST:event_btReloadActionPerformed
 
@@ -501,6 +524,7 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JTable jTable1;
@@ -510,7 +534,7 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
     // End of variables declaration//GEN-END:variables
 
     @Override
-    public void launched() {
+    public void launched(ProcessData pd) {
         // we are not yet interested in this event
     }
 

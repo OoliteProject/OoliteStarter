@@ -1,1 +1,1 @@
-java -jar dist\@projectname@-@pomversion@.jar
+javaw -jar dist\@projectname@-@pomversion@.jar

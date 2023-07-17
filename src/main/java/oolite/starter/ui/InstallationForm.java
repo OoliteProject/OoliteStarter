@@ -23,6 +23,8 @@ public class InstallationForm extends javax.swing.JPanel {
     private static final String INSTALLATIONFORM_USER_HOME = "user.home";
     private static final String INSTALLATIONFORM_SELECT = "Select";
     private static final String INSTALLATIONFORM_ERROR = "Error";
+    private static final String INSTALLATIONFORM_BROWSE = "Browse";
+    private static final String INSTALLATIONFORM_COULD_NOT_READ_VERSION = "Could not read version from {}";
     
     private transient Installation data;
 
@@ -109,6 +111,7 @@ public class InstallationForm extends javax.swing.JPanel {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        java.awt.GridBagConstraints gridBagConstraints;
 
         filler1 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 0), new java.awt.Dimension(32767, 0));
         jLabel1 = new javax.swing.JLabel();
@@ -134,211 +137,272 @@ public class InstallationForm extends javax.swing.JPanel {
         jLabel8 = new javax.swing.JLabel();
         btDeactivatedAddOnDir = new javax.swing.JButton();
         txtDeactivatedAddOnDir = new javax.swing.JTextField();
-        filler3 = new javax.swing.Box.Filler(new java.awt.Dimension(5, 0), new java.awt.Dimension(0, 0), new java.awt.Dimension(32767, 0));
+        filler2 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 32767));
+        filler3 = new javax.swing.Box.Filler(new java.awt.Dimension(3, 0), new java.awt.Dimension(3, 0), new java.awt.Dimension(32767, 0));
+
+        setLayout(new java.awt.GridBagLayout());
 
         jLabel1.setText("Home Directory");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.BASELINE_LEADING;
+        gridBagConstraints.insets = new java.awt.Insets(9, 6, 0, 0);
+        add(jLabel1, gridBagConstraints);
 
         jLabel2.setText("Version");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
+        gridBagConstraints.insets = new java.awt.Insets(9, 6, 0, 0);
+        add(jLabel2, gridBagConstraints);
 
         jLabel3.setText("Executable");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
+        gridBagConstraints.insets = new java.awt.Insets(9, 6, 0, 0);
+        add(jLabel3, gridBagConstraints);
 
         jLabel4.setText("Savegame Directory");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(9, 6, 0, 0);
+        add(jLabel4, gridBagConstraints);
 
         jLabel5.setText("AddOn Directory");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(9, 6, 0, 0);
+        add(jLabel5, gridBagConstraints);
 
         jLabel6.setText("Managed AddOn Directory");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 6;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(9, 6, 0, 0);
+        add(jLabel6, gridBagConstraints);
 
         jLabel7.setText("Managed Deactivated AddOn Directory");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 7;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(9, 6, 0, 0);
+        add(jLabel7, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 7;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(6, 12, 6, 0);
+        add(txtManagedDeactivatedAddOnDir, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 6;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(6, 12, 0, 0);
+        add(txtManagedAddOnDir, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(6, 12, 0, 0);
+        add(txtAddOnDir, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(6, 12, 0, 0);
+        add(txtSavegameDir, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(6, 12, 0, 0);
+        add(txtExecutable, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(6, 12, 0, 0);
+        add(txtVersion, gridBagConstraints);
 
-        btHomeDir.setText("Browse");
+        txtHomeDir.setMinimumSize(new java.awt.Dimension(100, 24));
+        txtHomeDir.setPreferredSize(new java.awt.Dimension(250, 24));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(6, 12, 0, 0);
+        add(txtHomeDir, gridBagConstraints);
+
+        btHomeDir.setText(INSTALLATIONFORM_BROWSE);
         btHomeDir.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btHomeDirActionPerformed(evt);
             }
         });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
+        gridBagConstraints.insets = new java.awt.Insets(6, 9, 0, 6);
+        add(btHomeDir, gridBagConstraints);
 
-        btExecutable.setText("Browse");
+        btExecutable.setText(INSTALLATIONFORM_BROWSE);
         btExecutable.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btExecutableActionPerformed(evt);
             }
         });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
+        gridBagConstraints.insets = new java.awt.Insets(6, 9, 0, 6);
+        add(btExecutable, gridBagConstraints);
 
-        btSavegameDir.setText("Browse");
+        btSavegameDir.setText(INSTALLATIONFORM_BROWSE);
         btSavegameDir.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btSavegameDirActionPerformed(evt);
             }
         });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
+        gridBagConstraints.insets = new java.awt.Insets(6, 9, 0, 6);
+        add(btSavegameDir, gridBagConstraints);
 
-        btAddOnDir.setText("Browse");
+        btAddOnDir.setText(INSTALLATIONFORM_BROWSE);
         btAddOnDir.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btAddOnDirActionPerformed(evt);
             }
         });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
+        gridBagConstraints.insets = new java.awt.Insets(6, 9, 0, 6);
+        add(btAddOnDir, gridBagConstraints);
 
-        btManagedAddOnDir.setText("Browse");
+        btManagedAddOnDir.setText(INSTALLATIONFORM_BROWSE);
         btManagedAddOnDir.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btManagedAddOnDirActionPerformed(evt);
             }
         });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 6;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
+        gridBagConstraints.insets = new java.awt.Insets(6, 9, 0, 6);
+        add(btManagedAddOnDir, gridBagConstraints);
 
-        btManagedDeactivatedAddOnDir.setText("Browse");
+        btManagedDeactivatedAddOnDir.setText(INSTALLATIONFORM_BROWSE);
         btManagedDeactivatedAddOnDir.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btManagedDeactivatedAddOnDirActionPerformed(evt);
             }
         });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 7;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
+        gridBagConstraints.insets = new java.awt.Insets(6, 9, 6, 6);
+        add(btManagedDeactivatedAddOnDir, gridBagConstraints);
 
         jLabel8.setText("Deactivated AddOn Directory");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 5;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(9, 6, 0, 0);
+        add(jLabel8, gridBagConstraints);
 
-        btDeactivatedAddOnDir.setText("Browse");
+        btDeactivatedAddOnDir.setText(INSTALLATIONFORM_BROWSE);
         btDeactivatedAddOnDir.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btDeactivatedAddOnDirActionPerformed(evt);
             }
         });
-
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel5)
-                            .addComponent(jLabel4)
-                            .addComponent(jLabel3)
-                            .addComponent(jLabel2)
-                            .addComponent(jLabel1))
-                        .addGap(131, 131, 131)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txtVersion, javax.swing.GroupLayout.DEFAULT_SIZE, 263, Short.MAX_VALUE)
-                            .addComponent(txtSavegameDir, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(txtAddOnDir, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(txtExecutable, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(txtHomeDir))
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(7, 7, 7)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(btExecutable, javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(btSavegameDir, javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(btAddOnDir, javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(btHomeDir, javax.swing.GroupLayout.Alignment.TRAILING)))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(filler3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(16, 16, 16))))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel7)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(txtManagedDeactivatedAddOnDir))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel8)
-                                    .addComponent(jLabel6))
-                                .addGap(75, 75, 75)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(txtDeactivatedAddOnDir)
-                                    .addComponent(txtManagedAddOnDir))))
-                        .addGap(7, 7, 7)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(btDeactivatedAddOnDir)
-                                .addComponent(btManagedAddOnDir))
-                            .addComponent(btManagedDeactivatedAddOnDir, javax.swing.GroupLayout.Alignment.TRAILING))))
-                .addContainerGap())
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(txtHomeDir, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btHomeDir))
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel2)
-                            .addComponent(txtVersion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(16, 16, 16)
-                        .addComponent(filler3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
-                    .addComponent(txtExecutable, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btExecutable))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel4)
-                    .addComponent(txtSavegameDir, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btSavegameDir))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel5)
-                    .addComponent(txtAddOnDir, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btAddOnDir))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel8)
-                    .addComponent(btDeactivatedAddOnDir)
-                    .addComponent(txtDeactivatedAddOnDir, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtManagedAddOnDir, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btManagedAddOnDir)
-                    .addComponent(jLabel6))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel7)
-                    .addComponent(btManagedDeactivatedAddOnDir)
-                    .addComponent(txtManagedDeactivatedAddOnDir, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 5;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
+        gridBagConstraints.insets = new java.awt.Insets(6, 9, 0, 6);
+        add(btDeactivatedAddOnDir, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 5;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(6, 12, 0, 0);
+        add(txtDeactivatedAddOnDir, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 8;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
+        gridBagConstraints.weighty = 1.0;
+        add(filler2, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 0;
+        add(filler3, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
 
     void maybeFillVersion(File homeDir) {
         // check Linux
-        if (txtVersion.getText().isBlank()) {
-            File releaseTxt = new File(homeDir, "../release.txt");
-            if (releaseTxt.isFile()) {
-                try {
-                    txtVersion.setText(IOUtils.toString(new FileReader(releaseTxt)).trim());
-                } catch (Exception e) {
-                    log.info("Could not read version from {}", releaseTxt, e);
-                }
+        File releaseTxt = new File(homeDir, "../release.txt");
+        if (txtVersion.getText().isBlank() && releaseTxt.isFile()) {
+            try {
+                txtVersion.setText(IOUtils.toString(new FileReader(releaseTxt)).trim());
+            } catch (Exception e) {
+                log.info(INSTALLATIONFORM_COULD_NOT_READ_VERSION, releaseTxt, e);
             }
         }
+        
         // check MacOS
-        if (txtVersion.getText().isBlank()) {
-            File releaseTxt = new File(homeDir, "Contents/Info.plist");
-            if (releaseTxt.isFile()) {
-                try {
-                    txtVersion.setText(Oolite.getVersionFromInfoPlist(releaseTxt));
-                } catch (Exception e) {
-                    log.info("Could not read version from {}", releaseTxt, e);
-                }
+        releaseTxt = new File(homeDir, "Contents/Info.plist");
+        if (txtVersion.getText().isBlank() && releaseTxt.isFile()) {
+            try {
+                txtVersion.setText(Oolite.getVersionFromInfoPlist(releaseTxt));
+            } catch (Exception e) {
+                log.info(INSTALLATIONFORM_COULD_NOT_READ_VERSION, releaseTxt, e);
             }
         }
+        
         // check Windows
-        if (txtVersion.getText().isBlank()) {
-            File releaseTxt = new File(homeDir, "Resources/manifest.plist");
-            if (releaseTxt.isFile()) {
-                try {
-                    txtVersion.setText(Oolite.getVersionFromManifest(releaseTxt));
-                } catch (Exception e) {
-                    log.info("Could not read version from {}", releaseTxt, e);
-                }
+        releaseTxt = new File(homeDir, "Resources/manifest.plist");
+        if (txtVersion.getText().isBlank() && releaseTxt.isFile()) {
+            try {
+                txtVersion.setText(Oolite.getVersionFromManifest(releaseTxt));
+            } catch (Exception e) {
+                log.info(INSTALLATIONFORM_COULD_NOT_READ_VERSION, releaseTxt, e);
             }
         }
     }
@@ -369,9 +433,7 @@ public class InstallationForm extends javax.swing.JPanel {
 
             if (txtDeactivatedAddOnDir.getText().isBlank()) {
                 File dd = new File(d, "../DeactivatedAddOns");
-                if (dd != null) {
-                    txtDeactivatedAddOnDir.setText(dd.getCanonicalPath());
-                }
+                txtDeactivatedAddOnDir.setText(dd.getCanonicalPath());
             }
         }
     }
@@ -570,6 +632,7 @@ public class InstallationForm extends javax.swing.JPanel {
     private javax.swing.JButton btManagedDeactivatedAddOnDir;
     private javax.swing.JButton btSavegameDir;
     private javax.swing.Box.Filler filler1;
+    private javax.swing.Box.Filler filler2;
     private javax.swing.Box.Filler filler3;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;

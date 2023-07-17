@@ -3,24 +3,20 @@
 package oolite.starter.ui;
 
 import java.awt.Color;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.Component;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
 import javax.swing.SwingUtilities;
-import javax.swing.SwingWorker;
 import javax.swing.UIDefaults;
 import javax.swing.UIManager;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableRowSorter;
 import oolite.starter.Configuration;
 import oolite.starter.Oolite;
@@ -39,12 +35,13 @@ public class InstallationsPanel extends javax.swing.JPanel {
     private static final String INSTALLATIONSPANEL_SELECT_ROW = "Please select row";
     private static final String INSTALLATIONSPANEL_COULD_NOT_SAVE = "Could not save";
     
+    private static final ImageIcon icon_star = new ImageIcon(InstallationsPanel.class.getResource("/icons/star_FILL0_wght400_GRAD0_opsz24.png"));
+    
     private InstallationForm installationDetails;
     private InstallationTableModel model;
     private transient Configuration configuration;
     
     private boolean configDirty;
-    private final Color clickMe = new Color(160, 80, 0);
 
     /**
      * Creates new form InstallationsPanel.
@@ -59,6 +56,24 @@ public class InstallationsPanel extends javax.swing.JPanel {
         configDirty = false;
         
         setButtonColors();
+        
+        jTable1.setDefaultRenderer(Boolean.class, new DefaultTableCellRenderer(){
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/OverriddenMethodBody
+                if (c instanceof JLabel l) {
+                    l.setText("");
+                    l.setHorizontalAlignment(CENTER);
+                    if (Boolean.TRUE.equals(value)) {
+                        l.setIcon(icon_star);
+                    } else {
+                        l.setIcon(null);
+                    }
+                }
+                return c;
+            }
+            
+        });
     }
     
     /**
@@ -123,22 +138,22 @@ public class InstallationsPanel extends javax.swing.JPanel {
         Color defaultBackground = uidefaults.getColor("Button.background");
 
         if (model != null && model.getRowCount()==0) {
-            btAdd.setBackground(clickMe);
-            btScan.setBackground(clickMe);
+            btAdd.setBackground(Configuration.COLOR_ATTENTION);
+            btScan.setBackground(Configuration.COLOR_ATTENTION);
             btActivate.setBackground(defaultBackground);
         } else {
             btAdd.setBackground(defaultBackground);
             btScan.setBackground(defaultBackground);
 
             if (configuration != null && configuration.getActiveInstallation() == null) {
-                btActivate.setBackground(clickMe);
+                btActivate.setBackground(Configuration.COLOR_ATTENTION);
             } else {
                 btActivate.setBackground(defaultBackground);
             }
         }
         
         if (configDirty) {
-            btSave.setBackground(clickMe);
+            btSave.setBackground(Configuration.COLOR_ATTENTION);
         } else {
             btSave.setBackground(defaultBackground);
         }
@@ -173,6 +188,7 @@ public class InstallationsPanel extends javax.swing.JPanel {
         setName("Oolite Versions"); // NOI18N
         setLayout(new java.awt.BorderLayout());
 
+        btAdd.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/add_FILL0_wght400_GRAD0_opsz24.png"))); // NOI18N
         btAdd.setText("Add...");
         btAdd.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -180,6 +196,7 @@ public class InstallationsPanel extends javax.swing.JPanel {
             }
         });
 
+        btEdit.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/edit_FILL0_wght400_GRAD0_opsz24.png"))); // NOI18N
         btEdit.setText("Edit...");
         btEdit.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -187,13 +204,15 @@ public class InstallationsPanel extends javax.swing.JPanel {
             }
         });
 
-        btRemove.setText("Remove");
+        btRemove.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/delete_forever_FILL0_wght400_GRAD0_opsz24.png"))); // NOI18N
+        btRemove.setText("Delete");
         btRemove.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btRemoveActionPerformed(evt);
             }
         });
 
+        btScan.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/search_FILL0_wght400_GRAD0_opsz24.png"))); // NOI18N
         btScan.setText("Scan...");
         btScan.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -201,6 +220,7 @@ public class InstallationsPanel extends javax.swing.JPanel {
             }
         });
 
+        btSave.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/save_FILL0_wght400_GRAD0_opsz24.png"))); // NOI18N
         btSave.setText("Save");
         btSave.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -208,7 +228,8 @@ public class InstallationsPanel extends javax.swing.JPanel {
             }
         });
 
-        btActivate.setText("Activate");
+        btActivate.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/star_FILL0_wght400_GRAD0_opsz24.png"))); // NOI18N
+        btActivate.setText("Select");
         btActivate.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btActivateActionPerformed(evt);
@@ -272,177 +293,42 @@ public class InstallationsPanel extends javax.swing.JPanel {
         ipd.add(ip);
         ipd.pack();
         ipd.setLocationRelativeTo(f2);
+
+        ScanOolitesSwingWorker worker = new ScanOolitesSwingWorker(ip);
+
+        ip.addCancelListener(ae -> {
+            try {
+                ipd.setVisible(false);
+                worker.cancel(true);
+            } catch (Exception e) {
+                log.error("Could not cleanup after cancel", e);
+            }
+        });
+        ip.addOkListener(ae -> {
+            try {
+                ipd.setVisible(false);
+                worker.cancel(true);
+
+                log.info("something was selected - we want this value {}", ip.getSelectedInstallation());
+
+                File homeDir = new File(ip.getSelectedInstallation());
+                Installation i = Oolite.populateFromHomeDir(homeDir);
+
+                log.info("offering for edit {}", i);
+                InstallationForm installationForm = new InstallationForm();
+                installationForm.setData(i);
+                if (JOptionPane.showOptionDialog(InstallationsPanel.this, installationForm, "Add Oolite version...", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, null, null) == JOptionPane.OK_OPTION) {
+                    log.info("adding installation...");
+                    int rowIndex = model.addRow(installationForm.getData());
+                    rowIndex = jTable1.convertRowIndexToView(rowIndex);
+                    jTable1.getSelectionModel().setSelectionInterval(rowIndex, rowIndex);
+                    setConfigDirty(true);
+                }
+            } catch (Exception e) {
+                log.error("Could not act after ok", e);
+            }
+        });
         
-        SwingWorker<List<String>, String> worker = new SwingWorker<List<String>, String>() {
-            
-            private List<Pattern> skipPatterns = new ArrayList<>();
-            private List<Pattern> goodPatterns = new ArrayList<>();
-            private List<String> result;
-            private HashSet<String> scannedFiles;
-            private int totalFiles;
-            
-            private void scan(File f) throws IOException {
-                log.trace("scan({})", f);
-                log.trace("already scanned {}/{} files", scannedFiles.size(), totalFiles);
-
-                publish (f.getAbsolutePath());
-                
-                if (scannedFiles.contains(f.getCanonicalPath())) {
-                    return;
-                }
-                scannedFiles.add(f.getCanonicalPath());
-
-                for (Pattern p: skipPatterns) {
-                    if (p.matcher(f.getAbsolutePath()).matches()) {
-                        return;
-                    }
-                }
-                
-                for (Pattern p: goodPatterns) {
-                    Matcher m = p.matcher(f.getAbsolutePath());
-                    if (m.matches()) {
-                        //String s = f.getAbsolutePath();
-                        String s = m.group(1);
-                        result.add(s);
-                        
-                        // add to installations panel
-                        ip.addInstallation(s);
-                        publish(s);
-                    }
-                }
-                        
-                if (f.isDirectory()) {
-                    File[] entries = f.listFiles();
-                    if (entries != null) {
-                        totalFiles += entries.length;
-                        for (File entry: entries ) {
-                            scan(entry);
-                            
-                            if (isCancelled() ) {
-                            //if (isCancelled() || monitor.isCanceled()) {
-                                return;
-                            }
-                        }
-                    }
-                }
-            }
-            
-            /**
-             * Entry point for this SwingWorker.
-             * Scans the filesystem, then returns the collected results.
-             */
-            @Override
-            protected List<String> doInBackground() throws Exception {
-                log.debug("doInBackground()");
-                ip.startScan();
-                
-                scannedFiles = new HashSet<>();
-
-                skipPatterns.add(Pattern.compile("^/proc/.*"));
-                skipPatterns.add(Pattern.compile("^/sys/.*"));
-                skipPatterns.add(Pattern.compile(".*/proc/self/.*"));
-                skipPatterns.add(Pattern.compile(".*/proc/thread-self/.*"));
-                skipPatterns.add(Pattern.compile(".*/proc/\\d+/.*"));
-                skipPatterns.add(Pattern.compile(".*/cwd/proc/.*/cwd/proc/.*"));
-                skipPatterns.add(Pattern.compile(".*/cwd/sys/class/.*"));
-                skipPatterns.add(Pattern.compile(".*/cwd/sys/devices/.*"));
-                skipPatterns.add(Pattern.compile(".*/cwd/sys/dev/.*"));
-                skipPatterns.add(Pattern.compile(".*/sys/class/.*"));
-                skipPatterns.add(Pattern.compile(".*/sys/devices/.*"));
-                skipPatterns.add(Pattern.compile(".*/sys/dev/.*"));
-                skipPatterns.add(Pattern.compile(".*/sys/bus/.*"));
-                skipPatterns.add(Pattern.compile(".*/sys/block/.*"));
-                skipPatterns.add(Pattern.compile(".*/sys/module/.*"));
-                
-                // Linux version
-                goodPatterns.add(Pattern.compile("(.*/oolite.app)/oolite-wrapper"));
-                // Mac OS version
-                goodPatterns.add(Pattern.compile("(.*\\.app)/Contents/MacOS/Oolite"));
-                // Windows version
-                goodPatterns.add(Pattern.compile("(.*\\\\oolite.app)\\\\oolite.exe"));
-                
-                try {
-                    result = new ArrayList<>();
-
-                    totalFiles += File.listRoots().length + 1;
-                    
-                    scan(new File(System.getProperty("user.home")));
-                    
-                    for(File f: File.listRoots()) {
-                        scan(f);
-                    }
-
-                    return result;
-                } catch (Exception e) {
-                    log.error("could not scan", e);
-                    throw new Exception("could not scan", e);
-                }
-            }
-
-            @Override
-            protected void process(List<String> chunks) {
-                log.trace("process({})", chunks);
-                
-                // can we read something from the amount of chunks?
-                
-                if (!chunks.isEmpty()) {
-                    ip.setNote(chunks.get(0));
-                }
-            }
-
-            @Override
-            protected void done() {
-                log.debug("done()");
-                //monitor.close();
-                ip.stopScan();
-                ip.setNote("Scanning finished.");
-                btScan.setEnabled(true);
-                
-                log.debug("Found {} installations {}", result.size(), result);
-            }
-            
-        };
-
-        ip.addCancelListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent ae) {
-                try {
-                    ipd.setVisible(false);
-                    worker.cancel(true);
-                } catch (Exception e) {
-                    log.error("Could not cleanup after cancel", e);
-                }
-            }
-        });
-        ip.addOkListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent ae) {
-                try {
-                    ipd.setVisible(false);
-                    worker.cancel(true);
-
-                    log.info("something was selected - we want this value {}", ip.getSelectedInstallation());
-
-                    File homeDir = new File(ip.getSelectedInstallation());
-                    Installation i = Oolite.populateFromHomeDir(homeDir);
-
-                    log.info("offering for edit {}", i);
-                    InstallationForm installationForm = new InstallationForm();
-                    installationForm.setData(i);
-                    if (JOptionPane.showOptionDialog(InstallationsPanel.this, installationForm, "Add Oolite version...", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, null, null) == JOptionPane.OK_OPTION) {
-                        log.info("adding installation...");
-                        int rowIndex = model.addRow(installationForm.getData());
-                        rowIndex = jTable1.convertRowIndexToView(rowIndex);
-                        jTable1.getSelectionModel().setSelectionInterval(rowIndex, rowIndex);
-                        setConfigDirty(true);
-                    }
-                } catch (Exception e) {
-                    log.error("Could not act after ok", e);
-                }
-            }
-        });
-
-        worker.execute();
         ipd.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
@@ -450,7 +336,8 @@ public class InstallationsPanel extends javax.swing.JPanel {
             }
 
         });
-        ipd.setVisible(true);
+        worker.execute();
+        ipd.setVisible(true); // this one blocks until the dialog gets hidden
         
     }//GEN-LAST:event_btScanActionPerformed
 
@@ -459,7 +346,12 @@ public class InstallationsPanel extends javax.swing.JPanel {
         
         try {
             InstallationForm installationForm = new InstallationForm();
-            if (JOptionPane.showOptionDialog(this, installationForm, "Add Oolite version...", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, null, null) == JOptionPane.OK_OPTION) {
+            JOptionPane pane = new JOptionPane(installationForm, JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION, null);
+            JDialog dialog = pane.createDialog(this, "Add Oolite version...");
+            dialog.setResizable(true);
+            
+            dialog.setVisible(true);
+            if (((Integer)pane.getValue()).intValue() == JOptionPane.OK_OPTION) {
                 int rowIndex = model.addRow(installationForm.getData());
                 rowIndex = jTable1.convertRowIndexToView(rowIndex);
                 jTable1.getSelectionModel().setSelectionInterval(rowIndex, rowIndex);
@@ -487,7 +379,12 @@ public class InstallationsPanel extends javax.swing.JPanel {
             InstallationForm installationForm = new InstallationForm();
             installationForm.setData(i);
             
-            if (JOptionPane.showOptionDialog(this, installationForm, "Add Installation...", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, null, null) == JOptionPane.OK_OPTION) {
+            JOptionPane pane = new JOptionPane(installationForm, JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION, null);
+            JDialog dialog = pane.createDialog(this, "Edit Oolite version...");
+            dialog.setResizable(true);
+            
+            dialog.setVisible(true);
+            if (((Integer)pane.getValue()).intValue() == JOptionPane.OK_OPTION) {
                 Installation data = installationForm.getData();
                 model.updateRow(data);
                 if (model.getRow(jTable1.getSelectedRow()) == data) {
@@ -495,6 +392,7 @@ public class InstallationsPanel extends javax.swing.JPanel {
                 }
                 setConfigDirty(true);
             }
+
         } catch (Exception e) {
             log.error(INSTALLATIONSPANEL_ERROR, e);
             JOptionPane.showMessageDialog(this, INSTALLATIONSPANEL_ERROR);
@@ -527,8 +425,6 @@ public class InstallationsPanel extends javax.swing.JPanel {
         try {
             File f = new File(System.getProperty("user.home") + File.separator + ".oolite-starter.conf");
             configuration.saveConfiguration(f);
-            
-            //JOptionPane.showMessageDialog(this, "Stored configuration in " + f.getAbsolutePath(), "Save", JOptionPane.INFORMATION_MESSAGE);
             
             StringBuilder sb = new StringBuilder("<html>");
             if (configuration.getActiveInstallation() == null) {

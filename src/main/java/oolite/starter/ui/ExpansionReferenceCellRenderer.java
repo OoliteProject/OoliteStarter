@@ -43,6 +43,8 @@ public class ExpansionReferenceCellRenderer  extends JLabel implements ListCellR
                 case SURPLUS:
                     setIcon(iiSurplus);
                     break;
+                default:
+                    break;
             }
             
             if (isSelected) {

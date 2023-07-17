@@ -81,7 +81,7 @@ public class InstallationTableModel extends AbstractTableModel implements Proper
         switch (columnIndex) {
             case 0: return "Home Directory";
             case 1: return "Version";
-            case 2: return "Active";
+            case 2: return "Selected";
             default:
                 return super.getColumnName(columnIndex);
         }
@@ -89,7 +89,7 @@ public class InstallationTableModel extends AbstractTableModel implements Proper
 
     @Override
     public Class<?> getColumnClass(int columnIndex) {
-        if (columnIndex == 20) {
+        if (columnIndex == 2) {
             return Boolean.class;
         } else {
             return super.getColumnClass(columnIndex);
@@ -118,11 +118,7 @@ public class InstallationTableModel extends AbstractTableModel implements Proper
             case 0: return row.getHomeDir();
             case 1: return row.getVersion();
             case 2: 
-                if (row == data.getActiveInstallation()) {
-                    return "active";
-                } else {
-                    return "";
-                }
+                return row == data.getActiveInstallation();
             default:
                 return "n/a";
         }

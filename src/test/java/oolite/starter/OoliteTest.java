@@ -2,6 +2,7 @@
  */
 package oolite.starter;
 
+import oolite.starter.util.PlistUtil;
 import com.chaudhuri.plist.PlistParser;
 import java.io.File;
 import java.io.IOException;
@@ -13,6 +14,7 @@ import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
 import oolite.starter.model.Expansion;
+import oolite.starter.model.ProcessData;
 import oolite.starter.model.SaveGame;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -82,6 +84,31 @@ public class OoliteTest {
 
         List<SaveGame> sgs = instance.getSaveGames();
         assertEquals(0, sgs.size());
+    }
+
+    /**
+     * Test of setConfiguration method, of class Oolite.
+     */
+    @Test
+    public void testSetConfiguration3() throws IOException, ParserConfigurationException, SAXException, XPathExpressionException {
+        log.info("testSetConfiguration3");
+
+        Oolite instance = new Oolite();
+        Configuration configuration = Mockito.mock(Configuration.class);
+        Mockito.when(configuration.getSaveGameDir()).thenReturn(new File("target/test/savegames"));
+        instance.setConfiguration(configuration);
+
+        List<SaveGame> sgs = instance.getSaveGames();
+        assertEquals(0, sgs.size());
+        
+        instance.setConfiguration(null);
+        try {
+            instance.getSaveGames();
+            fail("expected exception");
+        } catch (IllegalStateException e) {
+            assertEquals("configuration must not be null", e.getMessage());
+            log.debug("caught expected exception", e);
+        }
     }
 
     @Test
@@ -259,34 +286,37 @@ public class OoliteTest {
         Oolite.OoliteListener listener = Mockito.mock(Oolite.OoliteListener.class);
         Oolite oolite = new Oolite();
         
-        Mockito.verify(listener, Mockito.times(0)).launched();
+        List<String> command = new ArrayList<>();
+        ProcessData pd = new ProcessData(new File("."), command, 123);
+        
+        Mockito.verify(listener, Mockito.times(0)).launched(Mockito.any());
         Mockito.verify(listener, Mockito.times(0)).terminated();
         
-        oolite.fireLaunched();
-        Mockito.verify(listener, Mockito.times(0)).launched();
+        oolite.fireLaunched(pd);
+        Mockito.verify(listener, Mockito.times(0)).launched(Mockito.any());
         Mockito.verify(listener, Mockito.times(0)).terminated();
 
         oolite.fireTerminated();
-        Mockito.verify(listener, Mockito.times(0)).launched();
+        Mockito.verify(listener, Mockito.times(0)).launched(Mockito.any());
         Mockito.verify(listener, Mockito.times(0)).terminated();
 
         oolite.addOoliteListener(listener);
 
-        oolite.fireLaunched();
-        Mockito.verify(listener, Mockito.times(1)).launched();
+        oolite.fireLaunched(pd);
+        Mockito.verify(listener, Mockito.times(1)).launched(Mockito.any());
         Mockito.verify(listener, Mockito.times(0)).terminated();
 
         oolite.fireTerminated();
-        Mockito.verify(listener, Mockito.times(1)).launched();
+        Mockito.verify(listener, Mockito.times(1)).launched(Mockito.any());
         Mockito.verify(listener, Mockito.times(1)).terminated();
 
         oolite.removeOoliteListener(listener);
-        oolite.fireLaunched();
-        Mockito.verify(listener, Mockito.times(1)).launched();
+        oolite.fireLaunched(pd);
+        Mockito.verify(listener, Mockito.times(1)).launched(Mockito.any());
         Mockito.verify(listener, Mockito.times(1)).terminated();
 
         oolite.fireTerminated();
-        Mockito.verify(listener, Mockito.times(1)).launched();
+        Mockito.verify(listener, Mockito.times(1)).launched(Mockito.any());
         Mockito.verify(listener, Mockito.times(1)).terminated();
     }
     
@@ -313,5 +343,16 @@ public class OoliteTest {
         
         assertEquals("1.90", v);
     }
-    
+
+    @Test
+    public void testRun() throws IOException, InterruptedException, ProcessRunException {
+        log.info("testRun()");
+        
+        List<String> command = new ArrayList<>();
+        command.add("/usr/bin/ls");
+        
+        Oolite oolite = new Oolite();
+        oolite.run(command, new File("."));
+        assertTrue(true);
+    }
 }

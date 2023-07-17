@@ -234,16 +234,16 @@ jobs:
 
     - name: Finish AppImage for Windows
       run: |
-        jpackage --verbose --app-image target/appimage/OoliteStarter --name "OoliteStarter ${{ needs.semver.outputs.GITVERSION_SEMVER }}" --dest target --win-shortcut --icon oolitestarter/src/main/resources/images/Mr_Gimlet_transparent.ico --win-shortcut --win-menu --win-menu-group Oolite
+        jpackage --verbose --app-image target/appimage/OoliteStarter --app-version "${{ needs.semver.outputs.GITVERSION_ASSEMBLYSEMVER }}" --name "OoliteStarter" --dest target --win-shortcut --icon oolitestarter/src/main/resources/images/Mr_Gimlet_transparent.ico --win-shortcut --win-menu --win-menu-group Oolite
         #--resource-dir src/jpackage/resources
 
     - name: Check status 3
       run: |
         get-childitem . -Recurse | where {!$_.PSIsContainer} | select-object FullName
 
-    - name: Rename result (target\OoliteStarter 0.1.13-1.0.exe)
+    - name: Rename result (target\OoliteStarter-0.1.16.0.exe)
       run: |
-        ren "target\OoliteStarter ${{ needs.semver.outputs.GITVERSION_SEMVER }}-1.0.exe" OoliteStarter.${{ needs.semver.outputs.GITVERSION_SEMVER }}-1.0-Windows.exe
+        ren "target\OoliteStarter-${{ needs.semver.outputs.GITVERSION_ASSEMBLYSEMVER }}.exe" OoliteStarter-${{ needs.semver.outputs.GITVERSION_SEMVER }}-Windows.exe
 
     - name: Check status 4
       run: |
@@ -368,6 +368,64 @@ jobs:
         name: OoliteStarter-MacOS
         path: target/OoliteStarter*
 
+  snap:
+    needs: [semver,package-linux]
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout project
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+        path: oolitestarter
+
+    - name: Download artifacts
+      uses: actions/download-artifact@v3
+      with:
+        name: OoliteStarter-Ubuntu
+        path: oolitestarter
+
+    - name: Check status 1
+      run: |
+        printenv | sort
+        echo -n "Current directory: "
+        pwd
+        find . -not -path "./oolitestarter/.git/*"
+      env:
+        DEBIAN_PKGVERSION: ${{ needs.semver.outputs.DEBIAN_PKGVERSION }}
+        GITVERSION_SEMVER: ${{ needs.semver.outputs.GITVERSION_SEMVER }}
+        
+    - name: version bump snapcraft.yaml
+      run: |
+        sed -i "s/^version:.*/version: ${{ needs.semver.outputs.GITVERSION_SEMVER }}/g" oolitestarter/snapcraft.yaml
+        sed -i "s/^    source:.*/    source: oolitestarter_${{ needs.semver.outputs.DEBIAN_PKGVERSION }}-1_amd64.deb/g" oolitestarter/snapcraft.yaml
+        cat oolitestarter/snapcraft.yaml
+        
+    - name: Build the snap
+      id: buildsnap
+      uses: snapcore/action-build@v1
+      with:
+        path: oolitestarter
+
+    - name: Check status 2
+      run: |
+        printenv | sort
+        echo -n "Current directory: "
+        echo "Snap build output is ${{ steps.buildsnap.outputs.snap }}"
+        pwd
+        find . -not -path "./oolitestarter/.git/*"
+      env:
+        DEBIAN_PKGVERSION: ${{ needs.semver.outputs.DEBIAN_PKGVERSION }}
+        GITVERSION_SEMVER: ${{ needs.semver.outputs.GITVERSION_SEMVER }}
+    
+    - name: Publish the snap
+      uses: snapcore/action-publish@v1
+      env:
+        SNAPCRAFT_STORE_CREDENTIALS: ${{ secrets.SNAPSTORE_LOGIN }}
+      with:
+        snap: ${{ steps.buildsnap.outputs.snap }}
+        release: edge
+
   release:
     needs: [semver,package-linux,package-windows,package-macos]
     runs-on: ubuntu-latest
@@ -390,7 +448,7 @@ jobs:
       uses: s00d/delete-older-releases@0.2.1
       with:
         #repo: <owner>/<repoName> # defaults to current repo
-        keep_latest: 5
+        keep_latest: 4
         #delete_tag_pattern: v\d+\.\d+\.\d+-.*
         delete_type: 'prerelease'
         #delete_branch: '${{ github.ref_name }}'
@@ -418,7 +476,7 @@ jobs:
       uses: s00d/delete-older-releases@0.2.1
       with:
         #repo: <owner>/<repoName> # defaults to current repo
-        keep_latest: 3
+        keep_latest: 2
         #delete_tag_pattern: v\d+\.\d+\.\d+
         delete_type: 'release'
         #delete_branch: 'main'

@@ -6,6 +6,7 @@ package oolite.starter;
 import com.vdurmont.semver4j.Semver;
 import java.awt.Component;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.AfterAll;
@@ -75,10 +76,21 @@ public class GithubVersionCheckerTest {
      */
     @Test
     public void testGetReleasesURL() throws Exception {
-        System.out.println("getReleasesURL");
+        log.info("getReleasesURL");
 
         GithubVersionChecker instance = new GithubVersionChecker();
         assertEquals("https://api.github.com/repos/HiranChaudhuri/OoliteStarter/releases", instance.getReleasesURL().toExternalForm());
+    }
+
+    /**
+     * Test of getReleaseURL method, of class GithubVersionChecker.
+     */
+    @Test
+    public void testGetHtmlReleaseURL() throws Exception {
+        log.info("testGetHtmlReleaseURL");
+
+        GithubVersionChecker instance = new GithubVersionChecker();
+        assertEquals("https://github.com/HiranChaudhuri/OoliteStarter/releases/tag/vcoco", instance.getHtmlReleaseURL("coco").toExternalForm());
     }
 
     /**
@@ -99,11 +111,11 @@ public class GithubVersionCheckerTest {
      * Test of getHtmlUserMessage method, of class GithubVersionChecker.
      */
     @Test
-    public void testGetHtmlUserMessage() {
+    public void testGetHtmlUserMessage() throws MalformedURLException {
         System.out.println("getHtmlUserMessage");
 
         GithubVersionChecker instance = new GithubVersionChecker();
-        assertEquals("<html><body><p>All right there. We heard rumors the new version vX has been released.</p><p>You need to check <a href=\"https://github.com/HiranChaudhuri/OoliteStarter/releases\">https://github.com/HiranChaudhuri/OoliteStarter/releases</a> and report back to me.</p><p>But don't keep me waiting too long, kid!</p></body></html>", instance.getHtmlUserMessage("vX"));
+        assertEquals("<html><body><p>All right there. We heard rumors the new version vX has been released.</p><p>You need to check <a href=\"https://github.com/HiranChaudhuri/OoliteStarter/releases/tag/vX\">https://github.com/HiranChaudhuri/OoliteStarter/releases/tag/vX</a> and report back to me.</p><p>But don't keep me waiting too long, kid!</p></body></html>", instance.getHtmlUserMessage("vX"));
     }
 
 }
