@@ -394,7 +394,11 @@ jobs:
     
     - name: Build snap
       run: |
+        printenv | sort
         snapcraft --verbosity=verbose pack
+      env:
+          DEBIAN_PKGVERSION: ${{ needs.semver.outputs.DEBIAN_PKGVERSION }}
+          GITVERSION_SEMVER: ${{ needs.semver.outputs.GITVERSION_SEMVER }}
 
   release:
     needs: [semver,package-linux,package-windows,package-macos]

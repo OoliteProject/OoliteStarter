@@ -8,6 +8,8 @@ description: |
   
   Here is a space simulation based on the Oolite engine.
 
+architectures:
+  - build-on: amd64
 base: core22
 confinement: devmode
 
