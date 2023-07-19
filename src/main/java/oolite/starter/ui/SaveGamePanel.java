@@ -3,19 +3,25 @@
 package oolite.starter.ui;
 
 import java.awt.Color;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import javax.swing.DefaultListModel;
 import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
 import oolite.starter.model.ExpansionReference;
 import oolite.starter.model.SaveGame;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  *
  * @author hiran
  */
 public class SaveGamePanel extends javax.swing.JPanel {
+    private static final Logger log = LogManager.getLogger();
     
     private transient SaveGame data;
+    private DefaultListModel<ExpansionReference> dlm;
     
     /**
      * Creates new form SaveGamePanel.
@@ -23,6 +29,20 @@ public class SaveGamePanel extends javax.swing.JPanel {
     public SaveGamePanel() {
         initComponents();
         lsExpansions.setCellRenderer(new ExpansionReferenceCellRenderer());
+        lsExpansions.addMouseMotionListener(new MouseAdapter() {
+            @Override
+            public void mouseMoved(MouseEvent e) {
+                int rowIndex = lsExpansions.locationToIndex(e.getPoint());
+                if (dlm != null && rowIndex >= 0) {
+                    ExpansionReference er = dlm.getElementAt(rowIndex);
+                    if (er.getReasons().isEmpty()) {
+                        lsExpansions.setToolTipText(null);
+                    } else {
+                        lsExpansions.setToolTipText(String.valueOf(er.getReasons()));
+                    }
+                }
+            }
+        });
     }
     
     private void updateFields() {
@@ -35,7 +55,7 @@ public class SaveGamePanel extends javax.swing.JPanel {
         txtShipKills.setText(String.valueOf(data.getShipKills()));
         txtPilotName.setText(String.valueOf(data.getPlayerName()));
 
-        DefaultListModel<ExpansionReference> dlm = new DefaultListModel<>();
+        dlm = new DefaultListModel<>();
         if (data.getExpansions() != null) {
             dlm.addAll(data.getExpansions());
 

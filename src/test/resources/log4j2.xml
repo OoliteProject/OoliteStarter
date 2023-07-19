@@ -14,7 +14,7 @@
     <Logger level="warn" name="oolite.starter.model.ExpansionReferenceTest"/>
     <Logger level="warn" name="oolite.starter.model.InstallationTest"/>
     <Logger level="warn" name="oolite.starter.model.SaveGameTest"/>
-    <Logger level="warn" name="oolite.starter.Oolite"/>
+    <Logger level="info" name="oolite.starter.Oolite"/>
     <Logger level="info" name="oolite.starter.OoliteTest"/>
     <Logger level="warn" name="oolite.starter.XmlUtil"/>
     

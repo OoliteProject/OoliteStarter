@@ -3,6 +3,9 @@
 
 package oolite.starter.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  *
  * @author hiran
@@ -34,7 +37,29 @@ public class ExpansionReference implements Comparable<ExpansionReference> {
 
     private String name;
     private Status status;
+    private List<String> reasons = new ArrayList<>();
 
+    /**
+     * Creates a new ExpansionReference.
+     */
+    public ExpansionReference() {
+    }
+    
+    /**
+     * Creates a new ExpansionReference.
+     */
+    public ExpansionReference(String name) {
+        this.name = name;
+    }
+    
+    /**
+     * Creates a new ExpansionReference.
+     */
+    public ExpansionReference(String name, Status status) {
+        this.name = name;
+        this.status = status;
+    }
+    
     /**
      * Returns the name.
      * 
@@ -70,6 +95,24 @@ public class ExpansionReference implements Comparable<ExpansionReference> {
     public void setStatus(Status status) {
         this.status = status;
     }
+    
+    /**
+     * Adds a reason to this reference.
+     * 
+     * @param reason the reason
+     */
+    public void addReason(String reason) {
+        reasons.add(reason);
+    }
+    
+    /**
+     * Returns all reasons for this reference.
+     * 
+     * @return the reasons
+     */
+    public List<String> getReasons() {
+        return reasons;
+    }
 
     @Override
     public int compareTo(ExpansionReference other) {
@@ -100,7 +143,7 @@ public class ExpansionReference implements Comparable<ExpansionReference> {
         }
         return false;
     }
-
+    
     @Override
     public String toString() {
         return "ExpansionReference{" + "name=" + name + ", status=" + status + '}';

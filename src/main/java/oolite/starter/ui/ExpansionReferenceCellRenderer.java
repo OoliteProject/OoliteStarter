@@ -36,6 +36,7 @@ public class ExpansionReferenceCellRenderer  extends JLabel implements ListCellR
             switch(value.getStatus()) {
                 case OK:
                     setIcon(iiOk);
+                    setIcon(null);
                     break;
                 case MISSING:
                     setIcon(iiMissing);
@@ -57,6 +58,7 @@ public class ExpansionReferenceCellRenderer  extends JLabel implements ListCellR
             setEnabled(list.isEnabled());
             setFont(list.getFont());
             setOpaque(true);
+            
             return this;
         }
 }

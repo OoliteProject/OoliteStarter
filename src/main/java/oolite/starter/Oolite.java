@@ -251,6 +251,7 @@ public class Oolite implements PropertyChangeListener {
                 ExpansionReference ref = new ExpansionReference();
                 ref.setName(expansion.getIdentifier() + "@" + expansion.getVersion());
                 ref.setStatus(ExpansionReference.Status.SURPLUS);
+                ref.addReason("not required but installed");
                 surplus.add(ref);
             }
         }
@@ -993,6 +994,7 @@ public class Oolite implements PropertyChangeListener {
 
                 ExpansionReference er = getExpansionReference(dependency);
                 if (er.getStatus() == ExpansionReference.Status.MISSING) {
+                    er.addReason("missed by " + expansion.getIdentifier());
                     result.add(er);
                 }
             }
@@ -1010,6 +1012,7 @@ public class Oolite implements PropertyChangeListener {
                 ExpansionReference er = getExpansionReference(dependency);
                 if (er.getStatus() == ExpansionReference.Status.OK) {
                     er.setStatus(ExpansionReference.Status.SURPLUS);
+                    er.addReason("conflicting with " + expansion.getIdentifier());
                     result.add(er);
                 }
             }
@@ -1017,7 +1020,9 @@ public class Oolite implements PropertyChangeListener {
     }
     
     /**
-     * Validates whether the list of expansions is acceptable in itself.
+     * Validates whether the list of expansions is satisfied.
+     * It checks for unfulfilled requirements and conflicts, but only on the
+     * enabled ones.
      * 
      * @param expansions the expansions to check
      * @return the list of discrepancies found
@@ -1090,10 +1095,24 @@ public class Oolite implements PropertyChangeListener {
         FileUtils.deleteDirectory(destDir);
     }
     
+    /**
+     * Returns an ExpansionReference for an enabled expansion.
+     * The expansion is searched in the AddonsDir and the ManagedAddonsDir.
+     * 
+     * @param name
+     * @return 
+     */
     protected ExpansionReference getExpansionReference(String name) {
-        ExpansionReference result = new ExpansionReference();
+        if (configuration == null) {
+            throw new IllegalStateException("configuration must not be null");
+        }
+        
+        ExpansionReference result = null;
+
+        result = new ExpansionReference();
         result.setName(name);
         result.setStatus(ExpansionReference.Status.MISSING);
+        result.addReason("required but not enabled");
         
         // find a direct match
         if (
@@ -1102,6 +1121,7 @@ public class Oolite implements PropertyChangeListener {
                 new File(configuration.getManagedAddonsDir(), name).exists()
             ) {
             result.setStatus(ExpansionReference.Status.OK);
+            result.getReasons().clear();
             return result;
         }
         
@@ -1113,14 +1133,14 @@ public class Oolite implements PropertyChangeListener {
         }
         File[] files = configuration.getAddonsDir().listFiles();
         for (File f: files) {
-            if (f.getName().contains(id)) {
+            if (f.getName().startsWith(id)) {
                 result.setStatus(ExpansionReference.Status.OK);
                 return result;
             }
         }
         files = configuration.getManagedAddonsDir().listFiles();
         for (File f: files) {
-            if (f.getName().contains(id)) {
+            if (f.getName().startsWith(id)) {
                 result.setStatus(ExpansionReference.Status.OK);
                 return result;
             }
@@ -1518,5 +1538,51 @@ public class Oolite implements PropertyChangeListener {
 
         log.info("population done");
         return i;
+    }
+    
+    /**
+     * Calculate deviations.
+     * The result list will contain differences between want and have, including
+     * transitive dependencies and conlicts.
+     * 
+     * Each of the elements in the diff list will have reasons attached.
+     * 
+     * @param want
+     * @param have
+     * @return 
+     */
+    public List<ExpansionReference> diff(List<ExpansionReference> want, List<ExpansionReference> have) {
+        log.info("diff({}, {})", want, have);
+        if (want == null) {
+            throw new IllegalArgumentException("want must not be null");
+        }
+        if (have == null) {
+            throw new IllegalArgumentException("have must not be null");
+        }
+        
+        List<ExpansionReference> result = new ArrayList<>();
+        
+        List<ExpansionReference> inter = new ArrayList<>(have);
+        for (ExpansionReference er: want) {
+            inter.remove(er);
+        }
+        for (ExpansionReference er: inter) {
+            er.setStatus(ExpansionReference.Status.SURPLUS);
+            result.add(er);
+        }
+        
+        inter = new ArrayList<>(want);
+        for (ExpansionReference er: have) {
+            inter.remove(er);
+        }
+        for (ExpansionReference er: inter) {
+            er.setStatus(ExpansionReference.Status.MISSING);
+            result.add(er);
+        }
+
+        // todo: work out transitive requirements
+        // todo: work out conflicts
+        
+        return result;
     }
 }

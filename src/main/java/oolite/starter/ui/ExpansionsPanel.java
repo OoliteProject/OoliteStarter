@@ -5,6 +5,8 @@ package oolite.starter.ui;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ItemEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -482,6 +484,20 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
                 dlm.addAll(warnings);
                 JList<ExpansionReference> list = new JList<>(dlm);
                 list.setCellRenderer(new ExpansionReferenceCellRenderer());
+                list.addMouseMotionListener(new MouseAdapter() {
+                    @Override
+                    public void mouseMoved(MouseEvent e) {
+                        int rowIndex = list.locationToIndex(e.getPoint());
+                        if (dlm != null && rowIndex >= 0) {
+                            ExpansionReference er = dlm.getElementAt(rowIndex);
+                            if (er.getReasons().isEmpty()) {
+                                list.setToolTipText(null);
+                            } else {
+                                list.setToolTipText(String.valueOf(er.getReasons()));
+                            }
+                        }
+                    }
+                });
                 
                 JScrollPane sp = new JScrollPane(list);
                 
