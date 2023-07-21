@@ -15,6 +15,7 @@ import javax.swing.JOptionPane;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
+import oolite.starter.model.Installation;
 import oolite.starter.ui.ExpansionsPanel;
 import oolite.starter.ui.InstallationsPanel;
 import oolite.starter.ui.MrGimlet;
@@ -39,7 +40,7 @@ public class MainFrame extends javax.swing.JFrame {
      */
     public MainFrame() throws IOException, SAXException, ParserConfigurationException, XPathExpressionException {
         initComponents();
-        setTitle(MainFrame.class.getPackage().getImplementationTitle() + " " + MainFrame.class.getPackage().getImplementationVersion());
+        setInstallationTitle(null);
         setIconImage(new ImageIcon(getClass().getResource("/images/Mr_Gimlet_transparent.png")).getImage());
 
         File confFile = new File(System.getProperty("oolite.starter.configuration", System.getProperty("user.home") + "/.oolite-starter.conf"));
@@ -56,6 +57,15 @@ public class MainFrame extends javax.swing.JFrame {
 
         oolite = new Oolite();
         oolite.setConfiguration(configuration);
+
+        configuration.addPropertyChangeListener(pce -> {
+            if (pce.getSource() instanceof Configuration) {
+                log.debug("Configuration change {}", pce);
+                Installation i = (Installation)pce.getNewValue();
+                setInstallationTitle(i);
+            }
+        });
+        setInstallationTitle(configuration.getActiveInstallation());
         
         StartGamePanel sgp = new StartGamePanel();
         sgp.setOolite(oolite);
@@ -104,6 +114,20 @@ public class MainFrame extends javax.swing.JFrame {
             
             ss.update();
         }
+    }
+    
+    /**
+     * Sets the window title based on the installation version and OoliteStarter version.
+     * 
+     * @param installation the active installation
+     */
+    public void setInstallationTitle(Installation installation) {
+        String iversion = "";
+        if (installation != null) {
+            iversion = installation.getHomeDir() + " " + installation.getVersion() + " - ";
+        }
+        String product = MainFrame.class.getPackage().getImplementationTitle() + " " + MainFrame.class.getPackage().getImplementationVersion();
+        setTitle(iversion + product);
     }
     
     /**

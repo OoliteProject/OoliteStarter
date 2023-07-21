@@ -466,7 +466,7 @@ public class InstallationsPanel extends javax.swing.JPanel {
             configuration.activateInstallation(i);
             model.fireTableDataChanged();
             jTable1.getSelectionModel().setSelectionInterval(rowIndex, rowIndex);
-
+            
             setConfigDirty(true);
         } catch (Exception e) {
             log.error(INSTALLATIONSPANEL_COULD_NOT_SAVE, e);
