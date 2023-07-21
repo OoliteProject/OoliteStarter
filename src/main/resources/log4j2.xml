@@ -26,7 +26,7 @@
     <Logger level="warn" name="oolite.starter.ui.ExpansionReferenceCellRenderer"/>
     <Logger level="warn" name="oolite.starter.ui.InstallationTableModel"/>
     <Logger level="warn" name="oolite.starter.ui.InstallationForm"/>
-    <Logger level="debug" name="oolite.starter.ui.InstallationsPanel"/>
+    <Logger level="info" name="oolite.starter.ui.InstallationsPanel"/>
     <Logger level="warn" name="oolite.starter.ui.ScanOolitesSwingWorker"/>
     <Logger level="info" name="oolite.starter.ui.StartGamePanel"/>
     <Logger level="info" name="oolite.starter.ui.OoliteFileChooserAccessory"/>
