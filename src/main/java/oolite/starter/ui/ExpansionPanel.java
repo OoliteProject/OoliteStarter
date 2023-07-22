@@ -6,6 +6,7 @@ import java.awt.Color;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import javax.swing.SwingUtilities;
+import oolite.starter.Configuration;
 import oolite.starter.model.Expansion;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -107,6 +108,13 @@ public class ExpansionPanel extends javax.swing.JPanel implements PropertyChange
             }
             if (data.isLocal() && !data.isOnline()) {
                 jpDownThere.add(new Tag("No download", Color.BLUE));
+            }
+
+            if (data.isEnabled() && data.getEMStatus().isConflicting()) {
+                jpDownThere.add(new Tag("Conflicting", Configuration.COLOR_ATTENTION));
+            }
+            if (data.isEnabled() && data.getEMStatus().isMissingDeps()) {
+                jpDownThere.add(new Tag("MissingDeps", Configuration.COLOR_ATTENTION));
             }
         }
         validate();

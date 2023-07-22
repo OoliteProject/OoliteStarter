@@ -25,6 +25,7 @@ import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.TableRowSorter;
+import oolite.starter.Configuration;
 import oolite.starter.Oolite;
 import oolite.starter.model.Expansion;
 import oolite.starter.model.ExpansionReference;
@@ -69,6 +70,8 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
                     return !expansion.isOnline();
                 case "updatable":
                     return model.getSiblingCount(expansion)>1;
+                case "problematic":
+                    return expansion.isEnabled() && (expansion.getEMStatus().isConflicting() || expansion.getEMStatus().isMissingDeps());
                 default: // all
                     return true;
             }
@@ -95,7 +98,7 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
                 showDetailsOfSelection();
             }
         });
-        jTable1.setDefaultRenderer(Object.class, new AnnotationRenderer(jTable1.getDefaultRenderer(Object.class)));
+        jTable1.setDefaultRenderer(Object.class, new AnnotationRenderer(jTable1.getDefaultRenderer(Object.class), Configuration.COLOR_ATTENTION));
         txtFilterText.getDocument().addDocumentListener(new DocumentListener() {
             @Override
             public void insertUpdate(DocumentEvent de) {
@@ -133,14 +136,17 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
 
             pnStatus.removeAll();
             
-            Badge b = new Badge("Expansions", String.valueOf(trw.getViewRowCount()), Color.BLACK);
-            pnStatus.add(b);
+            pnStatus.add(new Badge("Expansions", String.valueOf(trw.getViewRowCount()), Color.BLACK));
+
+            int y = model.getNumberOfExpansionsMissingDeps();
+            if (y>0) {
+                pnStatus.add(new Badge("MissingDeps", String.valueOf(y), Configuration.COLOR_ATTENTION));
+            }
             
-            b = new Badge("MissingDeps", String.valueOf(model.getNumberOfExpansionsMissingDeps()), Color.BLACK);
-            pnStatus.add(b);
-            
-            b = new Badge("Conflicts", String.valueOf(model.getNumberOfExpansionsConflicting()), Color.BLACK);
-            pnStatus.add(b);
+            int x = model.getNumberOfExpansionsConflicting();
+            if (x > 0) {
+                pnStatus.add(new Badge("Conflicts", String.valueOf(x), Configuration.COLOR_ATTENTION));
+            }
             
             pnStatus.validate();
         }
@@ -238,7 +244,7 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
 
         jLabel1.setText("Status");
 
-        cbFilterMode.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "all", "installed", "updatable", "not installed", "enabled", "disabled", "not online" }));
+        cbFilterMode.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "all", "installed", "updatable", "not installed", "enabled", "disabled", "not online", "problematic" }));
         cbFilterMode.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 cbFilterModeItemStateChanged(evt);
