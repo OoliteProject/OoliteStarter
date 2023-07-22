@@ -50,6 +50,8 @@ public class ExpansionPanel extends javax.swing.JPanel implements PropertyChange
             txtRequires.setText("");
             txtConflicts.setText("");
             txtOptional.setText("");
+            txtMinVersion.setText("");
+            txtMaxVersion.setText("");
             btInstall.setEnabled(false);
             btEnable.setEnabled(false);
             btDisable.setEnabled(false);
@@ -60,6 +62,8 @@ public class ExpansionPanel extends javax.swing.JPanel implements PropertyChange
             txtRequires.setText(String.valueOf(data.getRequiresOxps()));
             txtConflicts.setText(String.valueOf(data.getConflictOxps()));
             txtOptional.setText(String.valueOf(data.getOptionalOxps()));
+            txtMinVersion.setText(String.valueOf(data.getRequiredOoliteVersion()));
+            txtMaxVersion.setText(String.valueOf(data.getMaximumOoliteVersion()));
             btInstall.setEnabled(data.isOnline() && !data.isLocal());
             btEnable.setEnabled(data.isLocal() && !data.isEnabled());
             btDisable.setEnabled(data.isLocal() && data.isEnabled());
@@ -91,6 +95,11 @@ public class ExpansionPanel extends javax.swing.JPanel implements PropertyChange
         txtConflicts = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
         txtOptional = new javax.swing.JTextField();
+        jLabel6 = new javax.swing.JLabel();
+        jLabel7 = new javax.swing.JLabel();
+        txtMinVersion = new javax.swing.JTextField();
+        jLabel8 = new javax.swing.JLabel();
+        txtMaxVersion = new javax.swing.JTextField();
 
         jLabel1.setText("Description");
 
@@ -153,6 +162,16 @@ public class ExpansionPanel extends javax.swing.JPanel implements PropertyChange
 
         txtOptional.setEditable(false);
 
+        jLabel6.setText("Oolite Version");
+
+        jLabel7.setText("min");
+
+        txtMinVersion.setEditable(false);
+
+        jLabel8.setText("max");
+
+        txtMaxVersion.setEditable(false);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -164,10 +183,19 @@ public class ExpansionPanel extends javax.swing.JPanel implements PropertyChange
                     .addComponent(jLabel2)
                     .addComponent(jLabel3)
                     .addComponent(jLabel4)
-                    .addComponent(jLabel5))
+                    .addComponent(jLabel5)
+                    .addComponent(jLabel6))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(txtLocalFile, javax.swing.GroupLayout.DEFAULT_SIZE, 288, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel7)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtMinVersion)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel8)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtMaxVersion))
+                    .addComponent(txtLocalFile)
                     .addComponent(txtRequires)
                     .addComponent(txtConflicts)
                     .addComponent(txtOptional)
@@ -211,7 +239,14 @@ public class ExpansionPanel extends javax.swing.JPanel implements PropertyChange
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5)
                     .addComponent(txtOptional, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel6)
+                    .addComponent(jLabel7)
+                    .addComponent(txtMinVersion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel8)
+                    .addComponent(txtMaxVersion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(35, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -262,10 +297,15 @@ public class ExpansionPanel extends javax.swing.JPanel implements PropertyChange
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextField txtConflicts;
     private javax.swing.JTextArea txtDescription;
     private javax.swing.JTextField txtLocalFile;
+    private javax.swing.JTextField txtMaxVersion;
+    private javax.swing.JTextField txtMinVersion;
     private javax.swing.JTextField txtOptional;
     private javax.swing.JTextField txtRequires;
     // End of variables declaration//GEN-END:variables
