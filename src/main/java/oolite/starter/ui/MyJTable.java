@@ -7,7 +7,6 @@ import java.awt.Color;
 import java.awt.Component;
 import java.util.Enumeration;
 import java.util.Vector;
-import javax.swing.JComponent;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.UIDefaults;
@@ -15,7 +14,6 @@ import javax.swing.UIManager;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
-import oolite.starter.model.Expansion;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -105,39 +103,39 @@ public class MyJTable extends JTable {
         log.trace("prepareRenderer({}, {}, {})", renderer, rowIndex, column);
         Component c = super.prepareRenderer(renderer, rowIndex, column);
 
-        if (getModel() instanceof ExpansionsTableModel etm) {
-            rowIndex = convertRowIndexToModel(rowIndex);
-            Expansion row = etm.getRow(rowIndex);
-            
-            /*
-    private static Color coCurrent = Color.WHITE;
-    private static Color coManuallyInstalled = Color.RED;
-    private static Color coNotInstallable = Color.BLUE;
-            */
-            JComponent jc = (JComponent)c;
-            
-            if (row.getEMStatus().isIncompatible()) {
-                //jc.setBorder(new LineBorder(coIncompatible));
-                jc.setForeground(coIncompatible);
-            } else if (row.getEMStatus().isConflicting()) {
-                //jc.setBorder(new LineBorder(coConflict));
-                jc.setForeground(coConflict);
-            } else if (!row.getEMStatus().isLatest()) {
-                //jc.setBorder(new LineBorder(coUpdatable));
-                jc.setForeground(coUpdatable);
-            } else if (row.isOnline() && (row.getRequiresOxps() == null || row.getRequiresOxps().isEmpty())) {
-                //jc.setBorder(new LineBorder(coInstallableNoDeps));
-                jc.setForeground(coInstallableNoDeps);
-            } else if (row.isOnline() && row.getRequiresOxps()!= null &&!row.getRequiresOxps().isEmpty()) {
-                //jc.setBorder(new LineBorder(coInstallableWithDeps));
-                jc.setForeground(coInstallableWithDeps);
-            } else if (!row.isOnline() && row.isLocal()) {
-                //jc.setBorder(new LineBorder(coManuallyInstalled));
-                jc.setForeground(coManuallyInstalled);
-            } else {
-                //c.setBackground(null);
-            }
-        }
+//        if (getModel() instanceof ExpansionsTableModel etm) {
+//            rowIndex = convertRowIndexToModel(rowIndex);
+//            Expansion row = etm.getRow(rowIndex);
+//            
+//            /*
+//    private static Color coCurrent = Color.WHITE;
+//    private static Color coManuallyInstalled = Color.RED;
+//    private static Color coNotInstallable = Color.BLUE;
+//            */
+//            JComponent jc = (JComponent)c;
+//            
+//            if (row.getEMStatus().isIncompatible()) {
+//                //jc.setBorder(new LineBorder(coIncompatible));
+//                jc.setForeground(coIncompatible);
+//            } else if (row.getEMStatus().isConflicting()) {
+//                //jc.setBorder(new LineBorder(coConflict));
+//                jc.setForeground(coConflict);
+//            } else if (!row.getEMStatus().isLatest()) {
+//                //jc.setBorder(new LineBorder(coUpdatable));
+//                jc.setForeground(coUpdatable);
+//            } else if (row.isOnline() && (row.getRequiresOxps() == null || row.getRequiresOxps().isEmpty())) {
+//                //jc.setBorder(new LineBorder(coInstallableNoDeps));
+//                jc.setForeground(coInstallableNoDeps);
+//            } else if (row.isOnline() && row.getRequiresOxps()!= null &&!row.getRequiresOxps().isEmpty()) {
+//                //jc.setBorder(new LineBorder(coInstallableWithDeps));
+//                jc.setForeground(coInstallableWithDeps);
+//            } else if (!row.isOnline() && row.isLocal()) {
+//                //jc.setBorder(new LineBorder(coManuallyInstalled));
+//                jc.setForeground(coManuallyInstalled);
+//            } else {
+//                //c.setBackground(null);
+//            }
+//        }
 
         return c;
     }

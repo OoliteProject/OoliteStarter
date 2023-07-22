@@ -649,7 +649,7 @@ public class Oolite implements PropertyChangeListener {
                 int index = resultList.indexOf(local);
                 Expansion remote = resultList.get(index);
                 
-//                remote.setOnline( remote.isOnline() || local.isOnline());
+                remote.setOnline( remote.isOnline() || local.isOnline());
                 if (local.getLocalFile() != null) {
                     remote.setLocalFile(local.getLocalFile());
                 }

@@ -2,6 +2,7 @@
  */
 package oolite.starter.ui;
 
+import java.awt.Color;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import javax.swing.SwingUtilities;
@@ -44,6 +45,7 @@ public class ExpansionPanel extends javax.swing.JPanel implements PropertyChange
     }
     
     private void update() {
+        jpDownThere.removeAll();
         if (data == null) {
             txtDescription.setText("");
             txtLocalFile.setText("");
@@ -68,7 +70,47 @@ public class ExpansionPanel extends javax.swing.JPanel implements PropertyChange
             btEnable.setEnabled(data.isLocal() && !data.isEnabled());
             btDisable.setEnabled(data.isLocal() && data.isEnabled());
             btRemove.setEnabled(data.isLocal());
+            
+            if (data.isOnline()) {
+                jpDownThere.add(new Tag("Online", Color.GREEN));
+            }
+            if (data.isLocal() && data.isEnabled()) {
+                jpDownThere.add(new Tag("Enabled", Color.GREEN));
+            }
+            if (data.isLocal() && !data.isEnabled()) {
+                jpDownThere.add(new Tag("Disabled", Color.GREEN));
+            }
+            
+            if (data.isOnline() && !data.isEnabled()) {
+                jpDownThere.add(new Tag("Installable", Color.YELLOW));
+            }
+            if (data.isLocal() && data.getEMStatus().isLatest()) {
+                jpDownThere.add(new Tag("Current", Color.WHITE));
+            }
+            if (data.isLocal() && !data.getEMStatus().isLatest()) {
+                jpDownThere.add(new Tag("Updatable", Color.CYAN));
+            }
+            if (data.getEMStatus().isConflicting()) {
+                jpDownThere.add(new Tag("Conflict", Color.RED));
+            }
+            if (data.isOnline() && data.getEMStatus().isMissingDeps()) {
+                jpDownThere.add(new Tag("Install+", Color.ORANGE));
+            }
+            if (data.isEnabled() && data.getEMStatus().isConflicting()) {
+                jpDownThere.add(new Tag("Conflict", new Color(150, 70, 50)));
+            }
+            if (data.getEMStatus().isIncompatible()) {
+                jpDownThere.add(new Tag("Incompatible", Color.GRAY));
+            }
+            if (data.isLocal() && !data.isManaged()) {
+                jpDownThere.add(new Tag("Manual", Color.RED));
+            }
+            if (data.isLocal() && !data.isOnline()) {
+                jpDownThere.add(new Tag("No download", Color.BLUE));
+            }
         }
+        validate();
+        repaint();
     }
 
     /**
@@ -100,6 +142,7 @@ public class ExpansionPanel extends javax.swing.JPanel implements PropertyChange
         txtMinVersion = new javax.swing.JTextField();
         jLabel8 = new javax.swing.JLabel();
         txtMaxVersion = new javax.swing.JTextField();
+        jpDownThere = new javax.swing.JPanel();
 
         jLabel1.setText("Description");
 
@@ -172,6 +215,8 @@ public class ExpansionPanel extends javax.swing.JPanel implements PropertyChange
 
         txtMaxVersion.setEditable(false);
 
+        jpDownThere.setAlignmentX(0.0F);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -179,33 +224,36 @@ public class ExpansionPanel extends javax.swing.JPanel implements PropertyChange
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel1)
-                    .addComponent(jLabel2)
-                    .addComponent(jLabel3)
-                    .addComponent(jLabel4)
-                    .addComponent(jLabel5)
-                    .addComponent(jLabel6))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jpDownThere, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel7)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtMinVersion)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel1)
+                            .addComponent(jLabel2)
+                            .addComponent(jLabel3)
+                            .addComponent(jLabel4)
+                            .addComponent(jLabel5)
+                            .addComponent(jLabel6))
                         .addGap(18, 18, 18)
-                        .addComponent(jLabel8)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtMaxVersion))
-                    .addComponent(txtLocalFile)
-                    .addComponent(txtRequires)
-                    .addComponent(txtConflicts)
-                    .addComponent(txtOptional)
-                    .addComponent(jScrollPane1))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(btRemove, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btDisable, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btEnable, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btInstall, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel7)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(txtMinVersion)
+                                .addGap(18, 18, 18)
+                                .addComponent(jLabel8)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(txtMaxVersion))
+                            .addComponent(txtLocalFile)
+                            .addComponent(txtRequires)
+                            .addComponent(txtConflicts)
+                            .addComponent(txtOptional)
+                            .addComponent(jScrollPane1))
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(btRemove, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btDisable, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btEnable, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btInstall, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -246,7 +294,9 @@ public class ExpansionPanel extends javax.swing.JPanel implements PropertyChange
                     .addComponent(txtMinVersion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel8)
                     .addComponent(txtMaxVersion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(35, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(jpDownThere, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -301,6 +351,7 @@ public class ExpansionPanel extends javax.swing.JPanel implements PropertyChange
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JPanel jpDownThere;
     private javax.swing.JTextField txtConflicts;
     private javax.swing.JTextArea txtDescription;
     private javax.swing.JTextField txtLocalFile;

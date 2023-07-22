@@ -528,6 +528,20 @@ public class Expansion implements Comparable<Expansion> {
             return false;
         }
     }
+    
+    /**
+     * Returns true if this expansion is managed.
+     * 
+     * @return 
+     */
+    public boolean isManaged() {
+        try {
+            return oolite.isManaged(this);
+        } catch (IOException e) {
+            log.info("Could not determine isManaged", e);
+            return false;
+        }
+    }
 
     /**
      * Returns the oolite handler for this expansion.
