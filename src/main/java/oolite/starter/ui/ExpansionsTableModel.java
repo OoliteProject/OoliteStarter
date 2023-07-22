@@ -147,4 +147,34 @@ public class ExpansionsTableModel extends AbstractTableModel implements Property
             SwingUtilities.invokeLater(() -> fireTableRowsUpdated(index, index) );
         }
     }
+    
+    /**
+     * Returns the number of expansions that are missing required expansions.
+     * 
+     * @return the number
+     */
+    public int getNumberOfExpansionsMissingDeps() {
+        int result = 0;
+        for (Expansion e: data) {
+            if (e.isEnabled() && e.getEMStatus().isMissingDeps()) {
+                result++;
+            }
+        }
+        return result;
+    }
+    
+    /**
+     * Returns the number of expansions that are conflicting with something.
+     * 
+     * @return the number
+     */
+    public int getNumberOfExpansionsConflicting() {
+        int result = 0;
+        for (Expansion e: data) {
+            if (e.isEnabled() && e.getEMStatus().isConflicting()) {
+                result++;
+            }
+        }
+        return result;
+    }
 }

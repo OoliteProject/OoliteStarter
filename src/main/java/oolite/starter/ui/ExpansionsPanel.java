@@ -3,6 +3,7 @@
 package oolite.starter.ui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ItemEvent;
 import java.awt.event.MouseAdapter;
@@ -129,8 +130,19 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
                 }
             }
             trw.setRowFilter(RowFilter.andFilter(filters));
+
+            pnStatus.removeAll();
             
-            txtStatus.setText(String.format("%d expansions", trw.getViewRowCount()));
+            Badge b = new Badge("Expansions", String.valueOf(trw.getViewRowCount()), Color.BLACK);
+            pnStatus.add(b);
+            
+            b = new Badge("MissingDeps", String.valueOf(model.getNumberOfExpansionsMissingDeps()), Color.BLACK);
+            pnStatus.add(b);
+            
+            b = new Badge("Conflicts", String.valueOf(model.getNumberOfExpansionsConflicting()), Color.BLACK);
+            pnStatus.add(b);
+            
+            pnStatus.validate();
         }
     }
     
@@ -201,7 +213,6 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
-        java.awt.GridBagConstraints gridBagConstraints;
 
         jpToolbar = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
@@ -218,8 +229,7 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
         jSplitPane1 = new javax.swing.JSplitPane();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new MyJTable();
-        jPanel1 = new javax.swing.JPanel();
-        txtStatus = new javax.swing.JLabel();
+        pnStatus = new javax.swing.JPanel();
 
         setName("OXPs/OXZs"); // NOI18N
         setLayout(new java.awt.BorderLayout());
@@ -390,15 +400,8 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
 
         add(jSplitPane1, java.awt.BorderLayout.CENTER);
 
-        jPanel1.setLayout(new java.awt.GridBagLayout());
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 0, 6, 1133);
-        jPanel1.add(txtStatus, gridBagConstraints);
-
-        add(jPanel1, java.awt.BorderLayout.PAGE_END);
+        pnStatus.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
+        add(pnStatus, java.awt.BorderLayout.PAGE_END);
     }// </editor-fold>//GEN-END:initComponents
 
     private void cbFilterModeItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbFilterModeItemStateChanged
@@ -529,7 +532,6 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
     private javax.swing.JComboBox<String> cbFilterMode;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
@@ -537,8 +539,8 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JTable jTable1;
     private javax.swing.JPanel jpToolbar;
+    private javax.swing.JPanel pnStatus;
     private javax.swing.JTextField txtFilterText;
-    private javax.swing.JLabel txtStatus;
     // End of variables declaration//GEN-END:variables
 
     @Override

@@ -24,9 +24,10 @@
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
-              <Component id="jlName" min="-2" max="-2" attributes="0"/>
+              <EmptySpace min="-2" max="-2" attributes="0"/>
+              <Component id="jlName" pref="44" max="32767" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="txtValue" pref="59" max="32767" attributes="0"/>
+              <Component id="txtValue" min="-2" pref="40" max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -41,11 +42,15 @@
   </Layout>
   <SubComponents>
     <Component class="javax.swing.JLabel" name="jlName">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="test"/>
+      </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="txtValue">
       <Properties>
         <Property name="editable" type="boolean" value="false"/>
         <Property name="text" type="java.lang.String" value="jTextField1"/>
+        <Property name="enabled" type="boolean" value="false"/>
       </Properties>
     </Component>
   </SubComponents>

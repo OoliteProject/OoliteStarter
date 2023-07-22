@@ -216,6 +216,7 @@ public class ExpansionPanel extends javax.swing.JPanel implements PropertyChange
         txtMaxVersion.setEditable(false);
 
         jpDownThere.setAlignmentX(0.0F);
+        jpDownThere.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
