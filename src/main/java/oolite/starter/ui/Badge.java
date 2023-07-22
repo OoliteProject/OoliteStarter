@@ -74,6 +74,7 @@ public class Badge extends javax.swing.JPanel {
         jlName.setText("test");
 
         txtValue.setEditable(false);
+        txtValue.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
         txtValue.setText("jTextField1");
         txtValue.setEnabled(false);
 

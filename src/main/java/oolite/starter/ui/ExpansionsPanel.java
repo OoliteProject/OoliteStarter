@@ -133,23 +133,9 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
                 }
             }
             trw.setRowFilter(RowFilter.andFilter(filters));
-
-            pnStatus.removeAll();
             
-            pnStatus.add(new Badge("Expansions", String.valueOf(trw.getViewRowCount()), Color.BLACK));
-
-            int y = model.getNumberOfExpansionsMissingDeps();
-            if (y>0) {
-                pnStatus.add(new Badge("MissingDeps", String.valueOf(y), Configuration.COLOR_ATTENTION));
-            }
-            
-            int x = model.getNumberOfExpansionsConflicting();
-            if (x > 0) {
-                pnStatus.add(new Badge("Conflicts", String.valueOf(x), Configuration.COLOR_ATTENTION));
-            }
-            
-            pnStatus.validate();
         }
+        jTable1.repaint();
     }
     
     private void showDetailsOfSelection() {
@@ -181,6 +167,24 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
         oolite.addOoliteListener(this);
     }
     
+    void updateBadges() {
+        pnStatus.removeAll();
+
+        pnStatus.add(new Badge("Expansions", String.valueOf(trw.getViewRowCount()), Color.BLACK));
+
+        int y = model.getNumberOfExpansionsMissingDeps();
+        if (y>0) {
+            pnStatus.add(new Badge("MissingDeps", String.valueOf(y), Configuration.COLOR_ATTENTION));
+        }
+
+        int x = model.getNumberOfExpansionsConflicting();
+        if (x > 0) {
+            pnStatus.add(new Badge("Conflicts", String.valueOf(x), Configuration.COLOR_ATTENTION));
+        }
+
+        pnStatus.validate();
+    }
+    
     /**
      * Updates the expansionspanel display.
      */
@@ -189,6 +193,10 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
             expansions = oolite.getAllExpansions();
 
             model = new ExpansionsTableModel(expansions);
+            model.addTableModelListener(tme -> {
+                updateBadges();
+            });
+            
             jTable1.setRowSorter(null);
             jTable1.setModel(model);
             
