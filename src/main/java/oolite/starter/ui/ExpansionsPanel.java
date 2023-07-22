@@ -216,7 +216,7 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
         btReload = new javax.swing.JButton();
         jSplitPane1 = new javax.swing.JSplitPane();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        jTable1 = new MyJTable();
         jPanel1 = new javax.swing.JPanel();
         txtStatus = new javax.swing.JLabel();
 

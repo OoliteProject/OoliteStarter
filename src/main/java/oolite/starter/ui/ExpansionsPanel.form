@@ -293,6 +293,9 @@
                   <JTableSelectionModel selectionMode="0"/>
                 </Property>
               </Properties>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new MyJTable()"/>
+              </AuxValues>
             </Component>
           </SubComponents>
         </Container>
