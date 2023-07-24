@@ -102,12 +102,12 @@ public class ConfigurationTest {
     public void testActivateInstallation_Installation() throws MalformedURLException {
         log.info("testActivateInstallation_Installation");
         Configuration c = new Configuration();
-        try {
-            c.activateInstallation((Installation)null);
-            fail("expected exception");
-        } catch (IllegalArgumentException e) {
-            assertEquals("installation must be known", e.getMessage());
-            log.debug("caught expected exception");
-        }
+        Installation i = new Installation();
+        c.getInstallations().add(i);
+        c.activateInstallation(i);
+        
+        assertEquals(i, c.getActiveInstallation());
+        c.activateInstallation((Installation)null);
+        assertNull(c.getActiveInstallation());
     }
 }
