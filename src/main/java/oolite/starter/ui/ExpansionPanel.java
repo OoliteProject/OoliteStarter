@@ -48,6 +48,7 @@ public class ExpansionPanel extends javax.swing.JPanel implements PropertyChange
     private void update() {
         jpDownThere.removeAll();
         if (data == null) {
+            txtTitle.setText("");
             txtDescription.setText("");
             txtLocalFile.setText("");
             txtRequires.setText("");
@@ -60,6 +61,7 @@ public class ExpansionPanel extends javax.swing.JPanel implements PropertyChange
             btDisable.setEnabled(false);
             btRemove.setEnabled(false);
         } else {
+            txtTitle.setText(data.getTitle());
             txtDescription.setText(data.getDescription());
             txtLocalFile.setText(String.valueOf(data.getLocalFile()));
             txtRequires.setText(String.valueOf(data.getRequiresOxps()));
@@ -151,6 +153,8 @@ public class ExpansionPanel extends javax.swing.JPanel implements PropertyChange
         jLabel8 = new javax.swing.JLabel();
         txtMaxVersion = new javax.swing.JTextField();
         jpDownThere = new javax.swing.JPanel();
+        jLabel9 = new javax.swing.JLabel();
+        txtTitle = new javax.swing.JTextField();
 
         jLabel1.setText("Description");
 
@@ -226,6 +230,10 @@ public class ExpansionPanel extends javax.swing.JPanel implements PropertyChange
         jpDownThere.setAlignmentX(0.0F);
         jpDownThere.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
 
+        jLabel9.setText("Title");
+
+        txtTitle.setEditable(false);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -234,29 +242,34 @@ public class ExpansionPanel extends javax.swing.JPanel implements PropertyChange
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jpDownThere, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel1)
-                            .addComponent(jLabel2)
-                            .addComponent(jLabel3)
-                            .addComponent(jLabel4)
-                            .addComponent(jLabel5)
-                            .addComponent(jLabel6))
-                        .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel6)
+                                .addGap(18, 18, 18)
                                 .addComponent(jLabel7)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txtMinVersion)
-                                .addGap(18, 18, 18)
+                                .addComponent(txtMinVersion, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(jLabel8)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(txtMaxVersion))
-                            .addComponent(txtLocalFile)
-                            .addComponent(txtRequires)
-                            .addComponent(txtConflicts)
-                            .addComponent(txtOptional)
-                            .addComponent(jScrollPane1))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel9)
+                                    .addComponent(jLabel2)
+                                    .addComponent(jLabel3)
+                                    .addComponent(jLabel4)
+                                    .addComponent(jLabel5)
+                                    .addComponent(jLabel1))
+                                .addGap(35, 35, 35)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(txtLocalFile, javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(txtRequires, javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(txtConflicts, javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(txtOptional)
+                                    .addComponent(txtTitle))))
                         .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(btRemove, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -269,8 +282,7 @@ public class ExpansionPanel extends javax.swing.JPanel implements PropertyChange
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jScrollPane1)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(btInstall)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -279,7 +291,13 @@ public class ExpansionPanel extends javax.swing.JPanel implements PropertyChange
                         .addComponent(btDisable)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btRemove))
-                    .addComponent(jLabel1))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel9)
+                            .addComponent(txtTitle, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel1))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtLocalFile, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -305,7 +323,7 @@ public class ExpansionPanel extends javax.swing.JPanel implements PropertyChange
                     .addComponent(txtMaxVersion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(jpDownThere, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -359,6 +377,7 @@ public class ExpansionPanel extends javax.swing.JPanel implements PropertyChange
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JPanel jpDownThere;
     private javax.swing.JTextField txtConflicts;
@@ -368,6 +387,7 @@ public class ExpansionPanel extends javax.swing.JPanel implements PropertyChange
     private javax.swing.JTextField txtMinVersion;
     private javax.swing.JTextField txtOptional;
     private javax.swing.JTextField txtRequires;
+    private javax.swing.JTextField txtTitle;
     // End of variables declaration//GEN-END:variables
 
     @Override
