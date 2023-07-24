@@ -1182,10 +1182,10 @@ public class Oolite implements PropertyChangeListener {
             }
             
             if (e.getVersion().equals(ds.get(0).getVersion())) {
-                log.warn("latest = true on {}", e.getIdentifier());
+                log.trace("latest = true on {}", e.getIdentifier());
                 e.getEMStatus().setLatest( true );
             } else {
-                log.warn("latest = false on {}", e.getIdentifier());
+                log.trace("latest = false on {}", e.getIdentifier());
                 e.getEMStatus().setLatest( false );
             }
             
