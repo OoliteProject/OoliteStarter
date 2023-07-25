@@ -93,10 +93,27 @@ public class MainFrame extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setMinimumSize(new java.awt.Dimension(800, 600));
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+        });
         getContentPane().add(jTabbedPane1, java.awt.BorderLayout.CENTER);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        // trigger Oolite shutdown
+        if (oolite.isRunning()) {
+            oolite.terminate();
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                log.debug("thread interrupted while waiting for Oolite to shutdown", e);
+            }
+        }
+    }//GEN-LAST:event_formWindowClosing
 
     private static void customizeSplashScreen() {
         SplashScreen ss = SplashScreen.getSplashScreen();

@@ -77,6 +77,7 @@ public class Oolite implements PropertyChangeListener {
     private static final String OOLITE_VERSION = "version";
     
     private boolean terminate = false;
+    private int running = 0;
 
     private void validateCompatibility(List<Expansion> resultList) {
         log.warn("validateCompatibility(...)");
@@ -447,6 +448,15 @@ public class Oolite implements PropertyChangeListener {
         terminate = true;
     }
     
+    /**
+     * Checks whether Oolite is running some process.
+     * 
+     * @return true is some process is running, false otherwise
+     */
+    public boolean isRunning() {
+        return running > 0;
+    }
+    
     void destroyProcessTree(ProcessHandle ph, boolean forcibly) {
         if (ph.isAlive()) {
             if (forcibly) {
@@ -478,6 +488,7 @@ public class Oolite implements PropertyChangeListener {
 
             ProcessBuilder pb = new ProcessBuilder(command);
             pb.directory(dir);
+            running++;
             Process p = pb.start();
             
             StreamGobbler outputGobbler = new StreamGobbler(p.getInputStream(), logOolite::info);
@@ -503,6 +514,7 @@ public class Oolite implements PropertyChangeListener {
             t1.join(2000);
             t2.join(2000);
             
+            running--;
             fireTerminated();
             
             log.info("Process exited with code {}", p.exitValue());
