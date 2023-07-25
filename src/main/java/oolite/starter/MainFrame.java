@@ -104,11 +104,12 @@ public class MainFrame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        log.debug("formWindowClosing(...)");
         // trigger Oolite shutdown
         if (oolite.isRunning()) {
             oolite.terminate();
             try {
-                Thread.sleep(2000);
+                Thread.sleep(3000);
             } catch (InterruptedException e) {
                 log.debug("thread interrupted while waiting for Oolite to shutdown", e);
             }

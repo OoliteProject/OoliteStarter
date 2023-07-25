@@ -18,7 +18,7 @@
   <Loggers>
         <!-- error, warn, info, debug, trace -->
     <Logger level="info" name="oolite.starter.Configuration"/>
-    <Logger level="info" name="oolite.starter.Oolite"/>
+    <Logger level="warn" name="oolite.starter.Oolite"/>
     <Logger level="info" name="oolite.starter.GithubVersionChecker"/>
     <Logger level="warn" name="oolite.starter.model.ProcessData"/>
     <Logger level="info" name="oolite.starter.ui.AnnotationRenderer"/>

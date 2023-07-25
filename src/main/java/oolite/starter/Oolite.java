@@ -80,7 +80,7 @@ public class Oolite implements PropertyChangeListener {
     private int running = 0;
 
     private void validateCompatibility(List<Expansion> resultList) {
-        log.warn("validateCompatibility(...)");
+        log.debug("validateCompatibility(...)");
         ModuleDescriptor.Version oolite =  ModuleDescriptor.Version.parse(configuration.getActiveInstallation().getVersion());
         
         for (Expansion e: resultList) {
@@ -155,7 +155,7 @@ public class Oolite implements PropertyChangeListener {
                 for (String ref: conflicts) {
                     List<Expansion> cs = getExpansionByReference(ref, expansions, true);
                     if (!cs.isEmpty()) {
-                        log.warn("Expansion {} conflicts with {}", e.getIdentifier(), cs);
+                        log.info("Expansion {} conflicts with {}", e.getIdentifier(), cs);
                         e.getEMStatus().setConflicting(true);
                     }
                 }
@@ -250,7 +250,7 @@ public class Oolite implements PropertyChangeListener {
                     try {
                         result.add(createSaveGame(f));
                     } catch (Exception e) {
-                        log.warn("Skipping savegame {}", f.getAbsolutePath(), e);
+                        log.info("Skipping savegame {}", f.getAbsolutePath(), e);
                     }
                 }
             }
@@ -459,17 +459,30 @@ public class Oolite implements PropertyChangeListener {
     
     void destroyProcessTree(ProcessHandle ph, boolean forcibly) {
         if (ph.isAlive()) {
-            if (forcibly) {
-                log.warn("destroying forcibly pid {}", ph.pid());
-                ph.destroyForcibly();
-            } else {
-                log.warn("destroying pid {}", ph.pid());
-                ph.destroy();
+            if (Util.getOperatingSystemType() == Util.OSType.LINUX) {
+                try {
+                    List<String> cmd = new ArrayList<>();
+                    cmd.add("pkill");
+                    cmd.add("-P");
+                    cmd.add(String.valueOf(ph.pid()));
+                    run(cmd, new File("."));
+                } catch (Exception e) {
+                    log.info("Could not run pkill");
+                }
             }
             
             ph.descendants().forEach(t -> {
                 destroyProcessTree(t, forcibly);
             });
+
+            if (forcibly) {
+                log.info("destroying forcibly pid {}", ph.pid());
+                ph.destroyForcibly();
+            } else {
+                log.info("destroying pid {}", ph.pid());
+                ph.destroy();
+            }
+            
         }
     }
     
@@ -477,7 +490,7 @@ public class Oolite implements PropertyChangeListener {
      * Runs Oolite using the specified command in the specified directory.
      */
     public void run(List<String> command, File dir) throws IOException, InterruptedException, ProcessRunException {
-        log.debug("run({}, {})", command, dir);
+        log.warn("run({}, {})", command, dir);
 
         if (configuration != null) {
             injectExpansion();
@@ -514,7 +527,6 @@ public class Oolite implements PropertyChangeListener {
             t1.join(2000);
             t2.join(2000);
             
-            running--;
             fireTerminated();
             
             log.info("Process exited with code {}", p.exitValue());
@@ -523,6 +535,7 @@ public class Oolite implements PropertyChangeListener {
             }
             
         } finally {
+            running--;
             if (configuration != null) {
                 try {
                     removeExpansion();
@@ -565,7 +578,7 @@ public class Oolite implements PropertyChangeListener {
                         case "maximum_version":
                             break;
                         default:
-                            log.warn("unknown dependency key {}", key);
+                            log.info("unknown dependency key {}", key);
                             break;
                     }
                 }
@@ -653,14 +666,14 @@ public class Oolite implements PropertyChangeListener {
                     try {
                         result.setUploadDate(LocalDateTime.ofEpochSecond(Long.parseLong(value), 0, ZoneOffset.UTC));
                     } catch (NumberFormatException e) {
-                        log.warn("NumberFormatException on {} line {}:{}: {}", kvc.start.getTokenSource().getSourceName(), kvc.start.getLine(), kvc.start.getCharPositionInLine(), e.getMessage());
+                        log.info("NumberFormatException on {} line {}:{}: {}", kvc.start.getTokenSource().getSourceName(), kvc.start.getLine(), kvc.start.getCharPositionInLine(), e.getMessage());
                     }
                     break;
                 case OOLITE_VERSION:
                     result.setVersion(value);
                     break;
                 default:
-                    log.warn("unknown {}->{}", key, value);
+                    log.info("unknown {}->{}", key, value);
             }
         }
         return result;
@@ -1205,7 +1218,7 @@ public class Oolite implements PropertyChangeListener {
                 for (String dep: deps) {
                     List<Expansion> ds = getExpansionByReference(dep, expansions, true);
                     if (ds.isEmpty()) {
-                        log.warn("Expansion {} is missing {}", e.getIdentifier(), dep);
+                        log.info("Expansion {} is missing {}", e.getIdentifier(), dep);
                         e.getEMStatus().setMissingDeps(true);
                     }
                 }
@@ -1677,7 +1690,7 @@ public class Oolite implements PropertyChangeListener {
      * @return the installation
      */
     public static Installation populateFromHomeDir(File homeDir) {
-        log.warn("populateFromHomeDir({})", homeDir);
+        log.debug("populateFromHomeDir({})", homeDir);
         
         Installation i = new Installation();
         i.setHomeDir(homeDir.getAbsolutePath());
