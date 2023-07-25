@@ -29,6 +29,7 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -74,6 +75,8 @@ public class Oolite implements PropertyChangeListener {
     private static final String OOLITE_IDENTIFIER = "identifier";
     private static final String OOLITE_USER_HOME = "user.home";
     private static final String OOLITE_VERSION = "version";
+    
+    private boolean terminate = false;
 
     private void validateCompatibility(List<Expansion> resultList) {
         log.warn("validateCompatibility(...)");
@@ -437,6 +440,30 @@ public class Oolite implements PropertyChangeListener {
     }
     
     /**
+     * Terminates a running process.
+     * Sets a flag to terminates whichever process is being executed by run(...).
+     */
+    public void terminate() {
+        terminate = true;
+    }
+    
+    void destroyProcessTree(ProcessHandle ph, boolean forcibly) {
+        if (ph.isAlive()) {
+            if (forcibly) {
+                log.warn("destroying forcibly pid {}", ph.pid());
+                ph.destroyForcibly();
+            } else {
+                log.warn("destroying pid {}", ph.pid());
+                ph.destroy();
+            }
+            
+            ph.descendants().forEach(t -> {
+                destroyProcessTree(t, forcibly);
+            });
+        }
+    }
+    
+    /**
      * Runs Oolite using the specified command in the specified directory.
      */
     public void run(List<String> command, File dir) throws IOException, InterruptedException, ProcessRunException {
@@ -460,9 +487,18 @@ public class Oolite implements PropertyChangeListener {
             Thread t2 = new Thread(errorGobbler);
             t1.start();
             t2.start();
-            
+
+            terminate = false;
             fireLaunched(new ProcessData(dir, command, p.pid()));
-            p.waitFor();
+            while (p.isAlive()) {
+                p.waitFor(1000, TimeUnit.MILLISECONDS);
+                
+                if (terminate) {
+                    destroyProcessTree(p.toHandle(), false);
+                    Thread.sleep(1000);
+                    destroyProcessTree(p.toHandle(), true);
+                }
+            }
             
             t1.join(2000);
             t2.join(2000);

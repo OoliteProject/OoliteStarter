@@ -366,7 +366,7 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
                 }
             };
             glassPane.setLayout(new GridBagLayout());
-            waitPanel = new WaitPanel();
+            waitPanel = new WaitPanel(oolite);
             glassPane.add(waitPanel, new GridBagConstraints(1, 1, 1, 1, 1.0d, 1.0d, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(50, 50, 50, 50), 0, 0));
             glassPane.addMouseListener(new MouseAdapter() {
             });
