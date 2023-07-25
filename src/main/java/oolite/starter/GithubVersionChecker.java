@@ -8,6 +8,8 @@ import com.vdurmont.semver4j.Semver;
 import java.awt.Component;
 import java.awt.EventQueue;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -41,7 +43,14 @@ public class GithubVersionChecker {
     public void init() throws IOException {
         versions = new ArrayList<>();
         try {
-            List<Object> releases = new Genson().deserialize(getReleasesURL().openStream(), List.class);
+            URL url = getReleasesURL();
+            url.openStream();
+            HttpURLConnection connection = (HttpURLConnection)url.openConnection();
+            connection.setRequestProperty("Referer", "http://oolite.org");
+            connection.setDoInput(true);
+            InputStream in = connection.getInputStream();
+            
+            List<Object> releases = new Genson().deserialize(in, List.class);
             for (Object release: releases) {
                 if (release instanceof Map<?,?> map) {
                     String v = String.valueOf(map.get("tag_name"));
