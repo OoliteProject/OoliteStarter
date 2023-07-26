@@ -1,0 +1,160 @@
+{
+    "ATTACK_SHIP" =     {
+        ATTACKED =         (
+            setTargetToPrimaryAggressor,
+            "setStateTo: ATTACK_SHIP"
+        );
+        ENTER =         (
+            performAttack
+        );
+        "INCOMING_MISSILE" =         (
+            fightOrFleeMissile,
+            setTargetToPrimaryAggressor,
+            fireMissile,
+            "setStateTo: ATTACK_SHIP"
+        );
+        "ROLL_1" =         (
+            fireMissile,
+            "pauseAI: 6.0"
+        );
+        "ROLL_2" =         (
+            fireMissile,
+            "pauseAI: 12.0"
+        );
+        "ROLL_3" =         (
+            "pauseAI: 6.0"
+        );
+        "TARGET_DESTROYED" =         (
+            "setStateTo: LOOK_FOR_TARGETS"
+        );
+        "TARGET_LOST" =         (
+            "setStateTo: LOOK_FOR_TARGETS"
+        );
+        UPDATE =         (
+            "rollD: 3"
+        );
+    };
+    GLOBAL =     {
+        ENTER =         (
+            "setStateTo: LOOK_FOR_TARGETS"
+        );
+    };
+    "HEAD_FOR_PLANET" =     {
+        ATTACKED =         (
+            setTargetToPrimaryAggressor,
+            deployEscorts,
+            "setStateTo: ATTACK_SHIP"
+        );
+        "COURSE_OK" =         (
+            "setSpeedFactorTo: 1.0",
+            performFlyToRangeFromDestination
+        );
+        "DESIRED_RANGE_ACHIEVED" =         (
+            "setStateTo: LOOK_FOR_TARGETS"
+        );
+        ENTER =         (
+            setCourseToPlanet,
+            "setDesiredRangeTo: 80000.0",
+            checkCourseToDestination,
+            checkForNormalSpace
+        );
+        "INCOMING_MISSILE" =         (
+            fightOrFleeMissile,
+            setTargetToPrimaryAggressor,
+            "setStateTo: ATTACK_SHIP"
+        );
+        "INTERSTELLAR_SPACE" =         (
+            "setStateTo: HEAD_FOR_WITCHPOINT"
+        );
+        RESTARTED =         (
+            setCourseToPlanet,
+            "setDesiredRangeTo: 80000.0",
+            checkCourseToDestination,
+            checkForNormalSpace
+        );
+        "TARGET_FOUND" =         (
+            setTargetToFoundTarget,
+            deployEscorts,
+            "setStateTo: ATTACK_SHIP"
+        );
+        UPDATE =         (
+            setCourseToPlanet,
+            "setDesiredRangeTo: 80000.0",
+            checkCourseToDestination,
+            scanForNonThargoid,
+            "pauseAI: 10.0"
+        );
+        "WAYPOINT_SET" =         (
+            "setAITo: gotoWaypointAI.plist"
+        );
+    };
+    "HEAD_FOR_WITCHPOINT" =     {
+        ATTACKED =         (
+            setTargetToPrimaryAggressor,
+            deployEscorts,
+            "setStateTo: ATTACK_SHIP"
+        );
+        "COURSE_OK" =         (
+            "setSpeedFactorTo: 1.0",
+            performFlyToRangeFromDestination
+        );
+        "DESIRED_RANGE_ACHIEVED" =         (
+            "setStateTo: LOOK_FOR_TARGETS"
+        );
+        ENTER =         (
+            setCourseToWitchpoint,
+            "setDesiredRangeTo: 15000.0",
+            checkCourseToDestination
+        );
+        "INCOMING_MISSILE" =         (
+            fightOrFleeMissile,
+            setTargetToPrimaryAggressor,
+            "setStateTo: ATTACK_SHIP"
+        );
+        "TARGET_FOUND" =         (
+            setTargetToFoundTarget,
+            deployEscorts,
+            "setStateTo: ATTACK_SHIP"
+        );
+        UPDATE =         (
+            setCourseToWitchpoint,
+            "setDesiredRangeTo: 15000.0",
+            checkCourseToDestination,
+            scanForNonThargoid,
+            "pauseAI: 10.0"
+        );
+        "WAYPOINT_SET" =         (
+            "setAITo: gotoWaypointAI.plist"
+        );
+    };
+    "LOOK_FOR_TARGETS" =     {
+        ATTACKED =         (
+            setTargetToPrimaryAggressor,
+            deployEscorts,
+            "setStateTo: ATTACK_SHIP"
+        );
+        ENTER =         (
+            "setSpeedTo: 0.0",
+            performTumble,
+            scanForNonThargoid,
+            "pauseAI: 5.0"
+        );
+        "INCOMING_MISSILE" =         (
+            fightOrFleeMissile,
+            setTargetToPrimaryAggressor,
+            "setStateTo: ATTACK_SHIP"
+        );
+        "NOTHING_FOUND" =         (
+            "setStateTo: HEAD_FOR_PLANET"
+        );
+        "TARGET_FOUND" =         (
+            setTargetToFoundTarget,
+            deployEscorts,
+            "setStateTo: ATTACK_SHIP"
+        );
+        UPDATE =         (
+            scanForNonThargoid,
+            "pauseAI: 5.0"
+        );
+    };
+}

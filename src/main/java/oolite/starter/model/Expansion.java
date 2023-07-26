@@ -463,7 +463,7 @@ public class Expansion implements Comparable<Expansion> {
     }
 
     /**
-     * Returns the version.
+     * Returns the expansion's version.
      * 
      * @return the version
      */
@@ -472,7 +472,7 @@ public class Expansion implements Comparable<Expansion> {
     }
 
     /**
-     * Sets the version.
+     * Sets the expansion's version.
      * 
      * @param version the version
      */

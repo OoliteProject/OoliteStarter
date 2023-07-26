@@ -600,16 +600,16 @@ public class Oolite implements PropertyChangeListener {
      */
     public Expansion createExpansion(PlistParser.ValueContext vc) {
         log.debug("createExpansion({})", vc);
-        return createExpansion(vc.dictionary());
+        return createExpansionFromManifest(vc.dictionary());
     }
 
     /**
-     * Creates an Expansion from a dictionary context.
+     * Creates an Expansion from a manifest dictionary context.
      * 
      * @param dc the dictionary context to read
      * @return the Expansion
      */    
-    public Expansion createExpansion(PlistParser.DictionaryContext dc) {
+    public Expansion createExpansionFromManifest(PlistParser.DictionaryContext dc) {
         log.debug("createExpansion({})", dc);
         Expansion result = new Expansion();
         for (PlistParser.KeyvaluepairContext kvc: dc.keyvaluepair()) {
@@ -680,17 +680,71 @@ public class Oolite implements PropertyChangeListener {
     }
     
     /**
-     * Creates an Expansion from a manifest stream.
+     * Creates an Expansion from a requires dictionary context.
+     * 
+     * @param dc the dictionary context to read
+     * @return the Expansion
+     */    
+    public Expansion createExpansionFromRequires(PlistParser.DictionaryContext dc) {
+        log.debug("createExpansion({})", dc);
+        Expansion result = new Expansion();
+        for (PlistParser.KeyvaluepairContext kvc: dc.keyvaluepair()) {
+            String key = kvc.STRING().getText();
+            String value = kvc.value().getText();
+            
+            switch (key) {
+                case "max_version":
+                    result.setMaximumOoliteVersion(value);
+                    break;
+                case OOLITE_VERSION:
+                    result.setRequiredOoliteVersion(value);
+                    break;
+                default:
+                    log.info("unknown {}->{}", key, value);
+            }
+        }
+        return result;
+    }
+    
+    /**
+     * Creates an Expansion from a manifest.plist stream.
      * 
      * @param manifest the input stream to read (typically from a file or zipfile).
      * @param sourceName name of the source for the input stream
      * @return the Expansion
      */    
-    public Expansion createExpansion(InputStream manifest, String sourceName) throws IOException {
+    public Expansion createExpansionFromManifest(InputStream manifest, String sourceName) throws IOException {
         log.debug("createExpansion({}, {})", manifest, sourceName);
         // parse plist, then create Expansion from that
         PlistParser.DictionaryContext dc = PlistUtil.parsePListDict(manifest, sourceName);
-        return createExpansion(dc);
+        return createExpansionFromManifest(dc);
+    }
+    
+    /**
+     * Creates an Expansion from a requires.plist stream.
+     * 
+     * @param manifest the input stream to read (typically from a file or zipfile).
+     * @param sourceName name of the source for the input stream
+     * @return the Expansion
+     */    
+    public Expansion createExpansionFromRequires(InputStream manifest, String sourceName) throws IOException {
+        log.debug("createExpansionFromRequiresPlist({}, {})", manifest, sourceName);
+        String oxp = sourceName;
+        if (oxp.endsWith("/requires.plist")) {
+            oxp = oxp.substring(0, oxp.length()-15);
+        }
+        
+        // parse plist, then create Expansion from that
+        PlistParser.DictionaryContext dc = PlistUtil.parsePListDict(manifest, sourceName);
+        Expansion expansion = createExpansionFromRequires(dc);
+        expansion.setIdentifier(oxp);
+        expansion.setTitle(oxp);
+        expansion.setDescription(
+                "This is some OXP implementing requires.plist.\n" +
+                "From that file almost no metadata is available. Consider switching to manifest.plist."
+        );
+        expansion.setVersion("0");
+        return expansion;
     }
     
     /**
@@ -839,12 +893,16 @@ public class Oolite implements PropertyChangeListener {
     private Expansion getExpansionFromOxp(File f) throws IOException {
         log.debug("getExpansionsFromOxp({})", f);
         File manifestFile = new File(f, "manifest.plist");
-        if (!manifestFile.isFile()) {
-            return null;
+        if (manifestFile.isFile()) {
+            InputStream stream = new FileInputStream(manifestFile);
+            return createExpansionFromManifest(stream, manifestFile.getAbsolutePath());
         }
-
-        InputStream stream = new FileInputStream(manifestFile);
-        return createExpansion(stream, manifestFile.getAbsolutePath());
+        manifestFile = new File(f, "requires.plist");
+        if (manifestFile.isFile()) {
+            InputStream stream = new FileInputStream(manifestFile);
+            return createExpansionFromRequires(stream, manifestFile.getAbsolutePath());
+        }
+        return null;
     }
     
     private Expansion getExpansionFromOxz(File f) throws IOException {
@@ -857,7 +915,7 @@ public class Oolite implements PropertyChangeListener {
 
                 if ("manifest.plist".equals(entry.getName())) {
                     InputStream stream = zipFile.getInputStream(entry);
-                    return createExpansion(stream, f.getAbsolutePath() + "!" + entry.getName());
+                    return createExpansionFromManifest(stream, f.getAbsolutePath() + "!" + entry.getName());
                 } else {
                     log.trace("ignoring zipentry {}", entry.getName());
                 }

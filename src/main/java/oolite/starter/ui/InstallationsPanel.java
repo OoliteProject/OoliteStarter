@@ -57,7 +57,7 @@ public class InstallationsPanel extends javax.swing.JPanel {
         
         configDirty = false;
         
-        setButtonColors();
+        //setButtonColors();
         
         jTable1.setDefaultRenderer(Boolean.class, new DefaultTableCellRenderer(){
             @Override
@@ -147,7 +147,7 @@ public class InstallationsPanel extends javax.swing.JPanel {
     }
     
     private void setButtonColors() {
-        log.warn("setButtonColors()");
+        log.debug("setButtonColors()");
         UIDefaults uidefaults = UIManager.getLookAndFeelDefaults();
         Color defaultBackground = uidefaults.getColor("Button.background");
 

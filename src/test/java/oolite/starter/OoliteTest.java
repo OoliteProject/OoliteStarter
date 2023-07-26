@@ -113,17 +113,33 @@ public class OoliteTest {
     }
 
     @Test
-    public void testCreateExpansion_Dictionary() throws IOException {
-        log.info("testCreateExpansion_Dictionary");
+    public void testCreateExpansionFromManifest_Dictionary() throws IOException {
+        log.info("testCreateExpansionFromManifest_Dictionary");
         
         URL url = getClass().getResource("/data/expansion.plist");
         
         Oolite oolite = new Oolite();
         PlistParser.DictionaryContext dc = PlistUtil.parsePListDict(url.openStream(), url.toString());
-        Expansion expansion = oolite.createExpansion(dc);
+        Expansion expansion = oolite.createExpansionFromManifest(dc);
         
         assertEquals("oolite.oxp.cim.camera-drones", expansion.getIdentifier());
         assertEquals("1.4", expansion.getVersion());
+    }
+    
+    @Test
+    public void testCreateExpansionFromRequires_Dictionary() throws IOException {
+        log.info("testCreateExpansionFromRequires_Dictionary");
+        
+        URL url = getClass().getResource("/data/Asteroids3D1.2.oxp/requires.plist");
+        
+        Oolite oolite = new Oolite();
+        PlistParser.DictionaryContext dc = PlistUtil.parsePListDict(url.openStream(), url.toString());
+        Expansion expansion = oolite.createExpansionFromRequires(dc);
+        
+        assertEquals(null, expansion.getIdentifier());
+        assertEquals(null, expansion.getVersion());
+        assertEquals("1.76", expansion.getRequiredOoliteVersion());
+        assertEquals(null, expansion.getMaximumOoliteVersion());
     }
     
     @Test
@@ -135,7 +151,7 @@ public class OoliteTest {
         Oolite oolite = new Oolite();
         
         try {
-            oolite.createExpansion(url.openStream(), url.toString());
+            oolite.createExpansionFromManifest(url.openStream(), url.toString());
             fail("expected exception");
         } catch (ConnectException e) {
             assertEquals("Connection refused", e.getMessage());
@@ -150,7 +166,7 @@ public class OoliteTest {
         URL url = getClass().getResource("/data/expansion.plist");
         
         Oolite oolite = new Oolite();
-        Expansion expansion = oolite.createExpansion(url.openStream(), url.toString());
+        Expansion expansion = oolite.createExpansionFromManifest(url.openStream(), url.toString());
         
         assertEquals("oolite.oxp.cim.camera-drones", expansion.getIdentifier());
         assertEquals("1.4", expansion.getVersion());
@@ -277,7 +293,9 @@ public class OoliteTest {
         oolite.setConfiguration(configuration);
         
         List<Expansion> expansions = oolite.getLocalExpansions();
-        assertEquals(1, expansions.size());
+        assertEquals(2, expansions.size());
+        assertTrue(String.valueOf(expansions.get(0).getIdentifier()).endsWith("Asteroids3D1.2.oxp"));
+        assertEquals("oolite.oxp.Norby.Addons_for_Beginners", expansions.get(1).getIdentifier());
     }
     
     @Test

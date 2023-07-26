@@ -210,111 +210,6 @@
                 </configuration>
             </plugin>
 
-            <!--
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <version>3.0.0</version>
-                <executions>
-                    <execution>
-                        <id>get-macos-jvm</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                        <configuration>
-                            <target>
-                                <mkdir dir="cache"/>
-                                <get src="${macos.jvm.url}" dest="cache/${macos.jvm.file}" skipexisting="true"/>
-                                <untar src="cache/${macos.jvm.file}" dest="target/macos/jvm" compression="gzip"/>
-                            </target>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>jpackage-app-image-creation</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                        <configuration>
-                            <target>
-                                <echo>JPackage phase One</echo>
-                                <exec executable="jpackage" failonerror="true">
-                                    <arg line="- -type app-image"/>
-                                    <arg line="- -app-version &quot;${project.version}&quot;"/>
-                                    <arg line="- -copyright Copyright"/>
-                                    <arg line="- -description &quot;Nexus is an add-on for Oolite to allow multiplayer interaction. (check http://wiki.alioth.net/index.php/Nexus)&quot;"/>
-                                    <arg line="- -name &quot;Nexus&quot;"/>
-                                    <arg line="- -dest target"/>
-                                    <arg line="- -temp target/Nexus-tmp"/>
-                                    <arg line="- -vendor hiran"/>
-                                    <arg line="- -verbose"/>
-                                    <arg line="- -icon target/classes/org/oolite/hiran/nexus/ui/Communicator_Logo_Icon.png"/>
-                                    <arg line="- -input target/dist"/>
-                                    <arg line="- -main-jar Nexus-${project.version}.jar"/>
-                                    <arg line="- -main-class ${mainclass}"/>
-                                    <arg line="- -resource-dir src/jpackage/resources"/>
-                                </exec>
-                                <copy file="src/jpackage/resources/Nexus.desktop" tofile="target/Nexus/lib/nexus-Nexus.desktop"/>
-                            </target>
-                        </configuration>
-                    </execution>
-
-                    <execution>
-                        <id>jpackage-app-image-finalization</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                        <configuration>
-                            <target>
-                                <echo>JPackage phase Two</echo>
-                                <exec executable="jpackage" failonerror="true">
-                                    <arg line="- -app-image target/Nexus"/>
-                                    <arg line="- -app-version &quot;${project.version}&quot;"/>
-                                    <arg line="- -copyright Copyright"/>
-                                    <arg line="- -description &quot;Nexus is an add-on for Oolite to allow multiplayer interaction. (check http://wiki.alioth.net/index.php/Nexus)&quot;"/>
-                                    <arg line="- -name &quot;Nexus&quot;"/>
-                                    <arg line="- -dest target"/>
-                                    <arg line="- -temp target/Nexus-tmp"/>
-                                    <arg line="- -vendor hiran"/>
-                                    <arg line="- -verbose"/>
-                                    <arg line="- -resource-dir src/jpackage/resources"/>
-                                </exec>
-                                
-                                <!- - build AppDir - ->
-                                <copy toDir="target/AppDir/usr">
-                                    <fileset dir="target/Nexus"/>
-                                </copy>
-                                <chmod file="target/AppDir/usr/bin/Nexus" perm="ugo+x"/>
-                                <symlink link="target/AppDir/AppRun" resource="usr/bin/Nexus"/>
-                                <symlink link="target/AppDir/.DirIcon" resource="usr/lib/Nexus.png"/>
-                                <concat destfile="target/AppDir/nexus.desktop">[Desktop Entry]
-Name=Oolite Nexus
-Exec=Nexus
-Icon=nexus
-Type=Application
-Categories=Game;
-</concat>
-                                <symlink link="target/AppDir/nexus.png" resource="usr/lib/Nexus.png"/>
-                                
-                                <!- - Create AppImage from AppDir - ->
-                                <mkdir dir="cache"/>
-                                <get src="${macos.jvm.url}" dest="cache/${macos.jvm.file}" skipexisting="true"/>
-                                <get src="https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage" dest="cache/appimagetool-x86_64.AppImage"/>
-                                <chmod file="cache/appimagetool-x86_64.AppImage" perm="ugo+x"/>
-                                <exec executable="cache/appimagetool-x86_64.AppImage" failonerror="true">
-                                    <env key="ARCH" value="x86_64"/>
-                                    <arg line="target/AppDir"/>
-                                    <arg line="target/Nexus-${project.version}-x86_64.AppImage"/>
-                                </exec>
-                            </target>
-                        </configuration>
-                    </execution>
-
-                </executions>
-            </plugin>
-            -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
@@ -424,6 +319,6 @@ Categories=Game;
             <artifactId>semver4j</artifactId>
             <version>3.1.0</version>
         </dependency>
-        
+                
     </dependencies>
 </project>
