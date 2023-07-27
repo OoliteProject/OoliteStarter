@@ -1,0 +1,22 @@
+{
+    GLOBAL = {ENTER = (setUpEscorts, "setStateTo: LURK"); }; 
+      
+    "ATTACK_SHIP" = {
+        ENTER = (performAttack); 
+        ATTACKED = (setTargetToPrimaryAggressor, "setStateTo: ATTACK_SHIP"); 
+        "INCOMING_MISSILE" = (fightOrFleeMissile); 
+        "TARGET_DESTROYED" = ("setStateTo: LURK"); 
+        "TARGET_LOST" = ("setStateTo: LURK"); 
+    }; 
+      
+  LURK = {
+        ENTER = ("setSpeedTo: 0.0", performIdle); 
+        ATTACKED = (setTargetToPrimaryAggressor, groupAttackTarget); 
+        "INCOMING_MISSILE" = (fightOrFleeMissile); 
+        "TARGET_FOUND" = (setTargetToFoundTarget, groupAttackTarget);
+	"OFFENCE_COMMITTED" = (setTargetToFoundTarget, "markTargetForOffence: 7", deployEscorts, groupAttackTarget);
+	"GROUP_ATTACK_TARGET" = (setTargetToFoundTarget, "setStateTo: ATTACK_SHIP"); 
+        UPDATE = (scanForOffenders, "pauseAI: 10.0"); 
+    }; 
+      
+}

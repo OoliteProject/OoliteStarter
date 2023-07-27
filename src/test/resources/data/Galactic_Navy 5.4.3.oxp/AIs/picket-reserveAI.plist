@@ -1,0 +1,24 @@
+{
+    GLOBAL = {ENTER = ("setCoordinates: pwm 0 0 1000000", setDestinationFromCoordinates, "setStateTo: LURK", setUpEscorts); }; 
+      
+    "ATTACK_SHIP" = {
+        ENTER = (performAttack); 
+        ATTACKED = (setTargetToPrimaryAggressor, "sendScriptMessage: sendReserveAttacked", "setStateTo: ATTACK_SHIP"); 
+        "ENERGY_LOW" = ("sendScriptMessage: sendReserveMayday"); 
+        "INCOMING_MISSILE" = (fightOrFleeMissile); 
+        "TARGET_DESTROYED" = ("sendScriptMessage: sendReserveKill ", "setStateTo: LURK"); 
+        "TARGET_LOST" = ("setStateTo: LURK"); 
+    }; 
+      
+
+  LURK = {
+        ENTER = ("setSpeedTo: 0.0", performFaceDestination); 
+        ATTACKED = (setTargetToPrimaryAggressor, "setStateTo: ATTACK_SHIP"); 
+        "INCOMING_MISSILE" = (fightOrFleeMissile); 
+        "TARGET_FOUND" = (setTargetToFoundTarget, "setStateTo: ATTACK_SHIP");
+	"OFFENCE_COMMITTED" = (setTargetToFoundTarget, deployEscorts, groupAttackTarget);         	
+	"GROUP_ATTACK_TARGET" = (setTargetToFoundTarget, "setStateTo: ATTACK_SHIP"); 
+        UPDATE = (scanForThargoid, "pauseAI: 5"); 
+    }; 
+      
+}

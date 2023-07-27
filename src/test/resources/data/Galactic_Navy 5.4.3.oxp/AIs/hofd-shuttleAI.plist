@@ -1,0 +1,8 @@
+{
+    GLOBAL = {
+        ENTER = ("commsMessage: The Horror! The Horror!"); 
+	ATTACKED = (setTargetToFoundTarget, "sendTargetCommsMessage: The Horror! The Horror!"); 
+        "DESIRED_RANGE_ACHIEVED" = (landOnPlanet); 
+        UPDATE = (setCourseToPlanet, "setSpeedFactorTo: 1.0", performFlyToRangeFromDestination, "commsMessage: The Horror! The Horror!", "pauseAI: 10.0"); 
+    }; 
+}

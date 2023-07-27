@@ -1,0 +1,173 @@
+{
+    GLOBAL = {
+        ENTER = (checkForNormalSpace);
+        "NORMAL_SPACE" = ("setStateTo: HEAD_FOR_PLANET"); 
+        "INTERSTELLAR_SPACE" = ("setStateTo: STAY_INTERSTELLAR"); 
+        }; 
+    "ATTACK_TARGET1" = {
+        ENTER = (launchDefenseShip, checkGroupOddsVersusTarget, setTargetToPrimaryAggressor, performAttack); 
+	ATTACKED = (setTargetToPrimaryAggressor, "setStateTo: ATTACK_TARGET1"); 
+        "ENERGY_LOW" = (launchDefenseShip, launchDefenseShip); 
+        "DOCKING_REQUESTED" = ("setStateTo: RECEIVE_DOCKING1"); 
+        "INCOMING_MISSILE" = (fightOrFleeMissile); 
+        "TARGET_DESTROYED" = ("setStateTo: HEAD_FOR_PLANET"); 
+        "TARGET_LOST" = ("setStateTo: HEAD_FOR_PLANET"); 
+        "GROUP_ATTACK_TARGET" = (setTargetToFoundTarget, "setStateTo: ATTACK_TARGET1"); 
+        "ODDS_BAD" = (launchDefenseShip, launchDefenseShip); 
+        "ODDS_LEVEL" = (launchDefenseShip); 
+	};
+ 
+    "HEAD_FOR_PLANET" = {
+		ENTER = (setCourseToPlanet, "setDesiredRangeTo: 50000.0", checkCourseToDestination);
+		"COURSE_OK" = ("setSpeedFactorTo: 0.8", performFlyToRangeFromDestination);
+		"WAYPOINT_SET" = ("setStateTo: NEW_WAYPOINT1");
+		"DESIRED_RANGE_ACHIEVED" = ("setStateTo: HEAD_FOR_WITCHPOINT");
+        "GROUP_ATTACK_TARGET" = (setTargetToFoundTarget, "setStateTo: ATTACK_TARGET1"); 
+        ATTACKED = (setTargetToPrimaryAggressor, groupAttackTarget); 
+        "INCOMING_MISSILE" = (fightOrFleeMissile, setTargetToPrimaryAggressor, groupAttackTarget, "setStateTo: ATTACK_TARGET1"); 
+        "TARGET_FOUND" = (setTargetToFoundTarget, groupAttackTarget); 
+        "OFFENCE_COMMITTED" = (setTargetToFoundTarget, "markTargetForOffence: 7", deployEscorts, groupAttackTarget); 
+        "ACCEPT_DISTRESS_CALL" = (setTargetToFoundTarget, groupAttackTarget); 
+        "DOCKING_REQUESTED" = ("setStateTo: RECEIVE_DOCKING1"); 
+		UPDATE = (setCourseToPlanet, "setDesiredRangeTo: 50000.0", checkCourseToDestination, scanForOffenders, "pauseAI: 10.0");
+	}; 
+    "NEW_WAYPOINT1" = {
+		ENTER = ("setSpeedFactorTo: 0.0", "setDesiredRangeTo: 50.0", checkCourseToDestination);
+		"WAYPOINT_SET" = ("setStateTo: NEW_WAYPOINT1");
+		"COURSE_OK" = ("setStateTo: GO_TO_WAYPOINT1");
+		"DESIRED_RANGE_ACHIEVED" = ("setStateTo: HEAD_FOR_PLANET");
+        ATTACKED = ("setStateTo: HEAD_FOR_PLANET"); 
+        "DOCKING_REQUESTED" = ("setStateTo: RECEIVE_DOCKING1"); 
+        "INCOMING_MISSILE" = ("setStateTo: HEAD_FOR_PLANET"); 
+	}; 
+    "GO_TO_WAYPOINT1" = {
+		"WAYPOINT_SET" = ("setStateTo: NEW_WAYPOINT1");
+		"DESIRED_RANGE_ACHIEVED" = ("setStateTo: HEAD_FOR_PLANET");
+        "ACCEPT_DISTRESS_CALL" = (setTargetToFoundTarget, launchDefenseShip, groupAttackTarget); 
+        "OFFENCE_COMMITTED" = (setTargetToFoundTarget, "markTargetForOffence: 7", deployEscorts, groupAttackTarget); 
+        "GROUP_ATTACK_TARGET" = (setTargetToFoundTarget, "setStateTo: ATTACK_TARGET1"); 
+        ATTACKED = (setTargetToPrimaryAggressor, groupAttackTarget); 
+        "INCOMING_MISSILE" = (fightOrFleeMissile, setTargetToPrimaryAggressor, groupAttackTarget, "setStateTo: ATTACK_TARGET1"); 
+        "TARGET_FOUND" = (setTargetToFoundTarget, groupAttackTarget); 
+        "DOCKING_REQUESTED" = ("setStateTo: RECEIVE_DOCKING1"); 
+		UPDATE = ("setSpeedFactorTo: 0.80", performFlyToRangeFromDestination, checkCourseToDestination, scanForOffenders);
+	}; 
+    "RECEIVE_DOCKING1" = {
+		ENTER = ("setSpeedFactorTo: 0.0", performIdle, scanForOffenders);
+		"DOCKING_COMPLETE" = ("setStateTo: HEAD_FOR_PLANET");
+		"DOCKING_ABORTED" = ("setStateTo: HEAD_FOR_PLANET");
+        "GROUP_ATTACK_TARGET" = (setTargetToFoundTarget, launchDefenseShip); 
+        ATTACKED = (setTargetToPrimaryAggressor, groupAttackTarget, "setStateTo: ATTACK_TARGET1"); 
+        "INCOMING_MISSILE" = (fightOrFleeMissile, setTargetToPrimaryAggressor, groupAttackTarget); 
+        "TARGET_FOUND" = (setTargetToFoundTarget, groupAttackTarget, launchDefenseShip); 
+        "ACCEPT_DISTRESS_CALL" = (setTargetToFoundTarget, launchDefenseShip, groupAttackTarget); 
+        "OFFENCE_COMMITTED" = (setTargetToFoundTarget, "markTargetForOffence: 7", deployEscorts, groupAttackTarget); 
+		UPDATE = (scanForOffenders, "pauseAI: 10.0");
+	}; 
+    "ATTACK_TARGET2" = {
+	ATTACKED = (setTargetToPrimaryAggressor, "setStateTo: ATTACK_TARGET2"); 
+        "ENERGY_LOW" = (launchDefenseShip, launchDefenseShip); 
+        ENTER = (launchDefenseShip, checkGroupOddsVersusTarget, setTargetToPrimaryAggressor, performAttack); 
+        "DOCKING_REQUESTED" = ("setStateTo: RECEIVE_DOCKING2"); 
+        "INCOMING_MISSILE" = (fightOrFleeMissile); 
+        "TARGET_DESTROYED" = ("setStateTo: HEAD_FOR_WITCHPOINT"); 
+        "TARGET_LOST" = ("setStateTo: HEAD_FOR_WITCHPOINT"); 
+        "GROUP_ATTACK_TARGET" = (setTargetToFoundTarget, "setStateTo: ATTACK_TARGET2"); 
+        "ODDS_BAD" = (launchDefenseShip, launchDefenseShip); 
+        "ODDS_LEVEL" = (launchDefenseShip); 
+    }; 
+    "HEAD_FOR_WITCHPOINT" = {
+		ENTER = (setCourseToWitchpoint, "setDesiredRangeTo: 10000.0", checkCourseToDestination);
+		"COURSE_OK" = ("setSpeedFactorTo: 0.8", performFlyToRangeFromDestination);
+		"WAYPOINT_SET" = ("setStateTo: NEW_WAYPOINT1");
+		"DESIRED_RANGE_ACHIEVED" = ("setStateTo: HEAD_FOR_PLANET");
+        "OFFENCE_COMMITTED" = (setTargetToFoundTarget, "markTargetForOffence: 7", deployEscorts, groupAttackTarget); 
+        "GROUP_ATTACK_TARGET" = (setTargetToFoundTarget, "setStateTo: ATTACK_TARGET2"); 
+        ATTACKED = (setTargetToPrimaryAggressor, groupAttackTarget); 
+        "INCOMING_MISSILE" = (fightOrFleeMissile, setTargetToPrimaryAggressor, groupAttackTarget, "setStateTo: ATTACK_TARGET2"); 
+        "TARGET_FOUND" = (setTargetToFoundTarget, groupAttackTarget); 
+        "ACCEPT_DISTRESS_CALL" = (setTargetToFoundTarget, groupAttackTarget); 
+        "DOCKING_REQUESTED" = ("setStateTo: RECEIVE_DOCKING2"); 
+		UPDATE = (setCourseToWitchpoint, "setDesiredRangeTo: 10000.0", checkCourseToDestination, scanForOffenders, "pauseAI: 10.0");
+	}; 
+    "NEW_WAYPOINT2" = {
+		ENTER = ("setSpeedFactorTo: 0.0", "setDesiredRangeTo: 50.0", checkCourseToDestination);
+		"WAYPOINT_SET" = ("setStateTo: NEW_WAYPOINT2");
+		"COURSE_OK" = ("setStateTo: GO_TO_WAYPOINT2");
+		"DESIRED_RANGE_ACHIEVED" = ("setStateTo: HEAD_FOR_WITCHPOINT");
+        ATTACKED = ("setStateTo: HEAD_FOR_WITCHPOINT"); 
+        "DOCKING_REQUESTED" = ("setStateTo: RECEIVE_DOCKING2"); 
+        "INCOMING_MISSILE" = ("setStateTo: HEAD_FOR_WITCHPOINT"); 
+	}; 
+    "GO_TO_WAYPOINT2" = {
+		"WAYPOINT_SET" = ("setStateTo: NEW_WAYPOINT2");
+		"DESIRED_RANGE_ACHIEVED" = ("setStateTo: HEAD_FOR_WITCHPOINT");
+        "ACCEPT_DISTRESS_CALL" = (setTargetToFoundTarget, launchDefenseShip, groupAttackTarget); 
+        "OFFENCE_COMMITTED" = (setTargetToFoundTarget, "markTargetForOffence: 7", deployEscorts, groupAttackTarget); 
+        "GROUP_ATTACK_TARGET" = (setTargetToFoundTarget, "setStateTo: ATTACK_TARGET2"); 
+        ATTACKED = (setTargetToPrimaryAggressor, groupAttackTarget); 
+        "INCOMING_MISSILE" = (fightOrFleeMissile, setTargetToPrimaryAggressor, launchDefenseShip, groupAttackTarget, "setStateTo: ATTACK_TARGET2"); 
+        "TARGET_FOUND" = (setTargetToFoundTarget, launchDefenseShip, groupAttackTarget); 
+        "DOCKING_REQUESTED" = ("setStateTo: RECEIVE_DOCKING2"); 
+		UPDATE = ("setSpeedFactorTo: 0.80", performFlyToRangeFromDestination, checkCourseToDestination, scanForOffenders);
+	}; 
+    "RECEIVE_DOCKING2" = {
+		ENTER = ("setSpeedFactorTo: 0.0", performIdle, scanForOffenders);
+		"DOCKING_COMPLETE" = ("setStateTo: HEAD_FOR_WITCHPOINT");
+		"DOCKING_ABORTED" = ("setStateTo: HEAD_FOR_WITCHPOINT");
+        "GROUP_ATTACK_TARGET" = (setTargetToFoundTarget, launchDefenseShip); 
+        ATTACKED = (setTargetToPrimaryAggressor, groupAttackTarget, "setStateTo: ATTACK_TARGET2"); 
+        "INCOMING_MISSILE" = (fightOrFleeMissile, setTargetToPrimaryAggressor, launchDefenseShip, groupAttackTarget, "setStateTo: ATTACK_TARGET2"); 
+        "TARGET_FOUND" = (setTargetToFoundTarget, launchDefenseShip, groupAttackTarget); 
+        "ACCEPT_DISTRESS_CALL" = (setTargetToFoundTarget, launchDefenseShip, groupAttackTarget); 
+        "OFFENCE_COMMITTED" = (setTargetToFoundTarget, "markTargetForOffence: 7", deployEscorts, groupAttackTarget); 
+		UPDATE = (scanForOffenders, "pauseAI: 10.0");
+	}; 
+    "ATTACK_TARGET3" = {
+	ATTACKED = (setTargetToPrimaryAggressor, "setStateTo: ATTACK_TARGET3"); 
+        "ENERGY_LOW" = (launchDefenseShip, launchDefenseShip); 
+        ENTER = (launchDefenseShip, checkGroupOddsVersusTarget, setTargetToPrimaryAggressor, performAttack); 
+        "DOCKING_REQUESTED" = ("setStateTo: RECEIVE_DOCKING3"); 
+        "INCOMING_MISSILE" = (fightOrFleeMissile); 
+        "TARGET_DESTROYED" = ("setStateTo: STAY_INTERSTELLAR"); 
+        "TARGET_LOST" = ("setStateTo: STAY_INTERSTELLAR"); 
+        "GROUP_ATTACK_TARGET" = (setTargetToFoundTarget, "setStateTo: ATTACK_TARGET3"); 
+        "ODDS_BAD" = (launchDefenseShip, launchDefenseShip); 
+        "ODDS_LEVEL" = (launchDefenseShip); 
+    }; 
+    "RECEIVE_DOCKING3" = {
+	ENTER = ("setSpeedFactorTo: 0.0", performIdle, scanForHostiles);
+		"DOCKING_COMPLETE" = ("setStateTo: STAY_INTERSTELLAR");
+		"DOCKING_ABORTED" = ("setStateTo: STAY_INTERSTELLAR");
+        "GROUP_ATTACK_TARGET" = (setTargetToFoundTarget, launchDefenseShip); 
+        ATTACKED = (setTargetToPrimaryAggressor, groupAttackTarget, "setStateTo: ATTACK_TARGET3"); 
+        "INCOMING_MISSILE" = (fightOrFleeMissile, setTargetToPrimaryAggressor, launchDefenseShip, groupAttackTarget, "setStateTo: ATTACK_TARGET2"); 
+        "TARGET_FOUND" = (setTargetToFoundTarget, launchDefenseShip, groupAttackTarget); 
+		UPDATE = (scanForHostiles, "pauseAI: 5.0");
+	}; 
+    "STAY_INTERSTELLAR" = {
+	ENTER = (scanForHostiles, "pauseAI: 5.0");
+        "OFFENCE_COMMITTED" = (setTargetToFoundTarget, "markTargetForOffence: 7", deployEscorts, groupAttackTarget); 
+        "GROUP_ATTACK_TARGET" = (setTargetToFoundTarget, "setStateTo: ATTACK_TARGET3"); 
+        ATTACKED = (setTargetToPrimaryAggressor, groupAttackTarget); 
+        "INCOMING_MISSILE" = (fightOrFleeMissile, setTargetToPrimaryAggressor, groupAttackTarget, "setStateTo: ATTACK_TARGET3"); 
+        "TARGET_FOUND" = (setTargetToFoundTarget, groupAttackTarget); 
+        "NOTHING_FOUND" = ("setStateTo: CONSIDER_LEAVING"); 
+        "ACCEPT_DISTRESS_CALL" = (setTargetToFoundTarget, launchDefenseShip, groupAttackTarget); 
+        "OFFENCE_COMMITTED" = (setTargetToFoundTarget, "markTargetForOffence: 7", deployEscorts, groupAttackTarget); 
+        "DOCKING_REQUESTED" = ("setStateTo: RECEIVE_DOCKING3"); 
+		UPDATE = (scanForHostiles, "pauseAI: 5.0");
+	}; 
+    "CONSIDER_LEAVING" = {
+	ENTER = (scanForNearestMerchantmen, "pauseAI: 10.0");
+        "OFFENCE_COMMITTED" = (setTargetToFoundTarget, "markTargetForOffence: 7", deployEscorts, groupAttackTarget); 
+        "GROUP_ATTACK_TARGET" = (setTargetToFoundTarget, "setStateTo: ATTACK_TARGET3"); 
+        ATTACKED = (setTargetToPrimaryAggressor, groupAttackTarget); 
+        "INCOMING_MISSILE" = (fightOrFleeMissile, setTargetToPrimaryAggressor, groupAttackTarget, "setStateTo: ATTACK_TARGET3"); 
+        "TARGET_FOUND" = ("setStateTo: STAY_INTERSTELLAR"); 
+        "ACCEPT_DISTRESS_CALL" = (setTargetToFoundTarget, launchDefenseShip, groupAttackTarget); 
+        "OFFENCE_COMMITTED" = (setTargetToFoundTarget, "markTargetForOffence: 7", deployEscorts, groupAttackTarget); 
+        "DOCKING_REQUESTED" = ("setStateTo: RECEIVE_DOCKING3"); 
+		UPDATE = (performHyperSpaceExit);
+	}; 
+}

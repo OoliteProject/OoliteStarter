@@ -8,6 +8,7 @@ import oolite.starter.util.XmlUtil;
 import com.chaudhuri.plist.PlistParser;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -27,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Scanner;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
@@ -53,6 +55,7 @@ import oolite.starter.model.ExpansionReference;
 import oolite.starter.model.Installation;
 import oolite.starter.model.ProcessData;
 import oolite.starter.model.SaveGame;
+import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
@@ -75,6 +78,7 @@ public class Oolite implements PropertyChangeListener {
     private static final String OOLITE_IDENTIFIER = "identifier";
     private static final String OOLITE_USER_HOME = "user.home";
     private static final String OOLITE_VERSION = "version";
+    private static final String OOLITE_XML_HEADER = "<?xml";
     
     private boolean terminate = false;
     private int running = 0;
@@ -685,7 +689,7 @@ public class Oolite implements PropertyChangeListener {
      * @param dc the dictionary context to read
      * @return the Expansion
      */    
-    public Expansion createExpansionFromRequires(PlistParser.DictionaryContext dc) {
+    public Expansion createExpansionFromRequiresPlist(PlistParser.DictionaryContext dc) {
         log.debug("createExpansion({})", dc);
         Expansion result = new Expansion();
         for (PlistParser.KeyvaluepairContext kvc: dc.keyvaluepair()) {
@@ -722,29 +726,62 @@ public class Oolite implements PropertyChangeListener {
     
     /**
      * Creates an Expansion from a requires.plist stream.
+     * The stream may be in plist or xml format.
      * 
-     * @param manifest the input stream to read (typically from a file or zipfile).
+     * @param requires the input stream to read (typically from a file or zipfile).
      * @param sourceName name of the source for the input stream
      * @return the Expansion
      */    
-    public Expansion createExpansionFromRequires(InputStream manifest, String sourceName) throws IOException {
-        log.debug("createExpansionFromRequiresPlist({}, {})", manifest, sourceName);
+    public Expansion createExpansionFromRequires(InputStream requires, String sourceName) throws IOException {
+        log.debug("createExpansionFromRequiresPlist({}, {})", requires, sourceName);
         String oxp = sourceName;
         if (oxp.endsWith("/requires.plist")) {
             oxp = oxp.substring(0, oxp.length()-15);
         }
-        
-        // parse plist, then create Expansion from that
-        PlistParser.DictionaryContext dc = PlistUtil.parsePListDict(manifest, sourceName);
-        Expansion expansion = createExpansionFromRequires(dc);
-        expansion.setIdentifier(oxp);
-        expansion.setTitle(oxp);
-        expansion.setDescription(
-                "This is some OXP implementing requires.plist.\n" +
-                "From that file almost no metadata is available. Consider switching to manifest.plist."
-        );
-        expansion.setVersion("0");
-        return expansion;
+        if (!requires.markSupported()) {
+            requires = new BufferedInputStream(requires);
+        }
+    
+        requires.mark(10);
+        Scanner sc = new Scanner(requires);
+        if (OOLITE_XML_HEADER.equals(sc.next())) {
+            requires.reset();
+            try {
+                Document doc = XmlUtil.parseXmlStream(requires);
+                XPath xpath = XPathFactory.newDefaultInstance().newXPath();
+
+                Expansion expansion = new Expansion();
+                expansion.setIdentifier(oxp);
+                expansion.setTitle(oxp);
+                expansion.setDescription(
+                        "This is some OXP implementing requires.plist.\n" +
+                        "From that file almost no metadata is available. Consider switching to manifest.plist."
+                );
+                expansion.setVersion("0");
+                expansion.setRequiredOoliteVersion(xpath.evaluate("/plist/dict/key[.='version']/following-sibling::string", doc));
+                expansion.setMaximumOoliteVersion(xpath.evaluate("/plist/dict/key[.='max_version']/following-sibling::string", doc));
+                return expansion;
+            } catch (IOException | ParserConfigurationException | XPathExpressionException | SAXException e) {
+                throw new IOException(String.format("Could not read as XML: %s, see log", sourceName), e);
+            }
+        } else {
+            requires.reset();
+            try {
+                // parse plist, then create Expansion from that
+                PlistParser.DictionaryContext dc = PlistUtil.parsePListDict(requires, sourceName);
+                Expansion expansion = createExpansionFromRequiresPlist(dc);
+                expansion.setIdentifier(oxp);
+                expansion.setTitle(oxp);
+                expansion.setDescription(
+                        "This is some OXP implementing requires.plist.\n" +
+                        "From that file almost no metadata is available. Consider switching to manifest.plist."
+                );
+                expansion.setVersion("0");
+                return expansion;
+            } catch (ParseCancellationException e) {
+                throw new IOException(String.format("Could not read as Plist: %s, see log", sourceName), e);
+            }
+        }
     }
     
     /**

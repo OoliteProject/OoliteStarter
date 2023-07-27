@@ -1,0 +1,43 @@
+{
+
+    GLOBAL = {ENTER = ("setStateTo: HEAD_FOR_PLANET"); }; 
+      
+ "ATTACK_SHIP" = {
+        ENTER = (performAttack); 
+        ATTACKED = (setTargetToPrimaryAggressor, "sendScriptMessage: sendReserveAttacked ", "setStateTo: ATTACK_SHIP"); 
+        "ENERGY_LOW" = ("sendScriptMessage: sendReserveMayday"); 
+        "INCOMING_MISSILE" = (fightOrFleeMissile); 
+        "TARGET_DESTROYED" = ("sendScriptMessage: sendReserveKill ", "setStateTo: HEAD_FOR_PLANET"); 
+        "TARGET_LOST" = ("setStateTo: HEAD_FOR_PLANET"); 
+    }; 
+       
+  "HEAD_FOR_PLANET" = {
+		ENTER = (setCourseToPlanet, "setDesiredRangeTo: 50000.0", checkCourseToDestination);
+		"COURSE_OK" = ("setSpeedFactorTo: 0.8", performFlyToRangeFromDestination);
+		"WAYPOINT_SET" = ("setStateTo: NEW_WAYPOINT1");
+		"DESIRED_RANGE_ACHIEVED" = ("setStateTo: HEAD_FOR_WITCHPOINT");
+        "GROUP_ATTACK_TARGET" = (setTargetToFoundTarget, "setStateTo: ATTACK_SHIP"); 
+        ATTACKED = (setTargetToPrimaryAggressor, groupAttackTarget); 
+        "INCOMING_MISSILE" = (fightOrFleeMissile, setTargetToPrimaryAggressor, groupAttackTarget, "setStateTo: ATTACK_SHIP"); 
+        "TARGET_FOUND" = (setTargetToFoundTarget, groupAttackTarget); 		EXIT = ();
+	UPDATE = (setCourseToPlanet, "setDesiredRangeTo: 50000.0", checkCourseToDestination, "scanForNearestShipWithRole: reserve-hideout", "pauseAI: 5.0");
+	}; 
+    "NEW_WAYPOINT1" = {
+		ENTER = ("setSpeedFactorTo: 0.0", "setDesiredRangeTo: 50.0", checkCourseToDestination);
+		"WAYPOINT_SET" = ("setStateTo: NEW_WAYPOINT1");
+		"COURSE_OK" = ("setStateTo: GO_TO_WAYPOINT1");
+		"DESIRED_RANGE_ACHIEVED" = ("setStateTo: HEAD_FOR_PLANET");
+        ATTACKED = ("setStateTo: HEAD_FOR_PLANET"); 
+        "INCOMING_MISSILE" = ("setStateTo: HEAD_FOR_PLANET"); 
+	}; 
+    "GO_TO_WAYPOINT1" = {
+		"WAYPOINT_SET" = ("setStateTo: NEW_WAYPOINT1");
+		"DESIRED_RANGE_ACHIEVED" = ("setStateTo: HEAD_FOR_PLANET");
+        "GROUP_ATTACK_TARGET" = (setTargetToFoundTarget, "setStateTo: ATTACK_SHIP"); 
+        ATTACKED = (setTargetToPrimaryAggressor, groupAttackTarget); 
+        "INCOMING_MISSILE" = (fightOrFleeMissile, setTargetToPrimaryAggressor, groupAttackTarget, "setStateTo: ATTACK_SHIP"); 
+        "TARGET_FOUND" = (setTargetToFoundTarget, groupAttackTarget); 
+		UPDATE = ("setSpeedFactorTo: 0.80", performFlyToRangeFromDestination, checkCourseToDestination, "scanForNearestShipWithRole: reserve-hideout");
+	}; 
+      
+}

@@ -1,0 +1,566 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>0 24</key>
+	<dict>
+		<key>description</key>
+		<string>This planet is most notable for vicious Inzalodi gargle blasters but scourged by unpredictable earthquakes.  This system is home to Navy Sector Command 1.</string>
+	</dict>
+	<key>0 193</key>
+	<dict>
+		<key>description</key>
+		<string>Orrere is mildly well known for Orrereian vicious brew.  This system is home to Navy Sector Command 2.</string>
+	</dict>
+	<key>0 154</key>
+	<dict>
+		<key>description</key>
+		<string>This world is very fabled for its unusual oceans.  This system is home to Navy Sector Command 3.</string>
+	</dict>
+	<key>0 188</key>
+	<dict>
+		<key>description</key>
+		<string>Tibionis is most noted for the Tibionisian deadly goat and its vast rain forests.  This system is home to Navy Sector Command 4.</string>
+	</dict>
+	<key>0 125</key>
+	<dict>
+		<key>description</key>
+		<string>Encereso is cursed by dreadful civil war.  This system is home to Navy Sector Command 5.</string>
+	</dict>
+	<key>0 109</key>
+	<dict>
+		<key>description</key>
+		<string>This planet is reasonably famous for its inhabitants&apos; exceptional loathing of sit coms.  This system is home to Navy Sector Command 6.</string>
+	</dict>
+	<key>0 249</key>
+	<dict>
+		<key>description</key>
+		<string>This world is mildly famous for its vast rain forests and the Maxeedsoian tree wolf.  This system is home to Navy Sector Command 7.</string>
+	</dict>
+	<key>0 150</key>
+	<dict>
+		<key>description</key>
+		<string> This world is very well known for Xeerian wolf meat and its fabulous cuisine.  This system is home to Navy Sector Command 8.</string>
+	</dict>
+	<key>0 80</key>
+	<dict>
+		<key>description</key>
+		<string>This world is ravaged by unpredictable civil war.  This system is home to Navy Sector Command 9.</string>
+	</dict>
+	<key>0 175</key>
+	<dict>
+		<key>description</key>
+		<string>This world is reasonably notable for its great volcanoes but ravaged by a vicious disease.  This system is home to Navy Sector Command 10.</string>
+	</dict>
+	<key>0 120</key>
+	<dict>
+		<key>description</key>
+		<string>Aerater is a revolting little planet.  This system is home to Navy Sector Command 11.</string>
+	</dict>
+	<key>0 220</key>
+	<dict>
+		<key>description</key>
+		<string>This world is reasonably notable for its great volcanoes but ravaged by vicious vicious shrews.  This system is home to Navy Sector Command 12.</string>
+	</dict>
+	<key>0 158</key>
+	<dict>
+		<key>description</key>
+		<string>This world is a tedious place.  This system is home to Navy Sector Command 13.</string>
+	</dict>
+	<key>0 15</key>
+	<dict>
+		<key>description</key>
+		<string>This planet is most fabled for its inhabitants&apos; ingrained silliness but scourged by deadly civil war.  This system is home to Navy Sector Command 14.</string>
+	</dict>
+	<key>1 248</key>
+	<dict>
+		<key>description</key>
+		<string>The world Aanteso is beset by dreadful earthquakes.  This system is home to Navy Sector Command 1.</string>
+	</dict>
+	<key>1 135</key>
+	<dict>
+		<key>description</key>
+		<string>The planet Laraisso is reasonably noted for mud tennis and its ancient mountains.  This system is home to Navy Sector Command 2.</string>
+	</dict>
+	<key>1 106</key>
+	<dict>
+		<key>description</key>
+		<string>This planet is a dull world.  This system is home to Navy Sector Command 3.</string>
+	</dict>
+	<key>1 82</key>
+	<dict>
+		<key>description</key>
+		<string>The world Vezaaes is very famous for Vezaaesian shrew steak but ravaged by dreadful civil war.  This system is home to Navy Sector Command 4.</string>
+	</dict>
+	<key>1 150</key>
+	<dict>
+		<key>description</key>
+		<string>The world Xeatxe is very noted for its ancient Xeatxeian Onin banana plantations but cursed by deadly civil war.  This system is home to Navy Sector Command 5.</string>
+	</dict>
+	<key>1 182</key>
+	<dict>
+		<key>description</key>
+		<string>This world is very well known for vicious Numaoudi brew and its exotic fish cutlet.  This system is home to Navy Sector Command 6.</string>
+	</dict>
+	<key>1 33</key>
+	<dict>
+		<key>description</key>
+		<string>The planet Diti is famous for Ditiian shrew steak but ravaged by unpredictable civil war.  This system is home to Navy Sector Command 7.</string>
+	</dict>
+	<key>1 48</key>
+	<dict>
+		<key>description</key>
+		<string>The planet Atzaxe is a boring planet.  This system is home to Navy Sector Command 8.</string>
+	</dict>
+	<key>1 227</key>
+	<dict>
+		<key>description</key>
+		<string>This world is plagued by frequent solar activity.  This system is home to Navy Sector Command 9.</string>
+	</dict>
+	<key>1 96</key>
+	<dict>
+		<key>description</key>
+		<string>The world Anusa is reasonably noted for its fabulous goat soup.  This system is home to Navy Sector Command 10.</string>
+	</dict>
+	<key>1 127</key>
+	<dict>
+		<key>description</key>
+		<string>This planet is plagued by frequent earthquakes.  This system is home to Navy Sector Command 11.</string>
+	</dict>
+	<key>1 202</key>
+	<dict>
+		<key>description</key>
+		<string>This planet is beset by deadly earthquakes.  This system is home to Navy Sector Command 12.</string>
+	</dict>
+	<key>1 243</key>
+	<dict>
+		<key>description</key>
+		<string>The world Titequ is notable for its great volcanoes and its inhabitants&apos; eccentric shyness.  This system is home to Navy Sector Command 13.</string>
+	</dict>
+	<key>1 170</key>
+	<dict>
+		<key>description</key>
+		<string>The planet Onmate is most noted for its inhabitants&apos; exceptional loathing of casinos and the Onmateian spotted wolf.  This system is home to Navy Sector Command 14.</string>
+	</dict>
+	<key>2 31</key>
+	<dict>
+		<key>description</key>
+		<string>The planet Teceinre is reasonably noted for its inhabitants&apos; eccentric love for poetry and the Teceinreian tree wolf.  This system is home to Navy Sector Command 1.</string>
+	</dict>
+	<key>2 165</key>
+	<dict>
+		<key>description</key>
+		<string>The planet Edxeri is reasonably noted for its fabulous goat soup and Zero-G cricket.  This system is home to Navy Sector Command 2.</string>
+	</dict>
+	<key>2 245</key>
+	<dict>
+		<key>description</key>
+		<string>The planet Maceceve is cursed by deadly civil war.  This system is home to Navy Sector Command 3.</string>
+	</dict>
+	<key>2 84</key>
+	<dict>
+		<key>description</key>
+		<string>The world Leentima is mildly fabled for its inhabitants&apos; eccentric love for poetry but plagued by frequent earthquakes.  This system is home to Navy Sector Command 4.</string>
+	</dict>
+	<key>2 36</key>
+	<dict>
+		<key>description</key>
+		<string>Birera is most noted for its inhabitants&apos; eccentric love for tourists and the Bireraian tree grub.  This system is home to Navy Sector Command 5.</string>
+	</dict>
+	<key>2 21</key>
+	<dict>
+		<key>description</key>
+		<string>This planet is reasonably noted for its exotic fish meat.  This system is home to Navy Sector Command 6.</string>
+	</dict>
+	<key>2 26</key>
+	<dict>
+		<key>description</key>
+		<string>Rigebi is ravaged by dreadful civil war.  This system is home to Navy Sector Command 7.</string>
+	</dict>
+	<key>2 139</key>
+	<dict>
+		<key>description</key>
+		<string>Inbiti is a n unremarkable dump.  This system is home to Navy Sector Command 8.</string>
+	</dict>
+	<key>2 251</key>
+	<dict>
+		<key>description</key>
+		<string>Tizabea is famous for its inhabitants&apos; ancient mating traditions but ravaged by dreadful civil war.  This system is home to Navy Sector Command 9.</string>
+	</dict>
+	<key>2 205</key>
+	<dict>
+		<key>description</key>
+		<string>Rainle is a revolting little planet.  This system is home to Navy Sector Command 10.</string>
+	</dict>
+	<key>2 223</key>
+	<dict>
+		<key>description</key>
+		<string>This planet is mildly noted for its ancient Rilalelaian Loenstet banana plantations but cursed by dreadful civil war.  This system is home to Navy Sector Command 11.</string>
+	</dict>
+	<key>2 204</key>
+	<dict>
+		<key>description</key>
+		<string>Dianed is very notable for the Dianedian edible grub.  This system is home to Navy Sector Command 12.</string>
+	</dict>
+	<key>2 17</key>
+	<dict>
+		<key>description</key>
+		<string>This planet is reasonably famous for the Bezaedian spotted leopard.  This system is home to Navy Sector Command 13.</string>
+	</dict>
+	<key>2 247</key>
+	<dict>
+		<key>description</key>
+		<string>Lebied is mildly notable for its inhabitants&apos; unusual mating traditions.  This system is home to Navy Sector Command 14.</string>
+	</dict>
+	<key>3 39</key>
+	<dict>
+		<key>description</key>
+		<string>The planet Encegequ is most noted for the Encegequian evil talking treeoid and its inhabitants&apos; ingrained shyness.  This system is home to Navy Sector Command 1.</string>
+	</dict>
+	<key>3 221</key>
+	<dict>
+		<key>description</key>
+		<string>The planet Quzaarar is scourged by killer mountain Iloids.  This system is home to Navy Sector Command 2.</string>
+	</dict>
+	<key>3 188</key>
+	<dict>
+		<key>description</key>
+		<string>This planet is mildly fabled for its inhabitants&apos; eccentric love for tourists but plagued by deadly earthquakes.  This system is home to Navy Sector Command 3.</string>
+	</dict>
+	<key>3 86</key>
+	<dict>
+		<key>description</key>
+		<string>This planet is a tedious little planet.  This system is home to Navy Sector Command 4.</string>
+	</dict>
+	<key>3 9</key>
+	<dict>
+		<key>description</key>
+		<string>Tiveorso is ravaged by unpredictable solar activity.  This system is home to Navy Sector Command 5.</string>
+	</dict>
+	<key>3 57</key>
+	<dict>
+		<key>description</key>
+		<string>This world is very well known for its inhabitants&apos; unusual mating traditions and its vast rain forests.  This system is home to Navy Sector Command 6.</string>
+	</dict>
+	<key>3 186</key>
+	<dict>
+		<key>description</key>
+		<string>The planet Arama is famous for its inhabitants&apos; ancient loathing of discos but ravaged by lethal spotted craboids.  This system is home to Navy Sector Command 7.</string>
+	</dict>
+	<key>3 237</key>
+	<dict>
+		<key>description</key>
+		<string>This world is mildly well known for Cequququian shrew steak and Cequququian wolf meat.  This system is home to Navy Sector Command 8.</string>
+	</dict>
+	<key>3 49</key>
+	<dict>
+		<key>description</key>
+		<string>This world is plagued by deadly earthquakes.  This system is home to Navy Sector Command 9.</string>
+	</dict>
+	<key>3 103</key>
+	<dict>
+		<key>description</key>
+		<string>This planet is plagued by deadly earthquakes.  This system is home to Navy Sector Command 10.</string>
+	</dict>
+	<key>3 254</key>
+	<dict>
+		<key>description</key>
+		<string>This world is most fabled for its inhabitants&apos; ingrained silliness but scourged by deadly edible poets.  This system is home to Navy Sector Command 11.</string>
+	</dict>
+	<key>3 66</key>
+	<dict>
+		<key>description</key>
+		<string>Diriceen is a n unremarkable planet.  This system is home to Navy Sector Command 12.</string>
+	</dict>
+	<key>3 140</key>
+	<dict>
+		<key>description</key>
+		<string>Geonerbe is a n unremarkable planet.  This system is home to Navy Sector Command 13.</string>
+	</dict>
+	<key>3 110</key>
+	<dict>
+		<key>description</key>
+		<string>The planet Onramaon is reasonably noted for its inhabitants&apos; eccentric shyness and its inhabitants&apos; ingrained silliness.  This system is home to Navy Sector Command 14.</string>
+	</dict>
+	<key>4 249</key>
+	<dict>
+		<key>description</key>
+		<string>Gesolaon is very notable for the Gesolaonian tree snake.  This system is home to Navy Sector Command 1.</string>
+	</dict>
+	<key>4 71</key>
+	<dict>
+		<key>description</key>
+		<string>The planet Edxeri is reasonably noted for its fabulous goat soup and Zero-G cricket.  This system is home to Navy Sector Command 2.</string>
+	</dict>
+	<key>4 57</key>
+	<dict>
+		<key>description</key>
+		<string>This planet is a tedious little planet.  This system is home to Navy Sector Command 3.</string>
+	</dict>
+	<key>4 144</key>
+	<dict>
+		<key>description</key>
+		<string>This world is fabled for its ancient Za plant plantations.  This system is home to Navy Sector Command 4.</string>
+	</dict>
+	<key>4 198</key>
+	<dict>
+		<key>description</key>
+		<string>This world is mildly famous for its vast rain forests and the Xeveraian tree wolf.  This system is home to Navy Sector Command 5.</string>
+	</dict>
+	<key>4 153</key>
+	<dict>
+		<key>description</key>
+		<string>This planet is reasonably famous for its inhabitants&apos; exceptional loathing of sit coms.  This system is home to Navy Sector Command 6.</string>
+	</dict>
+	<key>4 204</key>
+	<dict>
+		<key>description</key>
+		<string>The world Atenrile is a boring world.  This system is home to Navy Sector Command 7.</string>
+	</dict>
+	<key>4 73</key>
+	<dict>
+		<key>description</key>
+		<string>Onrace is reasonably notable for its unusual tropical forests but scourged by frequent civil war.  This system is home to Navy Sector Command 8.</string>
+	</dict>
+	<key>4 102</key>
+	<dict>
+		<key>description</key>
+		<string>Bisoge is well known for the Bisogeian spotted shrew but plagued by evil tree leopards.  This system is home to Navy Sector Command 9.</string>
+	</dict>
+	<key>4 222</key>
+	<dict>
+		<key>description</key>
+		<string>This world is ravaged by unpredictable civil war.  This system is home to Navy Sector Command 10.</string>
+	</dict>
+	<key>4 29</key>
+	<dict>
+		<key>description</key>
+		<string>Tiusriri is a revolting little planet.  This system is home to Navy Sector Command 11.</string>
+	</dict>
+	<key>4 233</key>
+	<dict>
+		<key>description</key>
+		<string>Rareat is a n unremarkable planet.  This system is home to Navy Sector Command 12.</string>
+	</dict>
+	<key>4 152</key>
+	<dict>
+		<key>description</key>
+		<string>The planet Qulecele is reasonably fabled for Zero-G hockey and its inhabitants&apos; ingrained silliness.  This system is home to Navy Sector Command 13.</string>
+	</dict>
+	<key>4 190</key>
+	<dict>
+		<key>description</key>
+		<string>Diis is mildly well known for killer Ar juice.  This system is home to Navy Sector Command 14.</string>
+	</dict>
+	<key>5 151</key>
+	<dict>
+		<key>description</key>
+		<string>The world Teesso is scourged by deadly tree ants.  This system is home to Navy Sector Command 1.</string>
+	</dict>
+	<key>5 227</key>
+	<dict>
+		<key>description</key>
+		<string>Atquti is mildly well known for killer Xeones gargle blasters.  This system is home to Navy Sector Command 2.</string>
+	</dict>
+	<key>5 6</key>
+	<dict>
+		<key>description</key>
+		<string>The planet Oresmaa is scourged by a deadly disease.  This system is home to Navy Sector Command 3.</string>
+	</dict>
+	<key>5 51</key>
+	<dict>
+		<key>description</key>
+		<string>This planet is a tedious place.  This system is home to Navy Sector Command 4.</string>
+	</dict>
+	<key>5 60</key>
+	<dict>
+		<key>description</key>
+		<string>The planet Ormadi is very famous for its exotic goat meat but scourged by dreadful solar activity.  This system is home to Navy Sector Command 5.</string>
+	</dict>
+	<key>5 129</key>
+	<dict>
+		<key>description</key>
+		<string>This world is fabled for its ancient Engeanian On banana plantations.  This system is home to Navy Sector Command 6.</string>
+	</dict>
+	<key>5 8</key>
+	<dict>
+		<key>description</key>
+		<string>The planet Soamaxe is famous for its inhabitants&apos; exceptional loathing of sit coms but cursed by a deadly disease.  This system is home to Navy Sector Command 7.</string>
+	</dict>
+	<key>5 53</key>
+	<dict>
+		<key>description</key>
+		<string>This world is mildly well known for its exotic cuisine and its inhabitants&apos; ingrained silliness.  This system is home to Navy Sector Command 8.</string>
+	</dict>
+	<key>5 85</key>
+	<dict>
+		<key>description</key>
+		<string>The world Celaan is a boring world.  This system is home to Navy Sector Command 9.</string>
+	</dict>
+	<key>5 120</key>
+	<dict>
+		<key>description</key>
+		<string>The world Usquat is reasonably famous for the Usquatian evil arts graduate.  This system is home to Navy Sector Command 10.</string>
+	</dict>
+	<key>5 208</key>
+	<dict>
+		<key>description</key>
+		<string>The planet Anenbi is mildly well known for its exotic cuisine.  This system is home to Navy Sector Command 11.</string>
+	</dict>
+	<key>5 220</key>
+	<dict>
+		<key>description</key>
+		<string>Orgete is a revolting little planet.  This system is home to Navy Sector Command 12.</string>
+	</dict>
+	<key>5 146</key>
+	<dict>
+		<key>description</key>
+		<string>The planet Ariqu is mildly well known for its hoopy casinos.  This system is home to Navy Sector Command 13.</string>
+	</dict>
+	<key>5 66</key>
+	<dict>
+		<key>description</key>
+		<string>The world Isaanus is reasonably fabled for its exciting Isaanusian lethal brandy and its exotic night life.  This system is home to Navy Sector Command 14.</string>
+	</dict>
+	<key>6 214</key>
+	<dict>
+		<key>description</key>
+		<string>This world is a revolting little planet.  This system is home to Navy Sector Command 1.</string>
+	</dict>
+	<key>6 161</key>
+	<dict>
+		<key>description</key>
+		<string>This planet is a tedious place.  This system is home to Navy Sector Command 2.</string>
+	</dict>
+	<key>6 250</key>
+	<dict>
+		<key>description</key>
+		<string>The world Xeorusge is scourged by deadly tree snakes.  This system is home to Navy Sector Command 3.</string>
+	</dict>
+	<key>6 127</key>
+	<dict>
+		<key>description</key>
+		<string>The world Qulearbi is mildly noted for the Qulearbiian mountain lobstoid but beset by frequent solar activity.  This system is home to Navy Sector Command 4.</string>
+	</dict>
+	<key>6 23</key>
+	<dict>
+		<key>description</key>
+		<string>This world is very fabled for its unusual oceans.  This system is home to Navy Sector Command 5.</string>
+	</dict>
+	<key>6 154</key>
+	<dict>
+		<key>description</key>
+		<string>The world Atuszais is mildly fabled for the Atuszaisian mountain slug but ravaged by a vicious disease.  This system is home to Navy Sector Command 6.</string>
+	</dict>
+	<key>6 234</key>
+	<dict>
+		<key>description</key>
+		<string>This world is very notable for the Erarriorian edible grub and the Erarriorian tree grub.  This system is home to Navy Sector Command 7.</string>
+	</dict>
+	<key>6 24</key>
+	<dict>
+		<key>description</key>
+		<string>This world is very notable for its inhabitants&apos; weird shyness and its inhabitants&apos; ingrained shyness.  This system is home to Navy Sector Command 8.</string>
+	</dict>
+	<key>6 55</key>
+	<dict>
+		<key>description</key>
+		<string>The planet Enarines is a boring world.  This system is home to Navy Sector Command 9.</string>
+	</dict>
+	<key>6 64</key>
+	<dict>
+		<key>description</key>
+		<string>The planet Agebi is a n unremarkable dump.  This system is home to Navy Sector Command 10.</string>
+	</dict>
+	<key>6 231</key>
+	<dict>
+		<key>description</key>
+		<string>The planet Diusace is mildly notable for its inhabitants&apos; unusual silliness.  This system is home to Navy Sector Command 11.</string>
+	</dict>
+	<key>6 140</key>
+	<dict>
+		<key>description</key>
+		<string>This planet is notable for the Teedian edible moth and the Teedian edible arts graduate.  This system is home to Navy Sector Command 12.</string>
+	</dict>
+	<key>6 202</key>
+	<dict>
+		<key>description</key>
+		<string>The world Ceraxete is beset by a evil disease.  This system is home to Navy Sector Command 13.</string>
+	</dict>
+	<key>6 35</key>
+	<dict>
+		<key>description</key>
+		<string>This planet is mildly noted for the Ribiorian mountain slug but cursed by occasional earthquakes.  This system is home to Navy Sector Command 14.</string>
+	</dict>
+	<key>7 26</key>
+	<dict>
+		<key>description</key>
+		<string>The planet Titiridi is reasonably noted for its inhabitants&apos; eccentric shyness and its inhabitants&apos; eccentric love for poetry.  This system is home to Navy Sector Command 1.</string>
+	</dict>
+	<key>7 218</key>
+	<dict>
+		<key>description</key>
+		<string>This planet is most fabled for mud hockey but ravaged by occasional earthquakes.  This system is home to Navy Sector Command 2.</string>
+	</dict>
+	<key>7 9</key>
+	<dict>
+		<key>description</key>
+		<string>The world Leater is very famous for its hoopy night life but scourged by killer mountain monkeys.  This system is home to Navy Sector Command 3.</string>
+	</dict>
+	<key>7 174</key>
+	<dict>
+		<key>description</key>
+		<string>Atmabe is mildly well known for its exotic cuisine and its inhabitants&apos; ingrained shyness.  This system is home to Navy Sector Command 4.</string>
+	</dict>
+	<key>7 156</key>
+	<dict>
+		<key>description</key>
+		<string>The planet Inzaan is cursed by vicious killer beasts.  This system is home to Navy Sector Command 5.</string>
+	</dict>
+	<key>7 251</key>
+	<dict>
+		<key>description</key>
+		<string>This planet is fabled for its ancient Esusaleian A&apos;nuet tulip plantations.  This system is home to Navy Sector Command 6.</string>
+	</dict>
+	<key>7 75</key>
+	<dict>
+		<key>description</key>
+		<string>The world Inisbi is a boring planet.  This system is home to Navy Sector Command 7.</string>
+	</dict>
+	<key>7 136</key>
+	<dict>
+		<key>description</key>
+		<string>The planet Leesusen is a boring planet.  This system is home to Navy Sector Command 8.</string>
+	</dict>
+	<key>7 184</key>
+	<dict>
+		<key>description</key>
+		<string>The planet Maarabi is a boring world.  This system is home to Navy Sector Command 9.</string>
+	</dict>
+	<key>7 87</key>
+	<dict>
+		<key>description</key>
+		<string>The world Teteus is most famous for its vast oceans.  This system is home to Navy Sector Command 10.</string>
+	</dict>
+	<key>7 212</key>
+	<dict>
+		<key>description</key>
+		<string>The world Belabia is reasonably fabled for Belabiaian evil juice and its inhabitants&apos; eccentric love for poetry.  This system is home to Navy Sector Command 11.</string>
+	</dict>
+	<key>7 116</key>
+	<dict>
+		<key>description</key>
+		<string>This planet is mildly noted for the Vebixeian mountain poet but cursed by unpredictable earthquakes.  This system is home to Navy Sector Command 12.</string>
+	</dict>
+	<key>7 98</key>
+	<dict>
+		<key>description</key>
+		<string>The planet Laorlaza is reasonably noted for its inhabitants&apos; exceptional love for tourists and the Laorlazaian edible arts graduate.  This system is home to Navy Sector Command 13.</string>
+	</dict>
+	<key>7 55</key>
+	<dict>
+		<key>description</key>
+		<string>This planet is very well known for its inhabitants&apos; unusual silliness and killer Re gargle blasters.  This system is home to Navy Sector Command 14.</string>
+	</dict>
+</dict>
+</plist>

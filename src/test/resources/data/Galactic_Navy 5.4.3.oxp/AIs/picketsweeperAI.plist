@@ -1,0 +1,26 @@
+{
+GLOBAL = {
+        ENTER = ("setStateTo: LOOK_FOR_TARGETS"); 
+    }; 
+
+"ATTACK_SHIP" = {
+        ENTER = (performAttack); 
+  	 ATTACKED = (setTargetToPrimaryAggressor, "setStateTo: ATTACK_SHIP"); 
+        "INCOMING_MISSILE" = (setTargetToPrimaryAggressor, performAttack); 
+        "TARGET_DESTROYED" = ("setStateTo: LOOK_FOR_TARGETS"); 
+        "TARGET_LOST" = ("setStateTo: LOOK_FOR_TARGETS"); 
+	"TARGET_FOUND" = (setTargetToFoundTarget, "commsMessage: Quirium Cascade Weapon Detected and Disarmed", "scriptActionOnTarget: becomeExplosion"); 
+        UPDATE = ("scanForNearestShipWithAnyPrimaryRole: EQ_QC_MINE EQ_CASCADE_MISSILE", "pauseAI: 3"); 
+    }; 
+
+
+"LOOK_FOR_TARGETS" = {
+        "ATTACKED" = ("setStateTo: ATTACK_SHIP"); 
+        "INCOMING_MISSILE" = (setTargetToPrimaryAggressor, "setStateTo: ATTACK_SHIP"); 
+	"TARGET_FOUND" = (setTargetToFoundTarget, "commsMessage: Quirium Cascade Weapon Detected and Disarmed", "scriptActionOnTarget: becomeExplosion"); 
+	"OFFENCE_COMMITTED" = (setTargetToFoundTarget, "markTargetForOffence: 7", "setStateTo: ATTACK_SHIP"); 
+	"NOTHING_FOUND" = ("setStateTo: LOOK_FOR_MORE_TARGETS"); 
+	UPDATE = ("scanForNearestShipWithAnyPrimaryRole: EQ_QC_MINE EQ_CASCADE_MISSILE", "pauseAI: 1.0");
+	}; 
+  
+}

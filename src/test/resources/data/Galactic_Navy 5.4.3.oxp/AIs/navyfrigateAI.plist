@@ -1,0 +1,98 @@
+{
+GLOBAL = {
+        ENTER = (checkForNormalSpace, setUpEscorts);
+        "NORMAL_SPACE" = ("setStateTo: HEAD_FOR_PLANET"); 
+        "INTERSTELLAR_SPACE" = ("setStateTo: STAY_INTERSTELLAR"); 
+        }; 
+
+    "HEAD_FOR_PLANET" = {
+		ENTER = (setCourseToPlanet, "setDesiredRangeTo: 50000.0", checkCourseToDestination);
+		"COURSE_OK" = ("setSpeedFactorTo: 0.8", performFlyToRangeFromDestination);
+		"WAYPOINT_SET" = ("setAITo: gotoWaypointAI.plist");
+        "DOCKING_REQUESTED" = ("setAITo: receiveDockingAI.plist"); 
+		"DESIRED_RANGE_ACHIEVED" = ("setStateTo: HEAD_FOR_WITCHPOINT");
+        "ACCEPT_DISTRESS_CALL" = (setTargetToFoundTarget, deployEscorts, groupAttackTarget); 
+        "OFFENCE_COMMITTED" = (setTargetToFoundTarget, "markTargetForOffence: 7", deployEscorts, groupAttackTarget); 
+        "TARGET_FOUND" = (setTargetToFoundTarget, deployEscorts, groupAttackTarget); 
+        "INCOMING_MISSILE" = (fightOrFleeMissile, setTargetToPrimaryAggressor, deployEscorts, groupAttackTarget, "setAITo: interceptAI.plist", "setStateTo: INBOUND_LOOT"); 
+        ATTACKED = (setTargetToPrimaryAggressor, groupAttackTarget); 
+        "GROUP_ATTACK_TARGET" = (setTargetToFoundTarget, "setAITo: interceptAI.plist"); 
+		UPDATE = (setCourseToPlanet, "setDesiredRangeTo: 50000.0", checkCourseToDestination, scanForOffenders, "pauseAI: 10.0");
+	}; 
+    "HEAD_FOR_WITCHPOINT" = {
+		ENTER = (setCourseToWitchpoint, checkCourseToDestination);
+		"COURSE_OK" = ("setSpeedFactorTo: 0.8", performFlyToRangeFromDestination);
+		"WAYPOINT_SET" = ("setAITo: gotoWaypointAI.plist");
+        "DOCKING_REQUESTED" = ("setAITo: receiveDockingAI.plist"); 
+		"DESIRED_RANGE_ACHIEVED" = ("setStateTo: HEAD_FOR_PLANET");
+        "ACCEPT_DISTRESS_CALL" = (setTargetToFoundTarget, deployEscorts, groupAttackTarget);
+        "OFFENCE_COMMITTED" = (setTargetToFoundTarget, "markTargetForOffence: 7", deployEscorts, groupAttackTarget); 
+        "TARGET_FOUND" = (setTargetToFoundTarget, deployEscorts, groupAttackTarget); 
+        "INCOMING_MISSILE" = (fightOrFleeMissile, setTargetToPrimaryAggressor, deployEscorts, groupAttackTarget, "setAITo: interceptAI.plist", "setStateTo: OUTBOUND_LOOT"); 
+        ATTACKED = (setTargetToPrimaryAggressor, groupAttackTarget); 
+        "GROUP_ATTACK_TARGET" = (setTargetToFoundTarget, "setAITo: interceptAI.plist"); 
+		UPDATE = (setCourseToWitchpoint, checkCourseToDestination, scanForOffenders, "pauseAI: 10.0");
+	}; 
+    "OUTBOUND_LOOT" = {
+        ENTER = ("setSpeedTo: 0.0", performIdle); 
+        "GROUP_ATTACK_TARGET" = (setTargetToFoundTarget, "setAITo: interceptAI.plist"); 
+        ATTACKED = (setTargetToPrimaryAggressor, groupAttackTarget); 
+        "INCOMING_MISSILE" = (fightOrFleeMissile, setTargetToPrimaryAggressor, deployEscorts, groupAttackTarget, "setAITo: interceptAI.plist", "setStateTo: OUTBOUND_LOOT"); 
+        "TARGET_FOUND" = (setTargetToFoundTarget, "setAITo: collectLootAI.plist"); 
+        "NOTHING_FOUND" = ("setStateTo: OUTBOUND_CHECK"); 
+        UPDATE = (scanForLoot, "pauseAI: 10.0"); 
+    }; 
+    "INBOUND_LOOT" = {
+        ENTER = ("setSpeedTo: 0.0", performIdle); 
+        "GROUP_ATTACK_TARGET" = (setTargetToFoundTarget, "setAITo: interceptAI.plist");  
+        ATTACKED = (setTargetToPrimaryAggressor, groupAttackTarget); 
+        "INCOMING_MISSILE" = (fightOrFleeMissile, setTargetToPrimaryAggressor, deployEscorts, groupAttackTarget, "setAITo: interceptAI.plist", "setStateTo: INBOUND_LOOT"); 
+        "TARGET_FOUND" = (setTargetToFoundTarget, "setAITo: collectLootAI.plist"); 
+        "NOTHING_FOUND" = ("setStateTo: INBOUND_CHECK"); 
+        UPDATE = (scanForLoot, "pauseAI: 10.0"); 
+    }; 
+    "INBOUND_CHECK" = {
+        ENTER = (scanForOffenders, checkForNormalSpace); 
+        "OFFENCE_COMMITTED" = (setTargetToFoundTarget, "markTargetForOffence: 7", deployEscorts, groupAttackTarget); 
+        "TARGET_FOUND" = (setTargetToFoundTarget, deployEscorts, groupAttackTarget); 
+        "GROUP_ATTACK_TARGET" = (setTargetToFoundTarget, "setAITo: interceptAI.plist"); 
+        RESTARTED = ("setStateTo: INBOUND_LOOT");
+        "NORMAL_SPACE" = ("setStateTo: HEAD_FOR_PLANET"); 
+        "INTERSTELLAR_SPACE" = ("setSpeedFactorTo: 1.0", "pauseAI: 15.0", "setStateTo: HYPER_OUT"); 
+    }; 
+    "OUTBOUND_CHECK" = {
+        ENTER = (scanForOffenders, checkForNormalSpace); 
+        "OFFENCE_COMMITTED" = (setTargetToFoundTarget, "markTargetForOffence: 7", deployEscorts, groupAttackTarget); 
+        "TARGET_FOUND" = (setTargetToFoundTarget, deployEscorts, groupAttackTarget); 
+        "GROUP_ATTACK_TARGET" = (setTargetToFoundTarget, "setAITo: interceptAI.plist"); 
+        RESTARTED = ("setStateTo: OUTBOUND_LOOT");
+        "NORMAL_SPACE" = ("setStateTo: HEAD_FOR_WITCHPOINT"); 
+        "INTERSTELLAR_SPACE" = ("setSpeedFactorTo: 1.0", "pauseAI: 15.0", "setStateTo: HYPER_OUT"); 
+    }; 
+        "STAY_INTERSTELLAR" = {
+	ENTER = (performIdle, "pauseAI: 5.0");
+        "OFFENCE_COMMITTED" = (setTargetToFoundTarget, "markTargetForOffence: 7", deployEscorts, groupAttackTarget); 
+        "GROUP_ATTACK_TARGET" = (setTargetToFoundTarget, "setStateTo: INTERSTELLAR_ATTACK"); 
+        ATTACKED = (setTargetToPrimaryAggressor, groupAttackTarget); 
+        "INCOMING_MISSILE" = (fightOrFleeMissile, setTargetToPrimaryAggressor, deployEscorts, groupAttackTarget, "setStateTo: INTERSTELLAR_ATTACK"); 
+        "TARGET_FOUND" = (setTargetToFoundTarget, groupAttackTarget); 
+        "NOTHING_FOUND" = ("setStateTo: HYPER_OUT"); 
+        "OFFENCE_COMMITTED" = (setTargetToFoundTarget, "markTargetForOffence: 7", deployEscorts, groupAttackTarget);  
+		UPDATE = (scanForOffenders, "pauseAI: 5.0");
+	}; 
+    "INTERSTELLAR_ATTACK" = {
+        ENTER = (performAttack); 
+        "INCOMING_MISSILE" = (fightOrFleeMissile); 
+        "TARGET_DESTROYED" = ("setStateTo: STAY_INTERSTELLAR"); 
+        "TARGET_LOST" = ("setStateTo: STAY_INTERSTELLAR"); 
+        "GROUP_ATTACK_TARGET" = (setTargetToFoundTarget, "setStateTo: ATTACK_TARGET"); 
+    }; 
+    
+"HYPER_OUT" = {
+	  "WITCHSPACE UNAVAILABLE" = (performIdle, "pauseAI: 15.0", "setStateTo: STAY_INTERSTELLAR");
+        "WITCHSPACE BLOCKED" = (setDestinationToCurrentLocation, "setDesiredRangeTo: 1500.0", performFlyToRangeFromDestination, "pauseAI: 5.0");
+        "WITCHSPACE OKAY" = (wormholeGroup, wormholeEscorts);
+   	  UPDATE = (performHyperSpaceExit);
+    }; 
+
+}

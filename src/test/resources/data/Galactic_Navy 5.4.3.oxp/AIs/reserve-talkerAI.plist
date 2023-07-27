@@ -1,0 +1,52 @@
+{
+    GLOBAL = {ENTER = ("setCoordinates: pwm 0 0 1000000", setDestinationFromCoordinates, "setStateTo: HAIL_PLAYER", setUpEscorts); }; 
+         
+     "HAIL_PLAYER" = {
+        ENTER = (performFaceDestination); 
+        ATTACKED = (setTargetToPrimaryAggressor, "sendScriptMessage: sendReserveAttacked", "setStateTo: ATTACK_SHIP");  
+	"TARGET_FOUND" = ("rollD: 10", "pauseAI: 1.0"); 
+	"ROLL_1" = ("sendScriptMessage: sendReserveHail", "setStateTo: INBOUND_WARNING");
+	"ROLL_2" = ("setStateTo: HAIL_PLAYER");
+	"ROLL_3" = ("setStateTo: HAIL_PLAYER");
+	"ROLL_4" = ("setStateTo: HAIL_PLAYER");
+	"ROLL_5" = ("setStateTo: HAIL_PLAYER");
+	"ROLL_6" = ("setStateTo: HAIL_PLAYER");
+	"ROLL_7" = ("setStateTo: HAIL_PLAYER");
+	"ROLL_8" = ("setStateTo: HAIL_PLAYER");
+	"ROLL_9" = ("setStateTo: HAIL_PLAYER");
+	"ROLL_10" = ("setStateTo: HAIL_PLAYER");
+        "INCOMING_MISSILE" = (fightOrFleeMissile); 
+        "TARGET_LOST" = ("setStateTo: HAIL_PLAYER"); 
+        UPDATE = ("scanForNearestShipWithRole: player", "pauseAI: 5"); 
+    }; 
+
+     "INBOUND_WARNING" = {
+        ATTACKED = (setTargetToPrimaryAggressor, "setStateTo: ATTACK_SHIP");  
+	"TARGET_FOUND" = ("sendScriptMessage: sendReserveWarning", "setStateTo: LURK"); 
+        "INCOMING_MISSILE" = (fightOrFleeMissile); 
+        "TARGET_LOST" = ("setStateTo: LURK"); 
+        UPDATE = ("scanForNearestShipWithRole: thargoid", "pauseAI: 10"); 
+    }; 
+
+ "ATTACK_SHIP" = {
+        ENTER = (performAttack); 
+        ATTACKED = (setTargetToPrimaryAggressor, "sendScriptMessage: sendReserveAttacked", "setStateTo: ATTACK_SHIP"); 
+        "ENERGY_LOW" = ("sendScriptMessage: sendReserveMayday"); 
+        "INCOMING_MISSILE" = (fightOrFleeMissile); 
+        "TARGET_DESTROYED" = ("sendScriptMessage: sendReserveKill", "setStateTo: LURK"); 
+        "TARGET_LOST" = ("setStateTo: LURK"); 
+    }; 
+      
+ 
+  LURK = {
+        ENTER = ("setSpeedTo: 0.0", performIdle); 
+        ATTACKED = (setTargetToPrimaryAggressor, "setStateTo: ATTACK_SHIP"); 
+        "INCOMING_MISSILE" = (fightOrFleeMissile); 
+        "NOTHING_FOUND" = ("setStateTo: LURK"); 
+        "TARGET_FOUND" = (setTargetToFoundTarget, "setStateTo: ATTACK_SHIP");
+	"OFFENCE_COMMITTED" = (setTargetToFoundTarget, deployEscorts, groupAttackTarget);         	
+	"GROUP_ATTACK_TARGET" = (setTargetToFoundTarget, "setStateTo: ATTACK_SHIP"); 
+        UPDATE = (scanForOffenders, "pauseAI: 10"); 
+    }; 
+      
+}

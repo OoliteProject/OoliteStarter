@@ -134,7 +134,7 @@ public class OoliteTest {
         
         Oolite oolite = new Oolite();
         PlistParser.DictionaryContext dc = PlistUtil.parsePListDict(url.openStream(), url.toString());
-        Expansion expansion = oolite.createExpansionFromRequires(dc);
+        Expansion expansion = oolite.createExpansionFromRequiresPlist(dc);
         
         assertEquals(null, expansion.getIdentifier());
         assertEquals(null, expansion.getVersion());
@@ -293,9 +293,10 @@ public class OoliteTest {
         oolite.setConfiguration(configuration);
         
         List<Expansion> expansions = oolite.getLocalExpansions();
-        assertEquals(2, expansions.size());
+        assertEquals(3, expansions.size());
         assertTrue(String.valueOf(expansions.get(0).getIdentifier()).endsWith("Asteroids3D1.2.oxp"));
-        assertEquals("oolite.oxp.Norby.Addons_for_Beginners", expansions.get(1).getIdentifier());
+        assertTrue(String.valueOf(expansions.get(1).getIdentifier()).endsWith("Galactic_Navy 5.4.3.oxp"));
+        assertEquals("oolite.oxp.Norby.Addons_for_Beginners", expansions.get(2).getIdentifier());
     }
     
     @Test

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>galNavy_officer</key>
+	<dict>
+		<key>origin</key>
+		<string>26</string>
+		<key>random_seed</key>
+		<string>0 0 0 0 0 0</string>
+		<key>role</key>
+		<string>police</string>
+		<key>name</key>
+		<string>a Navy Officer!</string>
+		<key>script_actions</key>
+		<array>
+			<string>increment: mission_navy_officer_count</string>
+		</array>
+		<key>script</key>
+		<string>galNavyOfficer.js</string>
+	</dict>
+</dict>
+</plist>

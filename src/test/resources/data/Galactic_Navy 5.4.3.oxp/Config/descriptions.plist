@@ -1,0 +1,2912 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>GalNavy-station-warning</key>
+	<array>
+		<string>Prepare for destruction!</string>
+		<string>You have been targeted for annihilation!</string>
+		<string>You're trespassing in Navy Space!</string>
+		<string>Halt your trusters and lower your shields!</string>
+		<string>Ready yourself for justice!</string>
+	</array>
+
+	<key>rescue-hail</key>
+	<array>
+		<string>Hold on Commander! We're coming!</string>
+		<string>Sit tight Commander! We're on our way!</string>
+		<string>We have you on our scope Commander - prepare for pick up.</string>
+		<string>Sit tight Commander. We are inbound to your position</string>
+	</array>
+
+	<key>reserve-target</key>
+	<array>
+		<string>Pirate fleet in range.</string>
+		<string>Pirates on scanner.</string>
+	</array>
+
+	<key>reserve-attacked</key>
+	<array>
+		<string>I've got one on my six!</string>
+		<string>I can't shake him!</string>
+		<string>I'm taking fire!</string>
+		<string>I need some support!</string>
+	</array>
+
+	<key>reserve-mayday</key>
+	<array>
+		<string>May-Day! May-Day!</string>
+		<string>AAAhhhh!</string>
+		<string>I've lost my shields!</string>
+		<string>I'm hit! I'm hit!</string>
+	</array>
+
+	<key>reserve-kill</key>
+	<array>
+		<string>I got one! I got one!</string>
+		<string>Target destroyed!</string>
+		<string>Scratch one bad guy!</string>
+		<string>Ha Ha! Kill confirmed!</string>
+	</array>
+
+	<key>reserve-hail</key>
+	<array>
+		<string>Good to have you, Commander. Form up.</string>
+		<string>Thargoid fleet inbound. Form up, Commander.</string>
+		<string>You made it just in time. Form up, Commander.</string>
+		<string>Form up, Commander. Thargoids are inbound.</string>
+	</array>
+
+	<key>reserve-hail2</key>
+	<array>
+		<string>Good to have you Commander. Form up.</string>
+		<string>Let's smash some bugs! Form up, Commander.</string>
+		<string>You made it just in time. Form up, Commander.</string>
+		<string>Form up, Commander. Let's smash some bugs!</string>
+	</array>
+
+	<key>reserve-hail3</key>
+	<array>
+		<string>Good to have you, Commander. Form up.</string>
+		<string>Lets find those pirates. Form up, Commander.</string>
+		<string>You made it just in time. Form up, Commander.</string>
+		<string>Form up, Commander. We'll find those pirates.</string>
+	</array>
+
+	<key>reserve-warning</key>
+	<array>
+		<string>Here they come!</string>
+		<string>Thargoid fleet in range.</string>
+		<string>All right, Let's wipe'em out!</string>
+		<string>There's so many!</string>
+	</array>
+
+
+	<key>galNavy-ship</key>
+	<array>
+		<string>picket-behemoth</string>
+		<string>picket-frigate</string>
+		<string>picket-frigate</string>
+		<string>picket-frigate</string>
+		<string>picket-behemoth</string>
+		<string>picket-behemoth</string>
+		<string>picket-transport</string>
+		<string>picket-transport</string>
+		<string>picket-transport</string>
+		<string>picket-transport</string>
+	</array>
+
+	<key>navy-thargoid</key>
+	<array>
+		<string>galnav-thargoid</string>
+		<string>galnav-thargoid</string>
+		<string>galnav-thargoid</string>
+		<string>galnav-thargoid</string>
+		<string>galnav-thargoid</string>
+		<string>galnav-thargoid</string>
+		<string>galnav-thargcruiser</string>
+		<string>galnav-thargcruiser</string>
+		<string>galnav-thargbatship</string>
+		<string>galnav-thargbatship</string>	
+	</array>
+
+	<key>galaxy0_sector1</key>
+	<array>
+		<integer>38</integer>
+		<integer>53</integer>
+		<integer>67</integer>
+		<integer>68</integer>
+		<integer>71</integer>
+		<integer>75</integer>
+		<integer>95</integer>
+		<integer>104</integer>
+		<integer>163</integer>
+		<integer>171</integer>
+		<integer>173</integer>
+		<integer>199</integer>
+		<integer>211</integer>
+		<integer>214</integer>
+		<integer>219</integer>
+		<integer>235</integer>
+		<integer>245</integer>
+		<integer>252</integer>
+	</array>
+
+	<key>galaxy0_sector2</key>
+	<array>
+		<integer>0</integer>
+		<integer>7</integer>
+		<integer>19</integer>
+		<integer>27</integer>
+		<integer>39</integer>
+		<integer>46</integer>
+		<integer>55</integer>
+		<integer>72</integer>
+		<integer>147</integer>
+		<integer>155</integer>
+		<integer>165</integer>
+		<integer>192</integer>
+		<integer>217</integer>
+		<integer>239</integer>
+		<integer>255</integer>
+	</array>
+
+	<key>galaxy0_sector3</key>
+	<array>
+		<integer>10</integer>
+		<integer>17</integer>
+		<integer>23</integer>
+		<integer>26</integer>
+		<integer>31</integer>
+		<integer>44</integer>
+		<integer>73</integer>
+		<integer>82</integer>
+		<integer>90</integer>
+		<integer>113</integer>
+		<integer>124</integer>
+		<integer>129</integer>
+		<integer>157</integer>
+		<integer>177</integer>
+		<integer>201</integer>
+		<integer>204</integer>
+		<integer>224</integer>
+		<integer>244</integer>
+	</array>
+
+	<key>galaxy0_sector4</key>
+	<array>
+		<integer>35</integer>
+		<integer>37</integer>
+		<integer>43</integer>
+		<integer>48</integer>
+		<integer>50</integer>
+		<integer>58</integer>
+		<integer>64</integer>
+		<integer>89</integer>
+		<integer>101</integer>
+		<integer>111</integer>
+		<integer>140</integer>
+		<integer>141</integer>
+		<integer>180</integer>
+		<integer>186</integer>
+		<integer>197</integer>
+		<integer>210</integer>
+		<integer>222</integer>
+		<integer>226</integer>
+		<integer>250</integer>
+	</array>
+
+	<key>galaxy0_sector5</key>
+	<array>
+		<integer>2</integer>
+		<integer>3</integer>
+		<integer>6</integer>
+		<integer>13</integer>
+		<integer>30</integer>
+		<integer>77</integer>
+		<integer>94</integer>
+		<integer>96</integer>
+		<integer>115</integer>
+		<integer>128</integer>
+		<integer>132</integer>
+		<integer>146</integer>
+		<integer>153</integer>
+		<integer>178</integer>
+		<integer>196</integer>
+		<integer>212</integer>
+		<integer>225</integer>
+		<integer>228</integer>
+		<integer>234</integer>
+		<integer>248</integer>
+		<integer>253</integer>
+	</array>
+
+	<key>galaxy0_sector6</key>
+	<array>
+		<integer>11</integer>
+		<integer>33</integer>
+		<integer>47</integer>
+		<integer>52</integer>
+		<integer>54</integer>
+		<integer>61</integer>
+		<integer>76</integer>
+		<integer>106</integer>
+		<integer>123</integer>
+		<integer>127</integer>
+		<integer>130</integer>
+		<integer>137</integer>
+		<integer>143</integer>
+		<integer>149</integer>
+		<integer>152</integer>
+		<integer>156</integer>
+		<integer>166</integer>
+		<integer>172</integer>
+		<integer>183</integer>
+		<integer>209</integer>
+		<integer>232</integer>
+	</array>
+
+	<key>galaxy0_sector7</key>
+	<array>
+		<integer>21</integer>
+		<integer>29</integer>
+		<integer>42</integer>
+		<integer>45</integer>
+		<integer>93</integer>
+		<integer>100</integer>
+		<integer>131</integer>
+		<integer>139</integer>
+		<integer>144</integer>
+		<integer>167</integer>
+		<integer>168</integer>
+	</array>
+
+	<key>galaxy0_sector8</key>
+	<array>
+		<integer>4</integer>
+		<integer>36</integer>
+		<integer>41</integer>
+		<integer>57</integer>
+		<integer>62</integer>
+		<integer>85</integer>
+		<integer>110</integer>
+		<integer>133</integer>
+		<integer>145</integer>
+		<integer>179</integer>
+		<integer>198</integer>
+		<integer>200</integer>
+		<integer>230</integer>
+		<integer>236</integer>
+		<integer>237</integer>
+		<integer>243</integer>
+		<integer>247</integer>
+	</array>
+
+	<key>galaxy0_sector9</key>
+	<array>
+		<integer>16</integer>
+		<integer>28</integer>
+		<integer>56</integer>
+		<integer>63</integer>
+		<integer>70</integer>
+		<integer>81</integer>
+		<integer>83</integer>
+		<integer>91</integer>
+		<integer>92</integer>
+		<integer>97</integer>
+		<integer>135</integer>
+		<integer>151</integer>
+		<integer>161</integer>
+		<integer>162</integer>
+		<integer>195</integer>
+		<integer>203</integer>
+		<integer>206</integer>
+	</array>
+
+	<key>galaxy0_sector10</key>
+	<array>
+		<integer>1</integer>
+		<integer>5</integer>
+		<integer>20</integer>
+		<integer>40</integer>
+		<integer>69</integer>
+		<integer>74</integer>
+		<integer>103</integer>
+		<integer>112</integer>
+		<integer>118</integer>
+		<integer>119</integer>
+		<integer>122</integer>
+		<integer>134</integer>
+		<integer>148</integer>
+		<integer>159</integer>
+		<integer>160</integer>
+		<integer>176</integer>
+		<integer>181</integer>
+		<integer>187</integer>
+		<integer>190</integer>
+		<integer>194</integer>
+		<integer>205</integer>
+		<integer>208</integer>
+		<integer>216</integer>
+		<integer>229</integer>
+		<integer>233</integer>
+		<integer>240</integer>
+		<integer>242</integer>
+		<integer>251</integer>
+		<integer>254</integer>
+	</array>
+
+	<key>galaxy0_sector11</key>
+	<array>
+		<integer>22</integer>
+		<integer>60</integer>
+		<integer>84</integer>
+		<integer>86</integer>
+		<integer>98</integer>
+		<integer>99</integer>
+		<integer>121</integer>
+		<integer>185</integer>
+		<integer>191</integer>
+		<integer>221</integer>
+		<integer>231</integer>
+		<integer>241</integer>
+	</array>
+
+	<key>galaxy0_sector12</key>
+	<array>
+		<integer>9</integer>
+		<integer>25</integer>
+		<integer>34</integer>
+		<integer>59</integer>
+		<integer>79</integer>
+		<integer>88</integer>
+		<integer>105</integer>
+		<integer>142</integer>
+		<integer>169</integer>
+		<integer>174</integer>
+		<integer>184</integer>
+		<integer>202</integer>
+	</array>
+
+	<key>galaxy0_sector13</key>
+	<array>
+		<integer>8</integer>
+		<integer>12</integer>
+		<integer>14</integer>
+		<integer>18</integer>
+		<integer>32</integer>
+		<integer>49</integer>
+		<integer>51</integer>
+		<integer>65</integer>
+		<integer>78</integer>
+		<integer>87</integer>
+		<integer>102</integer>
+		<integer>107</integer>
+		<integer>108</integer>
+		<integer>114</integer>
+		<integer>116</integer>
+		<integer>126</integer>
+		<integer>136</integer>
+		<integer>138</integer>
+		<integer>164</integer>
+		<integer>207</integer>
+		<integer>215</integer>
+		<integer>218</integer>
+		<integer>246</integer>
+	</array>
+
+	<key>galaxy0_sector14</key>
+	<array>
+		<integer>66</integer>
+		<integer>117</integer>
+		<integer>170</integer>
+		<integer>182</integer>
+		<integer>189</integer>
+		<integer>213</integer>
+		<integer>223</integer>
+		<integer>238</integer>
+	</array>
+
+	<key>galaxy1_sector1</key>
+	<array>
+		<integer>16</integer>
+		<integer>34</integer>
+		<integer>59</integer>
+		<integer>100</integer>
+		<integer>111</integer>
+		<integer>139</integer>
+		<integer>157</integer>
+		<integer>159</integer>
+		<integer>171</integer>
+		<integer>205</integer>
+	</array>
+
+	<key>galaxy1_sector2</key>
+	<array>
+		<integer>0</integer>
+		<integer>30</integer>
+		<integer>47</integer>
+		<integer>64</integer>
+		<integer>110</integer>
+		<integer>137</integer>
+		<integer>190</integer>
+		<integer>213</integer>
+		<integer>217</integer>
+		<integer>225</integer>
+		<integer>254</integer>
+		<integer>255</integer>
+	</array>
+
+	<key>galaxy1_sector3</key>
+	<array>
+		<integer>9</integer>
+		<integer>31</integer>
+		<integer>52</integer>
+		<integer>71</integer>
+		<integer>92</integer>
+		<integer>121</integer>
+		<integer>132</integer>
+		<integer>133</integer>
+		<integer>145</integer>
+		<integer>151</integer>
+		<integer>156</integer>
+		<integer>158</integer>
+		<integer>184</integer>
+		<integer>211</integer>
+		<integer>218</integer>
+		<integer>245</integer>
+	</array>
+
+	<key>galaxy1_sector4</key>
+	<array>
+		<integer>1</integer>
+		<integer>5</integer>
+		<integer>23</integer>
+		<integer>25</integer>
+		<integer>35</integer>
+		<integer>37</integer>
+		<integer>54</integer>
+		<integer>77</integer>
+		<integer>83</integer>
+		<integer>86</integer>
+		<integer>154</integer>
+		<integer>174</integer>
+		<integer>188</integer>
+		<integer>191</integer>
+		<integer>210</integer>
+		<integer>219</integer>
+		<integer>223</integer>
+		<integer>229</integer>
+		<integer>234</integer>
+		<integer>237</integer>
+		<integer>250</integer>
+	</array>
+
+	<key>galaxy1_sector5</key>
+	<array>
+		<integer>15</integer>
+		<integer>40</integer>
+		<integer>41</integer>
+		<integer>45</integer>
+		<integer>46</integer>
+		<integer>61</integer>
+		<integer>68</integer>
+		<integer>129</integer>
+		<integer>144</integer>
+		<integer>179</integer>
+		<integer>200</integer>
+		<integer>201</integer>
+	</array>
+
+	<key>galaxy1_sector6</key>
+	<array>
+		<integer>17</integer>
+		<integer>43</integer>
+		<integer>49</integer>
+		<integer>80</integer>
+		<integer>84</integer>
+		<integer>89</integer>
+		<integer>105</integer>
+		<integer>108</integer>
+		<integer>138</integer>
+		<integer>140</integer>
+		<integer>143</integer>
+		<integer>147</integer>
+		<integer>152</integer>
+		<integer>176</integer>
+		<integer>186</integer>
+		<integer>189</integer>
+		<integer>199</integer>
+		<integer>212</integer>
+		<integer>215</integer>
+		<integer>222</integer>
+		<integer>231</integer>
+		<integer>247</integer>
+		<integer>249</integer>
+	</array>
+
+	<key>galaxy1_sector7</key>
+	<array>
+		<integer>13</integer>
+		<integer>19</integer>
+		<integer>29</integer>
+		<integer>57</integer>
+		<integer>60</integer>
+		<integer>72</integer>
+		<integer>73</integer>
+		<integer>74</integer>
+		<integer>81</integer>
+		<integer>85</integer>
+		<integer>91</integer>
+		<integer>94</integer>
+		<integer>95</integer>
+		<integer>97</integer>
+		<integer>102</integer>
+		<integer>113</integer>
+		<integer>115</integer>
+		<integer>124</integer>
+		<integer>141</integer>
+		<integer>149</integer>
+		<integer>167</integer>
+		<integer>178</integer>
+		<integer>183</integer>
+		<integer>209</integer>
+		<integer>226</integer>
+		<integer>232</integer>
+		<integer>242</integer>
+		<integer>244</integer>
+		<integer>252</integer>
+	</array>
+
+	<key>galaxy1_sector8</key>
+	<array>
+		<integer>20</integer>
+		<integer>24</integer>
+		<integer>39</integer>
+		<integer>53</integer>
+		<integer>65</integer>
+		<integer>67</integer>
+		<integer>78</integer>
+		<integer>118</integer>
+		<integer>123</integer>
+		<integer>126</integer>
+		<integer>193</integer>
+		<integer>204</integer>
+		<integer>240</integer>
+	</array>
+
+	<key>galaxy1_sector9</key>
+	<array>
+		<integer>38</integer>
+		<integer>44</integer>
+		<integer>62</integer>
+		<integer>87</integer>
+		<integer>134</integer>
+		<integer>155</integer>
+		<integer>175</integer>
+		<integer>185</integer>
+		<integer>187</integer>
+		<integer>192</integer>
+		<integer>216</integer>
+		<integer>220</integer>
+		<integer>235</integer>
+	</array>
+
+	<key>galaxy1_sector10</key>
+	<array>
+		<integer>3</integer>
+		<integer>6</integer>
+		<integer>8</integer>
+		<integer>12</integer>
+		<integer>21</integer>
+		<integer>22</integer>
+		<integer>27</integer>
+		<integer>28</integer>
+		<integer>75</integer>
+		<integer>79</integer>
+		<integer>98</integer>
+		<integer>101</integer>
+		<integer>103</integer>
+		<integer>112</integer>
+		<integer>125</integer>
+		<integer>128</integer>
+		<integer>136</integer>
+		<integer>148</integer>
+		<integer>165</integer>
+		<integer>246</integer>
+		<integer>253</integer>
+	</array>
+
+	<key>galaxy1_sector11</key>
+	<array>
+		<integer>14</integer>
+		<integer>58</integer>
+		<integer>63</integer>
+		<integer>66</integer>
+		<integer>88</integer>
+		<integer>99</integer>
+		<integer>109</integer>
+		<integer>116</integer>
+		<integer>162</integer>
+		<integer>164</integer>
+		<integer>169</integer>
+		<integer>173</integer>
+		<integer>195</integer>
+		<integer>196</integer>
+		<integer>198</integer>
+		<integer>207</integer>
+		<integer>208</integer>
+		<integer>221</integer>
+		<integer>233</integer>
+		<integer>236</integer>
+		<integer>239</integer>
+		<integer>241</integer>
+	</array>
+
+	<key>galaxy1_sector12</key>
+	<array>
+		<integer>4</integer>
+		<integer>11</integer>
+		<integer>18</integer>
+		<integer>26</integer>
+		<integer>32</integer>
+		<integer>36</integer>
+		<integer>42</integer>
+		<integer>50</integer>
+		<integer>55</integer>
+		<integer>69</integer>
+		<integer>114</integer>
+		<integer>119</integer>
+		<integer>142</integer>
+		<integer>146</integer>
+		<integer>163</integer>
+		<integer>251</integer>
+	</array>
+
+	<key>galaxy1_sector13</key>
+	<array>
+		<integer>2</integer>
+		<integer>7</integer>
+		<integer>10</integer>
+		<integer>51</integer>
+		<integer>70</integer>
+		<integer>76</integer>
+		<integer>90</integer>
+		<integer>93</integer>
+		<integer>104</integer>
+		<integer>107</integer>
+		<integer>120</integer>
+		<integer>130</integer>
+		<integer>153</integer>
+		<integer>160</integer>
+		<integer>168</integer>
+		<integer>172</integer>
+		<integer>177</integer>
+		<integer>180</integer>
+		<integer>181</integer>
+		<integer>194</integer>
+		<integer>203</integer>
+		<integer>206</integer>
+		<integer>214</integer>
+		<integer>224</integer>
+		<integer>230</integer>
+		<integer>238</integer>
+	</array>
+
+	<key>galaxy1_sector14</key>
+	<array>
+		<integer>56</integer>
+		<integer>117</integer>
+		<integer>131</integer>
+		<integer>161</integer>
+		<integer>166</integer>
+		<integer>197</integer>
+		<integer>228</integer>
+	</array>
+
+	<key>galaxy2_sector1</key>
+	<array>
+		<integer>0</integer>
+		<integer>74</integer>
+		<integer>93</integer>
+		<integer>120</integer>
+		<integer>136</integer>
+		<integer>169</integer>
+		<integer>183</integer>
+		<integer>190</integer>
+		<integer>196</integer>
+		<integer>216</integer>
+		<integer>224</integer>
+		<integer>229</integer>
+	</array>
+
+	<key>galaxy2_sector2</key>
+	<array>
+		<integer>54</integer>
+		<integer>118</integer>
+		<integer>121</integer>
+		<integer>129</integer>
+		<integer>161</integer>
+		<integer>185</integer>
+		<integer>186</integer>
+		<integer>232</integer>
+	</array>
+
+	<key>galaxy2_sector3</key>
+	<array>
+		<integer>2</integer>
+		<integer>8</integer>
+		<integer>43</integer>
+		<integer>95</integer>
+		<integer>98</integer>
+		<integer>106</integer>
+		<integer>117</integer>
+		<integer>125</integer>
+		<integer>126</integer>
+		<integer>148</integer>
+		<integer>160</integer>
+		<integer>172</integer>
+		<integer>214</integer>
+		<integer>219</integer>
+		<integer>233</integer>
+		<integer>250</integer>
+		<integer>255</integer>
+	</array>
+
+	<key>galaxy2_sector4</key>
+	<array>
+		<integer>12</integer>
+		<integer>35</integer>
+		<integer>48</integer>
+		<integer>51</integer>
+		<integer>61</integer>
+		<integer>63</integer>
+		<integer>86</integer>
+		<integer>90</integer>
+		<integer>112</integer>
+		<integer>115</integer>
+		<integer>124</integer>
+		<integer>143</integer>
+		<integer>146</integer>
+		<integer>158</integer>
+		<integer>162</integer>
+		<integer>203</integer>
+		<integer>213</integer>
+		<integer>230</integer>
+		<integer>237</integer>
+		<integer>243</integer>
+	</array>
+
+	<key>galaxy2_sector5</key>
+	<array>
+		<integer>40</integer>
+		<integer>99</integer>
+		<integer>184</integer>
+		<integer>210</integer>
+	</array>
+
+	<key>galaxy2_sector6</key>
+	<array>
+		<integer>1</integer>
+		<integer>14</integer>
+		<integer>50</integer>
+		<integer>65</integer>
+		<integer>72</integer>
+		<integer>103</integer>
+		<integer>130</integer>
+		<integer>156</integer>
+		<integer>187</integer>
+		<integer>222</integer>
+		<integer>234</integer>
+		<integer>249</integer>
+	</array>
+
+	<key>galaxy2_sector7</key>
+	<array>
+		<integer>5</integer>
+		<integer>7</integer>
+		<integer>22</integer>
+		<integer>49</integer>
+		<integer>56</integer>
+		<integer>58</integer>
+		<integer>66</integer>
+		<integer>75</integer>
+		<integer>91</integer>
+		<integer>92</integer>
+		<integer>110</integer>
+		<integer>140</integer>
+		<integer>150</integer>
+		<integer>171</integer>
+		<integer>175</integer>
+		<integer>177</integer>
+		<integer>178</integer>
+		<integer>179</integer>
+		<integer>211</integer>
+		<integer>228</integer>
+		<integer>239</integer>
+		<integer>246</integer>
+		<integer>252</integer>
+		<integer>253</integer>
+	</array>
+
+	<key>galaxy2_sector8</key>
+	<array>
+		<integer>4</integer>
+		<integer>23</integer>
+		<integer>30</integer>
+		<integer>34</integer>
+		<integer>38</integer>
+		<integer>42</integer>
+		<integer>57</integer>
+		<integer>69</integer>
+		<integer>79</integer>
+		<integer>87</integer>
+		<integer>89</integer>
+		<integer>109</integer>
+		<integer>122</integer>
+		<integer>123</integer>
+		<integer>131</integer>
+		<integer>135</integer>
+		<integer>137</integer>
+		<integer>138</integer>
+		<integer>154</integer>
+		<integer>155</integer>
+		<integer>157</integer>
+		<integer>163</integer>
+		<integer>174</integer>
+		<integer>182</integer>
+		<integer>188</integer>
+		<integer>189</integer>
+		<integer>194</integer>
+		<integer>198</integer>
+		<integer>212</integer>
+		<integer>217</integer>
+		<integer>242</integer>
+	</array>
+
+	<key>galaxy2_sector9</key>
+	<array>
+		<integer>3</integer>
+		<integer>11</integer>
+		<integer>20</integer>
+		<integer>33</integer>
+		<integer>55</integer>
+		<integer>73</integer>
+		<integer>76</integer>
+		<integer>77</integer>
+		<integer>83</integer>
+		<integer>96</integer>
+		<integer>104</integer>
+		<integer>113</integer>
+		<integer>116</integer>
+		<integer>142</integer>
+		<integer>152</integer>
+		<integer>159</integer>
+		<integer>195</integer>
+	</array>
+
+	<key>galaxy2_sector10</key>
+	<array>
+		<integer>19</integer>
+		<integer>32</integer>
+		<integer>46</integer>
+		<integer>60</integer>
+		<integer>64</integer>
+		<integer>82</integer>
+		<integer>88</integer>
+		<integer>94</integer>
+		<integer>97</integer>
+		<integer>101</integer>
+		<integer>107</integer>
+		<integer>114</integer>
+		<integer>119</integer>
+		<integer>132</integer>
+		<integer>134</integer>
+		<integer>168</integer>
+		<integer>173</integer>
+		<integer>192</integer>
+		<integer>207</integer>
+		<integer>215</integer>
+		<integer>227</integer>
+		<integer>236</integer>
+		<integer>241</integer>
+		<integer>244</integer>
+		<integer>248</integer>
+	</array>
+
+	<key>galaxy2_sector11</key>
+	<array>
+		<integer>18</integer>
+		<integer>52</integer>
+		<integer>62</integer>
+		<integer>100</integer>
+		<integer>145</integer>
+		<integer>149</integer>
+		<integer>201</integer>
+	</array>
+
+	<key>galaxy2_sector12</key>
+	<array>
+		<integer>6</integer>
+		<integer>10</integer>
+		<integer>13</integer>
+		<integer>25</integer>
+		<integer>28</integer>
+		<integer>29</integer>
+		<integer>37</integer>
+		<integer>47</integer>
+		<integer>53</integer>
+		<integer>67</integer>
+		<integer>68</integer>
+		<integer>70</integer>
+		<integer>71</integer>
+		<integer>78</integer>
+		<integer>81</integer>
+		<integer>85</integer>
+		<integer>102</integer>
+		<integer>111</integer>
+		<integer>128</integer>
+		<integer>141</integer>
+		<integer>153</integer>
+		<integer>164</integer>
+		<integer>166</integer>
+		<integer>167</integer>
+		<integer>176</integer>
+		<integer>180</integer>
+		<integer>181</integer>
+		<integer>202</integer>
+		<integer>220</integer>
+		<integer>221</integer>
+		<integer>225</integer>
+		<integer>226</integer>
+		<integer>235</integer>
+		<integer>240</integer>
+	</array>
+
+	<key>galaxy2_sector13</key>
+	<array>
+		<integer>9</integer>
+		<integer>15</integer>
+		<integer>16</integer>
+		<integer>24</integer>
+		<integer>39</integer>
+		<integer>41</integer>
+		<integer>44</integer>
+		<integer>59</integer>
+		<integer>144</integer>
+		<integer>147</integer>
+		<integer>151</integer>
+		<integer>191</integer>
+		<integer>193</integer>
+		<integer>197</integer>
+		<integer>200</integer>
+		<integer>208</integer>
+		<integer>209</integer>
+		<integer>218</integer>
+		<integer>238</integer>
+		<integer>254</integer>
+	</array>
+
+	<key>galaxy2_sector14</key>
+	<array>
+		<integer>27</integer>
+		<integer>45</integer>
+		<integer>108</integer>
+		<integer>127</integer>
+		<integer>170</integer>
+		<integer>199</integer>
+		<integer>231</integer>
+	</array>
+
+	<key>galaxy3_sector1</key>
+	<array>
+		<integer>0</integer>
+		<integer>3</integer>
+		<integer>41</integer>
+		<integer>46</integer>
+		<integer>84</integer>
+		<integer>96</integer>
+		<integer>118</integer>
+		<integer>130</integer>
+		<integer>135</integer>
+		<integer>143</integer>
+		<integer>150</integer>
+		<integer>157</integer>
+		<integer>187</integer>
+		<integer>193</integer>
+		<integer>195</integer>
+		<integer>197</integer>
+		<integer>202</integer>
+		<integer>206</integer>
+		<integer>212</integer>
+		<integer>223</integer>
+		<integer>240</integer>
+		<integer>244</integer>
+		<integer>250</integer>
+	</array>
+
+	<key>galaxy3_sector2</key>
+	<array>
+		<integer>8</integer>
+		<integer>85</integer>
+		<integer>123</integer>
+		<integer>136</integer>
+		<integer>153</integer>
+		<integer>154</integer>
+		<integer>162</integer>
+		<integer>166</integer>
+		<integer>175</integer>
+		<integer>198</integer>
+		<integer>207</integer>
+		<integer>213</integer>
+		<integer>217</integer>
+	</array>
+
+	<key>galaxy3_sector3</key>
+	<array>
+		<integer>14</integer>
+		<integer>47</integer>
+		<integer>59</integer>
+		<integer>61</integer>
+		<integer>72</integer>
+		<integer>87</integer>
+		<integer>124</integer>
+		<integer>127</integer>
+		<integer>131</integer>
+		<integer>170</integer>
+		<integer>180</integer>
+		<integer>183</integer>
+		<integer>200</integer>
+		<integer>218</integer>
+		<integer>229</integer>
+		<integer>246</integer>
+		<integer>252</integer>
+		<integer>253</integer>
+	</array>
+
+	<key>galaxy3_sector4</key>
+	<array>
+		<integer>67</integer>
+		<integer>91</integer>
+		<integer>116</integer>
+		<integer>132</integer>
+		<integer>147</integer>
+		<integer>163</integer>
+		<integer>184</integer>
+		<integer>185</integer>
+		<integer>204</integer>
+		<integer>225</integer>
+	</array>
+
+	<key>galaxy3_sector5</key>
+	<array>
+		<integer>22</integer>
+		<integer>23</integer>
+		<integer>24</integer>
+		<integer>25</integer>
+		<integer>33</integer>
+		<integer>43</integer>
+		<integer>52</integer>
+		<integer>55</integer>
+		<integer>58</integer>
+		<integer>62</integer>
+		<integer>81</integer>
+		<integer>89</integer>
+		<integer>93</integer>
+		<integer>109</integer>
+		<integer>129</integer>
+		<integer>134</integer>
+		<integer>138</integer>
+		<integer>156</integer>
+		<integer>179</integer>
+		<integer>194</integer>
+		<integer>196</integer>
+		<integer>199</integer>
+		<integer>203</integer>
+		<integer>209</integer>
+		<integer>214</integer>
+		<integer>219</integer>
+		<integer>228</integer>
+		<integer>236</integer>
+		<integer>251</integer>
+	</array>
+
+	<key>galaxy3_sector6</key>
+	<array>
+		<integer>12</integer>
+		<integer>28</integer>
+		<integer>35</integer>
+		<integer>36</integer>
+		<integer>48</integer>
+		<integer>78</integer>
+		<integer>94</integer>
+		<integer>98</integer>
+		<integer>125</integer>
+		<integer>159</integer>
+		<integer>167</integer>
+		<integer>169</integer>
+		<integer>191</integer>
+		<integer>210</integer>
+		<integer>230</integer>
+		<integer>234</integer>
+		<integer>235</integer>
+		<integer>242</integer>
+		<integer>245</integer>
+	</array>
+
+	<key>galaxy3_sector7</key>
+	<array>
+		<integer>13</integer>
+		<integer>16</integer>
+		<integer>29</integer>
+		<integer>40</integer>
+		<integer>42</integer>
+		<integer>70</integer>
+		<integer>80</integer>
+		<integer>83</integer>
+		<integer>120</integer>
+		<integer>126</integer>
+		<integer>133</integer>
+		<integer>139</integer>
+		<integer>168</integer>
+		<integer>172</integer>
+		<integer>178</integer>
+		<integer>222</integer>
+		<integer>243</integer>
+		<integer>247</integer>
+	</array>
+
+	<key>galaxy3_sector8</key>
+	<array>
+		<integer>37</integer>
+		<integer>38</integer>
+		<integer>53</integer>
+		<integer>73</integer>
+		<integer>74</integer>
+		<integer>82</integer>
+		<integer>88</integer>
+		<integer>97</integer>
+		<integer>117</integer>
+		<integer>160</integer>
+		<integer>164</integer>
+		<integer>176</integer>
+		<integer>181</integer>
+		<integer>192</integer>
+	</array>
+
+	<key>galaxy3_sector9</key>
+	<array>
+		<integer>10</integer>
+		<integer>21</integer>
+		<integer>30</integer>
+		<integer>34</integer>
+		<integer>54</integer>
+		<integer>75</integer>
+		<integer>76</integer>
+		<integer>77</integer>
+		<integer>95</integer>
+		<integer>114</integer>
+		<integer>148</integer>
+		<integer>149</integer>
+		<integer>190</integer>
+		<integer>255</integer>
+	</array>
+
+	<key>galaxy3_sector10</key>
+	<array>
+		<integer>17</integer>
+		<integer>27</integer>
+		<integer>45</integer>
+		<integer>50</integer>
+		<integer>65</integer>
+		<integer>101</integer>
+		<integer>105</integer>
+		<integer>107</integer>
+		<integer>108</integer>
+		<integer>119</integer>
+		<integer>137</integer>
+		<integer>144</integer>
+		<integer>152</integer>
+		<integer>177</integer>
+		<integer>182</integer>
+		<integer>189</integer>
+		<integer>208</integer>
+		<integer>227</integer>
+		<integer>239</integer>
+		<integer>241</integer>
+	</array>
+
+	<key>galaxy3_sector11</key>
+	<array>
+		<integer>2</integer>
+		<integer>4</integer>
+		<integer>6</integer>
+		<integer>11</integer>
+		<integer>56</integer>
+		<integer>69</integer>
+		<integer>106</integer>
+		<integer>111</integer>
+		<integer>113</integer>
+		<integer>121</integer>
+		<integer>128</integer>
+		<integer>141</integer>
+		<integer>142</integer>
+		<integer>145</integer>
+		<integer>155</integer>
+		<integer>201</integer>
+		<integer>226</integer>
+		<integer>238</integer>
+		<integer>249</integer>
+	</array>
+
+	<key>galaxy3_sector12</key>
+	<array>
+		<integer>1</integer>
+		<integer>19</integer>
+		<integer>20</integer>
+		<integer>31</integer>
+		<integer>44</integer>
+		<integer>51</integer>
+		<integer>63</integer>
+		<integer>92</integer>
+		<integer>99</integer>
+		<integer>102</integer>
+		<integer>146</integer>
+		<integer>174</integer>
+		<integer>205</integer>
+		<integer>215</integer>
+	</array>
+
+	<key>galaxy3_sector13</key>
+	<array>
+		<integer>7</integer>
+		<integer>26</integer>
+		<integer>32</integer>
+		<integer>60</integer>
+		<integer>64</integer>
+		<integer>104</integer>
+		<integer>112</integer>
+		<integer>122</integer>
+		<integer>161</integer>
+		<integer>165</integer>
+		<integer>173</integer>
+		<integer>211</integer>
+		<integer>216</integer>
+		<integer>232</integer>
+	</array>
+
+	<key>galaxy3_sector14</key>
+	<array>
+		<integer>5</integer>
+		<integer>15</integer>
+		<integer>18</integer>
+		<integer>68</integer>
+		<integer>71</integer>
+		<integer>79</integer>
+		<integer>90</integer>
+		<integer>100</integer>
+		<integer>115</integer>
+		<integer>151</integer>
+		<integer>158</integer>
+		<integer>171</integer>
+		<integer>220</integer>
+		<integer>224</integer>
+		<integer>231</integer>
+		<integer>233</integer>
+		<integer>248</integer>
+	</array>
+
+	<key>galaxy4_sector1</key>
+	<array>
+		<integer>16</integer>
+		<integer>20</integer>
+		<integer>32</integer>
+		<integer>39</integer>
+		<integer>48</integer>
+		<integer>52</integer>
+		<integer>56</integer>
+		<integer>59</integer>
+		<integer>84</integer>
+		<integer>124</integer>
+		<integer>141</integer>
+		<integer>155</integer>
+		<integer>168</integer>
+		<integer>176</integer>
+		<integer>218</integer>
+		<integer>232</integer>
+		<integer>240</integer>
+	</array>
+
+	<key>galaxy4_sector2</key>
+	<array>
+		<integer>40</integer>
+		<integer>49</integer>
+		<integer>58</integer>
+		<integer>66</integer>
+		<integer>78</integer>
+		<integer>125</integer>
+		<integer>188</integer>
+		<integer>203</integer>
+		<integer>242</integer>
+	</array>
+
+	<key>galaxy4_sector3</key>
+	<array>
+		<integer>0</integer>
+		<integer>5</integer>
+		<integer>7</integer>
+		<integer>22</integer>
+		<integer>33</integer>
+		<integer>50</integer>
+		<integer>64</integer>
+		<integer>70</integer>
+		<integer>74</integer>
+		<integer>80</integer>
+		<integer>93</integer>
+		<integer>131</integer>
+		<integer>135</integer>
+		<integer>137</integer>
+		<integer>140</integer>
+		<integer>147</integer>
+		<integer>161</integer>
+		<integer>171</integer>
+		<integer>173</integer>
+		<integer>174</integer>
+		<integer>177</integer>
+		<integer>182</integer>
+		<integer>187</integer>
+		<integer>191</integer>
+		<integer>193</integer>
+		<integer>202</integer>
+		<integer>205</integer>
+		<integer>207</integer>
+		<integer>209</integer>
+		<integer>241</integer>
+		<integer>243</integer>
+		<integer>247</integer>
+		<integer>252</integer>
+		<integer>253</integer>
+	</array>
+
+	<key>galaxy4_sector4</key>
+	<array>
+		<integer>11</integer>
+		<integer>25</integer>
+		<integer>54</integer>
+		<integer>75</integer>
+		<integer>103</integer>
+		<integer>115</integer>
+		<integer>132</integer>
+		<integer>150</integer>
+		<integer>157</integer>
+		<integer>159</integer>
+		<integer>175</integer>
+		<integer>184</integer>
+		<integer>189</integer>
+		<integer>201</integer>
+		<integer>219</integer>
+		<integer>220</integer>
+		<integer>221</integer>
+		<integer>225</integer>
+		<integer>226</integer>
+		<integer>227</integer>
+	</array>
+
+	<key>galaxy4_sector5</key>
+	<array>
+		<integer>2</integer>
+		<integer>13</integer>
+		<integer>31</integer>
+		<integer>37</integer>
+		<integer>44</integer>
+		<integer>53</integer>
+		<integer>63</integer>
+		<integer>95</integer>
+		<integer>96</integer>
+		<integer>114</integer>
+		<integer>118</integer>
+		<integer>127</integer>
+		<integer>134</integer>
+		<integer>166</integer>
+		<integer>245</integer>
+	</array>
+
+	<key>galaxy4_sector6</key>
+	<array>
+		<integer>10</integer>
+		<integer>15</integer>
+		<integer>65</integer>
+		<integer>76</integer>
+		<integer>83</integer>
+		<integer>91</integer>
+		<integer>99</integer>
+		<integer>105</integer>
+		<integer>110</integer>
+		<integer>116</integer>
+		<integer>146</integer>
+		<integer>200</integer>
+		<integer>214</integer>
+		<integer>235</integer>
+		<integer>244</integer>
+		<integer>248</integer>
+		<integer>251</integer>
+	</array>
+
+	<key>galaxy4_sector7</key>
+	<array>
+		<integer>12</integer>
+		<integer>46</integer>
+		<integer>67</integer>
+		<integer>81</integer>
+		<integer>85</integer>
+		<integer>117</integer>
+		<integer>158</integer>
+		<integer>178</integer>
+		<integer>192</integer>
+		<integer>212</integer>
+		<integer>213</integer>
+		<integer>215</integer>
+		<integer>236</integer>
+	</array>
+
+	<key>galaxy4_sector8</key>
+	<array>
+		<integer>6</integer>
+		<integer>27</integer>
+		<integer>51</integer>
+		<integer>107</integer>
+		<integer>130</integer>
+		<integer>143</integer>
+		<integer>149</integer>
+		<integer>195</integer>
+		<integer>217</integer>
+		<integer>234</integer>
+		<integer>238</integer>
+	</array>
+
+	<key>galaxy4_sector9</key>
+	<array>
+		<integer>1</integer>
+		<integer>3</integer>
+		<integer>19</integer>
+		<integer>24</integer>
+		<integer>28</integer>
+		<integer>35</integer>
+		<integer>45</integer>
+		<integer>47</integer>
+		<integer>60</integer>
+		<integer>69</integer>
+		<integer>79</integer>
+		<integer>111</integer>
+		<integer>112</integer>
+		<integer>122</integer>
+		<integer>154</integer>
+		<integer>156</integer>
+		<integer>160</integer>
+		<integer>180</integer>
+		<integer>181</integer>
+		<integer>211</integer>
+		<integer>224</integer>
+		<integer>228</integer>
+		<integer>230</integer>
+		<integer>231</integer>
+		<integer>255</integer>
+	</array>
+
+	<key>galaxy4_sector10</key>
+	<array>
+		<integer>26</integer>
+		<integer>34</integer>
+		<integer>41</integer>
+		<integer>94</integer>
+		<integer>142</integer>
+		<integer>162</integer>
+		<integer>183</integer>
+		<integer>186</integer>
+		<integer>199</integer>
+		<integer>210</integer>
+		<integer>216</integer>
+		<integer>250</integer>
+		<integer>254</integer>
+	</array>
+
+	<key>galaxy4_sector11</key>
+	<array>
+		<integer>14</integer>
+		<integer>18</integer>
+		<integer>36</integer>
+		<integer>38</integer>
+		<integer>42</integer>
+		<integer>43</integer>
+		<integer>82</integer>
+		<integer>86</integer>
+		<integer>92</integer>
+		<integer>97</integer>
+		<integer>98</integer>
+		<integer>108</integer>
+		<integer>121</integer>
+		<integer>123</integer>
+		<integer>133</integer>
+		<integer>151</integer>
+		<integer>196</integer>
+		<integer>223</integer>
+		<integer>229</integer>
+	</array>
+
+	<key>galaxy4_sector12</key>
+	<array>
+		<integer>4</integer>
+		<integer>9</integer>
+		<integer>23</integer>
+		<integer>61</integer>
+		<integer>62</integer>
+		<integer>90</integer>
+		<integer>101</integer>
+		<integer>104</integer>
+		<integer>120</integer>
+		<integer>129</integer>
+		<integer>136</integer>
+		<integer>138</integer>
+		<integer>139</integer>
+		<integer>163</integer>
+		<integer>169</integer>
+		<integer>172</integer>
+		<integer>206</integer>
+	</array>
+
+	<key>galaxy4_sector13</key>
+	<array>
+		<integer>8</integer>
+		<integer>17</integer>
+		<integer>30</integer>
+		<integer>55</integer>
+		<integer>72</integer>
+		<integer>87</integer>
+		<integer>88</integer>
+		<integer>89</integer>
+		<integer>100</integer>
+		<integer>109</integer>
+		<integer>126</integer>
+		<integer>128</integer>
+		<integer>148</integer>
+		<integer>164</integer>
+		<integer>165</integer>
+		<integer>170</integer>
+		<integer>185</integer>
+		<integer>194</integer>
+		<integer>239</integer>
+	</array>
+
+	<key>galaxy4_sector14</key>
+	<array>
+		<integer>21</integer>
+		<integer>68</integer>
+		<integer>77</integer>
+		<integer>106</integer>
+		<integer>113</integer>
+		<integer>119</integer>
+		<integer>145</integer>
+		<integer>167</integer>
+		<integer>179</integer>
+		<integer>197</integer>
+		<integer>208</integer>
+		<integer>237</integer>
+		<integer>246</integer>
+	</array>
+
+	<key>galaxy5_sector1</key>
+	<array>
+		<integer>24</integer>
+		<integer>32</integer>
+		<integer>64</integer>
+		<integer>119</integer>
+		<integer>128</integer>
+		<integer>152</integer>
+		<integer>197</integer>
+		<integer>207</integer>
+	</array>
+
+	<key>galaxy5_sector2</key>
+	<array>
+		<integer>11</integer>
+		<integer>18</integer>
+		<integer>29</integer>
+		<integer>34</integer>
+		<integer>38</integer>
+		<integer>54</integer>
+		<integer>63</integer>
+		<integer>73</integer>
+		<integer>94</integer>
+		<integer>96</integer>
+		<integer>100</integer>
+		<integer>104</integer>
+		<integer>122</integer>
+		<integer>125</integer>
+		<integer>127</integer>
+		<integer>135</integer>
+		<integer>148</integer>
+		<integer>162</integer>
+		<integer>166</integer>
+		<integer>199</integer>
+		<integer>222</integer>
+	</array>
+
+	<key>galaxy5_sector3</key>
+	<array>
+		<integer>1</integer>
+		<integer>17</integer>
+		<integer>75</integer>
+		<integer>89</integer>
+		<integer>108</integer>
+		<integer>143</integer>
+		<integer>161</integer>
+		<integer>181</integer>
+		<integer>189</integer>
+		<integer>193</integer>
+		<integer>211</integer>
+	</array>
+
+	<key>galaxy5_sector4</key>
+	<array>
+		<integer>20</integer>
+		<integer>26</integer>
+		<integer>28</integer>
+		<integer>48</integer>
+		<integer>57</integer>
+		<integer>80</integer>
+		<integer>103</integer>
+		<integer>169</integer>
+		<integer>170</integer>
+		<integer>188</integer>
+		<integer>191</integer>
+		<integer>239</integer>
+		<integer>244</integer>
+		<integer>247</integer>
+	</array>
+
+	<key>galaxy5_sector5</key>
+	<array>
+		<integer>13</integer>
+		<integer>15</integer>
+		<integer>37</integer>
+		<integer>43</integer>
+		<integer>49</integer>
+		<integer>52</integer>
+		<integer>67</integer>
+		<integer>68</integer>
+		<integer>86</integer>
+		<integer>101</integer>
+		<integer>112</integer>
+		<integer>131</integer>
+		<integer>138</integer>
+		<integer>142</integer>
+		<integer>144</integer>
+		<integer>145</integer>
+		<integer>147</integer>
+		<integer>155</integer>
+		<integer>173</integer>
+		<integer>175</integer>
+		<integer>180</integer>
+		<integer>192</integer>
+		<integer>209</integer>
+		<integer>225</integer>
+		<integer>233</integer>
+		<integer>250</integer>
+		<integer>252</integer>
+		<integer>253</integer>
+	</array>
+
+	<key>galaxy5_sector6</key>
+	<array>
+		<integer>0</integer>
+		<integer>4</integer>
+		<integer>5</integer>
+		<integer>12</integer>
+		<integer>19</integer>
+		<integer>47</integer>
+		<integer>56</integer>
+		<integer>58</integer>
+		<integer>61</integer>
+		<integer>69</integer>
+		<integer>71</integer>
+		<integer>91</integer>
+		<integer>97</integer>
+		<integer>136</integer>
+		<integer>150</integer>
+		<integer>160</integer>
+		<integer>167</integer>
+		<integer>182</integer>
+		<integer>194</integer>
+		<integer>200</integer>
+		<integer>206</integer>
+		<integer>210</integer>
+		<integer>219</integer>
+		<integer>223</integer>
+		<integer>242</integer>
+		<integer>254</integer>
+	</array>
+
+	<key>galaxy5_sector7</key>
+	<array>
+		<integer>3</integer>
+		<integer>84</integer>
+		<integer>88</integer>
+		<integer>111</integer>
+		<integer>184</integer>
+		<integer>196</integer>
+		<integer>214</integer>
+		<integer>236</integer>
+	</array>
+
+	<key>galaxy5_sector8</key>
+	<array>
+		<integer>16</integer>
+		<integer>21</integer>
+		<integer>22</integer>
+		<integer>98</integer>
+		<integer>102</integer>
+		<integer>105</integer>
+		<integer>109</integer>
+		<integer>130</integer>
+		<integer>139</integer>
+		<integer>228</integer>
+		<integer>229</integer>
+		<integer>231</integer>
+		<integer>243</integer>
+		<integer>248</integer>
+	</array>
+
+	<key>galaxy5_sector9</key>
+	<array>
+		<integer>40</integer>
+		<integer>70</integer>
+		<integer>76</integer>
+		<integer>78</integer>
+		<integer>92</integer>
+		<integer>99</integer>
+		<integer>107</integer>
+		<integer>123</integer>
+		<integer>158</integer>
+		<integer>164</integer>
+		<integer>174</integer>
+		<integer>176</integer>
+		<integer>179</integer>
+		<integer>187</integer>
+		<integer>190</integer>
+		<integer>213</integer>
+		<integer>237</integer>
+	</array>
+
+	<key>galaxy5_sector10</key>
+	<array>
+		<integer>7</integer>
+		<integer>9</integer>
+		<integer>25</integer>
+		<integer>45</integer>
+		<integer>50</integer>
+		<integer>72</integer>
+		<integer>79</integer>
+		<integer>81</integer>
+		<integer>90</integer>
+		<integer>95</integer>
+		<integer>110</integer>
+		<integer>132</integer>
+		<integer>137</integer>
+		<integer>154</integer>
+		<integer>163</integer>
+		<integer>183</integer>
+		<integer>195</integer>
+		<integer>198</integer>
+		<integer>204</integer>
+		<integer>212</integer>
+		<integer>232</integer>
+		<integer>251</integer>
+		<integer>255</integer>
+	</array>
+
+	<key>galaxy5_sector11</key>
+	<array>
+		<integer>2</integer>
+		<integer>23</integer>
+		<integer>35</integer>
+		<integer>39</integer>
+		<integer>42</integer>
+		<integer>65</integer>
+		<integer>83</integer>
+		<integer>87</integer>
+		<integer>93</integer>
+		<integer>114</integer>
+		<integer>115</integer>
+		<integer>117</integer>
+		<integer>124</integer>
+		<integer>157</integer>
+		<integer>168</integer>
+		<integer>172</integer>
+		<integer>201</integer>
+		<integer>215</integer>
+		<integer>224</integer>
+		<integer>235</integer>
+		<integer>238</integer>
+		<integer>246</integer>
+	</array>
+
+	<key>galaxy5_sector12</key>
+	<array>
+		<integer>27</integer>
+		<integer>36</integer>
+		<integer>59</integer>
+		<integer>62</integer>
+		<integer>116</integer>
+		<integer>165</integer>
+		<integer>221</integer>
+	</array>
+
+	<key>galaxy5_sector13</key>
+	<array>
+		<integer>14</integer>
+		<integer>44</integer>
+		<integer>82</integer>
+		<integer>106</integer>
+		<integer>113</integer>
+		<integer>121</integer>
+		<integer>134</integer>
+		<integer>141</integer>
+		<integer>153</integer>
+		<integer>156</integer>
+		<integer>171</integer>
+		<integer>177</integer>
+		<integer>178</integer>
+		<integer>185</integer>
+		<integer>205</integer>
+		<integer>216</integer>
+		<integer>217</integer>
+		<integer>218</integer>
+		<integer>230</integer>
+		<integer>245</integer>
+		<integer>249</integer>
+	</array>
+
+	<key>galaxy5_sector14</key>
+	<array>
+		<integer>10</integer>
+		<integer>30</integer>
+		<integer>31</integer>
+		<integer>46</integer>
+		<integer>74</integer>
+		<integer>77</integer>
+		<integer>118</integer>
+		<integer>126</integer>
+		<integer>140</integer>
+		<integer>149</integer>
+		<integer>159</integer>
+		<integer>186</integer>
+		<integer>203</integer>
+		<integer>226</integer>
+		<integer>234</integer>
+		<integer>240</integer>
+		<integer>241</integer>
+	</array>
+
+	<key>galaxy6_sector1</key>
+	<array>
+		<integer>27</integer>
+		<integer>61</integer>
+		<integer>115</integer>
+		<integer>130</integer>
+		<integer>137</integer>
+		<integer>139</integer>
+		<integer>153</integer>
+		<integer>218</integer>
+		<integer>228</integer>
+		<integer>229</integer>
+	</array>
+
+	<key>galaxy6_sector2</key>
+	<array>
+		<integer>15</integer>
+		<integer>17</integer>
+		<integer>30</integer>
+		<integer>79</integer>
+		<integer>97</integer>
+		<integer>110</integer>
+		<integer>125</integer>
+		<integer>134</integer>
+		<integer>173</integer>
+		<integer>178</integer>
+		<integer>186</integer>
+		<integer>191</integer>
+		<integer>205</integer>
+		<integer>237</integer>
+		<integer>248</integer>
+	</array>
+
+	<key>galaxy6_sector3</key>
+	<array>
+		<integer>7</integer>
+		<integer>19</integer>
+		<integer>52</integer>
+		<integer>56</integer>
+		<integer>62</integer>
+		<integer>67</integer>
+		<integer>73</integer>
+		<integer>83</integer>
+		<integer>89</integer>
+		<integer>90</integer>
+		<integer>106</integer>
+		<integer>113</integer>
+		<integer>126</integer>
+		<integer>132</integer>
+		<integer>146</integer>
+		<integer>163</integer>
+		<integer>194</integer>
+		<integer>198</integer>
+		<integer>209</integer>
+		<integer>211</integer>
+	</array>
+
+	<key>galaxy6_sector4</key>
+	<array>
+		<integer>40</integer>
+		<integer>74</integer>
+		<integer>86</integer>
+		<integer>128</integer>
+		<integer>158</integer>
+		<integer>165</integer>
+		<integer>239</integer>
+	</array>
+
+	<key>galaxy6_sector5</key>
+	<array>
+		<integer>60</integer>
+		<integer>76</integer>
+		<integer>138</integer>
+		<integer>144</integer>
+		<integer>148</integer>
+		<integer>177</integer>
+		<integer>199</integer>
+		<integer>233</integer>
+		<integer>246</integer>
+		<integer>251</integer>
+	</array>
+
+	<key>galaxy6_sector6</key>
+	<array>
+		<integer>5</integer>
+		<integer>6</integer>
+		<integer>11</integer>
+		<integer>12</integer>
+		<integer>26</integer>
+		<integer>36</integer>
+		<integer>38</integer>
+		<integer>42</integer>
+		<integer>46</integer>
+		<integer>53</integer>
+		<integer>77</integer>
+		<integer>85</integer>
+		<integer>99</integer>
+		<integer>100</integer>
+		<integer>107</integer>
+		<integer>114</integer>
+		<integer>151</integer>
+		<integer>180</integer>
+		<integer>187</integer>
+		<integer>188</integer>
+		<integer>192</integer>
+		<integer>210</integer>
+		<integer>212</integer>
+		<integer>213</integer>
+		<integer>227</integer>
+		<integer>240</integer>
+		<integer>243</integer>
+	</array>
+
+	<key>galaxy6_sector7</key>
+	<array>
+		<integer>1</integer>
+		<integer>18</integer>
+		<integer>49</integer>
+		<integer>117</integer>
+		<integer>201</integer>
+		<integer>206</integer>
+		<integer>238</integer>
+		<integer>244</integer>
+	</array>
+
+	<key>galaxy6_sector8</key>
+	<array>
+		<integer>2</integer>
+		<integer>34</integer>
+		<integer>54</integer>
+		<integer>93</integer>
+		<integer>119</integer>
+		<integer>131</integer>
+		<integer>168</integer>
+		<integer>174</integer>
+		<integer>197</integer>
+		<integer>249</integer>
+	</array>
+
+	<key>galaxy6_sector9</key>
+	<array>
+		<integer>0</integer>
+		<integer>10</integer>
+		<integer>25</integer>
+		<integer>31</integer>
+		<integer>33</integer>
+		<integer>43</integer>
+		<integer>47</integer>
+		<integer>58</integer>
+		<integer>66</integer>
+		<integer>78</integer>
+		<integer>82</integer>
+		<integer>103</integer>
+		<integer>105</integer>
+		<integer>129</integer>
+		<integer>149</integer>
+		<integer>152</integer>
+		<integer>162</integer>
+		<integer>166</integer>
+		<integer>170</integer>
+		<integer>190</integer>
+		<integer>203</integer>
+		<integer>217</integer>
+		<integer>254</integer>
+	</array>
+
+	<key>galaxy6_sector10</key>
+	<array>
+		<integer>13</integer>
+		<integer>16</integer>
+		<integer>21</integer>
+		<integer>32</integer>
+		<integer>48</integer>
+		<integer>51</integer>
+		<integer>70</integer>
+		<integer>71</integer>
+		<integer>81</integer>
+		<integer>102</integer>
+		<integer>104</integer>
+		<integer>116</integer>
+		<integer>120</integer>
+		<integer>121</integer>
+		<integer>122</integer>
+		<integer>124</integer>
+		<integer>136</integer>
+		<integer>141</integer>
+		<integer>142</integer>
+		<integer>156</integer>
+		<integer>160</integer>
+		<integer>169</integer>
+		<integer>172</integer>
+		<integer>184</integer>
+		<integer>204</integer>
+		<integer>208</integer>
+		<integer>220</integer>
+		<integer>221</integer>
+		<integer>242</integer>
+		<integer>255</integer>
+	</array>
+
+	<key>galaxy6_sector11</key>
+	<array>
+		<integer>20</integer>
+		<integer>50</integer>
+		<integer>80</integer>
+		<integer>84</integer>
+		<integer>88</integer>
+		<integer>95</integer>
+		<integer>101</integer>
+		<integer>109</integer>
+		<integer>135</integer>
+		<integer>143</integer>
+		<integer>157</integer>
+		<integer>175</integer>
+		<integer>181</integer>
+		<integer>189</integer>
+		<integer>215</integer>
+		<integer>225</integer>
+		<integer>226</integer>
+		<integer>245</integer>
+	</array>
+
+	<key>galaxy6_sector12</key>
+	<array>
+		<integer>8</integer>
+		<integer>9</integer>
+		<integer>28</integer>
+		<integer>29</integer>
+		<integer>39</integer>
+		<integer>44</integer>
+		<integer>57</integer>
+		<integer>63</integer>
+		<integer>65</integer>
+		<integer>68</integer>
+		<integer>69</integer>
+		<integer>91</integer>
+		<integer>96</integer>
+		<integer>98</integer>
+		<integer>123</integer>
+		<integer>145</integer>
+		<integer>159</integer>
+		<integer>171</integer>
+		<integer>185</integer>
+		<integer>195</integer>
+		<integer>200</integer>
+		<integer>216</integer>
+		<integer>219</integer>
+		<integer>230</integer>
+		<integer>235</integer>
+		<integer>236</integer>
+		<integer>252</integer>
+		<integer>253</integer>
+	</array>
+
+	<key>galaxy6_sector13</key>
+	<array>
+		<integer>4</integer>
+		<integer>37</integer>
+		<integer>41</integer>
+		<integer>72</integer>
+		<integer>92</integer>
+		<integer>94</integer>
+		<integer>111</integer>
+		<integer>112</integer>
+		<integer>133</integer>
+		<integer>150</integer>
+		<integer>155</integer>
+		<integer>164</integer>
+		<integer>179</integer>
+		<integer>182</integer>
+		<integer>183</integer>
+		<integer>193</integer>
+		<integer>222</integer>
+		<integer>223</integer>
+		<integer>224</integer>
+		<integer>232</integer>
+		<integer>241</integer>
+		<integer>247</integer>
+	</array>
+
+	<key>galaxy6_sector14</key>
+	<array>
+		<integer>3</integer>
+		<integer>14</integer>
+		<integer>22</integer>
+		<integer>45</integer>
+		<integer>59</integer>
+		<integer>75</integer>
+		<integer>87</integer>
+		<integer>108</integer>
+		<integer>118</integer>
+		<integer>147</integer>
+		<integer>167</integer>
+		<integer>176</integer>
+		<integer>196</integer>
+		<integer>207</integer>
+	</array>
+
+	<key>galaxy7_sector1</key>
+	<array>
+		<integer>0</integer>
+		<integer>14</integer>
+		<integer>18</integer>
+		<integer>25</integer>
+		<integer>31</integer>
+		<integer>51</integer>
+		<integer>83</integer>
+		<integer>106</integer>
+		<integer>108</integer>
+		<integer>122</integer>
+		<integer>139</integer>
+		<integer>152</integer>
+		<integer>155</integer>
+		<integer>163</integer>
+		<integer>188</integer>
+		<integer>189</integer>
+		<integer>190</integer>
+		<integer>206</integer>
+		<integer>209</integer>
+		<integer>224</integer>
+		<integer>236</integer>
+		<integer>245</integer>
+	</array>
+
+	<key>galaxy7_sector2</key>
+	<array>
+		<integer>17</integer>
+		<integer>21</integer>
+		<integer>50</integer>
+		<integer>60</integer>
+		<integer>71</integer>
+		<integer>94</integer>
+		<integer>111</integer>
+		<integer>129</integer>
+		<integer>199</integer>
+		<integer>221</integer>
+		<integer>225</integer>
+	</array>
+
+	<key>galaxy7_sector3</key>
+	<array>
+		<integer>2</integer>
+		<integer>13</integer>
+		<integer>48</integer>
+		<integer>88</integer>
+		<integer>118</integer>
+		<integer>121</integer>
+		<integer>137</integer>
+		<integer>147</integer>
+		<integer>171</integer>
+		<integer>182</integer>
+		<integer>211</integer>
+		<integer>215</integer>
+		<integer>216</integer>
+	</array>
+
+	<key>galaxy7_sector4</key>
+	<array>
+		<integer>22</integer>
+		<integer>37</integer>
+		<integer>74</integer>
+		<integer>82</integer>
+		<integer>89</integer>
+		<integer>96</integer>
+		<integer>100</integer>
+		<integer>140</integer>
+		<integer>176</integer>
+		<integer>179</integer>
+		<integer>183</integer>
+		<integer>207</integer>
+		<integer>237</integer>
+	</array>
+
+	<key>galaxy7_sector5</key>
+	<array>
+		<integer>27</integer>
+		<integer>42</integer>
+		<integer>57</integer>
+		<integer>66</integer>
+		<integer>85</integer>
+		<integer>99</integer>
+		<integer>101</integer>
+		<integer>126</integer>
+		<integer>142</integer>
+		<integer>159</integer>
+		<integer>164</integer>
+		<integer>165</integer>
+		<integer>222</integer>
+		<integer>226</integer>
+		<integer>228</integer>
+	</array>
+
+	<key>galaxy7_sector6</key>
+	<array>
+		<integer>5</integer>
+		<integer>12</integer>
+		<integer>23</integer>
+		<integer>28</integer>
+		<integer>30</integer>
+		<integer>35</integer>
+		<integer>36</integer>
+		<integer>38</integer>
+		<integer>39</integer>
+		<integer>41</integer>
+		<integer>45</integer>
+		<integer>58</integer>
+		<integer>64</integer>
+		<integer>104</integer>
+		<integer>109</integer>
+		<integer>114</integer>
+		<integer>119</integer>
+		<integer>123</integer>
+		<integer>125</integer>
+		<integer>130</integer>
+		<integer>131</integer>
+		<integer>133</integer>
+		<integer>143</integer>
+		<integer>154</integer>
+		<integer>168</integer>
+		<integer>173</integer>
+		<integer>175</integer>
+		<integer>192</integer>
+		<integer>229</integer>
+		<integer>233</integer>
+		<integer>234</integer>
+		<integer>235</integer>
+		<integer>241</integer>
+		<integer>246</integer>
+	</array>
+
+	<key>galaxy7_sector7</key>
+	<array>
+		<integer>6</integer>
+		<integer>10</integer>
+		<integer>29</integer>
+		<integer>40</integer>
+		<integer>59</integer>
+		<integer>65</integer>
+		<integer>72</integer>
+		<integer>77</integer>
+		<integer>80</integer>
+		<integer>81</integer>
+		<integer>86</integer>
+		<integer>105</integer>
+		<integer>153</integer>
+		<integer>169</integer>
+		<integer>200</integer>
+		<integer>208</integer>
+		<integer>219</integer>
+		<integer>231</integer>
+		<integer>232</integer>
+		<integer>248</integer>
+		<integer>250</integer>
+		<integer>252</integer>
+	</array>
+
+	<key>galaxy7_sector8</key>
+	<array>
+		<integer>8</integer>
+		<integer>63</integer>
+		<integer>79</integer>
+		<integer>103</integer>
+		<integer>124</integer>
+		<integer>146</integer>
+		<integer>167</integer>
+		<integer>178</integer>
+		<integer>181</integer>
+		<integer>187</integer>
+		<integer>202</integer>
+		<integer>205</integer>
+		<integer>249</integer>
+	</array>
+
+	<key>galaxy7_sector9</key>
+	<array>
+		<integer>3</integer>
+		<integer>7</integer>
+		<integer>15</integer>
+		<integer>62</integer>
+		<integer>70</integer>
+		<integer>73</integer>
+		<integer>102</integer>
+		<integer>110</integer>
+		<integer>120</integer>
+		<integer>127</integer>
+		<integer>135</integer>
+		<integer>149</integer>
+		<integer>172</integer>
+		<integer>177</integer>
+		<integer>193</integer>
+		<integer>195</integer>
+		<integer>201</integer>
+		<integer>210</integer>
+		<integer>240</integer>
+	</array>
+
+	<key>galaxy7_sector10</key>
+	<array>
+		<integer>44</integer>
+		<integer>56</integer>
+		<integer>90</integer>
+		<integer>91</integer>
+		<integer>115</integer>
+		<integer>132</integer>
+		<integer>134</integer>
+		<integer>150</integer>
+		<integer>160</integer>
+		<integer>166</integer>
+		<integer>170</integer>
+		<integer>194</integer>
+		<integer>242</integer>
+	</array>
+
+	<key>galaxy7_sector11</key>
+	<array>
+		<integer>32</integer>
+		<integer>49</integer>
+		<integer>52</integer>
+		<integer>61</integer>
+		<integer>67</integer>
+		<integer>68</integer>
+		<integer>76</integer>
+		<integer>97</integer>
+		<integer>138</integer>
+		<integer>144</integer>
+		<integer>148</integer>
+		<integer>180</integer>
+		<integer>191</integer>
+		<integer>203</integer>
+		<integer>223</integer>
+		<integer>238</integer>
+		<integer>247</integer>
+	</array>
+
+	<key>galaxy7_sector12</key>
+	<array>
+		<integer>4</integer>
+		<integer>11</integer>
+		<integer>19</integer>
+		<integer>34</integer>
+		<integer>46</integer>
+		<integer>54</integer>
+		<integer>69</integer>
+		<integer>92</integer>
+		<integer>93</integer>
+		<integer>128</integer>
+		<integer>141</integer>
+		<integer>151</integer>
+		<integer>157</integer>
+		<integer>185</integer>
+		<integer>186</integer>
+		<integer>196</integer>
+		<integer>197</integer>
+		<integer>198</integer>
+		<integer>204</integer>
+		<integer>213</integer>
+		<integer>227</integer>
+		<integer>230</integer>
+		<integer>243</integer>
+		<integer>244</integer>
+		<integer>253</integer>
+	</array>
+
+	<key>galaxy7_sector13</key>
+	<array>
+		<integer>1</integer>
+		<integer>16</integer>
+		<integer>20</integer>
+		<integer>53</integer>
+		<integer>84</integer>
+		<integer>107</integer>
+		<integer>161</integer>
+		<integer>214</integer>
+		<integer>239</integer>
+		<integer>255</integer>
+	</array>
+
+	<key>galaxy7_sector14</key>
+	<array>
+		<integer>33</integer>
+		<integer>43</integer>
+		<integer>47</integer>
+		<integer>78</integer>
+		<integer>95</integer>
+		<integer>112</integer>
+		<integer>113</integer>
+		<integer>117</integer>
+		<integer>145</integer>
+		<integer>158</integer>
+		<integer>217</integer>
+		<integer>220</integer>
+		<integer>254</integer>
+	</array>
+
+	<key>navynews-fromthefront</key>
+	<array>
+		<string>[frontline-gains]</string>
+		<string>[frontline-losses]</string>
+	</array>
+
+	<key>navynews-othernews</key>
+	<array>
+		<string>[navy-recognition]</string>
+		<string>[thargoid-atrocity]</string>
+		<string>[navy-peacetalks]</string>
+		<string>[domestic-news]</string>
+		<string>[merchant-losses]</string>
+		<string>[navy-newship]</string>
+	</array>
+
+	<key>frontline-gains</key>
+	<string>[navy-opening] Galactic Navy forces have won [victory-adj] victory over the Thargoid [thargoid-adj] in Sector [navy-number], Quadrant [greek-alphabet] [navy-number].  Elements of the [fleet-descrip] commanded by [high-navyrank] [nom] engaged [tharg-fleet-descrip] of thargoid warships at approximately [navy-time] hours galactic standard time.  After [navy-number][navy-integer] hours of [combat-adj] combat the thargoid force was [battle-outcome].  Navy losses were [small-loses], while initial tallies estimate Thargoid casualties at [navy-number][navy-integer] ships damaged or destroyed.</string>
+
+	<key>frontline-losses</key>
+	<string>[navy-opening] Galactic Navy forces have suffered [defeat-descrip] in battle against the Thargoid [thargoid-adj] in Sector [navy-number], Quadrant [greek-alphabet] [navy-number].  At approximately [navy-time] hours galactic standard time, elements of the [fleet-descrip] engaged [tharg-fleet-descrip] of Thargoid warships.  After [navy-number][navy-integer] hours of [combat-adj] combat our brave forces were [battle-outcome].  Initial tallies estimate Navy casualties at [navy-number][navy-integer] craft damaged or destroyed.  Fleet Commander [high-navyrank] [nom] [commander-fate].</string>
+
+
+
+	<key>navy-recognition</key>
+	<array>
+		<string>Navy Officer [mid-navyrank] [nom] has been awarded the [navy-award] for his [action-adj] actions in battle against the Thargoid [thargoid-adj].</string>
+		<string>Navy Officer [mid-navyrank] [nom] has achieved Elite status by scoring [navy-number] confirmed kills in his last encounter with the Thargoid [thargoid-adj].</string>
+	</array>
+
+	<key>thargoid-atrocity</key>
+	<string>Thargoid raiders staged a vicious attack on the [system-name] system.  Navy forces were able to [invader-outcome] the invaders, but not until after they caused significant damage.  Civilian casualties are estimated in the [casualty-descrip].</string>
+
+	<key>navy-peacetalks</key>
+	<string>Peace talks with the thargoids failed once again when Chief Galcop Diplomat [nom11] [nom] was [diplomat-fate].  The Thargoid Ambassador later commented, "[thargoid_curses]"</string>
+
+	<key>domestic-news</key>
+	<string>Navy forces [domestic-action] [domestic-enemy] in the [system-name] system.  [mid-navyrank] [nom] led the task force responsible for the successful operation.</string>
+
+	<key>merchant-losses</key>
+	<string>Merchant shipping losses to enemy action totaled [navy-number][navy-integer],[navy-integer][navy-integer][navy-integer] tons this news cycle.  Galcop Commerce Official [nom11] [nom] blames the staggering losses on increased thargoid incursions.</string>
+
+	<key>navy-newship</key>
+	<string>The Navy recently commissioned the behemoth carrier [carrier-name].  Launched from the Navy shipyard on Xeer, the last ship to bear the name was [carrier-fate].</string>
+
+	<key>reserve-greeting</key>
+	<array>
+		<string>Welcome Commander</string>
+		<string>Greetings Commander</string>
+		<string>Hello Commander</string>
+		<string>Good to see you Commander</string>
+		<string>How are you Commander?</string>
+	</array>
+	
+	<key>reserve-greeting2</key>
+	<array>
+		<string>The Navy thanks you for volunteering your service as a reserve pilot.</string>
+		<string>Take a seat and pay attention.  Your mission will not be an easy one.</string>
+		<string>You have come at the right time.  Things are starting to heat up.</string>
+		<string>I hope you are ready to get your hands dirty.</string>
+		<string>I hope you have handled all your business and are ready to launch.</string>
+	</array>
+
+
+	<key>carrier-name</key>
+	<array>
+		<string>Magog</string>
+		<string>Gog</string>
+		<string>Titan</string>
+		<string>Ymir</string>
+		<string>Argus</string>
+		<string>Loki</string>
+		<string>Goliath</string>
+		<string>Colossus</string>
+		<string>Nimrod</string>
+		<string>Geryon</string>
+		<string>Atlas</string>
+		<string>Grid</string>
+		<string>Surt</string>
+		<string>Talos</string>
+		<string>Tethys</string>
+		<string>Bolverk</string>
+	</array>
+
+	<key>carrier-fate</key>
+	<array>
+		<string>lost to enemy action in Sector [navy-number], Quadrant [greek-alphabet]</string>
+		<string>seriously damaged in battle and scrapped for parts</string>
+		<string>sabotaged and destroyed by subversive pacifists in the [system-name] system</string>
+		<string>stripped and used for live fire Q-mine testing</string>
+	</array>
+
+	<key>domestic-action</key>
+	<array>
+		<string>broke up</string>
+		<string>crushed</string>
+		<string>frustrated</string>
+		<string>smashed</string>
+		<string>infiltrated and destroyed</string>
+	</array>
+
+	<key>domestic-enemy</key>
+	<array>
+		<string>a smuggling ring</string>
+		<string>a pirate fleet</string>
+		<string>a slave trader organization</string>
+		<string>an assassins guild</string>
+		<string>a major narcotics distributor</string>
+		<string>a rogue mercenary fleet</string>
+	</array>
+
+	<key>navy-award</key>
+	<array>
+		<string>Bronze Star</string>
+		<string>Silver Star</string>
+		<string>Gold Star</string>
+		<string>Navy Cross</string>
+		<string>Medal of Merit</string>
+	</array>
+
+	<key>diplomat-fate</key>
+	<array>
+		<string>disintegrated by a plasma rifle</string>
+		<string>dismembered and ritualistically eaten</string>
+		<string>overpowered and cocooned alive</string>
+		<string>incapacitated and his chest cavity filled with egg sacs</string>
+	</array>
+
+	<key>invader-outcome</key>
+	<array>
+		<string>route</string>
+		<string>scatter</string>
+		<string>destroy</string>
+		<string>eradicate</string>
+		<string>defeat</string>
+	</array>
+
+	<key>action-adj</key>
+	<array>
+		<string>courageous</string>
+		<string>heroic</string>
+		<string>daring</string>
+		<string>fearless</string>
+		<string>valorous</string>
+	</array>
+
+
+	<key>navy-opening</key>
+	<array>
+		<string>Recent reports from the front indicate</string>
+		<string>Latest Intel from the front confirms</string>
+		<string>Incoming communications from the front verify</string>
+	</array>
+
+
+	<key>victory-adj</key>
+	<array>
+		<string>a stunning</string>
+		<string>an impressive</string>
+		<string>a decisive</string>
+		<string>an overwhelming</string>
+		<string>a brilliant</string>
+		<string>a smashing</string>
+		<string>a tremendous</string>
+	</array>
+
+	<key>thargoid-adj</key>
+	<array>
+		<string>invaders</string>
+		<string>menace</string>
+		<string>hordes</string>
+		<string>swarm</string>
+	</array>
+
+	<key>fleet-descrip</key>
+	<array>
+		<string>1st Battle Fleet</string>
+		<string>2nd Battle Fleet</string>
+		<string>3rd Battle Fleet</string>
+		<string>4th Battle Fleet</string>
+		<string>5th Battle Fleet</string>
+		<string>6th Battle Fleet</string>
+		<string>7th Battle Fleet</string>
+		<string>8th Battle Fleet</string>
+		<string>9th Battle Fleet</string>
+		<string>10th Battle Fleet</string>
+		<string>11th Battle Fleet</string>
+		<string>12th Battle Fleet</string>
+		<string>13th Battle Fleet</string>
+		<string>14th Battle Fleet</string>
+	</array>
+
+	<key>casualty-descrip</key>
+	<array>
+		<string>hundreds</string>
+		<string>thousands</string>
+		<string>tens of thousands</string>
+		<string>hundreds of thousands</string>
+	</array>
+
+
+	<key>high-navyrank</key>
+	<array>
+		<string>Admiral</string>
+		<string>Vice Admiral</string>
+		<string>Rear Admiral</string>
+	</array>
+
+	<key>mid-navyrank</key>
+	<array>
+		<string>Senior Chief</string>
+		<string>Master Chief</string>
+		<string>Lieutenant</string>
+		<string>Captain</string>
+	</array>
+
+	<key>tharg-fleet-descrip</key>
+	<array>
+		<string>a massed fleet</string>
+		<string>a large scout force</string>
+		<string>an invasion fleet</string>
+		<string>several squadrons</string>
+		<string>an armada</string>
+		<string>a vast formation</string>
+	</array>
+
+	<key>system-name</key>
+	<array>
+		<string>Biarge</string>
+		<string>Ceedra</string>
+		<string>Atriso</string>
+		<string>Riedquat</string>
+		<string>Esusti</string>
+		<string>Tionisla</string>
+		<string>Xeququti</string>
+		<string>Zalaqura</string>
+		<string>Tezaeded</string>
+		<string>Inbibe</string>
+		<string>Solaed</string>
+		<string>Atxein</string>
+		<string>Laarzace</string>
+		<string>Rigebi</string>
+		<string>Xeines</string>
+		<string>Esdirece</string>
+		<string>Aarat</string>
+		<string>Razari</string>
+		<string>Erisso</string>
+		<string>Maleve</string>
+		<string>Quusanri</string>
+		<string>Xele</string>
+		<string>Diriis</string>
+		<string>Leteisan</string>
+	</array>
+
+	<key>navy-time</key>
+	<array>
+		<string>0100</string>
+		<string>0200</string>
+		<string>0300</string>
+		<string>0400</string>
+		<string>0500</string>
+		<string>0600</string>
+		<string>0700</string>
+		<string>0800</string>
+		<string>0900</string>
+		<string>1000</string>
+		<string>1100</string>
+		<string>1200</string>
+		<string>1300</string>
+		<string>1400</string>
+		<string>1500</string>
+		<string>1600</string>
+		<string>1700</string>
+		<string>1800</string>
+		<string>1900</string>
+		<string>2000</string>
+		<string>2100</string>
+		<string>2200</string>
+		<string>2300</string>
+		<string>2400</string>
+	</array>
+
+	<key>combat-adj</key>
+	<array>
+		<string>ferocious</string>
+		<string>ship to ship</string>
+		<string>bloody</string>
+		<string>grueling</string>
+		<string>explosive</string>
+		<string>harrowing</string>
+	</array>
+
+	<key>battle-outcome</key>
+	<array>
+		<string>scattered</string>
+		<string>in full retreat</string>
+		<string>obliterated</string>
+		<string>decimated</string>
+		<string>wiped out</string>
+		<string>crushed</string>
+	</array>
+
+	<key>small-loses</key>
+	<array>
+		<string>minimal</string>
+		<string>unsubstantial</string>
+		<string>minor</string>
+		<string>low</string>
+		<string>negligible</string>
+	</array>
+
+	<key>defeat-descrip</key>
+	<array>
+		<string>a major defeat</string>
+		<string>a serious setback</string>
+		<string>an embarrassing loss</string>
+		<string>a humiliating defeat</string>
+	</array>
+
+	<key>commander-fate</key>
+	<array>
+		<string>is missing in action</string>
+		<string>has been captured</string>
+		<string>went down with his ship</string>
+		<string>managed to escape with his life</string>
+	</array>
+
+	<key>navy-integer</key>
+	<array>
+		<string>0</string>
+		<string>1</string>
+		<string>2</string>
+		<string>3</string>
+		<string>4</string>
+		<string>5</string>
+		<string>6</string>
+		<string>7</string>
+		<string>8</string>
+		<string>9</string>
+	</array>
+
+	<key>navy-number</key>
+	<array>
+		<string>1</string>
+		<string>2</string>
+		<string>3</string>
+		<string>4</string>
+		<string>5</string>
+		<string>6</string>
+		<string>7</string>
+		<string>8</string>
+		<string>9</string>
+	</array>
+
+	<key>greek-alphabet</key>
+	<array>
+		<string>Alpha</string>
+		<string>Beta</string>
+		<string>Gamma</string>
+		<string>Delta</string>
+		<string>Kappa</string>
+		<string>Zeta</string>
+		<string>Sigma</string>
+		<string>Omega</string>
+		<string>Theta</string>
+	</array>
+
+	<key>navy-thanks-for-assistance</key>
+	<array>
+		<string>Gal Navy: Nice shot, Commander.</string>
+		<string>Gal Navy: Good going, Commander.</string>
+		<string>Gal Navy: Thanks for the help.</string>
+		<string>Gal Navy: Good work.</string>
+	</array>
+	
+	<!--Star Coordinates: -3,-4; -2,0; -5,2; -1,2; 0,5; 1,2; 5,2; 2,0; 3,-4; 0,-2; -3,-4-->
+	<key>navySeccomBuoy</key>
+	<array>
+		<integer>-3</integer>
+		<integer>-4</integer>
+		<integer>-2</integer>
+		<integer>0</integer>
+		<integer>-5</integer>
+		<integer>2</integer>
+		<integer>-1</integer>
+		<integer>2</integer>
+		<integer>0</integer>
+		<integer>5</integer>
+		<integer>1</integer>
+		<integer>2</integer>
+		<integer>5</integer>
+		<integer>2</integer>
+		<integer>2</integer>
+		<integer>0</integer>
+		<integer>3</integer>
+		<integer>-4</integer>
+		<integer>0</integer>
+		<integer>-2</integer>
+		<integer>-3</integer>
+		<integer>-4</integer>
+	</array>
+	
+	<key>SeccomLocator</key>
+	<array>
+		<integer>-3</integer>
+		<integer>-4</integer>
+		<integer>-2</integer>
+		<integer>0</integer>
+		<integer>-5</integer>
+		<integer>2</integer>
+		<integer>-1</integer>
+		<integer>2</integer>
+		<integer>0</integer>
+		<integer>5</integer>
+		<integer>1</integer>
+		<integer>2</integer>
+		<integer>5</integer>
+		<integer>2</integer>
+		<integer>2</integer>
+		<integer>0</integer>
+		<integer>3</integer>
+		<integer>-4</integer>
+		<integer>0</integer>
+		<integer>-2</integer>
+		<integer>-3</integer>
+		<integer>-4</integer>
+	</array>
+</dict>
+</plist>
