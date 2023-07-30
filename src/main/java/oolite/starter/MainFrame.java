@@ -16,6 +16,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
 import oolite.starter.model.Installation;
+import oolite.starter.ui.AboutPanel;
 import oolite.starter.ui.ExpansionsPanel;
 import oolite.starter.ui.InstallationsPanel;
 import oolite.starter.ui.MrGimlet;
@@ -78,6 +79,9 @@ public class MainFrame extends javax.swing.JFrame {
         InstallationsPanel ip = new InstallationsPanel();
         ip.setConfiguration(configuration);
         jTabbedPane1.add(ip);
+
+        AboutPanel ap = new AboutPanel("text/html", getClass().getResource("/about.html"));
+        jTabbedPane1.add("About", ap);
     }
 
     /**

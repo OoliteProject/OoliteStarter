@@ -136,6 +136,8 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
             
         }
         jTable1.repaint();
+        
+        updateBadges();
     }
     
     private void showDetailsOfSelection() {
@@ -171,7 +173,10 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
         log.debug("updateBadges()");
         pnStatus.removeAll();
 
-        pnStatus.add(new Badge("Expansions", String.valueOf(trw.getViewRowCount()), Color.BLACK));
+        pnStatus.add(new Badge("Expansions", String.valueOf(model.getRowCount()), Color.BLACK));
+        if (model.getRowCount() > trw.getViewRowCount()) {
+            pnStatus.add(new Badge("Filtered", String.valueOf(trw.getViewRowCount()), Color.BLACK));
+        }
 
         int y = model.getNumberOfExpansionsMissingDeps();
         if (y>0) {
@@ -182,8 +187,14 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
         if (x > 0) {
             pnStatus.add(new Badge("Conflicts", String.valueOf(x), Configuration.COLOR_ATTENTION));
         }
-
+        
+        x = model.getNumberOfExpansionsIncompatible();
+        if (x > 0) {
+            pnStatus.add(new Badge("Incompatible", String.valueOf(x), Color.black));
+        }
+        
         pnStatus.validate();
+        pnStatus.repaint();
     }
     
     /**

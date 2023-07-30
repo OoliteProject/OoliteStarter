@@ -177,4 +177,19 @@ public class ExpansionsTableModel extends AbstractTableModel implements Property
         }
         return result;
     }
+    
+    /**
+     * Returns the number of expansions that are incompatible.
+     * 
+     * @return the number
+     */
+    public int getNumberOfExpansionsIncompatible() {
+        int result = 0;
+        for (Expansion e: data) {
+            if (e.getEMStatus().isIncompatible()) {
+                result++;
+            }
+        }
+        return result;
+    }
 }
