@@ -43,6 +43,7 @@ public class AboutPanel extends javax.swing.JPanel {
                 }
             }
         });
+        jEditorPane1.setCaretPosition(0);
     }
 
     /**
@@ -68,6 +69,7 @@ public class AboutPanel extends javax.swing.JPanel {
                 }
             }
         });
+        jEditorPane1.setCaretPosition(0);
     }
 
     /**
