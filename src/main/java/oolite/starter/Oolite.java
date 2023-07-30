@@ -88,21 +88,25 @@ public class Oolite implements PropertyChangeListener {
         ModuleDescriptor.Version oolite =  ModuleDescriptor.Version.parse(configuration.getActiveInstallation().getVersion());
         
         for (Expansion e: resultList) {
-            e.getEMStatus().setIncompatible(false);
-            
-            if (e.getRequiredOoliteVersion() != null) {
-                ModuleDescriptor.Version reqVersion = ModuleDescriptor.Version.parse(e.getRequiredOoliteVersion());
-                if (oolite.compareTo(reqVersion) < 0) {
-                    log.trace("we have {} but need minimum {}", oolite, reqVersion);
-                    e.getEMStatus().setIncompatible(true);
+            try {
+                e.getEMStatus().setIncompatible(false);
+
+                if (e.getRequiredOoliteVersion() != null) {
+                    ModuleDescriptor.Version reqVersion = ModuleDescriptor.Version.parse(e.getRequiredOoliteVersion());
+                    if (oolite.compareTo(reqVersion) < 0) {
+                        log.trace("we have {} but need minimum {}", oolite, reqVersion);
+                        e.getEMStatus().setIncompatible(true);
+                    }
                 }
-            }
-            if (e.getMaximumOoliteVersion() != null) {
-                ModuleDescriptor.Version maxVersion = ModuleDescriptor.Version.parse(e.getMaximumOoliteVersion());
-                if (oolite.compareTo(maxVersion) > 0) {
-                    log.trace("we have {} but need maximum {}", oolite, maxVersion);
-                    e.getEMStatus().setIncompatible(true);
+                if (e.getMaximumOoliteVersion() != null && !e.getMaximumOoliteVersion().isBlank()) {
+                    ModuleDescriptor.Version maxVersion = ModuleDescriptor.Version.parse(e.getMaximumOoliteVersion());
+                    if (oolite.compareTo(maxVersion) > 0) {
+                        log.trace("we have {} but need maximum {}", oolite, maxVersion);
+                        e.getEMStatus().setIncompatible(true);
+                    }
                 }
+            } catch (Exception ex) {
+                log.warn("Could not verify compatibility for expansion {}", e.getIdentifier(), ex);
             }
         }
     }
@@ -150,19 +154,22 @@ public class Oolite implements PropertyChangeListener {
 
     void validateConflicts(List<Expansion> expansions) {
         log.debug("validateConflicts({})", expansions);
-        
         for (Expansion e: expansions) {
             e.getEMStatus().setConflicting(false);
 
-            List<String> conflicts = e.getConflictOxps();
-            if (conflicts != null) {
-                for (String ref: conflicts) {
-                    List<Expansion> cs = getExpansionByReference(ref, expansions, true);
-                    if (!cs.isEmpty()) {
-                        log.info("Expansion {} conflicts with {}", e.getIdentifier(), cs);
-                        e.getEMStatus().setConflicting(true);
+            try {
+                List<String> conflicts = e.getConflictOxps();
+                if (conflicts != null) {
+                    for (String ref: conflicts) {
+                        List<Expansion> cs = getExpansionByReference(ref, expansions, true);
+                        if (!cs.isEmpty()) {
+                            log.info("Expansion {} conflicts with {}", e.getIdentifier(), cs);
+                            e.getEMStatus().setConflicting(true);
+                        }
                     }
                 }
+            } catch (Exception ex) {
+                log.warn("Could not assess conflicts for {}", e.getIdentifier(), ex);
             }
         }
     }
@@ -1308,15 +1315,19 @@ public class Oolite implements PropertyChangeListener {
         for (Expansion e: expansions) {
             e.getEMStatus().setMissingDeps(false);
 
-            List<String> deps = e.getRequiresOxps();
-            if (deps != null) {
-                for (String dep: deps) {
-                    List<Expansion> ds = getExpansionByReference(dep, expansions, true);
-                    if (ds.isEmpty()) {
-                        log.info("Expansion {} is missing {}", e.getIdentifier(), dep);
-                        e.getEMStatus().setMissingDeps(true);
+            try {
+                List<String> deps = e.getRequiresOxps();
+                if (deps != null) {
+                    for (String dep: deps) {
+                        List<Expansion> ds = getExpansionByReference(dep, expansions, true);
+                        if (ds.isEmpty()) {
+                            log.info("Expansion {} is missing {}", e.getIdentifier(), dep);
+                            e.getEMStatus().setMissingDeps(true);
+                        }
                     }
                 }
+            } catch (Exception ex) {
+                log.warn("Could not validate dependencies for {}", e.getIdentifier(), ex);
             }
         }
     }
@@ -1327,24 +1338,27 @@ public class Oolite implements PropertyChangeListener {
         for (Expansion e: expansions) {
             List<Expansion> ds = getExpansionByReference(e.getIdentifier(), expansions, false);
 
-            if (ds.size() > 1) {
-                // sort backwards (latest is first)
-                Collections.sort(ds, (t, t1) -> {
-                    ModuleDescriptor.Version v = ModuleDescriptor.Version.parse(t.getVersion());
-                    ModuleDescriptor.Version v1 = ModuleDescriptor.Version.parse(t1.getVersion());
+            try {
+                if (ds.size() > 1) {
+                    // sort backwards (latest is first)
+                    Collections.sort(ds, (t, t1) -> {
+                        ModuleDescriptor.Version v = ModuleDescriptor.Version.parse(t.getVersion());
+                        ModuleDescriptor.Version v1 = ModuleDescriptor.Version.parse(t1.getVersion());
 
-                    return v1.compareTo(v); 
-                });
+                        return v1.compareTo(v); 
+                    });
+                }
+
+                if (e.getVersion().equals(ds.get(0).getVersion())) {
+                    log.trace("latest = true on {}", e.getIdentifier());
+                    e.getEMStatus().setLatest( true );
+                } else {
+                    log.trace("latest = false on {}", e.getIdentifier());
+                    e.getEMStatus().setLatest( false );
+                }
+            } catch (Exception ex) {
+                log.warn("Could not check updates for {}", e.getIdentifier(), ex);
             }
-            
-            if (e.getVersion().equals(ds.get(0).getVersion())) {
-                log.trace("latest = true on {}", e.getIdentifier());
-                e.getEMStatus().setLatest( true );
-            } else {
-                log.trace("latest = false on {}", e.getIdentifier());
-                e.getEMStatus().setLatest( false );
-            }
-            
         }
     }
     

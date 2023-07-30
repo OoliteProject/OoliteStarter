@@ -7,6 +7,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import javax.swing.DefaultListModel;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 import javax.swing.border.LineBorder;
 import oolite.starter.Configuration;
 import oolite.starter.model.Expansion;
@@ -125,8 +126,8 @@ public class ExpansionPanel extends javax.swing.JPanel implements PropertyChange
                 txtMinVersion.setBorder(new LineBorder(Configuration.COLOR_ATTENTION));
                 txtMaxVersion.setBorder(new LineBorder(Configuration.COLOR_ATTENTION));
             } else {
-                txtMinVersion.setBorder(null);
-                txtMaxVersion.setBorder(null);
+                txtMinVersion.setBorder(UIManager.getLookAndFeel().getDefaults().getBorder("TextField.border"));
+                txtMaxVersion.setBorder(UIManager.getLookAndFeel().getDefaults().getBorder("TextField.border"));
             }
             if (data.isLocal() && !data.isManaged()) {
                 jpDownThere.add(new Tag("Manual", Color.RED));
@@ -139,13 +140,13 @@ public class ExpansionPanel extends javax.swing.JPanel implements PropertyChange
                 jpDownThere.add(new Tag("Conflicting", Configuration.COLOR_ATTENTION));
                 spConflict.setBorder(new LineBorder(Configuration.COLOR_ATTENTION));
             } else {
-                spConflict.setBorder(null);
+                spConflict.setBorder(UIManager.getLookAndFeel().getDefaults().getBorder("ScrollPane.border"));
             }
             if (data.isEnabled() && data.getEMStatus().isMissingDeps()) {
                 jpDownThere.add(new Tag("MissingDeps", Configuration.COLOR_ATTENTION));
                 spRequires.setBorder(new LineBorder(Configuration.COLOR_ATTENTION));
             } else {
-                spRequires.setBorder(null);
+                spRequires.setBorder(UIManager.getLookAndFeel().getDefaults().getBorder("ScrollPane.border"));
             }
         }
         validate();

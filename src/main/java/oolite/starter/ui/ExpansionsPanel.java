@@ -168,6 +168,7 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
     }
     
     void updateBadges() {
+        log.debug("updateBadges()");
         pnStatus.removeAll();
 
         pnStatus.add(new Badge("Expansions", String.valueOf(trw.getViewRowCount()), Color.BLACK));
@@ -189,6 +190,7 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
      * Updates the expansionspanel display.
      */
     public void update() {
+        log.debug("update()");
         try {
             expansions = oolite.getAllExpansions();
 
@@ -203,6 +205,7 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
             trw = new TableRowSorter<>(model);
             jTable1.setRowSorter(trw);
             applyFilter();
+            updateBadges();
         } catch (Exception e) {
             log.warn("Could not update", e);
         }
