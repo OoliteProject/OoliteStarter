@@ -742,9 +742,18 @@ public class Oolite implements PropertyChangeListener {
     public Expansion createExpansionFromRequires(InputStream requires, String sourceName) throws IOException {
         log.debug("createExpansionFromRequiresPlist({}, {})", requires, sourceName);
         String oxp = sourceName;
-        if (oxp.endsWith("/requires.plist")) {
+        if (oxp.endsWith(File.separator + "requires.plist")) {
             oxp = oxp.substring(0, oxp.length()-15);
         }
+        String oxpTitle = oxp;
+        int idx = oxpTitle.lastIndexOf(File.separator);
+        if (idx >= 0) {
+            oxpTitle = oxpTitle.substring(idx+1);
+        }
+        if ( oxpTitle.endsWith(".oxp")) {
+            oxpTitle = oxpTitle.substring(0, oxpTitle.length()-4);
+        }
+                
         if (!requires.markSupported()) {
             requires = new BufferedInputStream(requires);
         }
@@ -759,7 +768,7 @@ public class Oolite implements PropertyChangeListener {
 
                 Expansion expansion = new Expansion();
                 expansion.setIdentifier(oxp);
-                expansion.setTitle(oxp);
+                expansion.setTitle(oxpTitle);
                 expansion.setDescription(
                         "This is some OXP implementing requires.plist.\n" +
                         "From that file almost no metadata is available. Consider switching to manifest.plist."
@@ -778,7 +787,7 @@ public class Oolite implements PropertyChangeListener {
                 PlistParser.DictionaryContext dc = PlistUtil.parsePListDict(requires, sourceName);
                 Expansion expansion = createExpansionFromRequiresPlist(dc);
                 expansion.setIdentifier(oxp);
-                expansion.setTitle(oxp);
+                expansion.setTitle(oxpTitle);
                 expansion.setDescription(
                         "This is some OXP implementing requires.plist.\n" +
                         "From that file almost no metadata is available. Consider switching to manifest.plist."
@@ -1416,11 +1425,13 @@ public class Oolite implements PropertyChangeListener {
     /**
      * Returns an ExpansionReference for an enabled expansion.
      * The expansion is searched in the AddonsDir and the ManagedAddonsDir.
+     * If a direct match is not found, the version number is stripped off
+     * and the search is repeated.
      * 
-     * @param name
-     * @return 
+     * @param name the name, optionally with '@' &lt;versionnumber&gt;
+     * @return the reference
      */
-    protected ExpansionReference getExpansionReference(String name) {
+    public ExpansionReference getExpansionReference(String name) {
         log.debug("getExpansionReference({})", name);
         if (configuration == null) {
             throw new IllegalStateException("configuration must not be null");
@@ -1446,10 +1457,15 @@ public class Oolite implements PropertyChangeListener {
         
         // find some indirect match. First strip off version number, then find substring
         String id = name;
-        int idx = id.indexOf("@");
+        int idx = id.lastIndexOf("@");
         if (idx >= 0) {
             id = id.substring(0, idx);
         }
+        idx = id.lastIndexOf(":");
+        if (idx >= 0) {
+            id = id.substring(0, idx);
+        }
+
         File[] files = configuration.getAddonsDir().listFiles();
         for (File f: files) {
             if (f.getName().startsWith(id)) {

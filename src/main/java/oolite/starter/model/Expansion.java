@@ -8,6 +8,7 @@ import java.beans.PropertyChangeSupport;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import oolite.starter.Oolite;
 import org.apache.logging.log4j.LogManager;
@@ -685,5 +686,77 @@ public class Expansion implements Comparable<Expansion> {
         String s1 = getIdentifier() + getVersion();
         String s2 = t.getIdentifier() + t.getVersion();
         return s1.compareTo(s2);
+    }
+    
+    /**
+     * Returns the list of required expansions as ExpansionReferences.
+     * 
+     * @return the list
+     */
+    public List<ExpansionReference> getRequiredRefs() {
+        List<ExpansionReference> result = new ArrayList<>();
+        for (String name: getRequiresOxps()) {
+            ExpansionReference er = oolite.getExpansionReference(name);
+            result.add(er);
+        }
+        return result;
+    }
+    
+    /**
+     * Returns the list of conflicting expansions as ExpansionReferences.
+     * 
+     * @return the list
+     */
+    public List<ExpansionReference> getConflictRefs() {
+        List<ExpansionReference> result = new ArrayList<>();
+        for (String name: getConflictOxps()) {
+            ExpansionReference er = oolite.getExpansionReference(name);
+            switch (er.getStatus()) {
+                case CONFLICT:
+                    break;
+                case MISSING:
+                    er.setStatus(ExpansionReference.Status.OK);
+                    break;
+                case OK:
+                    er.setStatus(ExpansionReference.Status.CONFLICT);
+                    break;
+                case REQUIRED_MISSING:
+                    er.setStatus(ExpansionReference.Status.OK);
+                    break;
+                case SURPLUS:
+                    break;
+            }
+            result.add(er);
+        }
+        return result;
+    }
+    
+    /**
+     * Returns the list of optional expansions as ExpansionReferences.
+     * 
+     * @return the list
+     */
+    public List<ExpansionReference> getOptionalRefs() {
+        List<ExpansionReference> result = new ArrayList<>();
+        for (String name: getOptionalOxps()) {
+            ExpansionReference er = oolite.getExpansionReference(name);
+            switch (er.getStatus()) {
+                case CONFLICT:
+                    break;
+                case MISSING:
+                    er.setStatus(ExpansionReference.Status.OK);
+                    break;
+                case OK:
+                    er.setStatus(ExpansionReference.Status.OK);
+                    break;
+                case REQUIRED_MISSING:
+                    er.setStatus(ExpansionReference.Status.OK);
+                    break;
+                case SURPLUS:
+                    break;
+            }
+            result.add(er);
+        }
+        return result;
     }
 }

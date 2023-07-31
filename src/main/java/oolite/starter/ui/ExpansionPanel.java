@@ -11,6 +11,7 @@ import javax.swing.UIManager;
 import javax.swing.border.LineBorder;
 import oolite.starter.Configuration;
 import oolite.starter.model.Expansion;
+import oolite.starter.model.ExpansionReference;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -29,6 +30,12 @@ public class ExpansionPanel extends javax.swing.JPanel implements PropertyChange
     public ExpansionPanel() {
         initComponents();
         update();
+        
+        ExpansionReferenceCellRenderer ercr = new ExpansionReferenceCellRenderer();
+        
+        lsRequires.setCellRenderer(ercr);
+        lsConflicts.setCellRenderer(ercr);
+        lsOptional.setCellRenderer(ercr);
     }
     
     /**
@@ -68,19 +75,19 @@ public class ExpansionPanel extends javax.swing.JPanel implements PropertyChange
             txtTitle.setText(data.getTitle());
             txtDescription.setText(data.getDescription());
             txtLocalFile.setText(String.valueOf(data.getLocalFile()));
-            DefaultListModel<String> lm = new DefaultListModel<>();
+            DefaultListModel<ExpansionReference> lm = new DefaultListModel<>();
             if (data.getRequiresOxps() != null) {
-                lm.addAll(data.getRequiresOxps());
+                lm.addAll(data.getRequiredRefs());
             }
             lsRequires.setModel(lm);
             lm = new DefaultListModel<>();
             if (data.getConflictOxps() != null) {
-                lm.addAll(data.getConflictOxps());
+                lm.addAll(data.getConflictRefs());
             }
             lsConflicts.setModel(lm);
             lm = new DefaultListModel<>();
             if (data.getOptionalOxps() != null) {
-                lm.addAll(data.getOptionalOxps());
+                lm.addAll(data.getOptionalRefs());
             }
             lsOptional.setModel(lm);
 //            lsRequires.setText(String.valueOf(data.getRequiresOxps()));
@@ -257,29 +264,14 @@ public class ExpansionPanel extends javax.swing.JPanel implements PropertyChange
 
         jLabel3.setText("Requires");
 
-        lsRequires.setModel(new javax.swing.AbstractListModel<String>() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
-            public int getSize() { return strings.length; }
-            public String getElementAt(int i) { return strings[i]; }
-        });
         spRequires.setViewportView(lsRequires);
 
         jLabel4.setText("Conflicts");
 
-        lsConflicts.setModel(new javax.swing.AbstractListModel<String>() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
-            public int getSize() { return strings.length; }
-            public String getElementAt(int i) { return strings[i]; }
-        });
         spConflict.setViewportView(lsConflicts);
 
         jLabel5.setText("Optional");
 
-        lsOptional.setModel(new javax.swing.AbstractListModel<String>() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
-            public int getSize() { return strings.length; }
-            public String getElementAt(int i) { return strings[i]; }
-        });
         jScrollPane4.setViewportView(lsOptional);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -437,9 +429,9 @@ public class ExpansionPanel extends javax.swing.JPanel implements PropertyChange
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JPanel jpDownThere;
-    private javax.swing.JList<String> lsConflicts;
-    private javax.swing.JList<String> lsOptional;
-    private javax.swing.JList<String> lsRequires;
+    private javax.swing.JList<ExpansionReference> lsConflicts;
+    private javax.swing.JList<ExpansionReference> lsOptional;
+    private javax.swing.JList<ExpansionReference> lsRequires;
     private javax.swing.JScrollPane spConflict;
     private javax.swing.JScrollPane spRequires;
     private javax.swing.JTextArea txtDescription;
