@@ -1,0 +1,33 @@
+{
+    GLOBAL = {ENTER = ("setStateTo: LURK", setUpEscorts); }; 
+      
+    "ATTACK_SHIP" = {
+        ENTER = (performAttack); 
+        ATTACKED = (setTargetToPrimaryAggressor, "setStateTo: ATTACK_SHIP"); 
+        "ENERGY_LOW" = ("setStateTo: FLEE"); 
+        "INCOMING_MISSILE" = (fightOrFleeMissile, "setStateTo: FLEE"); 
+        "TARGET_DESTROYED" = ("setStateTo: LURK"); 
+        "TARGET_LOST" = ("setStateTo: LURK"); 
+        UPDATE = ("scanForNearestShipWithPrimaryRole: player"); 
+    }; 
+      
+    FLEE = {
+        ENTER = ("setDesiredRangeTo: 25600", performFlee); 
+        "ENERGY_FULL" = (performIdle, "setStateTo: LURK"); 
+        "TARGET_LOST" = (performIdle, "setStateTo: LURK"); 
+        "DESIRED_RANGE_ACHIEVED" = (performIdle, "setStateTo: LURK"); 
+        "INCOMING_MISSILE" = (fightOrFleeMissile, "setStateTo: FLEE"); 
+        "REACHED_SAFETY" = ("setSpeedTo: 0.0", performIdle, "pauseAI: 10.0");
+        ATTACKED = (setTargetToPrimaryAggressor, "setStateTo: FLEE"); 
+    }; 
+
+  LURK = {
+        ENTER = ("setSpeedTo: 0.0", performIdle); 
+        ATTACKED = (setTargetToPrimaryAggressor, "setStateTo: ATTACK_SHIP"); 
+        "INCOMING_MISSILE" = (fightOrFleeMissile, "setStateTo: FLEE"); 
+        "TARGET_FOUND" = (setTargetToFoundTarget, "setStateTo: ATTACK_SHIP");
+	"GROUP_ATTACK_TARGET" = (setTargetToFoundTarget, "setStateTo: ATTACK_SHIP"); 
+        UPDATE = ("scanForNearestShipWithPrimaryRole: player", "pauseAI: 5"); 
+    }; 
+      
+}

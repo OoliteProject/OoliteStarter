@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleGetInfoString</key>
+	<string>Asteroids3D 1.2</string>
+	<key>CFBundleName</key>
+	<string>Asteroids3D</string>
+	<key>CFBundleShortVersionString</key>
+	<string>1.2</string>
+	<key>NSHumanReadableCopyright</key>
+	<string>Commander McLane 2012</string>
+</dict>
+</plist>

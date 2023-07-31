@@ -102,7 +102,8 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
                 sgp.setData(null);
             }
             
-            txtStatus.setText(String.format("%d save games", model.getRowCount()));
+            jpStatus.removeAll();
+            jpStatus.add(new Badge("Save Games", String.valueOf(model.getRowCount()), Color.BLACK));
             
             btResume.setEnabled(jTable1.getSelectedRow() != -1);
             btDelete.setEnabled(jTable1.getSelectedRow() != -1);
@@ -142,8 +143,7 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
         jSplitPane1 = new javax.swing.JSplitPane();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
-        jPanel3 = new javax.swing.JPanel();
-        txtStatus = new javax.swing.JLabel();
+        jpStatus = new javax.swing.JPanel();
 
         setLayout(new java.awt.BorderLayout());
 
@@ -160,10 +160,8 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridx = 6;
         gridBagConstraints.gridy = 1;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 2);
         jPanel2.add(btReload, gridBagConstraints);
 
         btNew.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/play_arrow_FILL0_wght400_GRAD0_opsz48.png"))); // NOI18N
@@ -241,24 +239,8 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
 
         add(jSplitPane1, java.awt.BorderLayout.CENTER);
 
-        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
-        jPanel3.setLayout(jPanel3Layout);
-        jPanel3Layout.setHorizontalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(txtStatus)
-                .addContainerGap(570, Short.MAX_VALUE))
-        );
-        jPanel3Layout.setVerticalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(txtStatus)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
-        add(jPanel3, java.awt.BorderLayout.PAGE_END);
+        jpStatus.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
+        add(jpStatus, java.awt.BorderLayout.PAGE_END);
     }// </editor-fold>//GEN-END:initComponents
 
     private void btNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btNewActionPerformed
@@ -366,11 +348,10 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
     private javax.swing.Box.Filler filler1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JTable jTable1;
-    private javax.swing.JLabel txtStatus;
+    private javax.swing.JPanel jpStatus;
     // End of variables declaration//GEN-END:variables
 
     private void showWaitPanel() {
@@ -385,7 +366,7 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
                 }
             };
             glassPane.setLayout(new GridBagLayout());
-            waitPanel = new WaitPanel();
+            waitPanel = new WaitPanel(oolite);
             glassPane.add(waitPanel, new GridBagConstraints(1, 1, 1, 1, 1.0d, 1.0d, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(50, 50, 50, 50), 0, 0));
             glassPane.addMouseListener(new MouseAdapter() {
             });

@@ -27,5 +27,4 @@ apps:
     plugs:
       - home
       - network
-      - cups-control
 

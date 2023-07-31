@@ -3,15 +3,20 @@
 
 package oolite.starter.ui;
 
+import java.awt.BasicStroke;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Rectangle2D;
 import javax.swing.JComponent;
 import javax.swing.JLayer;
 import javax.swing.JTable;
 import javax.swing.plaf.LayerUI;
 import javax.swing.table.TableCellRenderer;
+import oolite.starter.model.Expansion;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -25,7 +30,8 @@ public class AnnotationRenderer implements TableCellRenderer {
     
     private class MyLayerUI extends LayerUI<JComponent> {
         
-        private String indicator = "b";
+        private String indicator = " ";
+        private Color color = Color.RED;
         
         private transient FontRenderContext frc;
         
@@ -37,15 +43,26 @@ public class AnnotationRenderer implements TableCellRenderer {
             this.indicator = String.valueOf(indicator);
         }
         
+        public void setColor(Color color) {
+            this.color = color;
+        }
+        
         @Override
         public void paint(Graphics g, JComponent c) {
             log.trace("layerUI.paint(...)");
             super.paint(g, c);
 
-//            g.setColor(Color.red);
-//            g.drawLine(0, 0, c.getWidth(), c.getHeight());
-//            Rectangle2D r = g.getFont().getStringBounds(indicator, frc);
-//            g.drawString(indicator, (int)(c.getWidth()-r.getWidth()), (int)(c.getHeight() - 1));
+            Graphics2D g2d = (Graphics2D)g;
+            
+            int baseLine = c.getBaseline(c.getWidth(), c.getHeight());
+            if (baseLine >=0) {
+                baseLine += 2;
+                g2d.setColor(color);
+                g2d.setStroke(new BasicStroke(3));
+                g2d.drawLine(0, baseLine, c.getWidth(), baseLine);
+                Rectangle2D r = g2d.getFont().getStringBounds(indicator, frc);
+                g2d.drawString(indicator, (int)(c.getWidth()-r.getWidth()), (int)(c.getHeight() - 1));
+            }
         }
     }
     
@@ -64,21 +81,43 @@ public class AnnotationRenderer implements TableCellRenderer {
         this.layerUI = new MyLayerUI();
     }
 
+    /**
+     * Creates a new AnnotationRenderer.
+     * 
+     * @param parent the renderer that was used before
+     */
+    public AnnotationRenderer(TableCellRenderer parent, Color color) {
+        log.debug("AnnotationRenderer({})", parent);
+        
+        this.parent = parent;
+        this.layerUI = new MyLayerUI();
+        layerUI.setColor(color);
+    }
+
     @Override
     public Component getTableCellRendererComponent(JTable jtable, Object value, boolean isSelected, boolean hasFocus, int rowIndex, int columnIndex) {
         JComponent c = (JComponent)parent.getTableCellRendererComponent(jtable, value, isSelected, hasFocus, rowIndex, columnIndex);
-        if (columnIndex == 1 && jtable.getModel() instanceof ExpansionsTableModel etm) {
+        
+        if (jtable.getModel() instanceof ExpansionsTableModel etm) {
             int modelIndex = jtable.convertRowIndexToModel(rowIndex);
-            
-            /*
-            todo: calculate the real value based on the row
             Expansion row = etm.getRow(modelIndex);
-            */
-            layerUI.setIndicator(
-                    String.valueOf(etm.getValueAt(modelIndex, 0))
-            );
             
-            c = new JLayer<JComponent>(c, layerUI);
+            if (row.isEnabled()) {
+                String indicator = "";
+                
+                if (row.getEMStatus().isConflicting()) {
+                    indicator += "C";
+                }
+                if (row.getEMStatus().isMissingDeps()) {
+                    indicator += "D";
+                }
+                
+                if (!indicator.isEmpty()) {
+                    //layerUI.setIndicator(indicator);
+                    c = new JLayer<JComponent>(c, layerUI);
+                }
+            }
+            
         }
         return c;
     }

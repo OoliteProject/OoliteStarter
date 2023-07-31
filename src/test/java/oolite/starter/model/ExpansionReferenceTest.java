@@ -91,6 +91,22 @@ public class ExpansionReferenceTest {
     }
 
     /**
+     * Test of compareTo method, of class ExpansionReference.
+     */
+    @Test
+    public void testCompareTo5() {
+        log.info("testCompareTo5");
+
+        ExpansionReference one = new ExpansionReference();
+        one.setName("foo");
+        ExpansionReference other = new ExpansionReference();
+        other.setName("foo");
+        
+        assertEquals(0, one.compareTo(other));
+        assertEquals(0, other.compareTo(one));
+    }
+
+    /**
      * Test of toString method, of class ExpansionReference.
      */
     @Test

@@ -8,6 +8,8 @@ import com.vdurmont.semver4j.Semver;
 import java.awt.Component;
 import java.awt.EventQueue;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -41,7 +43,14 @@ public class GithubVersionChecker {
     public void init() throws IOException {
         versions = new ArrayList<>();
         try {
-            List<Object> releases = new Genson().deserialize(getReleasesURL().openStream(), List.class);
+            URL url = getReleasesURL();
+            url.openStream();
+            HttpURLConnection connection = (HttpURLConnection)url.openConnection();
+            connection.setRequestProperty("Referer", "http://oolite.org");
+            connection.setDoInput(true);
+            InputStream in = connection.getInputStream();
+            
+            List<Object> releases = new Genson().deserialize(in, List.class);
             for (Object release: releases) {
                 if (release instanceof Map<?,?> map) {
                     String v = String.valueOf(map.get("tag_name"));
@@ -92,7 +101,7 @@ public class GithubVersionChecker {
      * @throws MalformedURLException something went wrong
      * @throws IOException something went wrong
      */
-    public String getLatestVersion() throws IOException {
+    public Semver getLatestVersion() throws IOException {
         if (versions == null) {
             throw new IllegalStateException("versions is null. Use init()");
         }
@@ -111,7 +120,7 @@ public class GithubVersionChecker {
             
             if (latest.isGreaterThan(me)) {
                 log.debug("latest is greater!");
-                return latest.toString();
+                return latest;
             }
         }
         return null;
@@ -125,11 +134,19 @@ public class GithubVersionChecker {
      * @param version the latest version
      * @return the html message
      */
-    public String getHtmlUserMessage(String version) throws MalformedURLException {
-        URL url = getHtmlReleaseURL(version);
-        return "<html><body><p>All right there. We heard rumors the new version " + version + " has been released.</p>"
-            + "<p>You need to check <a href=\"" + url + "\">" + url + "</a> and report back to me.</p>"
-            + "<p>But don't keep me waiting too long, kid!</p></body></html>";
+    public String getHtmlUserMessage(Semver version) throws MalformedURLException {
+        URL url = getHtmlReleaseURL(version.toString());
+        
+        StringBuilder html = new StringBuilder("<html><body>");
+        html.append("<p>All right there. We heard rumors the new");
+        if (!version.isStable()) {
+            html.append(" experimental");
+        }
+        html.append(" version " + version + " has been released.</p>");
+        html.append("<p>You need to check <a href=\"" + url + "\">" + url + "</a> and report back to me.</p>");
+        html.append("<p>But don't keep me waiting too long, kid!</p>");
+        html.append("</body></html>");
+        return html.toString();
     }
     
     /**
@@ -139,7 +156,7 @@ public class GithubVersionChecker {
      */
     public void maybeAnnounceUpdate(Component parentComponent) {
         try {
-            String latest = getLatestVersion();
+            Semver latest = getLatestVersion();
             if (latest != null) {
                 String message = getHtmlUserMessage(latest);
                 EventQueue.invokeLater(() -> MrGimlet.showMessage(parentComponent, message) );

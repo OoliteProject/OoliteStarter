@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!-- texts -->
+	<key>2lt_insurance_payment</key>
+	<string>For returning 2nd Lieutenant [nom] the Galactic Navy pays you 100 Credits.</string>
+
+	<key>1lt_insurance_payment</key>
+	<string>For returning 1st Lieutenant [nom] the Galactic Navy pays you 250 Credits.</string>
+
+	<key>cpt_insurance_payment</key>
+	<string>For returning Captain [nom] the Galactic Navy pays you 500 Credits.</string>
+
+	<key>radm_insurance_payment</key>
+	<string>For returning Rear Admiral [nom] the Galactic Navy pays you 750 Credits.</string>
+
+	<key>vadm_insurance_payment</key>
+	<string>For returning Vice Admiral [nom] the Galactic Navy pays you 1000 Credits.</string>
+
+	<key>adm_insurance_payment</key>
+	<string>For returning Admiral [nom] the Galactic Navy pays you 2500 Credits.</string>
+
+	<key>seccom_welcome1</key>
+	<string>Welcome to Sector Command\n\nI am [mid-navyrank] [nom11] [nom].  I will be your Public Relations Officer during your stay at Sector Command.  Your [commanderShip_string] has been securely docked and entered into our registry.  Feel free to access any of our civilian services.  Navy maintenance technicians are top notch and our equipement is the best available. \n\nWould you like to check the latest News Brief or purchase some Victory Bonds to help fund the war effort?  Patrons receive special benefits depending on their level of support.  \n\nAll capable pilots interested in  battling the Thargoids are encouraged to check in with the local Reserve Squadron Commander to see where combat duty is needed.</string>
+
+	<key>seccom_welcome2</key>
+	<string>Welcome to Sector Command\n\nGood to see you back Commander [commander_name]. I am [mid-navyrank] [nom11] [nom].  I will be your Public Relations Officer during your stay at Sector Command.  Your [commanderShip_string] has been securely docked and refueled free of charge.  Our records indicate that you have been a staunch supporter of the  Galactic Navy.  To show our appreciation you have been credited with a 25% discount on all equipment and maintenance.\n\nPlease, feel free to check the latest News Brief or purchase some additional Victory Bonds.  The Navy still needs your support to defeat the Thargoid menace! \n\nRemember, all capable pilots are encouraged to check in with the Reserve Squadron Commander for combat duty.  Your service could mean the difference between victory and annihilation!</string>
+
+	<key>seccom_welcome3</key>
+	<string>Welcome to Sector Command\n\nGood to see you back Commander [commander_name]. I am [mid-navyrank] [nom11] [nom].  I will be your Public Relations Officer during your stay at Sector Command.  Your [commanderShip_string] has been securely docked and refueled free of charge.  Our records indicate that you have been a devoted benefactor of the  Galactic Navy.  To show our appreciation you have been credited with a 50% discount on all equipment and maintenance.\n\nPlease, feel free to check the latest News Brief or purchase some additional Victory Bonds.  The Navy still needs your support to defeat the Thargoid menace! \n\nRemember, all capable pilots are encouraged to check in with the Reserve Squadron Commander for combat duty.  Your service could mean the difference between victory and annihilation!</string>
+
+	<key>seccom_welcome4</key>
+	<string>Welcome to Sector Command\n\nGood to see you back Commander [commander_name]. I am [mid-navyrank] [nom11] [nom].  I will be your Public Relations Officer during your stay at Sector Command.  Your [commanderShip_string] has been securely docked and refueled free of charge.  Our records indicate that you have been an unflagging patron of the  Galactic Navy.  To show our appreciation you have been credited with a 75% discount on all equipment and maintenance.\n\nPlease, feel free to check the latest News Brief or purchase some additional Victory Bonds.  The Navy still needs your support to defeat the Thargoid menace! \n\nRemember, all capable pilots are encouraged to check in with the Reserve Squadron Commander for combat duty.  Your service could mean the difference between victory and annihilation!</string>
+
+
+	<key>buy_victory_bonds</key>
+	<string>\nINVEST IN VICTORY TODAY!\n\nThe Galactic Navy Victory Bond is a debt security issued by the Galactic Cooperative of Worlds to fund the war effort against the Thargoids.  Each bond has a purchase price of 1000 credits and a competitive rate of return which matures after 25 Galactic Standard Years.  Victory Bonds are the perfect investment in your military and your future.  All proceeds go to the construction, maintenance, and logistical support of Navy warships and stations.  They also protect your credits from the dangers of intergalactic warfare.  Invest Today!\n\nTotal  Bonds: [mission_vicbond_count]\nTotal Credits: [credits_number]\n\nWould you like to purchase a 1000 Credit Victory Bond Commander?</string>
+
+	<key>victory_bond_purchased</key>
+	<string>Thank you for your purchase Commander. Would you like to buy another?\n\nTotal  Bonds:  [mission_vicbond_count]\nTotal Credits: [credits_number]</string>
+
+	<key>vicbond_not_purchased</key>
+	<string>It's your choice Commander.\n\nAnything else?</string>
+
+	<key>no_cash_for_bond</key>
+	<string>Sorry Commander, You don't have enough credits.\n\nAnything else?</string>
+
+	<key>seccom_newsbrief</key>
+	<string>\n--- Fleet News\n\n[navynews-fromthefront]\n\n--- In Other News\n\n[navynews-othernews]</string>
+
+	<key>seccom_harmless</key>
+	<string>Sorry Commander\n\nYou're too green.  I am amazed you managed to dock your ship without crashing.  The Thargoids would eat you alive... if you could even find them.\n\nCome back when you've gained some combat experience.</string>
+
+	<key>seccom_mostlyharmless</key>
+	<string>Sorry Commander\n\nYou're too green.  Reserve pilots face serious combat, and it'd be like sending a Tiinlebian tree lamb to the slaughter.\n\nCome back when you've gained some more combat experience.</string>
+
+	<key>seccom_poor</key>
+	<string>Sorry Commander\n\nYou're still too green.  Sure, you've made a few kills, but you're still not ready to take on the Thargoid Hordes.  You wouldn't last five minutes against the bugs.\n\nCome back when you've gained some more combat experience.</string>
+
+	<key>seccom_average</key>
+	<string>Sorry Commander\n\nYou're not ready.  Reserve pilots need more than a few dozen kills under their belt before they're ready to take on the Thargoids.  You'd be lucky to survive the first encounter.\n\nCome back when you've gained some more combat experience.</string>
+
+	<key>seccom_aboveaverage</key>
+	<string>Sorry Commander\n\nYou're not quite ready.  The Navy won't accept anything less than Competent pilots for reserve duty.  You need a few more kills before taking on the Thargoids.\n\nCome back when you've gained a little more combat experience.</string>
+
+	<key>seccom_reserve_enlist</key>
+	<string>Hello Commander\n\nI am [mid-navyrank] [nom].  I oversee reserve recruitment for this Sector.  Are you interested in serving the Navy as a reserve pilot?\n\nAll graduates of the Lave Academy with a Competent rating are eligible for duty.  Once enlisted, reserve pilots check in with the local Reserve Squadron Commander at any SecCom to receive their assignments.  Service is completely voluntary and no salary is paid.  Unlike regular Navy, however, Reserve pilots may keep all bounties collected during their missions and earn bonuses based on sorties flown.\n\nWould you like to enlist?</string>
+
+	<key>seccom_reserve_pass</key>
+	<string>That's unfortunate.  Stop back if you change your mind.\n\nAnything else?</string>
+
+	<key>seccom_reserve_intro</key>
+	<string>Excellent!\n\nWelcome to the Navy Reserves!  I will enter your information into the reserve registry immediately Commander [commander_name].  It is vital that we have accurate records to contact your next of kin.  Seventy percent of rookie pilots don't survive their first mission.  Good Luck!\n\nThe Reserve Squadron Commander's office is just down the hall if you would like to get started immediately.</string>
+
+	<key>reserve_duty_invasion</key>
+	<string>[reserve-greeting] [commander_name]\n\n[reserve-greeting2]\n\nThe [mission_reserve_planetname] system has been invaded by Thargoids and is begging for assistance.  A small Navy contingent has already been dispatched to support the local [mission_reserve_planetname]ian forces in routing the invaders.  You are to make your way to [mission_reserve_planetname], form up with the reserve squadron, patrol the spacelanes and destroy as many Thargoids as possible.  You may keep all bounties collected.\n\nGood Luck Commander</string>
+
+	<key>reserve_duty_fleet</key>
+	<string>[reserve-greeting] [commander_name]\n\n[reserve-greeting2]\n\nNavy Intelligence indicates a large Thargoid Battle Fleet is approaching the [mission_reserve_planetname] system. Fortunately the fleet is still several days out, and there is still time to intercept it.  A Navy Carrier Group is en route as we speak.  The [mission_reserve_planetname]ians are counting on us.  You are to make your way to [mission_reserve_planetname], form up with the reserve squadron, and help repel the Thargoid Invaders.  You may keep all bounties collected.\n\nGood Luck Commander</string>
+
+	<key>reserve_duty_police</key>
+	<string>[reserve-greeting] [commander_name]\n\n[reserve-greeting2]\n\nThe [mission_reserve_planetname]ian Ambassador has requested Naval assistance.  Apparently a large, well outfitted pirate group has been preying on merchant ships as they enter the spacelane.  Local forces have been unable to deal with the threat. You are to make your way to [mission_reserve_planetname], form up with the reserve squadron, and destroy the pirates along with their base. You may keep all bounties collected.\n\nGood Luck Commander</string>
+
+
+	<key>reserve_duty_invasion_reminder</key>
+	<string>\nCommander [commander_name]\n\nYou have your assignment:\n\nProceed to the [mission_reserve_planetname] system ASAP\nForm up with the reserve squadron\nDestroy the Thargoid Invaders\n\nGood Luck</string>
+
+	<key>reserve_duty_intercept_reminder</key>
+	<string>\nCommander [commander_name]\n\nYou have your assignment:\n\nProceed to the [mission_reserve_planetname] system ASAP\nForm up with the reserve squadron\nRepel the Thargoid Battle Fleet\n\nGood Luck</string>
+
+	<key>reserve_duty_police_reminder</key>
+	<string>\nCommander [commander_name]\n\nYou have your assignment:\n\nProceed to the [mission_reserve_planetname] system ASAP\nForm up with the reserve squadron\nDestroy the pirates and their base\n\nGood Luck</string>
+
+
+	<key>reserve_bonus1</key>
+	<string>Hello Commander [commander_name]\n\nI am [mid-navyrank] [nom].  Our records indicate that you have flown [mission_player_sortie] Sorties as a Reserve pilot in the Galactic Navy.  Please accept this bonus of 1,000 Credits as a measure of the Navy's appreciation.  Keep up the good work Commander!\n\n\n\n1000 CREDITS AWARDED</string>
+
+	<key>reserve_bonus5</key>
+	<string>Hello Commander [commander_name]\n\nI am [mid-navyrank] [nom].  Our records indicate that you have flown [mission_player_sortie] Sorties as a Reserve pilot in the Galactic Navy.  To show its gratitude the Navy has authorized a 5,000 Credit bonus which I will transfer into your account immediately.  Keep up the good work Commander!\n\n\n\n5000 CREDITS AWARDED</string>
+
+	<key>reserve_bonus10</key>
+	<string>Hello Commander [commander_name]\n\nI am [mid-navyrank] [nom].  Our records indicate that you have flown [mission_player_sortie] Sorties as a Reserve pilot in the Galactic Navy.  In recognition of your exemplary service the Navy has instructed me to present you with this 10,000 Credit bonus.  Keep up the good work Commander!\n\n\n\n10000 CREDITS AWARDED</string>
+
+	<key>reserve_bonus25</key>
+	<string>Hello Commander [commander_name]\n\nI am [mid-navyrank] [nom].  Our records indicate that you have flown an amazing [mission_player_sortie] Sorties as a Reserve pilot in the Galactic Navy.  To celebrate this incredible milestone the Navy hopes you will accept this bonus of 25,000 credits. Your service is an inspiration Commander!\n\n\n\n25000 CREDITS AWARDED</string>
+
+
+	<key>squad_leaderboard</key>
+	<string>---------------------------------------- RESERVE LEADERBOARD ----------------------------------------\n\n                 COMMANDER                              STATUS               SORTIES\n                 --------------------                              -------------              --------------\n                 Williams                                        Retired                     104\n                 Powers                                          Active                      [mission_powers_sortie]\n                 Warrick                                          Active                      [mission_warrick_sortie]\n                 Crom                                              KIA                          62\n                 Zalack                                            Active                      [mission_zalack_sortie]\n                 Mitchell                                          MIA                          38\n                 Walker                                            KIA                          53\n                 Xaquetl                                          Active                      [mission_xaquetl_sortie]\n\n----------------------------------------------- PERSONAL INFO -----------------------------------------------\n\nCOMMANDER: [commander_name]\n\nSTATUS: Active                                 SORTIES: [mission_player_sortie]                            KILLS: [score_number]</string>
+
+	<key>hofd_offer</key>
+	<string>\n--- After docking, you are approached by a high ranking Galactic Navy Officer.  He asks if you would be interested in performing a dangerous covert mission in exchange for large number of credits.</string>
+
+	<key>hofd_decline</key>
+	<string>\nSo be it.\n\nSee you around Commander.</string>
+
+	<key>hofd_intro</key>
+	<string>---This information is highly sensitive commander.  You may not divulge it to anyone under pain of death.\n\nI am sure you are familiar with legendary Navy Admiral Kurtz the decorated and undefeated hero of the Thargoid Wars. From his flagship, the behemoth carrier Nellie, Admiral Kurtz  commands a large carrier group of more than a dozen warships.  Concern has been growing as we have been unable to contact the Admiral or his fleet for some time.\n The Navy regards Admiral Kurtz as one of its most capable officers.  He is a brilliant military tactician and an unrivaled leader of men.  Recent reports indicate, however, that Kurtz's genius may have spiraled into megalomania.  It appears he has gone quite mad and is now operating completely outside of Navy Command.   We would like you to locate, capture, and return him to the nearest SecCom Station for evaluation and treatment.\nIt is vitally important that Admiral Kurtz is not killed.  An assassination could spurn officers loyal to Kurtz into revolt and spark a deadly civil war.  Find Admiral Kurtz, return him to a SecCom Station, and the Navy will reward you with 25,000 credits.\nThe Nellie was last reported in orbit around the planet Ririso. Take this 1500 credits for out-fitting and expenses. Good Luck.
+</string>
+
+	<key>hofd_kurtz_offer</key>
+	<string>---After docking you are quickly surrounded by a sqaud of marines and escorted to the bridge---\n\nWelcome Commander,\n\nMy name is Admiral J Kurtz, and I have been expecting you.  Navy Command has sent you here to capture me.  They have told you I am mad and that I need help.  Well, I am not mad Commander, and I will not be captured.  The Navy has deceived you! The corrupt command structure is threatened by my popularity with the common officer and fears I will usurp their power.  They wish to eliminate me!\n\nWhy are you wasting your talents serving such incompetents?  A pilot of your skill and experience deserves better.  Join my forces Commander, and I promise you service more commensurate with your capabilities.</string>
+
+	<key>hofd_service</key>
+	<string>You join Admiral Kurtz as a dedicated Lieutenant.\n\nAs time passes you begin to feel that perhaps the Navy was right.  Kurtz becomes increasing cruel and his rule more absolute.  You watch as the Admiral carries out atrocities against local populations.  When one outspoken officer dares to question the Admiral's methods Kurtz has him summarily executed and his severed head placed on a pike decorating the bridge.\n\nYou decide discretion is the better part of valor and attempt to desert the Admiral's command.  Safely making your way into the hanger, you begin prepping your ship for launch when a sentry sounds the alarm!  Your desertion will not be taken lightly.</string>
+
+	<key>hofd_no_service</key>
+	<string>You fool!\n\nI do not need help.  Not from you or anyone else. I misjudged you Commander. You are nothing but a weak minded pawn of Navy Command.  I suggest you be on your way while I still allow it.  I have little patience for incompetence.</string>
+
+	<key>hofd_welldone</key>
+	<string>Well Done Commander!\n\nThe Navy thanks you for your service.  Admiral Kurtz will get the best possible treatment and care.  Here is your 25,000 Credits as promised.</string>
+
+
+	<key>hofd_news_update</key>
+	<string>---Breaking News Update\n\nThe Navy Press Secretary has issued a statement confirming the death of legendary Admiral J Kurtz.  No offical cause of death has been given, but the Press Secrectary is on record saying,  "that it was in no way unusual or suspicious."\n\nAdmiral Kurtz was the Navy's most decorated officer and had never lost a single engagement with the thargoid menace.  Memorial services are being planned at the Tionisla Orbital Graveyard.  Details will follow as they are available.</string>
+
+	<key>hofd_news_update2</key>
+	<string>---Breaking News Update\n\nSources have confirmed that famed Admiral J Kurtz has been killed during a deadly space battle while in orbit around the planet Ririso.  Reports indicate that a lone ship carried out the assassination. Allegations of governmental collaboration and conspiracy are running rampant. Galcop has vehemently denied the charges and promised a full investigation.\n\nThe Navy Press Secretary has issued an official statement praising Admiral Kurtz for his many years of  dedicated service.\n\n"Admiral Kurtz was an unparalleled leader of men and a brilliant military tactician.  A true hero of our time, his loss will be felt throughout the galaxy.  Navy Intelligence has already begun a search for the cowardly assassin and will not rest until he is brought to justice."\n\nMemorial services are being planned at the Tionisla Orbital Graveyard.  Details will follow as they are available.</string>
+
+	<key>hofd_news_update3</key>
+	<string>---Breaking News Update\n\nSources have confirmed that famed Admiral J Kurtz evaded a daring assassination attempt while in orbit around the planet Ririso.  Reports indicate that a lone ship attacked the entire battle fleet but was unable to capture or kill the Admiral. Allegations of governmental collaboration and conspiracy are running rampant. Galcop has vehemently denied the charges and promised a full investigation.\n\nSince the attack Admiral Kurtz has gone into hiding along  with a large contingent of loyal officers. There is no telling what far reaching consequences this incident will have on the course of galactic events. </string>
+
+	<!-- short descriptions -->
+	<key>hofd_short_desc</key>
+	<string>Find Admiral Kurtz and return him to a SecCom Station</string>
+
+	<key>system_invasion_desc</key>
+	<string>Reserve Duty - Rout the Thargoid Invaders at [mission_reserve_planetname]</string>
+
+	<key>fleet_intercept_desc</key>
+	<string>Reserve Duty - Intercept the Thargoid Battle Fleet at [mission_reserve_planetname]</string>
+
+	<key>police_action_desc</key>
+	<string>Reserve Duty - Destroy the pirate fleet at [mission_reserve_planetname]</string>
+
+	<!-- choices -->
+	<key>seccom_welcome_choice</key>
+	<dict>
+		<key>1buy_vicbond</key>
+		<string>Buy Victory Bonds</string>
+		<key>2check_newsbrief</key>
+		<string>Check Latest News</string>
+		<key>3check_reserveduty</key>
+		<string>Check Reserve Duty</string>
+		<key>4back_to_business</key>
+		<string>Get Back To Business</string>
+	</dict>
+
+	<key>vicbond_purchase_choice</key>
+	<dict>
+		<key>1one_vicbond</key>
+		<string>Sure, I'll take one</string>
+		<key>2no_vicbond</key>
+		<string>No Thanks</string>
+	</dict>
+
+	<key>vicbond_purchase_choice2</key>
+	<dict>
+		<key>1one_vicbond</key>
+		<string>Sure, I'll buy another.</string>
+		<key>2no_vicbond</key>
+		<string>No Thanks</string>
+	</dict>
+
+	<key>vicbond_purchase_choice3</key>
+	<dict>
+		<key>2check_newsbrief</key>
+		<string>Check Latest News</string>
+		<key>3check_reserveduty</key>
+		<string>Check Reserve Duty</string>
+		<key>4back_to_business</key>
+		<string>Get Back To Business</string>
+	</dict>
+
+	<key>seccom_newsbrief_choice</key>
+	<dict>
+		<key>1buy_vicbond</key>
+		<string>Buy Victory Bonds</string>					
+		<key>3check_reserveduty</key>
+		<string>Check Reserve Duty</string>
+		<key>4back_to_business</key>
+		<string>Get Back To Business</string>
+	</dict>
+
+	<key>seccom_green_choice</key>
+	<dict>
+		<key>1buy_vicbond</key>
+		<string>Buy Victory Bonds</string>
+		<key>2check_newsbrief</key>
+		<string>Check Latest News</string>
+		<key>4back_to_business</key>
+		<string>Get Back To Business</string>
+	</dict>
+
+	<key>reserve_enlist_choice</key>
+	<dict>
+		<key>1reserve_sign_me_up</key>
+		<string>Sign Me Up</string>
+		<key>2reserve_not_now</key>
+		<string>Not Right Now</string>
+	</dict>
+
+	<key>reserve_intro_choice</key>
+	<dict>
+		<key>1buy_vicbond</key>
+		<string>Buy Victory Bonds</string>					
+		<key>2check_newsbrief</key>
+		<string>Check Latest News</string>
+		<key>3check_reserveduty</key>
+		<string>Meet Reserve Squadron Commander</string>
+		<key>back_to_business</key>
+		<string>Get Back To Business</string>
+	</dict>
+
+
+	<key>seccom_reserveduty_choice</key>
+	<dict>
+		<key>1buy_vicbond</key>
+		<string>Buy Victory Bonds</string>					
+		<key>2check_newsbrief</key>
+		<string>Check Latest News</string>	
+		<key>3check_leaderboard</key>
+		<string>Check Leaderboard</string>
+		<key>4back_to_business</key>
+		<string>Get Back To Business</string>
+	</dict>
+
+	<key>leaderboard_return_choice</key>
+	<dict>
+		<key>3check_reserveduty</key>
+		<string>Return To Briefing</string>
+		<key>4back_to_business</key>
+		<string>Get Back To Business</string>
+	</dict>
+
+	<key>hofd_offer_choice</key>
+	<dict>
+		<key>hofd_accept</key>
+		<string>Sure, I'm always interested in a large number of credits.</string>
+		<key>hofd_decline</key>
+		<string>No Thanks, I'm not a big fan of danger.</string>
+	</dict>
+
+	<key>hofd_kurtz_choice</key>
+	<dict>
+		<key>hofd_kurtz_accept</key>
+		<string>It would be an honor to serve with you Admiral.</string>
+		<key>hofd_kurtz_decline</key>
+		<string>Sorry Admiral, you need help.</string>
+	</dict>
+
+
+</dict>
+</plist>

@@ -16,6 +16,8 @@ import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 import javax.swing.UIDefaults;
 import javax.swing.UIManager;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableRowSorter;
 import oolite.starter.Configuration;
@@ -55,7 +57,7 @@ public class InstallationsPanel extends javax.swing.JPanel {
         
         configDirty = false;
         
-        setButtonColors();
+        //setButtonColors();
         
         jTable1.setDefaultRenderer(Boolean.class, new DefaultTableCellRenderer(){
             @Override
@@ -85,6 +87,17 @@ public class InstallationsPanel extends javax.swing.JPanel {
         this.configuration = configuration;
 
         model = new InstallationTableModel(configuration);
+        model.addTableModelListener(new TableModelListener() {
+            @Override
+            public void tableChanged(TableModelEvent tme) {
+                log.debug("tableChanged({})", tme);
+                if (tme.getSource() == model) {
+                    log.trace("it is our tablemodel!");
+                    setButtonColors();
+                }
+            }
+        });
+        
         jTable1.setModel(model);
         jTable1.getSelectionModel().addListSelectionListener(lse -> {
             log.debug("valueChanged({})", lse);
@@ -134,17 +147,18 @@ public class InstallationsPanel extends javax.swing.JPanel {
     }
     
     private void setButtonColors() {
+        log.debug("setButtonColors()");
         UIDefaults uidefaults = UIManager.getLookAndFeelDefaults();
         Color defaultBackground = uidefaults.getColor("Button.background");
 
-        if (model != null && model.getRowCount()==0) {
+        if (model == null || model.getRowCount() == 0) {
             btAdd.setBackground(Configuration.COLOR_ATTENTION);
             btScan.setBackground(Configuration.COLOR_ATTENTION);
             btActivate.setBackground(defaultBackground);
-        } else {
+        } else {                
             btAdd.setBackground(defaultBackground);
             btScan.setBackground(defaultBackground);
-
+                
             if (configuration != null && configuration.getActiveInstallation() == null) {
                 btActivate.setBackground(Configuration.COLOR_ATTENTION);
             } else {
@@ -466,7 +480,7 @@ public class InstallationsPanel extends javax.swing.JPanel {
             configuration.activateInstallation(i);
             model.fireTableDataChanged();
             jTable1.getSelectionModel().setSelectionInterval(rowIndex, rowIndex);
-
+            
             setConfigDirty(true);
         } catch (Exception e) {
             log.error(INSTALLATIONSPANEL_COULD_NOT_SAVE, e);

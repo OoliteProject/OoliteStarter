@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>asteroids3D-asteroid1</key>
+	<dict>
+		<key>debris_role</key>
+		<string>asteroids3D_boulder</string>
+		<key>density</key>
+		<real>0.001</real>
+		<key>like_ship</key>
+		<string>asteroid</string>
+		<key>roles</key>
+		<string>asteroids3D_asteroid asteroids3D</string>
+		<key>script</key>
+		<string>asteroids3D-object.js</string>
+	</dict>
+	<key>asteroids3D-asteroid2</key>
+	<dict>
+		<key>debris_role</key>
+		<string>asteroids3D_boulder</string>
+		<key>density</key>
+		<real>0.001</real>
+		<key>like_ship</key>
+		<string>asteroid-alternative</string>
+		<key>roles</key>
+		<string>asteroids3D_asteroid asteroids3D</string>
+		<key>script</key>
+		<string>asteroids3D-object.js</string>
+	</dict>
+	<key>asteroids3D-boulder1</key>
+	<dict>
+		<key>debris_role</key>
+		<string>asteroids3D_splinter</string>
+		<key>density</key>
+		<real>0.10000000000000001</real>
+		<key>like_ship</key>
+		<string>boulder</string>
+		<key>roles</key>
+		<string>asteroids3D_boulder asteroids3D</string>
+		<key>script</key>
+		<string>asteroids3D-object.js</string>
+	</dict>
+	<key>asteroids3D-boulder2</key>
+	<dict>
+		<key>debris_role</key>
+		<string>asteroids3D_splinter</string>
+		<key>density</key>
+		<real>0.10000000000000001</real>
+		<key>like_ship</key>
+		<string>boulder-alternative</string>
+		<key>roles</key>
+		<string>asteroids3D_boulder asteroids3D</string>
+		<key>script</key>
+		<string>asteroids3D-object.js</string>
+	</dict>
+	<key>asteroids3D-splinter1</key>
+	<dict>
+		<key>bounty</key>
+		<integer>1</integer>
+		<key>cargo_carried</key>
+		<string>minerals</string>
+		<key>cargo_type</key>
+		<string>CARGO_MINERALS</string>
+		<key>like_ship</key>
+		<string>splinter</string>
+		<key>roles</key>
+		<string>asteroids3D_splinter asteroids3D</string>
+		<key>scan_class</key>
+		<string>CLASS_CARGO</string>
+		<key>script</key>
+		<string>asteroids3D-object.js</string>
+	</dict>
+	<key>asteroids3D-splinter2</key>
+	<dict>
+		<key>bounty</key>
+		<integer>1</integer>
+		<key>cargo_carried</key>
+		<string>minerals</string>
+		<key>cargo_type</key>
+		<string>CARGO_MINERALS</string>
+		<key>like_ship</key>
+		<string>splinter-alternative</string>
+		<key>roles</key>
+		<string>asteroids3D_splinter asteroids3D</string>
+		<key>scan_class</key>
+		<string>CLASS_CARGO</string>
+		<key>script</key>
+		<string>asteroids3D-object.js</string>
+	</dict>
+	<key>asteroids3D-tharglet</key>
+	<dict>
+		<key>like_ship</key>
+		<string>tharglet</string>
+		<key>roles</key>
+		<string>asteroids3D_thargon asteroids3D</string>
+		<key>script</key>
+		<string>asteroids3D-object.js</string>
+	</dict>
+	<key>asteroids3D-thargoid</key>
+	<dict>
+		<key>ai_type</key>
+		<string>asteroids3DthargoidAI.plist</string>
+		<key>like_ship</key>
+		<string>thargoid</string>
+		<key>missile_role</key>
+		<string>asteroids3D_thargon</string>
+		<key>roles</key>
+		<string>asteroids3D_thargoid asteroids3D thargoid(0)</string>
+		<key>script</key>
+		<string>asteroids3D-object.js</string>
+	</dict>
+</dict>
+</plist>

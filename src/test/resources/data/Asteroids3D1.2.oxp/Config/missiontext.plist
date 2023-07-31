@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>asteroids3D-gameChoices</key>
+	<dict>
+		<key>1</key>
+		<string>BEGINNER</string>
+		<key>2</key>
+		<string>MEDIUM</string>
+		<key>3</key>
+		<string>EXPERT</string>
+		<key>4</key>
+		<string>EXIT GAME</string>
+	</dict>
+	<key>asteroids3D-saveChoices</key>
+	<dict>
+		<key>1</key>
+		<string>Yeah, let me save first.</string>
+		<key>2</key>
+		<string>Thanks, but I'm playing anyway.</string>
+	</dict>
+</dict>
+</plist>

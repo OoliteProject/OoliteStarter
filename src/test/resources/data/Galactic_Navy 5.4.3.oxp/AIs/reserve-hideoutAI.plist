@@ -1,0 +1,24 @@
+{
+    GLOBAL = {ENTER = ("setStateTo: IDLE"); }; 
+  
+    "DEFENSE_MODE" = {
+        ATTACKED = (setTargetToPrimaryAggressor, increaseAlertLevel); 
+        ENTER = (launchDefenseShip); 
+        "RED_ALERT" = (launchDefenseShip); 
+        "YELLOW_ALERT" = (launchDefenseShip); 
+        "CONDITION_YELLOW" = (launchDefenseShip); 
+        "CONDITION_GREEN" = ("setStateTo: IDLE"); 
+        "INCOMING_MISSILE" = (increaseAlertLevel); 
+        "ENERGY_FULL" = ("pauseAI: 20.0", "setStateTo: IDLE"); 
+        "TARGET_DESTROYED" = ("pauseAI: 20.0", "setStateTo: IDLE"); 
+        "TARGET_LOST" = ("pauseAI: 20.0", "setStateTo: IDLE"); 
+        "NO_TARGET" = ("pauseAI: 20.0", "setStateTo: IDLE"); 
+    }; 
+
+
+  IDLE = {
+        ATTACKED = (setTargetToPrimaryAggressor, increaseAlertLevel, "setStateTo: DEFENSE_MODE"); 
+        "INCOMING_MISSILE" = (increaseAlertLevel); 
+        UPDATE = (decreaseAlertLevel, "pauseAI: 20.0"); 
+    }; 
+}

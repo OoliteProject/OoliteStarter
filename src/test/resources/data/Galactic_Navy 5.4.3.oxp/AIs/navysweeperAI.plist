@@ -1,0 +1,67 @@
+{
+    GLOBAL = {ENTER = ("setStateTo: HEAD_FOR_PLANET"); }; 
+
+    "ATTACK_TARGET1" = {
+        ENTER = (performAttack); 
+      "ENERGY_LOW" = (setTargetToPrimaryAggressor); 
+        "INCOMING_MISSILE" = (setTargetToPrimaryAggressor, performAttack); 
+        "TARGET_DESTROYED" = ("setStateTo: HEAD_FOR_PLANET"); 
+        "TARGET_LOST" = ("setStateTo: HEAD_FOR_PLANET"); 
+	"TARGET_FOUND" = (setTargetToFoundTarget, "commsMessage: Quirium Cascade Weapon Detected and Disarmed", "safeScriptActionOnTarget: becomeExplosion"); 
+        UPDATE = ("scanForNearestShipWithAnyPrimaryRole: EQ_QC_MINE EQ_CASCADE_MISSILE", "pauseAI: 2");
+    }; 
+    "ATTACK_TARGET2" = {
+        ENTER = (performAttack); 
+	"ENERGY_LOW" = (setTargetToPrimaryAggressor); 
+        "INCOMING_MISSILE" = (setTargetToPrimaryAggressor, performAttack); 
+        "TARGET_DESTROYED" = ("setStateTo: HEAD_FOR_WITCHPOINT"); 
+        "TARGET_LOST" = ("setStateTo: HEAD_FOR_WITCHPOINT"); 
+	"TARGET_FOUND" = (setTargetToFoundTarget, "commsMessage: Quirium Cascade Weapon Detected and Disarmed", "safeScriptActionOnTarget: becomeExplosion"); 
+        UPDATE = ("scanForNearestShipWithAnyPrimaryRole: EQ_QC_MINE EQ_CASCADE_MISSILE", "pauseAI: 2");
+    }; 
+
+    "HEAD_FOR_PLANET" = {
+	ENTER = (setCourseToPlanet, "setDesiredRangeTo: 50000.0", checkCourseToDestination);
+	"COURSE_OK" = ("setSpeedFactorTo: 0.8", performFlyToRangeFromDestination);
+	"WAYPOINT_SET" = ("setStateTo: GO_TO_WAYPOINT1");
+	"DESIRED_RANGE_ACHIEVED" = ("setStateTo: HEAD_FOR_WITCHPOINT");
+        ATTACKED = (setTargetToPrimaryAggressor, "setStateTo: ATTACK_TARGET1"); 
+        "INCOMING_MISSILE" = (setTargetToPrimaryAggressor, "setStateTo: ATTACK_TARGET1"); 
+	"OFFENCE_COMMITTED" = (setTargetToFoundTarget, "markTargetForOffence: 7", "setStateTo: ATTACK_TARGET1"); 
+        "TARGET_FOUND" = (setTargetToFoundTarget, "commsMessage: Quirium Cascade Weapon Detected and Disarmed", "safeScriptActionOnTarget: becomeExplosion");  
+        UPDATE = ("scanForNearestShipWithAnyPrimaryRole: EQ_QC_MINE EQ_CASCADE_MISSILE", "pauseAI: 2");
+	}; 
+    "GO_TO_WAYPOINT1" = {
+	ENTER = ("setDesiredRangeTo: 50.0", checkCourseToDestination);
+	"COURSE_OK" = ("setSpeedFactorTo: 0.8", performFlyToRangeFromDestination);
+	"WAYPOINT_SET" = ("setDesiredRangeTo: 50.0", checkCourseToDestination);
+	"DESIRED_RANGE_ACHIEVED" = ("setStateTo: HEAD_FOR_PLANET");
+	ATTACKED = (setTargetToPrimaryAggressor, "setStateTo: ATTACK_TARGET1"); 
+        "INCOMING_MISSILE" = (setTargetToPrimaryAggressor, "setStateTo: ATTACK_TARGET1"); 
+	"OFFENCE_COMMITTED" = (setTargetToFoundTarget, "markTargetForOffence: 7", "setStateTo: ATTACK_TARGET1"); 
+        "TARGET_FOUND" = (setTargetToFoundTarget, "commsMessage: Quirium Cascade Weapon Detected and Disarmed", "safeScriptActionOnTarget: becomeExplosion"); 
+        UPDATE = ("scanForNearestShipWithAnyPrimaryRole: EQ_QC_MINE EQ_CASCADE_MISSILE", "pauseAI: 2");
+	}; 
+    "HEAD_FOR_WITCHPOINT" = {
+	ENTER = (setCourseToWitchpoint, checkCourseToDestination);
+	"COURSE_OK" = ("setSpeedFactorTo: 0.8", performFlyToRangeFromDestination);
+	"WAYPOINT_SET" = ("setStateTo: GO_TO_WAYPOINT2");
+	"DESIRED_RANGE_ACHIEVED" = ("setStateTo: HEAD_FOR_PLANET");
+        ATTACKED = (setTargetToPrimaryAggressor, "setStateTo: ATTACK_TARGET2"); 
+        "INCOMING_MISSILE" = (setTargetToPrimaryAggressor, "setStateTo: ATTACK_TARGET2"); 
+	"OFFENCE_COMMITTED" = (setTargetToFoundTarget, "markTargetForOffence: 7", "setStateTo: ATTACK_TARGET2"); 
+        "TARGET_FOUND" = (setTargetToFoundTarget, "commsMessage: Quirium Cascade Weapon Detected and Disarmed", "safeScriptActionOnTarget: becomeExplosion"); 
+        UPDATE = ("scanForNearestShipWithAnyPrimaryRole: EQ_QC_MINE EQ_CASCADE_MISSILE", "pauseAI: 2");
+	}; 
+    "GO_TO_WAYPOINT2" = {
+        ENTER = ("setDesiredRangeTo: 50.0", checkCourseToDestination);
+        "COURSE_OK" = ("setSpeedFactorTo: 0.8", performFlyToRangeFromDestination);
+        "WAYPOINT_SET" = ("setDesiredRangeTo: 50.0", checkCourseToDestination);
+        "DESIRED_RANGE_ACHIEVED" = ("setStateTo: HEAD_FOR_WITCHPOINT");
+        ATTACKED = (setTargetToPrimaryAggressor, "setStateTo: ATTACK_TARGET2"); 
+        "INCOMING_MISSILE" = (setTargetToPrimaryAggressor, "setStateTo: ATTACK_TARGET2"); 
+	"OFFENCE_COMMITTED" = (setTargetToFoundTarget, "markTargetForOffence: 7", "setStateTo: ATTACK_TARGET2"); 
+        "TARGET_FOUND" = (setTargetToFoundTarget, "commsMessage: Quirium Cascade Weapon Detected and Disarmed", "safeScriptActionOnTarget: becomeExplosion"); 
+	UPDATE = ("scanForNearestShipWithAnyPrimaryRole: EQ_QC_MINE EQ_CASCADE_MISSILE", "pauseAI: 2");
+	}; 
+}

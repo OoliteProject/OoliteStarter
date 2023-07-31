@@ -103,8 +103,8 @@ public class GithubVersionCheckerTest {
         GithubVersionChecker instance = new GithubVersionChecker();
         instance.init();
         
-        String v = instance.getLatestVersion();
-        assertNotNull(new Semver(v));
+        Semver v = instance.getLatestVersion();
+        assertNotNull(v);
     }
 
     /**
@@ -115,7 +115,18 @@ public class GithubVersionCheckerTest {
         System.out.println("getHtmlUserMessage");
 
         GithubVersionChecker instance = new GithubVersionChecker();
-        assertEquals("<html><body><p>All right there. We heard rumors the new version vX has been released.</p><p>You need to check <a href=\"https://github.com/HiranChaudhuri/OoliteStarter/releases/tag/vX\">https://github.com/HiranChaudhuri/OoliteStarter/releases/tag/vX</a> and report back to me.</p><p>But don't keep me waiting too long, kid!</p></body></html>", instance.getHtmlUserMessage("vX"));
+        assertEquals("<html><body><p>All right there. We heard rumors the new version 999.999.999 has been released.</p><p>You need to check <a href=\"https://github.com/HiranChaudhuri/OoliteStarter/releases/tag/v999.999.999\">https://github.com/HiranChaudhuri/OoliteStarter/releases/tag/v999.999.999</a> and report back to me.</p><p>But don't keep me waiting too long, kid!</p></body></html>", instance.getHtmlUserMessage(new Semver("999.999.999")));
+    }
+
+    /**
+     * Test of getHtmlUserMessage method, of class GithubVersionChecker.
+     */
+    @Test
+    public void testGetHtmlUserMessage2() throws MalformedURLException {
+        System.out.println("getHtmlUserMessage2");
+
+        GithubVersionChecker instance = new GithubVersionChecker();
+        assertEquals("<html><body><p>All right there. We heard rumors the new experimental version 999.999.999-test.1 has been released.</p><p>You need to check <a href=\"https://github.com/HiranChaudhuri/OoliteStarter/releases/tag/v999.999.999-test.1\">https://github.com/HiranChaudhuri/OoliteStarter/releases/tag/v999.999.999-test.1</a> and report back to me.</p><p>But don't keep me waiting too long, kid!</p></body></html>", instance.getHtmlUserMessage(new Semver("999.999.999-test.1")));
     }
 
 }

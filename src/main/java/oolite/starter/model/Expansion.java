@@ -2,11 +2,13 @@
  */
 package oolite.starter.model;
 
+import java.awt.Color;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import oolite.starter.Oolite;
 import org.apache.logging.log4j.LogManager;
@@ -20,7 +22,108 @@ public class Expansion implements Comparable<Expansion> {
     private static final Logger log = LogManager.getLogger();
     
     private static final String EXPANSION_OOLITE_MUST_BE_SET = "oolite must be set before";
+    
+    /**
+     * Expansion Manager status fields.
+     * See https://wiki.alioth.net/index.php/Expansions_Manager
+     */
+    public static class EMStatus {
+        private Color color;
+        private boolean latest;
+        private boolean conflicting;
+        private boolean missingDeps;
+        private boolean incompatible;
 
+        /**
+         * Create a new status.
+         */
+        public EMStatus() {
+        }
+
+        /**
+         * Create a new status with parameters.
+         */
+        public EMStatus(Color color, boolean latest, boolean conflicting, boolean missingDeps, boolean incompatible) {
+            this.color = color;
+            this.latest = latest;
+            this.conflicting = conflicting;
+            this.missingDeps = missingDeps;
+            this.incompatible = incompatible;
+        }
+
+        /**
+         * Returns the intended color.
+         */
+        public Color getColor() {
+            return color;
+        }
+
+        /**
+         * Sets the intended color.
+         */
+        public void setColor(Color color) {
+            this.color = color;
+        }
+
+        /**
+         * Returns if the version is the latest.
+         */
+        public boolean isLatest() {
+            return latest;
+        }
+
+        /**
+         * Sets if the version is the latest.
+         */
+        public void setLatest(boolean latest) {
+            this.latest = latest;
+        }
+
+        /**
+         * Returns if the expansion is conflicting.
+         */
+        public boolean isConflicting() {
+            return conflicting;
+        }
+
+        /**
+         * Sets if the expansion is conflicting.
+         */
+        public void setConflicting(boolean conflicting) {
+            this.conflicting = conflicting;
+        }
+
+        /**
+         * Returns if required other expansions are missing.
+         */
+        public boolean isMissingDeps() {
+            return missingDeps;
+        }
+
+        /**
+         * Sets if required other expansions are missing.
+         */
+        public void setMissingDeps(boolean missingDeps) {
+            this.missingDeps = missingDeps;
+        }
+
+        /**
+         * Returns if the expansion is compatible with the current version of Oolite.
+         */
+        public boolean isIncompatible() {
+            return incompatible;
+        }
+
+        /**
+         * Sets if the expansion is compatible with the current version of Oolite.
+         */
+        public void setIncompatible(boolean incompatible) {
+            this.incompatible = incompatible;
+        }
+        
+        
+    }
+    
     private String author;
     private String category;
     private List<String> conflictOxps;
@@ -43,6 +146,7 @@ public class Expansion implements Comparable<Expansion> {
     
     private boolean online;
     private File localFile;
+    private EMStatus emStatus = new EMStatus();
     
     private PropertyChangeSupport pcs;
 
@@ -360,7 +464,7 @@ public class Expansion implements Comparable<Expansion> {
     }
 
     /**
-     * Returns the version.
+     * Returns the expansion's version.
      * 
      * @return the version
      */
@@ -369,7 +473,7 @@ public class Expansion implements Comparable<Expansion> {
     }
 
     /**
-     * Sets the version.
+     * Sets the expansion's version.
      * 
      * @param version the version
      */
@@ -425,6 +529,20 @@ public class Expansion implements Comparable<Expansion> {
             return false;
         }
     }
+    
+    /**
+     * Returns true if this expansion is managed.
+     * 
+     * @return 
+     */
+    public boolean isManaged() {
+        try {
+            return oolite.isManaged(this);
+        } catch (IOException e) {
+            log.info("Could not determine isManaged", e);
+            return false;
+        }
+    }
 
     /**
      * Returns the oolite handler for this expansion.
@@ -462,6 +580,14 @@ public class Expansion implements Comparable<Expansion> {
         File oldValue = this.localFile;
         this.localFile = localFile;
         pcs.firePropertyChange("localFile", oldValue, localFile);
+    }
+    
+    /**
+     * 
+     * @return 
+     */
+    public EMStatus getEMStatus() {
+        return emStatus;
     }
 
     @Override
@@ -560,5 +686,77 @@ public class Expansion implements Comparable<Expansion> {
         String s1 = getIdentifier() + getVersion();
         String s2 = t.getIdentifier() + t.getVersion();
         return s1.compareTo(s2);
+    }
+    
+    /**
+     * Returns the list of required expansions as ExpansionReferences.
+     * 
+     * @return the list
+     */
+    public List<ExpansionReference> getRequiredRefs() {
+        List<ExpansionReference> result = new ArrayList<>();
+        for (String name: getRequiresOxps()) {
+            ExpansionReference er = oolite.getExpansionReference(name);
+            result.add(er);
+        }
+        return result;
+    }
+    
+    /**
+     * Returns the list of conflicting expansions as ExpansionReferences.
+     * 
+     * @return the list
+     */
+    public List<ExpansionReference> getConflictRefs() {
+        List<ExpansionReference> result = new ArrayList<>();
+        for (String name: getConflictOxps()) {
+            ExpansionReference er = oolite.getExpansionReference(name);
+            switch (er.getStatus()) {
+                case CONFLICT:
+                    break;
+                case MISSING:
+                    er.setStatus(ExpansionReference.Status.OK);
+                    break;
+                case OK:
+                    er.setStatus(ExpansionReference.Status.CONFLICT);
+                    break;
+                case REQUIRED_MISSING:
+                    er.setStatus(ExpansionReference.Status.OK);
+                    break;
+                case SURPLUS:
+                    break;
+            }
+            result.add(er);
+        }
+        return result;
+    }
+    
+    /**
+     * Returns the list of optional expansions as ExpansionReferences.
+     * 
+     * @return the list
+     */
+    public List<ExpansionReference> getOptionalRefs() {
+        List<ExpansionReference> result = new ArrayList<>();
+        for (String name: getOptionalOxps()) {
+            ExpansionReference er = oolite.getExpansionReference(name);
+            switch (er.getStatus()) {
+                case CONFLICT:
+                    break;
+                case MISSING:
+                    er.setStatus(ExpansionReference.Status.OK);
+                    break;
+                case OK:
+                    er.setStatus(ExpansionReference.Status.OK);
+                    break;
+                case REQUIRED_MISSING:
+                    er.setStatus(ExpansionReference.Status.OK);
+                    break;
+                case SURPLUS:
+                    break;
+            }
+            result.add(er);
+        }
+        return result;
     }
 }

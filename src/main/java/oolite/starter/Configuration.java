@@ -221,9 +221,22 @@ public class Configuration {
     /**
      * Activates the given installation.
      * 
-     * @param installation the installation to activate
+     * @param installation the installation to activate. Null if no installation is chosen
      */
     public void activateInstallation(Installation installation) {
+        if (installation == null) {
+            Installation oldInstallation = activeInstallation;
+            activeInstallation = null;
+            
+            PropertyChangeEvent pce = new PropertyChangeEvent(this, "activeInstallation", oldInstallation, installation);
+            for (PropertyChangeListener pcl: pcs.getPropertyChangeListeners()) {
+                pcl.propertyChange(pce);
+            }
+            // for some reason this simple call was not enough: pcs.firePropertyChange("activeInstallation", oldInstallation, installation);
+            
+            return;
+        }
+        
         if (installations.contains(installation)) {
             if (activeInstallation != installation) {
                 Installation oldInstallation = installation;

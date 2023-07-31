@@ -1,0 +1,53 @@
+{
+    GLOBAL = {ENTER = ("setStateTo: IDLE"); };
+ 
+    "DEFENSE_MODE" = {
+        ENTER = (checkTargetLegalStatus, launchDefenseShip, "sendTargetCommsMessage: Enemy Craft! You have attacked a Galactic Navy SecCom Station.  In accordance with the Uniform Code of Navy Justice your ship will now be destroyed."); 
+        ATTACKED = (launchDefenseShip, launchDefenseShip, setTargetToPrimaryAggressor, increaseAlertLevel); 
+        "INCOMING_MISSILE" = (fireECM, launchDefenseShip); 
+        "TARGET_OFFENDER" = (launchDefenseShip); 
+        "TARGET_FUGITIVE" = (launchDefenseShip); 
+        "ENERGY_FULL" = ("setStateTo: IDLE"); 
+        "TARGET_DESTROYED" = ("setStateTo: IDLE"); 
+        "TARGET_LOST" = ("setStateTo: IDLE"); 
+        "NO_TARGET" = ("setStateTo: IDLE"); 
+    }; 
+    "HAIL_PLAYER" = {
+        ENTER = ("sendTargetCommsMessage: WARNING! You are traveling in Navy controlled SecCom space.", checkTargetLegalStatus); 
+        ATTACKED = (setTargetToPrimaryAggressor, launchDefenseShip, "setStateTo: DEFENSE_MODE"); 
+	"NO_TARGET" = ("setStateTo: IDLE");  
+	"TARGET_CLEAN" = ("setStateTo: SHUTTLE_LAUNCH"); 
+	"TARGET_OFFENDER" = (launchDefenseShip, "setStateTo: OFFENDER_LOCATED", "pauseAI: 20.0"); 
+	"TARGET_MINOR_OFFENDER" = (launchDefenseShip, "setStateTo: OFFENDER_LOCATED", "pauseAI: 20.0"); 
+        "TARGET_FUGITIVE" = (launchDefenseShip, "setStateTo: OFFENDER_LOCATED", "pauseAI: 20.0"); 
+        "INCOMING_MISSILE" = (fireECM, launchDefenseShip); 
+    }; 
+
+"OFFENDER_LOCATED" = {
+        ENTER = (launchDefenseShip); 
+        ATTACKED = (setTargetToPrimaryAggressor, launchDefenseShip, "setStateTo: DEFENSE_MODE"); 
+        "INCOMING_MISSILE" = (fireECM, launchDefenseShip);  
+	"TARGET_DESTROYED" = ("setStateTo: IDLE"); 
+        "TARGET_LOST" = ("setStateTo: IDLE"); 
+        "NO_TARGET" = ("setStateTo: IDLE"); 
+        UPDATE = ("sendTargetCommsMessage: Enemy Craft! [GalNavy-station-warning]", "pauseAI: 20.0"); 
+    }; 
+
+"SHUTTLE_LAUNCH" = {
+        ATTACKED = (setTargetToPrimaryAggressor, launchDefenseShip, "setStateTo: DEFENSE_MODE"); 
+	"NOTHING_FOUND" = ("setStateTo: IDLE"); 
+        "INCOMING_MISSILE" = (fireECM, launchDefenseShip); 
+	"ROLL_1" = ("launchShipWithRole: navy-shuttle");
+	"ROLL_2" = ("launchShipWithRole: navy-lander"); 
+	"ROLL_3" = ("launchShipWithRole: seccom-medship"); 
+         UPDATE = ("rollD: 20", "scanForNearestShipWithPrimaryRole: player", "pauseAI: 20.0"); 
+    }; 
+
+
+    IDLE = {
+        ATTACKED = (setTargetToPrimaryAggressor, launchDefenseShip, "setStateTo: DEFENSE_MODE"); 
+	"TARGET_FOUND" = (setTargetToFoundTarget, "setStateTo: HAIL_PLAYER");  
+        "INCOMING_MISSILE" = (fireECM, increaseAlertLevel); 
+        UPDATE = (decreaseAlertLevel, "scanForNearestShipWithPrimaryRole: player", "pauseAI: 10"); 
+    }; 
+}

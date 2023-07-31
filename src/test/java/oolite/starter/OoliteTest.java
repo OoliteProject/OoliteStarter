@@ -14,6 +14,7 @@ import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
 import oolite.starter.model.Expansion;
+import oolite.starter.model.ExpansionReference;
 import oolite.starter.model.ProcessData;
 import oolite.starter.model.SaveGame;
 import org.apache.logging.log4j.LogManager;
@@ -112,17 +113,33 @@ public class OoliteTest {
     }
 
     @Test
-    public void testCreateExpansion_Dictionary() throws IOException {
-        log.info("testCreateExpansion_Dictionary");
+    public void testCreateExpansionFromManifest_Dictionary() throws IOException {
+        log.info("testCreateExpansionFromManifest_Dictionary");
         
         URL url = getClass().getResource("/data/expansion.plist");
         
         Oolite oolite = new Oolite();
         PlistParser.DictionaryContext dc = PlistUtil.parsePListDict(url.openStream(), url.toString());
-        Expansion expansion = oolite.createExpansion(dc);
+        Expansion expansion = oolite.createExpansionFromManifest(dc);
         
         assertEquals("oolite.oxp.cim.camera-drones", expansion.getIdentifier());
         assertEquals("1.4", expansion.getVersion());
+    }
+    
+    @Test
+    public void testCreateExpansionFromRequires_Dictionary() throws IOException {
+        log.info("testCreateExpansionFromRequires_Dictionary");
+        
+        URL url = getClass().getResource("/data/Asteroids3D1.2.oxp/requires.plist");
+        
+        Oolite oolite = new Oolite();
+        PlistParser.DictionaryContext dc = PlistUtil.parsePListDict(url.openStream(), url.toString());
+        Expansion expansion = oolite.createExpansionFromRequiresPlist(dc);
+        
+        assertEquals(null, expansion.getIdentifier());
+        assertEquals(null, expansion.getVersion());
+        assertEquals("1.76", expansion.getRequiredOoliteVersion());
+        assertEquals(null, expansion.getMaximumOoliteVersion());
     }
     
     @Test
@@ -134,7 +151,7 @@ public class OoliteTest {
         Oolite oolite = new Oolite();
         
         try {
-            oolite.createExpansion(url.openStream(), url.toString());
+            oolite.createExpansionFromManifest(url.openStream(), url.toString());
             fail("expected exception");
         } catch (ConnectException e) {
             assertEquals("Connection refused", e.getMessage());
@@ -149,7 +166,7 @@ public class OoliteTest {
         URL url = getClass().getResource("/data/expansion.plist");
         
         Oolite oolite = new Oolite();
-        Expansion expansion = oolite.createExpansion(url.openStream(), url.toString());
+        Expansion expansion = oolite.createExpansionFromManifest(url.openStream(), url.toString());
         
         assertEquals("oolite.oxp.cim.camera-drones", expansion.getIdentifier());
         assertEquals("1.4", expansion.getVersion());
@@ -276,7 +293,10 @@ public class OoliteTest {
         oolite.setConfiguration(configuration);
         
         List<Expansion> expansions = oolite.getLocalExpansions();
-        assertEquals(1, expansions.size());
+        assertEquals(3, expansions.size());
+        assertTrue(String.valueOf(expansions.get(0).getIdentifier()).endsWith("Asteroids3D1.2.oxp"));
+        assertTrue(String.valueOf(expansions.get(1).getIdentifier()).endsWith("Galactic_Navy 5.4.3.oxp"));
+        assertEquals("oolite.oxp.Norby.Addons_for_Beginners", expansions.get(2).getIdentifier());
     }
     
     @Test
@@ -354,5 +374,139 @@ public class OoliteTest {
         Oolite oolite = new Oolite();
         oolite.run(command, new File("."));
         assertTrue(true);
+    }
+    
+    @Test
+    public void testDiff() {
+        log.info("testDiff");
+        
+        Oolite oolite = new Oolite();
+        try {
+            oolite.diff(null, null);
+            fail("expected exception");
+        } catch (IllegalArgumentException e) {
+            assertEquals("want must not be null", e.getMessage());
+            log.debug("caught expected exception", e);
+        }
+    }
+    
+    @Test
+    public void testDiff2() {
+        log.info("testDiff2");
+        
+        Oolite oolite = new Oolite();
+        List<ExpansionReference> want = new ArrayList<>();
+        try {
+            oolite.diff(want, null);
+            fail("expected exception");
+        } catch (IllegalArgumentException e) {
+            assertEquals("have must not be null", e.getMessage());
+            log.debug("caught expected exception", e);
+        }
+    }
+    
+    @Test
+    public void testDiff3() {
+        log.info("testDiff3");
+        
+        List<ExpansionReference> want = new ArrayList<>();
+        List<ExpansionReference> have = new ArrayList<>();
+        
+        Oolite oolite = new Oolite();
+        List<ExpansionReference> result = oolite.diff(want, have);
+        assertNotNull(result);
+        assertEquals(0, result.size());
+    }
+
+    @Test
+    public void testDiff4() {
+        log.info("testDiff4");
+
+        Oolite oolite = new Oolite();
+        
+        List<ExpansionReference> want = new ArrayList<>();
+        want.add(new ExpansionReference("A"));
+        List<ExpansionReference> have = new ArrayList<>();
+        
+        List<ExpansionReference> result = oolite.diff(want, have);
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        assertEquals("A", result.get(0).getName());
+        assertEquals(ExpansionReference.Status.MISSING, result.get(0).getStatus());
+    }
+
+    @Test
+    public void testDiff5() {
+        log.info("testDiff5");
+
+        Oolite oolite = new Oolite();
+        
+        List<ExpansionReference> want = new ArrayList<>();
+        List<ExpansionReference> have = new ArrayList<>();
+        have.add(new ExpansionReference("B"));
+        
+        List<ExpansionReference> result = oolite.diff(want, have);
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        assertEquals("B", result.get(0).getName());
+        assertEquals(ExpansionReference.Status.SURPLUS, result.get(0).getStatus());
+    }
+
+    @Test
+    public void testDiff6() {
+        log.info("testDiff6");
+
+        Oolite oolite = new Oolite();
+        
+        List<ExpansionReference> want = new ArrayList<>();
+        want.add(new ExpansionReference("A"));
+        List<ExpansionReference> have = new ArrayList<>();
+        have.add(new ExpansionReference("B"));
+        
+        List<ExpansionReference> result = oolite.diff(want, have);
+        assertNotNull(result);
+        assertEquals(2, result.size());
+        assertEquals("B", result.get(0).getName());
+        assertEquals(ExpansionReference.Status.SURPLUS, result.get(0).getStatus());
+        assertEquals("A", result.get(1).getName());
+        assertEquals(ExpansionReference.Status.MISSING, result.get(1).getStatus());
+    }
+
+    @Test
+    public void testDiff7() {
+        log.info("testDiff7");
+
+        Oolite oolite = new Oolite();
+        
+        List<ExpansionReference> want = new ArrayList<>();
+        want.add(new ExpansionReference("A"));
+        List<ExpansionReference> have = new ArrayList<>();
+        have.add(new ExpansionReference("A"));
+        
+        List<ExpansionReference> result = oolite.diff(want, have);
+        assertNotNull(result);
+        assertEquals(0, result.size());
+    }
+
+    @Test
+    public void testDiff8() {
+        log.info("testDiff8");
+
+        Oolite oolite = new Oolite();
+        
+        List<ExpansionReference> want = new ArrayList<>();
+        want.add(new ExpansionReference("A"));
+        want.add(new ExpansionReference("B"));
+        List<ExpansionReference> have = new ArrayList<>();
+        have.add(new ExpansionReference("B"));
+        have.add(new ExpansionReference("C"));
+        
+        List<ExpansionReference> result = oolite.diff(want, have);
+        assertNotNull(result);
+        assertEquals(2, result.size());
+        assertEquals("C", result.get(0).getName());
+        assertEquals(ExpansionReference.Status.SURPLUS, result.get(0).getStatus());
+        assertEquals("A", result.get(1).getName());
+        assertEquals(ExpansionReference.Status.MISSING, result.get(1).getStatus());
     }
 }

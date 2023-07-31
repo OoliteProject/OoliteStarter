@@ -38,10 +38,10 @@ To remove the software, run
 
     sudo apt remove oolitestarter
 
-### MacOS (.dmg)
+### MacOS (.pkg)
 
-The .dmg download has not yet been successfully installed. If you manage to
-succeed, please give a shout.
+Download the .pkg file, then Ctrl-click it to run the installer.
+After installation you should see a new icon in your desktop environment.
 
 ### Windows (.exe)
 
@@ -58,7 +58,7 @@ When you run the application, it will seach the configuration file
 $HOME/.oolite-starter.conf
 
 If this file is not present, do not worry. A warning will be displayed and the
-application will run. Switch to the Installations tab and add at least one
+application will run. Switch to the `Oolite Versions` tab and add at least one
 Oolite installation. Then press Save and the missing file will be created.
 
 For each Oolite installation you can define a number of places in the filesystem.
@@ -71,15 +71,15 @@ will check if some directory is missing and also offers to create it for you.
 
 ## Usage (Quickstart)
 
-* Run the application. Depending on your operating system and the package you 
+* Run Oolite Starter. Depending on your operating system and the package you 
   chose this may mean to just click an icon, a menu entry or use either 
   run.sh or run.cmd. When going for run.sh you may need to set execute
   permissions (chmod +x run.sh)
 * The Starter will present you with the list of your save games. Either press
-  the 'New' button to run a new game, or choose the save game and press 'Continue'.
+  the 'New' button to run a new game, or choose the save game and press 'Resume'.
   Either of those buttons will run Oolite the way you chose.
 * Play as usual.
-* If you want to change the installed expansions, switch to the 'Expansions' tab,
+* If you want to change the installed expansions, switch to the 'OXPs/OXZs' tab,
   check the list and choose to install, remove, enable or disable single expansions.
   You can also export your currently active expansions as 'Oolite Expansion Set',
   and load it later again or share with your friends.

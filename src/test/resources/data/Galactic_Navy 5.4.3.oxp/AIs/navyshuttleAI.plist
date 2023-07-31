@@ -1,0 +1,8 @@
+{
+    GLOBAL = {
+	ATTACKED = (setTargetToPrimaryAggressor, "markTargetForOffence: 15"); 
+	"ENERGY_LOW" = (setTargetToPrimaryAggressor, broadcastDistressMessage); 
+        "DESIRED_RANGE_ACHIEVED" = (landOnPlanet); 
+        UPDATE = (setCourseToPlanet, "setSpeedFactorTo: 1.0", performFlyToRangeFromDestination, "pauseAI: 5"); 
+    }; 
+}

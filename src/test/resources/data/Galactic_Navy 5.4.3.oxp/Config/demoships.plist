@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<array>
+	<string>navy-frigate</string>
+	<string>navy-transport</string>
+	<string>navy-minesweeper</string>
+	<string>navy-transport</string>
+	<string>navy-viper</string>
+	<string>navy-asp</string>
+	<string>navy-medship</string>
+	<string>navy-shuttle</string>
+	<string>navy-lander</string>
+</array>
+</plist>

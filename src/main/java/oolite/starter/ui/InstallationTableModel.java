@@ -72,7 +72,12 @@ public class InstallationTableModel extends AbstractTableModel implements Proper
      * @param rowIndex the row that needs to be removed
      */
     public void removeRow(int rowIndex) {
+        Installation row = data.getInstallations().get(rowIndex);
         data.getInstallations().remove(rowIndex);
+
+        if (row == data.getActiveInstallation()) {
+            data.activateInstallation((Installation)null);
+        }
         fireTableRowsDeleted(rowIndex, rowIndex);
     }
     

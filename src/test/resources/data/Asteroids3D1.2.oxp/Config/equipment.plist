@@ -1,0 +1,12 @@
+(
+        (
+        0,
+        0,
+        "Play a game of Asteroids3D",
+        "EQ_ASTEROIDS3D",
+        "Play a game of Asteroids3D. Relive the old times of early computer gaming. But this time for real. You become a part of the game, right in the middle of an asteroid field. Blow up all asteroids and scoop the debris. But beware of the flying saucers!",
+                {
+            "available_to_all" = true;
+        }
+    )
+)

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleGetInfoString</key>
+	<string>Galactic Navy 5.2.3</string>
+	<key>CFBundleName</key>
+	<string>Galactic Navy</string>
+	<key>CFBundleShortVersionString</key>
+	<string>5.2.3</string>
+	<key>NSHumanReadableCopyright</key>
+	<string>matt634, Nemoricus</string>
+</dict>
+</plist>

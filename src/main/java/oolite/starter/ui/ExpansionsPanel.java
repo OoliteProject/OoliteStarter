@@ -3,8 +3,11 @@
 package oolite.starter.ui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ItemEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +25,7 @@ import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.TableRowSorter;
+import oolite.starter.Configuration;
 import oolite.starter.Oolite;
 import oolite.starter.model.Expansion;
 import oolite.starter.model.ExpansionReference;
@@ -66,6 +70,8 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
                     return !expansion.isOnline();
                 case "updatable":
                     return model.getSiblingCount(expansion)>1;
+                case "problematic":
+                    return expansion.isEnabled() && (expansion.getEMStatus().isConflicting() || expansion.getEMStatus().isMissingDeps());
                 default: // all
                     return true;
             }
@@ -92,7 +98,7 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
                 showDetailsOfSelection();
             }
         });
-        jTable1.setDefaultRenderer(Object.class, new AnnotationRenderer(jTable1.getDefaultRenderer(Object.class)));
+        jTable1.setDefaultRenderer(Object.class, new AnnotationRenderer(jTable1.getDefaultRenderer(Object.class), Configuration.COLOR_ATTENTION));
         txtFilterText.getDocument().addDocumentListener(new DocumentListener() {
             @Override
             public void insertUpdate(DocumentEvent de) {
@@ -128,8 +134,10 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
             }
             trw.setRowFilter(RowFilter.andFilter(filters));
             
-            txtStatus.setText(String.format("%d expansions", trw.getViewRowCount()));
         }
+        jTable1.repaint();
+        
+        updateBadges();
     }
     
     private void showDetailsOfSelection() {
@@ -161,20 +169,54 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
         oolite.addOoliteListener(this);
     }
     
+    void updateBadges() {
+        log.debug("updateBadges()");
+        pnStatus.removeAll();
+
+        pnStatus.add(new Badge("Expansions", String.valueOf(model.getRowCount()), Color.BLACK));
+        if (model.getRowCount() > trw.getViewRowCount()) {
+            pnStatus.add(new Badge("Filtered", String.valueOf(trw.getViewRowCount()), Color.BLACK));
+        }
+
+        int y = model.getNumberOfExpansionsMissingDeps();
+        if (y>0) {
+            pnStatus.add(new Badge("MissingDeps", String.valueOf(y), Configuration.COLOR_ATTENTION));
+        }
+
+        int x = model.getNumberOfExpansionsConflicting();
+        if (x > 0) {
+            pnStatus.add(new Badge("Conflicts", String.valueOf(x), Configuration.COLOR_ATTENTION));
+        }
+        
+        x = model.getNumberOfExpansionsIncompatible();
+        if (x > 0) {
+            pnStatus.add(new Badge("Incompatible", String.valueOf(x), Color.black));
+        }
+        
+        pnStatus.validate();
+        pnStatus.repaint();
+    }
+    
     /**
      * Updates the expansionspanel display.
      */
     public void update() {
+        log.debug("update()");
         try {
             expansions = oolite.getAllExpansions();
 
             model = new ExpansionsTableModel(expansions);
+            model.addTableModelListener(tme -> {
+                updateBadges();
+            });
+            
             jTable1.setRowSorter(null);
             jTable1.setModel(model);
             
             trw = new TableRowSorter<>(model);
             jTable1.setRowSorter(trw);
             applyFilter();
+            updateBadges();
         } catch (Exception e) {
             log.warn("Could not update", e);
         }
@@ -214,9 +256,8 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
         btReload = new javax.swing.JButton();
         jSplitPane1 = new javax.swing.JSplitPane();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
-        jPanel1 = new javax.swing.JPanel();
-        txtStatus = new javax.swing.JLabel();
+        jTable1 = new MyJTable();
+        pnStatus = new javax.swing.JPanel();
 
         setName("OXPs/OXZs"); // NOI18N
         setLayout(new java.awt.BorderLayout());
@@ -225,7 +266,7 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
 
         jLabel1.setText("Status");
 
-        cbFilterMode.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "all", "installed", "updatable", "not installed", "enabled", "disabled", "not online" }));
+        cbFilterMode.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "all", "installed", "updatable", "not installed", "enabled", "disabled", "not online", "problematic" }));
         cbFilterMode.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 cbFilterModeItemStateChanged(evt);
@@ -387,24 +428,8 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
 
         add(jSplitPane1, java.awt.BorderLayout.CENTER);
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(txtStatus)
-                .addContainerGap(1133, Short.MAX_VALUE))
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(txtStatus)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
-        add(jPanel1, java.awt.BorderLayout.PAGE_END);
+        pnStatus.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
+        add(pnStatus, java.awt.BorderLayout.PAGE_END);
     }// </editor-fold>//GEN-END:initComponents
 
     private void cbFilterModeItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbFilterModeItemStateChanged
@@ -482,6 +507,20 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
                 dlm.addAll(warnings);
                 JList<ExpansionReference> list = new JList<>(dlm);
                 list.setCellRenderer(new ExpansionReferenceCellRenderer());
+                list.addMouseMotionListener(new MouseAdapter() {
+                    @Override
+                    public void mouseMoved(MouseEvent e) {
+                        int rowIndex = list.locationToIndex(e.getPoint());
+                        if (dlm != null && rowIndex >= 0) {
+                            ExpansionReference er = dlm.getElementAt(rowIndex);
+                            if (er.getReasons().isEmpty()) {
+                                list.setToolTipText(null);
+                            } else {
+                                list.setToolTipText(String.valueOf(er.getReasons()));
+                            }
+                        }
+                    }
+                });
                 
                 JScrollPane sp = new JScrollPane(list);
                 
@@ -521,7 +560,6 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
     private javax.swing.JComboBox<String> cbFilterMode;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
@@ -529,8 +567,8 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JTable jTable1;
     private javax.swing.JPanel jpToolbar;
+    private javax.swing.JPanel pnStatus;
     private javax.swing.JTextField txtFilterText;
-    private javax.swing.JLabel txtStatus;
     // End of variables declaration//GEN-END:variables
 
     @Override

@@ -1,0 +1,78 @@
+{  // escort with specialised mine scanning
+	GLOBAL =
+	{
+		ENTER = ("setStateTo: BEGIN_BUSINESS");
+	};
+	"FLYING_ESCORT" =
+	{
+		ENTER = ("rollD: 5");
+        	"ROLL_1" = ("setDesiredRangeTo: 0", performEscort); 
+        	"ROLL_2" = ("setDesiredRangeTo: 1250", performEscort); 
+        	"ROLL_3" = ("setDesiredRangeTo: 2500", performEscort); 
+        	"ROLL_4" = ("setDesiredRangeTo: 5000", performEscort); 
+        	"ROLL_5" = ("setDesiredRangeTo: 7500", performEscort); 
+		RESTARTED = ("setStateTo: NEXT_TARGET");
+		"GROUP_ATTACK_TARGET" = (); // keep doing your scanning business.
+		ESCORTING = (performEscort);
+		"INCOMING_MISSILE" = ("messageMother: INCOMING_MISSILE");
+		"ATTACKED" = ("messageMother: ATTACKED");
+		"CASCADE_WEAPON_FOUND" = ("commsMessage: Quirium Cascade Weapon Detected and Disarmed", "safeScriptActionOnTarget: becomeUncontrolledThargon");
+		"NOT_ESCORTING" = ("setStateTo: LOOK_FOR_BUSINESS");
+		//"TARGET_LOST" = ("setStateTo: LOOK_FOR_BUSINESS");
+		"TARGET_DESTROYED" = ("setStateTo: LOOK_FOR_BUSINESS");
+		"ENTER WORMHOLE" = ("setStateTo: ENTER_WORMHOLE");
+		UPDATE = (escortCheckMother, "sendScriptMessage: findCascadeWeapons", "pauseAI: 5");
+	};
+	"BEGIN_BUSINESS" =
+	{
+		ENTER = (escortCheckMother);
+		"LAUNCHED OKAY" = ("setStateTo: CLEAR_STATION");
+		ATTACKED = (setTargetToPrimaryAggressor, "setAITo: interceptAI.plist");
+		ESCORTING = ("setStateTo: FLYING_ESCORT");
+		"NOT_ESCORTING" = ("setStateTo: LOOK_FOR_BUSINESS");
+		UPDATE = (escortCheckMother, "pauseAI: 7.5");
+	};
+	"ENTER_WORMHOLE" =
+	 {
+		ENTER =
+		(
+			setDestinationToTarget,
+			"setDesiredRangeTo: 1.0",
+			"setSpeedFactorTo: 1.0",
+			performFlyToRangeFromDestination
+		);
+		"PLAYER WITCHSPACE" = (enterTargetWormhole);
+	};
+	"CLEAR_STATION" = {
+		ENTER = (
+			getWitchspaceEntryCoordinates, 
+			setDestinationFromCoordinates, 
+			"setDesiredRangeTo: 5000.0", 
+			"setSpeedFactorTo: 0.50", 
+			performFlyToRangeFromDestination
+		);
+		"DESIRED_RANGE_ACHIEVED" = ("setStateTo: LOOK_FOR_BUSINESS");
+		"TARGET_FOUND" = (setTargetToFoundTarget, suggestEscort);
+  		ESCORTING = ("setStateTo: FLYING_ESCORT");
+		UPDATE = (scanForFormationLeader, "pauseAI: 15.0");
+	};
+	"LOOK_FOR_BUSINESS" =
+	{
+		ENTER = (scanForFormationLeader);
+		RESTARTED = ("setStateTo: BEGIN_BUSINESS");
+		"LAUNCHED OKAY" = ("setStateTo: CLEAR_STATION");
+		ATTACKED = (setTargetToPrimaryAggressor, "setAITo: interceptAI.plist");
+		ESCORTING = ("setStateTo: FLYING_ESCORT");
+		"TARGET_FOUND" = (setTargetToFoundTarget, suggestEscort);
+		"NOTHING_FOUND" = ("switchAITo: route1patrolAI.plist");
+		UPDATE = ("pauseAI: 7.5", scanForFormationLeader);
+	};
+    "NEXT_TARGET" = {
+        	ENTER = (requestNewTarget); 
+		RESTARTED = (requestNewTarget); 
+        	"NOTHING_FOUND" = (switchLightsOff, "setStateTo: FLYING_ESCORT"); 
+        	"TARGET_FOUND" = (setTargetToFoundTarget, "setAITo: interceptAI.plist"); 
+        	"MOTHER_LOST" = (switchLightsOff, "setStateTo: BEGIN_BUSINESS"); 
+       	 	"INCOMING_MISSILE" = (fightOrFleeMissile, "setStateTo: FLEE"); 
+    }; 
+}
