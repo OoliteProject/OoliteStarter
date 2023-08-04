@@ -190,7 +190,7 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
         
         x = model.getNumberOfExpansionsIncompatible();
         if (x > 0) {
-            pnStatus.add(new Badge("Incompatible", String.valueOf(x), Color.black));
+            pnStatus.add(new Badge("Incompatible with selected Oolite version", String.valueOf(x), Color.black));
         }
         
         pnStatus.validate();

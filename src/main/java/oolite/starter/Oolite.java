@@ -351,7 +351,7 @@ public class Oolite implements PropertyChangeListener {
                 ExpansionReference ref = new ExpansionReference();
                 ref.setName(expansion.getIdentifier() + "@" + expansion.getVersion());
                 ref.setStatus(ExpansionReference.Status.SURPLUS);
-                ref.addReason("not required but installed");
+                ref.addReason("not required for this savegame but installed");
                 surplus.add(ref);
             }
         }
@@ -1442,7 +1442,7 @@ public class Oolite implements PropertyChangeListener {
         result = new ExpansionReference();
         result.setName(name);
         result.setStatus(ExpansionReference.Status.MISSING);
-        result.addReason("required but not enabled");
+        result.addReason("required for this savegame but not enabled");
         
         // find a direct match
         if (
