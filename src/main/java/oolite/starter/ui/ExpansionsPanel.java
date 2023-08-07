@@ -20,8 +20,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.RowFilter;
 import javax.swing.SwingUtilities;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.TableRowSorter;
@@ -99,23 +99,16 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
             }
         });
         jTable1.setDefaultRenderer(Object.class, new AnnotationRenderer(jTable1.getDefaultRenderer(Object.class), Configuration.COLOR_ATTENTION));
-        txtFilterText.getDocument().addDocumentListener(new DocumentListener() {
-            @Override
-            public void insertUpdate(DocumentEvent de) {
-                applyFilter();
-            }
 
+        DeferredDocumentChangeListener deferredListener = new DeferredDocumentChangeListener(300);
+        deferredListener.addChangeListener(new ChangeListener() {
             @Override
-            public void removeUpdate(DocumentEvent de) {
-                applyFilter();
-            }
-
-            @Override
-            public void changedUpdate(DocumentEvent de) {
+            public void stateChanged(ChangeEvent ce) {
                 applyFilter();
             }
         });
-        
+        txtFilterText.getDocument().addDocumentListener(deferredListener);
+
         ep = new ExpansionPanel();
         jSplitPane1.setRightComponent(ep);
     }
