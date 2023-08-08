@@ -183,6 +183,9 @@ public class MainFrame extends javax.swing.JFrame {
             
             javax.swing.UIManager.setLookAndFeel(new com.formdev.flatlaf.FlatDarkLaf());
             
+            // control frame title color
+            javax.swing.JFrame.setDefaultLookAndFeelDecorated(true);            
+            javax.swing.JDialog.setDefaultLookAndFeelDecorated(true);
             
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
             log.info("Could not set look and feel", ex);
