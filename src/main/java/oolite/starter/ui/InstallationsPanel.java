@@ -7,6 +7,7 @@ import java.awt.Component;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.util.Random;
 import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -416,21 +417,23 @@ public class InstallationsPanel extends javax.swing.JPanel {
     private void btRemoveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btRemoveActionPerformed
         log.debug("btRemoveActionPerformed({})", evt);
         
-        try {
-            int rowIndex = jTable1.getSelectedRow();
-            if (rowIndex == -1) {
-                JOptionPane.showMessageDialog(this, INSTALLATIONSPANEL_SELECT_ROW);
-                return;
-            }
-            
-            rowIndex = jTable1.convertRowIndexToModel(rowIndex);
-            model.removeRow(rowIndex);
+        if (JOptionPane.showConfirmDialog(btRemove, "Kiddo! Are you really sure that you want to do this?", "Remove...", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+            try {
+                int rowIndex = jTable1.getSelectedRow();
+                if (rowIndex == -1) {
+                    JOptionPane.showMessageDialog(this, INSTALLATIONSPANEL_SELECT_ROW);
+                    return;
+                }
 
-            setConfigDirty(true);
-        } catch (Exception e) {
-            log.error(INSTALLATIONSPANEL_ERROR, e);
-            JOptionPane.showMessageDialog(this, INSTALLATIONSPANEL_ERROR);
-        }        
+                rowIndex = jTable1.convertRowIndexToModel(rowIndex);
+                model.removeRow(rowIndex);
+
+                setConfigDirty(true);
+            } catch (Exception e) {
+                log.error(INSTALLATIONSPANEL_ERROR, e);
+                JOptionPane.showMessageDialog(this, INSTALLATIONSPANEL_ERROR);
+            }        
+        }
     }//GEN-LAST:event_btRemoveActionPerformed
 
     private void btSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btSaveActionPerformed
@@ -445,8 +448,21 @@ public class InstallationsPanel extends javax.swing.JPanel {
                 sb.append("<p>Nice try, kiddo!</p><p>Your configuration was stored in ").append(f.getAbsolutePath()).append(".</p>");
                 sb.append("<p>But... you still ain't got an active Oolite version. Expect trouble to follow your pants.</p>");
             } else {
-                sb.append("<p>Smart move, kiddo!</p><p>Your configuration was stored in ").append(f.getAbsolutePath()).append(".</p>");
-                sb.append("<p>Next time we won't have to fasten these screws again.</p>");
+                switch(new Random().nextInt(3)) {
+                    case 0:
+                        sb.append("<p>Smart move, kiddo!</p><p>Your configuration was stored in ").append(f.getAbsolutePath()).append(".</p>");
+                        sb.append("<p>Next time we won't have to fasten these screws again.</p>");
+                        break;
+                    case 1:
+                        sb.append("<p>Your configuration has been stashed away in ").append(f.getAbsolutePath()).append(".</p>");
+                        sb.append("<p>When you are ready to get out of here, kick off by pushing the &quot;Start Game&quot; button up top! But don't forget to visit the F8/8 marketplace first.</p>");
+                        break;
+                    default:
+                        sb.append("<p>All right there!\n" +
+                                  "We've stored your configuration in ").append(f.getAbsolutePath()).append(".</p>");
+                        sb.append("<p>If you are all finished, you can get yourself out of here and get your ship ready to undock.</p>");
+                        break;
+                }
             }
             sb.append("</html>");
             MrGimlet.showMessage(this, sb.toString());

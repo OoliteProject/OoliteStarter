@@ -4,11 +4,14 @@ package oolite.starter.ui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.event.ItemEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.DefaultListModel;
@@ -107,6 +110,19 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
                 applyFilter();
             }
         });
+        lbFilterText.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        lbFilterText.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                try {
+                    //Desktop.getDesktop().browse(new URI("https://en.wikipedia.org/wiki/Regular_expression"));
+                    //Desktop.getDesktop().browse(new URI("https://www.regular-expressions.info/quickstart.html"));
+                    Desktop.getDesktop().browse(new URI("https://www.regular-expressions.info/tutorial.html"));
+                } catch (Exception ex) {
+                    log.info("Could not browse", ex);
+                }
+            }
+        });
         txtFilterText.getDocument().addDocumentListener(deferredListener);
 
         ep = new ExpansionPanel();
@@ -114,13 +130,15 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
     }
     
     private void applyFilter() {
-        log.debug("applyFilter");
+        log.warn("applyFilter()");
         if (trw != null) {
             List<RowFilter<ExpansionsTableModel, Integer>> filters = new ArrayList<>();
             filters.add(new MyRowStatusFilter(String.valueOf(cbFilterMode.getSelectedItem()), txtFilterText.getText()));
             if (!"".equals(txtFilterText.getText())) {
                 try {
-                    filters.add(RowFilter.regexFilter(txtFilterText.getText()));
+                    String re = "(?i)" + txtFilterText.getText();
+                    log.warn("re={}", re);
+                    filters.add(RowFilter.regexFilter(re));
                 } catch (Exception e) {
                     log.info("Cannot apply regexp filter", e);
                 }
@@ -239,7 +257,7 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         cbFilterMode = new javax.swing.JComboBox<>();
-        jLabel2 = new javax.swing.JLabel();
+        lbFilterText = new javax.swing.JLabel();
         txtFilterText = new javax.swing.JTextField();
         jPanel3 = new javax.swing.JPanel();
         btActivate = new javax.swing.JButton();
@@ -266,7 +284,7 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
             }
         });
 
-        jLabel2.setText("and contains RE");
+        lbFilterText.setText("<html>and contains <a href=\"https://en.wikipedia.org/wiki/Regular_expression\">RE</a></html>");
 
         txtFilterText.setText(".*");
         txtFilterText.setMinimumSize(new java.awt.Dimension(300, 24));
@@ -281,7 +299,7 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(cbFilterMode, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel2)
+                .addComponent(lbFilterText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(txtFilterText, javax.swing.GroupLayout.DEFAULT_SIZE, 318, Short.MAX_VALUE)
                 .addContainerGap())
@@ -293,7 +311,7 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(cbFilterMode, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel2)
+                    .addComponent(lbFilterText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtFilterText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -552,7 +570,6 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
     private javax.swing.JButton btValidate;
     private javax.swing.JComboBox<String> cbFilterMode;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
@@ -560,6 +577,7 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JTable jTable1;
     private javax.swing.JPanel jpToolbar;
+    private javax.swing.JLabel lbFilterText;
     private javax.swing.JPanel pnStatus;
     private javax.swing.JTextField txtFilterText;
     // End of variables declaration//GEN-END:variables

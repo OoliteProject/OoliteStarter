@@ -770,8 +770,10 @@ public class Oolite implements PropertyChangeListener {
                 expansion.setIdentifier(oxp);
                 expansion.setTitle(oxpTitle);
                 expansion.setDescription(
-                        "This is some OXP implementing requires.plist.\n" +
-                        "From that file almost no metadata is available. Consider switching to manifest.plist."
+                        "This OXP only contains a \"requires.plist\".\n" +
+                        "These contain not much useful information. Consider adding a \"manifest.plist\"!\n" +
+                        "\n" +
+                        "More information: https://wiki.alioth.net/index.php/Manifest.plist"
                 );
                 expansion.setVersion("0");
                 expansion.setRequiredOoliteVersion(xpath.evaluate("/plist/dict/key[.='version']/following-sibling::string", doc));

@@ -329,6 +329,10 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
             
             rowIndex = jTable1.convertRowIndexToModel(rowIndex);
             SaveGame row = model.getRow(rowIndex);
+            
+            if (JOptionPane.showConfirmDialog(btDelete, "Too much clutter causes confusion, kid. Its a good choice to cut down the clobber - but do you really want to chuck " + row.getName() + "?", "Delete...", JOptionPane.YES_NO_OPTION) != JOptionPane.YES_OPTION) {
+                return;
+            }
 
             Files.delete(row.getFile().toPath());
             update();

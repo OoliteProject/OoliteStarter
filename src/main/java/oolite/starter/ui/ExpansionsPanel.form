@@ -73,7 +73,7 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="cbFilterMode" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
+                      <Component id="lbFilterText" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="txtFilterText" pref="318" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
@@ -87,7 +87,7 @@
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="cbFilterMode" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="jLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="lbFilterText" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="txtFilterText" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="32767" attributes="0"/>
@@ -123,9 +123,9 @@
                 <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
               </AuxValues>
             </Component>
-            <Component class="javax.swing.JLabel" name="jLabel2">
+            <Component class="javax.swing.JLabel" name="lbFilterText">
               <Properties>
-                <Property name="text" type="java.lang.String" value="and contains RE"/>
+                <Property name="text" type="java.lang.String" value="&lt;html&gt;and contains &lt;a href=&quot;https://en.wikipedia.org/wiki/Regular_expression&quot;&gt;RE&lt;/a&gt;&lt;/html&gt;"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JTextField" name="txtFilterText">

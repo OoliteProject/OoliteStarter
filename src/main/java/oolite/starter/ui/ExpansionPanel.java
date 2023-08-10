@@ -6,6 +6,7 @@ import java.awt.Color;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import javax.swing.DefaultListModel;
+import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.border.LineBorder;
@@ -404,6 +405,11 @@ public class ExpansionPanel extends javax.swing.JPanel implements PropertyChange
 
     private void btRemoveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btRemoveActionPerformed
         log.debug("btRemoveActionPerformed({})", evt);
+        
+        if (!data.isOnline() && JOptionPane.showConfirmDialog(btRemove, "Great! Getting rid of stuff!! But are you sure?", "Delete...", JOptionPane.YES_NO_OPTION) != JOptionPane.YES_OPTION) {
+            return;
+        }
+        
         try {
             new ExpansionWorker(data, ExpansionWorker.Action.REMOVE, this).execute();
         } catch (Exception e) {
