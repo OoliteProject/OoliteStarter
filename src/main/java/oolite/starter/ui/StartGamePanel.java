@@ -10,9 +10,13 @@ import java.awt.Insets;
 import java.awt.event.MouseAdapter;
 import java.io.File;
 import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.RowSorter;
+import javax.swing.SortOrder;
 import javax.swing.SwingUtilities;
 import javax.swing.table.TableRowSorter;
 import oolite.starter.Oolite;
@@ -96,6 +100,9 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
             jTable1.clearSelection();
             jTable1.setModel(model);
             TableRowSorter<SaveGameTableModel> trw = new TableRowSorter<>(model);
+            List<RowSorter.SortKey> sortKeys = new ArrayList<>();
+            sortKeys.add(new RowSorter.SortKey(0, SortOrder.ASCENDING));
+            trw.setSortKeys(sortKeys);
             jTable1.setRowSorter(trw);
             
             if (sgp != null) {

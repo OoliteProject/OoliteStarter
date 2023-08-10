@@ -7,6 +7,8 @@ import java.awt.Component;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import javax.swing.ImageIcon;
 import javax.swing.JDialog;
@@ -14,6 +16,8 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
+import javax.swing.RowSorter;
+import javax.swing.SortOrder;
 import javax.swing.SwingUtilities;
 import javax.swing.UIDefaults;
 import javax.swing.UIManager;
@@ -115,6 +119,9 @@ public class InstallationsPanel extends javax.swing.JPanel {
             }
         });
         TableRowSorter<InstallationTableModel> trw = new TableRowSorter<>(model);
+        List<RowSorter.SortKey> sortKeys = new ArrayList<>();
+        sortKeys.add(new RowSorter.SortKey(0, SortOrder.ASCENDING));
+        trw.setSortKeys(sortKeys);
         jTable1.setRowSorter(trw);
         
         setButtonColors();

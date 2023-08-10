@@ -22,6 +22,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.RowFilter;
+import javax.swing.RowSorter;
+import javax.swing.SortOrder;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -224,7 +226,12 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
             jTable1.setRowSorter(null);
             jTable1.setModel(model);
             
-            trw = new TableRowSorter<>(model);
+            if (trw == null) {
+                trw = new TableRowSorter<>(model);
+                List<RowSorter.SortKey> sortKeys = new ArrayList<>();
+                sortKeys.add(new RowSorter.SortKey(0, SortOrder.ASCENDING));
+                trw.setSortKeys(sortKeys);
+            }
             jTable1.setRowSorter(trw);
             applyFilter();
             updateBadges();
