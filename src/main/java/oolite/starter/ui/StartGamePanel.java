@@ -99,6 +99,8 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
             model = new SaveGameTableModel(oolite.getSaveGames());
             jTable1.clearSelection();
             jTable1.setModel(model);
+            Util.setColumnWidths(jTable1);
+            
             TableRowSorter<SaveGameTableModel> trw = new TableRowSorter<>(model);
             List<RowSorter.SortKey> sortKeys = new ArrayList<>();
             sortKeys.add(new RowSorter.SortKey(0, SortOrder.ASCENDING));

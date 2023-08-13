@@ -104,6 +104,8 @@ public class InstallationsPanel extends javax.swing.JPanel {
         });
         
         jTable1.setModel(model);
+        Util.setColumnWidths(jTable1);
+        
         jTable1.getSelectionModel().addListSelectionListener(lse -> {
             log.debug("valueChanged({})", lse);
             if (!lse.getValueIsAdjusting()) {

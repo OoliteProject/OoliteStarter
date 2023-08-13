@@ -225,7 +225,8 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
             
             jTable1.setRowSorter(null);
             jTable1.setModel(model);
-            
+            Util.setColumnWidths(jTable1);
+
             if (trw == null) {
                 trw = new TableRowSorter<>(model);
                 List<RowSorter.SortKey> sortKeys = new ArrayList<>();
