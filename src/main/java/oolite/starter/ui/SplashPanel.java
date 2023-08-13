@@ -71,7 +71,7 @@ public class SplashPanel extends JPanel implements MouseListener, MouseMotionLis
         
         dragOriginMouse = me.getLocationOnScreen();
         dragOriginScreen = f.getLocation();
-        log.warn("mousePressed {}", dragOriginMouse);
+        log.trace("mousePressed {}", dragOriginMouse);
     }
 
     @Override
@@ -88,9 +88,9 @@ public class SplashPanel extends JPanel implements MouseListener, MouseMotionLis
 
     @Override
     public void mouseDragged(MouseEvent me) {
-        //log.warn("mouseDragged({})", e);
+        //log.debug("mouseDragged({})", e);
         Point relMove = new Point(me.getLocationOnScreen().x - dragOriginMouse.x, me.getLocationOnScreen().y - dragOriginMouse.y);
-        log.warn("relMove {}", relMove);
+        log.trace("relMove {}", relMove);
 
         JFrame f = (JFrame)SwingUtilities.getRoot(this);
         Point newLoc = new Point(dragOriginScreen.x + relMove.x, dragOriginScreen.y + relMove.y);

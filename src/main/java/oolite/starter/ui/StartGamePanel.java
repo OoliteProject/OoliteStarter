@@ -98,6 +98,7 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
         try {
             model = new SaveGameTableModel(oolite.getSaveGames());
             jTable1.clearSelection();
+            jTable1.setAutoCreateColumnsFromModel(true);
             jTable1.setModel(model);
             Util.setColumnWidths(jTable1);
             
@@ -241,6 +242,7 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
                 "Save Games"
             }
         ));
+        jTable1.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
         jTable1.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jScrollPane1.setViewportView(jTable1);
 
