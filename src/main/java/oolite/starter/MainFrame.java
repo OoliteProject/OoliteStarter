@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
 import javax.swing.ImageIcon;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.xml.parsers.ParserConfigurationException;
@@ -20,6 +21,7 @@ import oolite.starter.ui.AboutPanel;
 import oolite.starter.ui.ExpansionsPanel;
 import oolite.starter.ui.InstallationsPanel;
 import oolite.starter.ui.MrGimlet;
+import oolite.starter.ui.SplashPanel;
 import oolite.starter.ui.StartGamePanel;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -32,6 +34,8 @@ import org.xml.sax.SAXException;
  */
 public class MainFrame extends javax.swing.JFrame {
     private static final Logger log = LogManager.getLogger();
+
+    private static transient JFrame newSplash;
     
     private transient Oolite oolite;
     private transient Configuration configuration;
@@ -133,9 +137,16 @@ public class MainFrame extends javax.swing.JFrame {
             g.drawString(text, 31, 51);
             g.setColor(new Color(46, 64, 82));
             g.drawString(text, 30, 50);
-            
             ss.update();
         }
+        
+        newSplash = new JFrame();
+        newSplash.setUndecorated(true);
+        newSplash.setIconImage(new ImageIcon(MainFrame.class.getResource("/images/Mr_Gimlet_transparent.png")).getImage());
+        newSplash.add(new SplashPanel(new ImageIcon(MainFrame.class.getResource("/images/OoliteStarter_Splashscreen_640x360.png"))));
+        newSplash.pack();
+        newSplash.setLocationRelativeTo(null);
+        newSplash.setVisible(true);
     }
     
     /**
@@ -215,8 +226,14 @@ public class MainFrame extends javax.swing.JFrame {
                 if (spentSeconds < 4) {
                     Thread.sleep((4 - spentSeconds) * 1000);
                 }
-
+                
+                mf.setLocationRelativeTo(newSplash);
                 mf.setVisible(true);
+                if (newSplash != null) {
+                    newSplash.setVisible(false);
+                    newSplash.dispose();
+                    newSplash = null;
+                }
                 
                 if (mf.configuration.getActiveInstallation() == null) {
                     // point user to creating an active installation
