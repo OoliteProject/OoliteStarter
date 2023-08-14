@@ -170,7 +170,16 @@ public class ScanOolitesSwingWorker extends SwingWorker<List<String>, String> {
             }
         }
     }
-            
+    
+    /**
+     * Scans a file/directory recursively, not going into already scanned
+     * areas again.
+     * 
+     * Scanned areas are stored in the scannedFiles list.
+     * 
+     * @param f the file to scan
+     * @throws IOException something went wrong
+     */
     private void scan(File f) throws IOException {
         log.trace("scan({})", f);
         log.trace("already scanned {}/{} files", scannedFiles.size(), totalFiles);
@@ -230,21 +239,34 @@ public class ScanOolitesSwingWorker extends SwingWorker<List<String>, String> {
         skipPatterns.add(Pattern.compile(".*/sys/block/.*"));
         skipPatterns.add(Pattern.compile(".*/sys/module/.*"));
 
-        // Linux version
-        goodPatterns.add(Pattern.compile("(.*/oolite.app)/oolite-wrapper"));
-        // Mac OS version
-        goodPatterns.add(Pattern.compile("(.*\\.app)/Contents/MacOS/Oolite"));
-        // Windows version
-        goodPatterns.add(Pattern.compile("(.*\\\\oolite.app)\\\\oolite.exe"));
+        List<File> preferredLocations = new ArrayList<>();
+        switch (oolite.starter.util.Util.getOperatingSystemType()) {
+            case LINUX: // Linux version
+                goodPatterns.add(Pattern.compile("(.*/oolite.app)/oolite-wrapper"));
+                preferredLocations.add(new File(new File(System.getProperty("user.home")), "GNUstep/Applications"));
+                break;
+            case MACOS: // Mac OS version
+                goodPatterns.add(Pattern.compile("(.*\\.app)/Contents/MacOS/Oolite"));
+                break;
+            case WINDOWS: // Windows version
+                goodPatterns.add(Pattern.compile("(.*\\\\oolite.app)\\\\oolite.exe"));
+                skipPatterns.add(Pattern.compile("C:\\\\Windows.*", Pattern.CASE_INSENSITIVE));
+                preferredLocations.add(new File("C:\\Oolite"));
+                break;
+            default:
+                break;
+        }
+        preferredLocations.add(new File(System.getProperty("user.home")));
+        for(File f: File.listRoots()) {
+            preferredLocations.add(f);
+        }
 
         try {
             result = new ArrayList<>();
 
             totalFiles += File.listRoots().length + 1;
 
-            scan(new File(System.getProperty("user.home")));
-
-            for(File f: File.listRoots()) {
+            for (File f: preferredLocations) {
                 scan(f);
             }
 
