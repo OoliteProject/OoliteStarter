@@ -5,6 +5,7 @@ package oolite.starter.ui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -46,6 +47,7 @@ public class SplashPanel extends JPanel implements MouseListener, MouseMotionLis
         
         addMouseListener(this);
         addMouseMotionListener(this);
+        setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
     }
 
     @Override
