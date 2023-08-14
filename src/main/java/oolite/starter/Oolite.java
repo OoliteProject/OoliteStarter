@@ -1922,4 +1922,30 @@ public class Oolite implements PropertyChangeListener {
         
         return result;
     }
+
+    /**
+     * Returns the URL to a Wiki page with the given name.
+     * Feed it with expansion names (titles, not identifiers) to get
+     * the relevant wiki page.
+     * 
+     * @param name the name of the page
+     * @return the url to the page
+     */
+    public static String getOoliteWikiPageUrl(String name) {
+        if (name == null) {
+            throw new IllegalArgumentException("parameter must not be null");
+        }
+        
+        final String base = "http://wiki.alioth.net/index.php/";
+        /*
+         * The URLEncoder uses too much of + escaping
+         * so do not use 'base + URLEncoder.encode(name, Charset.forName("utf-8"));'
+         */
+        
+        return base
+                + name.replace(" ", "%20")
+                        .replace("\"", "%22")
+                        .replace("[", "%5B")
+                        .replace("]", "%5D");
+    }
 }
