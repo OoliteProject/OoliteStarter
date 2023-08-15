@@ -64,9 +64,9 @@ public class ExpansionsTableModel extends AbstractTableModel implements Property
     @Override
     public String getColumnName(int columnIndex) {
         switch (columnIndex) {
-            case 0: return "Identifier";
+            case 0: return "Title";
             case 1: return "Date";
-            case 2: return "Title";
+            case 2: return "Identifier";
             case 3: return "Version";
             case 4: return "Category";
             case 5: return "Tags";
@@ -110,9 +110,9 @@ public class ExpansionsTableModel extends AbstractTableModel implements Property
     public Object getValueAt(int rowIndex, int columnIndex) {
         Expansion row = data.get(rowIndex);
         switch(columnIndex) {
-            case 0: return row.getIdentifier() + ":" + row.getVersion();
+            case 0: return row.getTitle();
             case 1: return row.getUploadDate();
-            case 2: return row.getTitle();
+            case 2: return row.getIdentifier() + ":" + row.getVersion();
             case 3: return row.getVersion();
             case 4: return row.getCategory();
             case 5: return row.getTags();

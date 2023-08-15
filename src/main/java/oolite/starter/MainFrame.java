@@ -69,6 +69,9 @@ public class MainFrame extends javax.swing.JFrame {
                 log.debug("Configuration change {}", pce);
                 Installation i = (Installation)pce.getNewValue();
                 setInstallationTitle(i);
+
+                jTabbedPane1.setEnabledAt(0, i != null);
+                jTabbedPane1.setEnabledAt(1, i != null);
             }
         });
         setInstallationTitle(configuration.getActiveInstallation());
@@ -250,6 +253,9 @@ public class MainFrame extends javax.swing.JFrame {
 
                     if (mf.configuration.getActiveInstallation() == null) {
                         // point user to creating an active installation
+        
+                        mf.jTabbedPane1.setEnabledAt(0, false);
+                        mf.jTabbedPane1.setEnabledAt(1, false);
                         mf.jTabbedPane1.setSelectedIndex(2);
 
                         StringBuilder message = new StringBuilder("<html>");

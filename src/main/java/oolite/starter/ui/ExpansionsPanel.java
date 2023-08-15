@@ -4,6 +4,7 @@ package oolite.starter.ui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Desktop;
 import java.awt.Dimension;
@@ -12,6 +13,9 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.net.URI;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
+import java.time.temporal.TemporalAccessor;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.DefaultListModel;
@@ -21,6 +25,7 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.RowFilter;
 import javax.swing.RowSorter;
 import javax.swing.SortOrder;
@@ -29,11 +34,13 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableRowSorter;
 import oolite.starter.Configuration;
 import oolite.starter.Oolite;
 import oolite.starter.model.Expansion;
 import oolite.starter.model.ExpansionReference;
+import oolite.starter.model.Installation;
 import oolite.starter.model.ProcessData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -112,6 +119,7 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
                 applyFilter();
             }
         });
+        
         lbFilterText.setCursor(new Cursor(Cursor.HAND_CURSOR));
         lbFilterText.addMouseListener(new MouseAdapter() {
             @Override
@@ -225,6 +233,19 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
             
             jTable1.setRowSorter(null);
             jTable1.setModel(model);
+            jTable1.getColumnModel().getColumn(1).setCellRenderer(new DefaultTableCellRenderer() {
+                
+                private DateTimeFormatter dtf = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT);
+
+                @Override
+                public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                    if (value instanceof TemporalAccessor ld) {
+                        value = dtf.format(ld);
+                    }
+                    return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/OverriddenMethodBody
+                }
+                
+            });
             Util.setColumnWidths(jTable1);
 
             if (trw == null) {
@@ -242,8 +263,9 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
     }
 
     @Override
-    public void activatedInstallation() {
-        log.error("activatedInstallation()");
+    public void activatedInstallation(Installation installation) {
+        log.error("activatedInstallation({})", installation);
+        
         try {
             update();
         } catch (Exception e) {

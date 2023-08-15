@@ -188,8 +188,10 @@ public class Oolite implements PropertyChangeListener {
 
         /**
          * Will be called whenever a new configuration has been activated.
+         * 
+         * @param installation the installation that was activated
          */
-        public void activatedInstallation();
+        public void activatedInstallation(Installation installation);
     }
     
     private List<OoliteListener> listeners;
@@ -431,9 +433,9 @@ public class Oolite implements PropertyChangeListener {
         }
     }
     
-    void fireActivatedInstallation() {
+    void fireActivatedInstallation(Installation installation) {
         for (OoliteListener l: listeners) {
-            l.activatedInstallation();
+            l.activatedInstallation(installation);
         }
     }
     
@@ -1839,7 +1841,8 @@ public class Oolite implements PropertyChangeListener {
     public void propertyChange(PropertyChangeEvent pce) {
         log.debug("propertyChange({})", pce);
         if ("activeInstallation".equals(pce.getPropertyName())) {
-            fireActivatedInstallation();
+            Installation i = (Installation)pce.getNewValue();
+            fireActivatedInstallation(i);
         }
     }
 

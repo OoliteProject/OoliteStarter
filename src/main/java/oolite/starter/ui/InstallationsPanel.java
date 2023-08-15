@@ -485,7 +485,7 @@ public class InstallationsPanel extends javax.swing.JPanel {
             StringBuilder sb = new StringBuilder("<html>");
             if (configuration.getActiveInstallation() == null) {
                 sb.append("<p>Nice try, kiddo!</p><p>Your configuration was stored in ").append(f.getAbsolutePath()).append(".</p>");
-                sb.append("<p>But... you still ain't got an active Oolite version. Expect trouble to follow your pants.</p>");
+                sb.append("<p>But... you still ain't got any Oolite version selected. Work on that, or I can't let you go.</p>");
             } else {
                 switch(new Random().nextInt(3)) {
                     case 0:

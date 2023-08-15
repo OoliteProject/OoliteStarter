@@ -20,6 +20,7 @@ import javax.swing.SortOrder;
 import javax.swing.SwingUtilities;
 import javax.swing.table.TableRowSorter;
 import oolite.starter.Oolite;
+import oolite.starter.model.Installation;
 import oolite.starter.model.ProcessData;
 import oolite.starter.model.SaveGame;
 import org.apache.logging.log4j.LogManager;
@@ -462,8 +463,9 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
     }
 
     @Override
-    public void activatedInstallation() {
-        log.error("activatedInstallation()");
+    public void activatedInstallation(Installation installation) {
+        log.error("activatedInstallation({})", installation);
+        
         try {
             update();
         } catch (Exception e) {
