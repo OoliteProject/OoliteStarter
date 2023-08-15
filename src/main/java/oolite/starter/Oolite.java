@@ -873,7 +873,14 @@ public class Oolite implements PropertyChangeListener {
         Collections.sort(result);
         return result;
     }
-    
+
+    /**
+     * Scans a directory for expansions.
+     * Todo: This needs to support recursion
+     * 
+     * @param dir
+     * @return 
+     */
     List<Expansion> getLocalExpansions(File dir) {
         log.debug("scanning {}", dir);
         List<Expansion> result = new ArrayList<>();
@@ -881,16 +888,31 @@ public class Oolite implements PropertyChangeListener {
         File[] files = dir.listFiles();
         if (files != null) {
             for (File f: files) {
-                try {
-                    Expansion expansion = getExpansionFrom(f);
+                
+                List<Expansion> tempResult = new ArrayList<>();
+                
+                if (f.isDirectory() && f.getName().toLowerCase().endsWith(".oxp")) {
+                    tempResult = getLocalExpansions(f);
+                }
+                
+                if (!tempResult.isEmpty()) {
+                    // we found OXP in subdirectories.
+                    // that means they matter, but this one does not
+                    result.addAll(tempResult);
+                } else {
+                    
+                    // no OXPs in subdirectories - then check this one
+                    try {
+                        Expansion expansion = getExpansionFrom(f);
 
-                    if (expansion != null) {
-                        expansion.setOolite(this);
-                        expansion.setLocalFile(f);
-                        result.add(expansion);
+                        if (expansion != null) {
+                            expansion.setOolite(this);
+                            expansion.setLocalFile(f);
+                            result.add(expansion);
+                        }
+                    } catch (Exception e) {
+                        log.warn("Could not read expansion in {}", f, e);
                     }
-                } catch (Exception e) {
-                    log.warn("Could not read expansion in {}", f, e);
                 }
             }
         }
@@ -922,15 +944,26 @@ public class Oolite implements PropertyChangeListener {
         return result;
     }
 
+    /**
+     * Investigates whether a File holds an expansion and returns it.
+     * 
+     * @param f the file to investigate
+     * @return the expansion found, or null
+     */
     private Expansion getExpansionFrom(File f) {
         log.debug("getExpansionsFrom({})", f);
         try {
             if (f.isDirectory()) {
                 // if it is a directory, is it an OXP?
                 if (f.getName().toLowerCase().endsWith(".oxp")) {
+                    
+                    // todo: Here we need to check for more subdirectories
+                    
                     return getExpansionFromOxp(f);
                 } else {
-                    // not a subdirectory, but we do not scan subdirectories [sic]
+                    // not a subdirectory, but we do not scan subdirectories
+                    
+                    // todo: here deactivated addons might be identified
                 }
             } else {
                 // if not a directory, is it an OXZ?
