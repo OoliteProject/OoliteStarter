@@ -24,6 +24,7 @@ public class InstallationForm extends javax.swing.JPanel {
     private static final String INSTALLATIONFORM_USER_HOME = "user.home";
     private static final String INSTALLATIONFORM_SELECT = "Select";
     private static final String INSTALLATIONFORM_ERROR = "Error";
+    private static final String INSTALLATIONFORM_WARNING = "Warning";
     private static final String INSTALLATIONFORM_BROWSE = "Browse";
     private static final String INSTALLATIONFORM_COULD_NOT_READ_VERSION = "Could not read version from {}";
 
@@ -475,6 +476,7 @@ public class InstallationForm extends javax.swing.JPanel {
             maybeFillManagedAddonDir(homeDir);
         } catch (Exception e) {
             log.warn("Could not fill in other fields", e);
+            JOptionPane.showMessageDialog(this, "Could not guess other values automatically. See logfile for more information.", INSTALLATIONFORM_WARNING, JOptionPane.WARNING_MESSAGE);
         }
     }
 
@@ -498,7 +500,7 @@ public class InstallationForm extends javax.swing.JPanel {
             }
         } catch (Exception e) {
             log.error("Could not set home dir", e);
-            JOptionPane.showMessageDialog(this, "Could not set home directory", INSTALLATIONFORM_ERROR, JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Could not set home directory. See logfile for more information.", INSTALLATIONFORM_ERROR, JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_btHomeDirActionPerformed
 
@@ -521,7 +523,7 @@ public class InstallationForm extends javax.swing.JPanel {
             }
         } catch (Exception e) {
             log.error("Could not set executable", e);
-            JOptionPane.showMessageDialog(this, "Could not set executable", INSTALLATIONFORM_ERROR, JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Could not set executable. See logfile for more information.", INSTALLATIONFORM_ERROR, JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_btExecutableActionPerformed
 
@@ -544,7 +546,7 @@ public class InstallationForm extends javax.swing.JPanel {
             }
         } catch (Exception e) {
             log.error("Could not set savegame dir", e);
-            JOptionPane.showMessageDialog(this, "Could not set savegame dir.", INSTALLATIONFORM_ERROR, JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Could not set savegame dir. See logfile for more information.", INSTALLATIONFORM_ERROR, JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_btSavegameDirActionPerformed
 
@@ -567,7 +569,7 @@ public class InstallationForm extends javax.swing.JPanel {
             }
         } catch (Exception e) {
             log.error("Could not set addon dir", e);
-            JOptionPane.showMessageDialog(this, "Could not set addon dir", INSTALLATIONFORM_ERROR, JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Could not set addon dir. See logfile for more information.", INSTALLATIONFORM_ERROR, JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_btAddOnDirActionPerformed
 
@@ -590,7 +592,7 @@ public class InstallationForm extends javax.swing.JPanel {
             }
         } catch (Exception e) {
             log.error("Could not set managed addon dir", e);
-            JOptionPane.showMessageDialog(this, "Could not set managed addon directory", INSTALLATIONFORM_ERROR, JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Could not set managed addon directory. See logfile for more information.", INSTALLATIONFORM_ERROR, JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_btManagedAddOnDirActionPerformed
 
@@ -613,7 +615,7 @@ public class InstallationForm extends javax.swing.JPanel {
             }
         } catch (Exception e) {
             log.error("Could not set managed deactivated addon dir", e);
-            JOptionPane.showMessageDialog(this, "Could not set managed deactivated addon dir", INSTALLATIONFORM_ERROR, JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Could not set managed deactivated addon dir. See logfile for more information.", INSTALLATIONFORM_ERROR, JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_btManagedDeactivatedAddOnDirActionPerformed
 
@@ -636,7 +638,7 @@ public class InstallationForm extends javax.swing.JPanel {
             }
         } catch (Exception e) {
             log.error("Could not set deactivated addon dir", e);
-            JOptionPane.showMessageDialog(this, "Could not set deactivated addon dir", INSTALLATIONFORM_ERROR, JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Could not set deactivated addon dir. See logfile for more information.", INSTALLATIONFORM_ERROR, JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_btDeactivatedAddOnDirActionPerformed
 

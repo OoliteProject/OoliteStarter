@@ -4,6 +4,8 @@ package oolite.starter.ui;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
@@ -78,6 +80,18 @@ public class InstallationsPanel extends javax.swing.JPanel {
                     }
                 }
                 return c;
+            }
+            
+        });
+        
+        jTable1.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                JTable table = (JTable)e.getSource();
+                int row = table.rowAtPoint(e.getPoint());
+                if (e.getClickCount() == 2 && row != -1) {
+                    activateRow(row);
+                }
             }
             
         });
@@ -189,6 +203,22 @@ public class InstallationsPanel extends javax.swing.JPanel {
         setButtonColors();
     }
 
+    void activateRow(int rowIndex) {
+        int modelIndex = jTable1.convertRowIndexToModel(rowIndex);
+        Installation i = model.getRow(modelIndex);
+
+        // validate installation
+        ensureDirectoryExists("AddonDir", i.getAddonDir());
+        ensureDirectoryExists("Deactivated AddonDir", i.getDeactivatedAddonDir());
+        ensureDirectoryExists("Managed AddonDir", i.getManagedAddonDir());
+        ensureDirectoryExists("Managed Deactivated AddonDir", i.getManagedDeactivatedAddonDir());
+
+        configuration.activateInstallation(i);
+        model.fireTableDataChanged();
+        jTable1.getSelectionModel().setSelectionInterval(rowIndex, rowIndex);
+
+        setConfigDirty(true);
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -493,20 +523,7 @@ public class InstallationsPanel extends javax.swing.JPanel {
                 return;
             }
             
-            int modelIndex = jTable1.convertRowIndexToModel(rowIndex);
-            Installation i = model.getRow(modelIndex);
-            
-            // validate installation
-            ensureDirectoryExists("AddonDir", i.getAddonDir());
-            ensureDirectoryExists("Deactivated AddonDir", i.getDeactivatedAddonDir());
-            ensureDirectoryExists("Managed AddonDir", i.getManagedAddonDir());
-            ensureDirectoryExists("Managed Deactivated AddonDir", i.getManagedDeactivatedAddonDir());
-            
-            configuration.activateInstallation(i);
-            model.fireTableDataChanged();
-            jTable1.getSelectionModel().setSelectionInterval(rowIndex, rowIndex);
-            
-            setConfigDirty(true);
+            activateRow(rowIndex);
         } catch (Exception e) {
             log.error(INSTALLATIONSPANEL_COULD_NOT_SAVE, e);
             JOptionPane.showMessageDialog(this, INSTALLATIONSPANEL_COULD_NOT_SAVE);

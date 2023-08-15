@@ -44,20 +44,18 @@ public class Util {
             TableCellRenderer renderer = null;
             {
                 // try to get the right header renderer
+                Object value = col.getHeaderValue();
                 renderer = col.getHeaderRenderer();
                 if (renderer == null) {
                     jTable1.getTableHeader().getDefaultRenderer();
                 }
                 if (renderer == null) {
-                    renderer = col.getCellRenderer();
-                }
-                if (renderer == null) {
-                    renderer = jTable1.getCellRenderer(0, i);
+                    renderer = jTable1.getDefaultRenderer(value.getClass());
                 }
                 
                 if (renderer != null) {
                     rows ++;
-                    Component comp = renderer.getTableCellRendererComponent(jTable1, col.getHeaderValue(), false, false, 0, i);
+                    Component comp = renderer.getTableCellRendererComponent(jTable1, value, false, false, 0, i);
                     maxWidth = Math.max(maxWidth, comp.getPreferredSize().width);
                     avgWidth += comp.getPreferredSize().width;
                 }
