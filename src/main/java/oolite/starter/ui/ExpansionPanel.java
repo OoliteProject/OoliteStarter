@@ -7,6 +7,8 @@ import java.awt.Desktop;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.net.URI;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
@@ -159,7 +161,20 @@ public class ExpansionPanel extends javax.swing.JPanel implements PropertyChange
             } else {
                 spRequires.setBorder(UIManager.getLookAndFeel().getDefaults().getBorder("ScrollPane.border"));
             }
+
+            // check if we have nested OXPs.
+            Pattern p = Pattern.compile("\\.oxp.+\\.oxp", Pattern.CASE_INSENSITIVE);
+            String file = String.valueOf(data.getLocalFile());
+            Matcher m = p.matcher(file);
+            if (m.find()) {
+                log.warn("Pattern {} found in {}", p.pattern(), file);
+                btDisable.setEnabled(false);
+            } else {
+                log.warn("Pattern {} not found in {}", p.pattern(), file);
+            }
+            
         }
+        
         validate();
         repaint();
     }
