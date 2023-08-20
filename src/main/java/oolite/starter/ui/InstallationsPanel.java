@@ -4,15 +4,22 @@ package oolite.starter.ui;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
+import javax.swing.RowSorter;
+import javax.swing.SortOrder;
 import javax.swing.SwingUtilities;
 import javax.swing.UIDefaults;
 import javax.swing.UIManager;
@@ -76,6 +83,18 @@ public class InstallationsPanel extends javax.swing.JPanel {
             }
             
         });
+        
+        jTable1.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                JTable table = (JTable)e.getSource();
+                int row = table.rowAtPoint(e.getPoint());
+                if (e.getClickCount() == 2 && row != -1) {
+                    activateRow(row);
+                }
+            }
+            
+        });
     }
     
     /**
@@ -99,6 +118,8 @@ public class InstallationsPanel extends javax.swing.JPanel {
         });
         
         jTable1.setModel(model);
+        Util.setColumnWidths(jTable1);
+        
         jTable1.getSelectionModel().addListSelectionListener(lse -> {
             log.debug("valueChanged({})", lse);
             if (!lse.getValueIsAdjusting()) {
@@ -114,6 +135,9 @@ public class InstallationsPanel extends javax.swing.JPanel {
             }
         });
         TableRowSorter<InstallationTableModel> trw = new TableRowSorter<>(model);
+        List<RowSorter.SortKey> sortKeys = new ArrayList<>();
+        sortKeys.add(new RowSorter.SortKey(0, SortOrder.ASCENDING));
+        trw.setSortKeys(sortKeys);
         jTable1.setRowSorter(trw);
         
         setButtonColors();
@@ -179,6 +203,22 @@ public class InstallationsPanel extends javax.swing.JPanel {
         setButtonColors();
     }
 
+    void activateRow(int rowIndex) {
+        int modelIndex = jTable1.convertRowIndexToModel(rowIndex);
+        Installation i = model.getRow(modelIndex);
+
+        // validate installation
+        ensureDirectoryExists("AddonDir", i.getAddonDir());
+        ensureDirectoryExists("Deactivated AddonDir", i.getDeactivatedAddonDir());
+        ensureDirectoryExists("Managed AddonDir", i.getManagedAddonDir());
+        ensureDirectoryExists("Managed Deactivated AddonDir", i.getManagedDeactivatedAddonDir());
+
+        configuration.activateInstallation(i);
+        model.fireTableDataChanged();
+        jTable1.getSelectionModel().setSelectionInterval(rowIndex, rowIndex);
+
+        setConfigDirty(true);
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -416,21 +456,23 @@ public class InstallationsPanel extends javax.swing.JPanel {
     private void btRemoveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btRemoveActionPerformed
         log.debug("btRemoveActionPerformed({})", evt);
         
-        try {
-            int rowIndex = jTable1.getSelectedRow();
-            if (rowIndex == -1) {
-                JOptionPane.showMessageDialog(this, INSTALLATIONSPANEL_SELECT_ROW);
-                return;
-            }
-            
-            rowIndex = jTable1.convertRowIndexToModel(rowIndex);
-            model.removeRow(rowIndex);
+        if (JOptionPane.showConfirmDialog(btRemove, "Kiddo! Are you really sure that you want to do this?", "Remove...", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+            try {
+                int rowIndex = jTable1.getSelectedRow();
+                if (rowIndex == -1) {
+                    JOptionPane.showMessageDialog(this, INSTALLATIONSPANEL_SELECT_ROW);
+                    return;
+                }
 
-            setConfigDirty(true);
-        } catch (Exception e) {
-            log.error(INSTALLATIONSPANEL_ERROR, e);
-            JOptionPane.showMessageDialog(this, INSTALLATIONSPANEL_ERROR);
-        }        
+                rowIndex = jTable1.convertRowIndexToModel(rowIndex);
+                model.removeRow(rowIndex);
+
+                setConfigDirty(true);
+            } catch (Exception e) {
+                log.error(INSTALLATIONSPANEL_ERROR, e);
+                JOptionPane.showMessageDialog(this, INSTALLATIONSPANEL_ERROR);
+            }        
+        }
     }//GEN-LAST:event_btRemoveActionPerformed
 
     private void btSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btSaveActionPerformed
@@ -443,10 +485,23 @@ public class InstallationsPanel extends javax.swing.JPanel {
             StringBuilder sb = new StringBuilder("<html>");
             if (configuration.getActiveInstallation() == null) {
                 sb.append("<p>Nice try, kiddo!</p><p>Your configuration was stored in ").append(f.getAbsolutePath()).append(".</p>");
-                sb.append("<p>But... you still ain't got an active Oolite version. Expect trouble to follow your pants.</p>");
+                sb.append("<p>But... you still ain't got any Oolite version selected. Work on that, or I can't let you go.</p>");
             } else {
-                sb.append("<p>Smart move, kiddo!</p><p>Your configuration was stored in ").append(f.getAbsolutePath()).append(".</p>");
-                sb.append("<p>Next time we won't have to fasten these screws again.</p>");
+                switch(new Random().nextInt(3)) {
+                    case 0:
+                        sb.append("<p>Smart move, kiddo!</p><p>Your configuration was stored in ").append(f.getAbsolutePath()).append(".</p>");
+                        sb.append("<p>Next time we won't have to fasten these screws again.</p>");
+                        break;
+                    case 1:
+                        sb.append("<p>Your configuration has been stashed away in ").append(f.getAbsolutePath()).append(".</p>");
+                        sb.append("<p>When you are ready to get out of here, kick off by pushing the &quot;Start Game&quot; button up top! But don't forget to visit the F8/8 marketplace first.</p>");
+                        break;
+                    default:
+                        sb.append("<p>All right there!\n" +
+                                  "We've stored your configuration in ").append(f.getAbsolutePath()).append(".</p>");
+                        sb.append("<p>If you are all finished, you can get yourself out of here and get your ship ready to undock.</p>");
+                        break;
+                }
             }
             sb.append("</html>");
             MrGimlet.showMessage(this, sb.toString());
@@ -468,20 +523,7 @@ public class InstallationsPanel extends javax.swing.JPanel {
                 return;
             }
             
-            int modelIndex = jTable1.convertRowIndexToModel(rowIndex);
-            Installation i = model.getRow(modelIndex);
-            
-            // validate installation
-            ensureDirectoryExists("AddonDir", i.getAddonDir());
-            ensureDirectoryExists("Deactivated AddonDir", i.getDeactivatedAddonDir());
-            ensureDirectoryExists("Managed AddonDir", i.getManagedAddonDir());
-            ensureDirectoryExists("Managed Deactivated AddonDir", i.getManagedDeactivatedAddonDir());
-            
-            configuration.activateInstallation(i);
-            model.fireTableDataChanged();
-            jTable1.getSelectionModel().setSelectionInterval(rowIndex, rowIndex);
-            
-            setConfigDirty(true);
+            activateRow(rowIndex);
         } catch (Exception e) {
             log.error(INSTALLATIONSPANEL_COULD_NOT_SAVE, e);
             JOptionPane.showMessageDialog(this, INSTALLATIONSPANEL_COULD_NOT_SAVE);

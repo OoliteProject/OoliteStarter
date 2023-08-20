@@ -4,11 +4,18 @@ package oolite.starter.ui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
+import java.awt.Cursor;
+import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.event.ItemEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.net.URI;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
+import java.time.temporal.TemporalAccessor;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.DefaultListModel;
@@ -18,17 +25,22 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.RowFilter;
+import javax.swing.RowSorter;
+import javax.swing.SortOrder;
 import javax.swing.SwingUtilities;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableRowSorter;
 import oolite.starter.Configuration;
 import oolite.starter.Oolite;
 import oolite.starter.model.Expansion;
 import oolite.starter.model.ExpansionReference;
+import oolite.starter.model.Installation;
 import oolite.starter.model.ProcessData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -99,35 +111,44 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
             }
         });
         jTable1.setDefaultRenderer(Object.class, new AnnotationRenderer(jTable1.getDefaultRenderer(Object.class), Configuration.COLOR_ATTENTION));
-        txtFilterText.getDocument().addDocumentListener(new DocumentListener() {
-            @Override
-            public void insertUpdate(DocumentEvent de) {
-                applyFilter();
-            }
 
+        DeferredDocumentChangeListener deferredListener = new DeferredDocumentChangeListener(300);
+        deferredListener.addChangeListener(new ChangeListener() {
             @Override
-            public void removeUpdate(DocumentEvent de) {
-                applyFilter();
-            }
-
-            @Override
-            public void changedUpdate(DocumentEvent de) {
+            public void stateChanged(ChangeEvent ce) {
                 applyFilter();
             }
         });
         
+        lbFilterText.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        lbFilterText.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                try {
+                    //Desktop.getDesktop().browse(new URI("https://en.wikipedia.org/wiki/Regular_expression"));
+                    //Desktop.getDesktop().browse(new URI("https://www.regular-expressions.info/quickstart.html"));
+                    Desktop.getDesktop().browse(new URI("https://www.regular-expressions.info/tutorial.html"));
+                } catch (Exception ex) {
+                    log.info("Could not browse", ex);
+                }
+            }
+        });
+        txtFilterText.getDocument().addDocumentListener(deferredListener);
+
         ep = new ExpansionPanel();
         jSplitPane1.setRightComponent(ep);
     }
     
     private void applyFilter() {
-        log.debug("applyFilter");
+        log.warn("applyFilter()");
         if (trw != null) {
             List<RowFilter<ExpansionsTableModel, Integer>> filters = new ArrayList<>();
             filters.add(new MyRowStatusFilter(String.valueOf(cbFilterMode.getSelectedItem()), txtFilterText.getText()));
             if (!"".equals(txtFilterText.getText())) {
                 try {
-                    filters.add(RowFilter.regexFilter(txtFilterText.getText()));
+                    String re = "(?i)" + txtFilterText.getText();
+                    log.warn("re={}", re);
+                    filters.add(RowFilter.regexFilter(re));
                 } catch (Exception e) {
                     log.info("Cannot apply regexp filter", e);
                 }
@@ -190,7 +211,7 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
         
         x = model.getNumberOfExpansionsIncompatible();
         if (x > 0) {
-            pnStatus.add(new Badge("Incompatible", String.valueOf(x), Color.black));
+            pnStatus.add(new Badge("Incompatible with selected Oolite version", String.valueOf(x), Color.black));
         }
         
         pnStatus.validate();
@@ -212,8 +233,27 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
             
             jTable1.setRowSorter(null);
             jTable1.setModel(model);
-            
-            trw = new TableRowSorter<>(model);
+            jTable1.getColumnModel().getColumn(1).setCellRenderer(new DefaultTableCellRenderer() {
+                
+                private DateTimeFormatter dtf = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM);
+
+                @Override
+                public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                    if (value instanceof TemporalAccessor ld) {
+                        value = dtf.format(ld);
+                    }
+                    return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/OverriddenMethodBody
+                }
+                
+            });
+            Util.setColumnWidths(jTable1);
+
+            if (trw == null) {
+                trw = new TableRowSorter<>(model);
+                List<RowSorter.SortKey> sortKeys = new ArrayList<>();
+                sortKeys.add(new RowSorter.SortKey(0, SortOrder.ASCENDING));
+                trw.setSortKeys(sortKeys);
+            }
             jTable1.setRowSorter(trw);
             applyFilter();
             updateBadges();
@@ -223,8 +263,9 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
     }
 
     @Override
-    public void activatedInstallation() {
-        log.error("activatedInstallation()");
+    public void activatedInstallation(Installation installation) {
+        log.error("activatedInstallation({})", installation);
+        
         try {
             update();
         } catch (Exception e) {
@@ -246,7 +287,7 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         cbFilterMode = new javax.swing.JComboBox<>();
-        jLabel2 = new javax.swing.JLabel();
+        lbFilterText = new javax.swing.JLabel();
         txtFilterText = new javax.swing.JTextField();
         jPanel3 = new javax.swing.JPanel();
         btActivate = new javax.swing.JButton();
@@ -273,7 +314,7 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
             }
         });
 
-        jLabel2.setText("and contains RE");
+        lbFilterText.setText("<html>and contains <a href=\"https://en.wikipedia.org/wiki/Regular_expression\">RE</a></html>");
 
         txtFilterText.setText(".*");
         txtFilterText.setMinimumSize(new java.awt.Dimension(300, 24));
@@ -288,7 +329,7 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(cbFilterMode, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel2)
+                .addComponent(lbFilterText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(txtFilterText, javax.swing.GroupLayout.DEFAULT_SIZE, 318, Short.MAX_VALUE)
                 .addContainerGap())
@@ -300,7 +341,7 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(cbFilterMode, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel2)
+                    .addComponent(lbFilterText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtFilterText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -559,7 +600,6 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
     private javax.swing.JButton btValidate;
     private javax.swing.JComboBox<String> cbFilterMode;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
@@ -567,6 +607,7 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JTable jTable1;
     private javax.swing.JPanel jpToolbar;
+    private javax.swing.JLabel lbFilterText;
     private javax.swing.JPanel pnStatus;
     private javax.swing.JTextField txtFilterText;
     // End of variables declaration//GEN-END:variables

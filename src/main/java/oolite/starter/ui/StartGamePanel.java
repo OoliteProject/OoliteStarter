@@ -10,12 +10,17 @@ import java.awt.Insets;
 import java.awt.event.MouseAdapter;
 import java.io.File;
 import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.RowSorter;
+import javax.swing.SortOrder;
 import javax.swing.SwingUtilities;
 import javax.swing.table.TableRowSorter;
 import oolite.starter.Oolite;
+import oolite.starter.model.Installation;
 import oolite.starter.model.ProcessData;
 import oolite.starter.model.SaveGame;
 import org.apache.logging.log4j.LogManager;
@@ -94,8 +99,14 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
         try {
             model = new SaveGameTableModel(oolite.getSaveGames());
             jTable1.clearSelection();
+            jTable1.setAutoCreateColumnsFromModel(true);
             jTable1.setModel(model);
+            Util.setColumnWidths(jTable1);
+            
             TableRowSorter<SaveGameTableModel> trw = new TableRowSorter<>(model);
+            List<RowSorter.SortKey> sortKeys = new ArrayList<>();
+            sortKeys.add(new RowSorter.SortKey(0, SortOrder.ASCENDING));
+            trw.setSortKeys(sortKeys);
             jTable1.setRowSorter(trw);
             
             if (sgp != null) {
@@ -232,6 +243,7 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
                 "Save Games"
             }
         ));
+        jTable1.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
         jTable1.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jScrollPane1.setViewportView(jTable1);
 
@@ -329,6 +341,10 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
             
             rowIndex = jTable1.convertRowIndexToModel(rowIndex);
             SaveGame row = model.getRow(rowIndex);
+            
+            if (JOptionPane.showConfirmDialog(btDelete, "Too much clutter causes confusion, kid. Its a good choice to cut down the clobber - but do you really want to chuck " + row.getName() + "?", "Delete...", JOptionPane.YES_NO_OPTION) != JOptionPane.YES_OPTION) {
+                return;
+            }
 
             Files.delete(row.getFile().toPath());
             update();
@@ -447,8 +463,9 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
     }
 
     @Override
-    public void activatedInstallation() {
-        log.error("activatedInstallation()");
+    public void activatedInstallation(Installation installation) {
+        log.error("activatedInstallation({})", installation);
+        
         try {
             update();
         } catch (Exception e) {

@@ -29,6 +29,7 @@
     <Logger level="info" name="oolite.starter.ui.InstallationsPanel"/>
     <Logger level="info" name="oolite.starter.ui.MyJTable"/>
     <Logger level="warn" name="oolite.starter.ui.ScanOolitesSwingWorker"/>
+    <Logger level="info" name="oolite.starter.ui.SplashPanel"/>
     <Logger level="info" name="oolite.starter.ui.StartGamePanel"/>
     <Logger level="info" name="oolite.starter.ui.OoliteFileChooserAccessory"/>
     <Logger level="warn" name="oolite.starter.util.PlistUtil"/>

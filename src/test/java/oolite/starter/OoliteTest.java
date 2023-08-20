@@ -130,7 +130,7 @@ public class OoliteTest {
     public void testCreateExpansionFromRequires_Dictionary() throws IOException {
         log.info("testCreateExpansionFromRequires_Dictionary");
         
-        URL url = getClass().getResource("/data/Asteroids3D1.2.oxp/requires.plist");
+        URL url = getClass().getResource("/data/PHKB_Folder.oxp/Asteroids3D1.2.oxp/requires.plist");
         
         Oolite oolite = new Oolite();
         PlistParser.DictionaryContext dc = PlistUtil.parsePListDict(url.openStream(), url.toString());
@@ -281,6 +281,26 @@ public class OoliteTest {
     @Test
     public void testGetLocalExpansions2() throws MalformedURLException {
         log.debug("testGetLocalExpansions2");
+
+        File dir = new File("src/test/resources/data/PHKB_Folder.oxp");
+        List<File> dirs = new ArrayList<>();
+        dirs.add(dir);
+        
+        Oolite oolite = new Oolite();
+        Configuration configuration = Mockito.mock(Configuration.class);
+        Mockito.when(configuration.getDeactivatedAddonsDir()).thenReturn(dir);
+        Mockito.when(configuration.getAddonDirs()).thenReturn(dirs);
+        oolite.setConfiguration(configuration);
+        
+        List<Expansion> expansions = oolite.getLocalExpansions();
+        assertEquals(2, expansions.size());
+        assertTrue(String.valueOf(expansions.get(0).getIdentifier()).endsWith("Asteroids3D1.2.oxp"));
+        assertTrue(String.valueOf(expansions.get(1).getIdentifier()).endsWith("Galactic_Navy 5.4.3.oxp"));
+    }
+    
+    @Test
+    public void testGetLocalExpansions3() throws MalformedURLException {
+        log.debug("testGetLocalExpansions3");
 
         File dir = new File("src/test/resources/data");
         List<File> dirs = new ArrayList<>();

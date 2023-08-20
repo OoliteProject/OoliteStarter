@@ -90,7 +90,7 @@
                             <mainClass>${exec.mainClass}</mainClass>
                         </manifest>
                         <manifestEntries>
-                            <SplashScreen-Image>images/OoliteStarter_Splashscreen_640x360.png</SplashScreen-Image>
+                            <!--<SplashScreen-Image>images/OoliteStarter_Splashscreen_640x360.png</SplashScreen-Image>-->
                         </manifestEntries>
                     </archive>
                 </configuration>

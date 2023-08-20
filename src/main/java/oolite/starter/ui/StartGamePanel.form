@@ -159,6 +159,7 @@
                     </Column>
                   </Table>
                 </Property>
+                <Property name="autoResizeMode" type="int" value="4"/>
                 <Property name="selectionMode" type="int" value="0"/>
               </Properties>
             </Component>

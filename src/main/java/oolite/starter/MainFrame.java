@@ -11,7 +11,9 @@ import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
 import javax.swing.ImageIcon;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.SwingWorker;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
@@ -20,6 +22,7 @@ import oolite.starter.ui.AboutPanel;
 import oolite.starter.ui.ExpansionsPanel;
 import oolite.starter.ui.InstallationsPanel;
 import oolite.starter.ui.MrGimlet;
+import oolite.starter.ui.SplashPanel;
 import oolite.starter.ui.StartGamePanel;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -32,6 +35,8 @@ import org.xml.sax.SAXException;
  */
 public class MainFrame extends javax.swing.JFrame {
     private static final Logger log = LogManager.getLogger();
+
+    private static transient JFrame newSplash;
     
     private transient Oolite oolite;
     private transient Configuration configuration;
@@ -64,6 +69,9 @@ public class MainFrame extends javax.swing.JFrame {
                 log.debug("Configuration change {}", pce);
                 Installation i = (Installation)pce.getNewValue();
                 setInstallationTitle(i);
+
+                jTabbedPane1.setEnabledAt(0, i != null);
+                jTabbedPane1.setEnabledAt(1, i != null);
             }
         });
         setInstallationTitle(configuration.getActiveInstallation());
@@ -133,9 +141,16 @@ public class MainFrame extends javax.swing.JFrame {
             g.drawString(text, 31, 51);
             g.setColor(new Color(46, 64, 82));
             g.drawString(text, 30, 50);
-            
             ss.update();
         }
+        
+        newSplash = new JFrame();
+        newSplash.setUndecorated(true);
+        newSplash.setIconImage(new ImageIcon(MainFrame.class.getResource("/images/Mr_Gimlet_transparent.png")).getImage());
+        newSplash.add(new SplashPanel(new ImageIcon(MainFrame.class.getResource("/images/OoliteStarter_Splashscreen_640x360.png"))));
+        newSplash.pack();
+        newSplash.setLocationRelativeTo(null);
+        newSplash.setVisible(true);
     }
     
     /**
@@ -183,6 +198,9 @@ public class MainFrame extends javax.swing.JFrame {
             
             javax.swing.UIManager.setLookAndFeel(new com.formdev.flatlaf.FlatDarkLaf());
             
+            // control frame title color
+            javax.swing.JFrame.setDefaultLookAndFeelDecorated(true);            
+            javax.swing.JDialog.setDefaultLookAndFeelDecorated(true);
             
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
             log.info("Could not set look and feel", ex);
@@ -191,10 +209,14 @@ public class MainFrame extends javax.swing.JFrame {
 
         // TODO: parse command line
         // react to --version and --help
-        
+
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> {
-            try {
+        new SwingWorker<MainFrame, Object>() {
+            
+            private GithubVersionChecker gvc;
+            
+            @Override
+            protected MainFrame doInBackground() throws Exception {
                 Instant i0 = Instant.now();
 
                 MainFrame mf = new MainFrame();
@@ -203,44 +225,64 @@ public class MainFrame extends javax.swing.JFrame {
 
                 Instant i1 = Instant.now();
 
-                Duration spent = Duration.between(i0, i1);
-                long spentSeconds = spent.getSeconds();
-
-                GithubVersionChecker gvc = new GithubVersionChecker();
+                gvc = new GithubVersionChecker();
                 gvc.init();
 
-                if (spentSeconds < 4) {
-                    Thread.sleep((4 - spentSeconds) * 1000);
-                }
+                Duration spent = Duration.between(i0, i1);
+                long spentMillis = spent.toMillis();
 
-                mf.setVisible(true);
+                if (spentMillis < 4000) {
+                    Thread.sleep(4000 - spentMillis);
+                }
                 
-                if (mf.configuration.getActiveInstallation() == null) {
-                    // point user to creating an active installation
-                    mf.jTabbedPane1.setSelectedIndex(2);
-                    
-                    StringBuilder message = new StringBuilder("<html>");
-                    message.append("<p>I see a lot of blanks on this here board... Kid, you gotta do something about it.</p>");
-                    message.append("<p>Have at least one active Oolite version. You need one. It's pretty much compulsory.<br/>");
-                    message.append("Hit the Add button and fill in the form, at least once to add Oolite versions.<br/>");
-                    message.append("Don't forget to select one of them, then hit the Activate button.</p>");
-                    message.append("<p>Then you can juggle OXPs or start the game. And maybe touch the Save button once in a while.</p>");
-                    message.append("</html>");
-
-                    MrGimlet.showMessage(mf, message.toString());
-                } else {
-                    gvc.maybeAnnounceUpdate(mf);
-                }
-
-            } catch (InterruptedException e) {
-                log.fatal("Interrupted", e);
-                Thread.currentThread().interrupt();
-            } catch (Exception e) {
-                log.fatal("Could not initialize UI", e);
-                JOptionPane.showMessageDialog(null, e.getClass().getName() + ":\n" + e.getMessage(), "Fatal Error", JOptionPane.ERROR_MESSAGE);
-                System.exit(1);
+                return mf;
             }
-        });
+
+            @Override
+            protected void done() {
+                try {
+
+                    MainFrame mf = get();
+                    mf.setLocationRelativeTo(newSplash);
+                    mf.setVisible(true);
+                    if (newSplash != null) {
+                        newSplash.setVisible(false);
+                        newSplash.dispose();
+                        newSplash = null;
+                    }
+
+                    if (mf.configuration.getActiveInstallation() == null) {
+                        // point user to creating an active installation
+        
+                        mf.jTabbedPane1.setEnabledAt(0, false);
+                        mf.jTabbedPane1.setEnabledAt(1, false);
+                        mf.jTabbedPane1.setSelectedIndex(2);
+
+                        StringBuilder message = new StringBuilder("<html>");
+                        message.append("<p>I see a lot of blanks on this here board... Kid, you gotta do something about it.</p>");
+                        message.append("<p>Have at least one active Oolite version. You need one. It's pretty much compulsory.<br/>");
+                        message.append("Hit the Add button and fill in the form, at least once to add Oolite versions.<br/>");
+                        message.append("Don't forget to select one of them, then hit the Activate button.</p>");
+                        message.append("<p>Then you can juggle OXPs or start the game. And maybe touch the Save button once in a while.</p>");
+                        message.append("</html>");
+
+                        MrGimlet.showMessage(mf, message.toString());
+                    } else {
+                        gvc.maybeAnnounceUpdate(mf);
+                    }
+
+                } catch (InterruptedException e) {
+                    log.fatal("Interrupted", e);
+                    Thread.currentThread().interrupt();
+                } catch (Exception e) {
+                    log.fatal("Could not initialize UI", e);
+                    JOptionPane.showMessageDialog(null, e.getClass().getName() + ":\n" + e.getMessage(), "Fatal Error", JOptionPane.ERROR_MESSAGE);
+                    System.exit(1);
+                }
+            }
+
+        }.execute();
+        
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
