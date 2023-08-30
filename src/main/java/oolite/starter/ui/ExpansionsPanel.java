@@ -225,6 +225,23 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
                     }
                 });
             } else {
+                popupMenu.add(new AbstractAction("Show in FileSystem") {
+                    @Override
+                    public void actionPerformed(ActionEvent ae) {
+                        try {
+                            Desktop.getDesktop().browseFileDirectory(row.getLocalFile());
+                            return;
+                        } catch (UnsupportedOperationException e) {
+                            log.warn("Could not open file", e);
+                        }
+                        try {
+                            Desktop.getDesktop().open(row.getLocalFile());
+                            return;
+                        } catch (Exception e) {
+                            log.warn("Could not open file", e);
+                        }
+                    }
+                });
                 if (!row.isNested()) {
                     if (row.isEnabled()) {
                         popupMenu.add(new AbstractAction("Disable") {
@@ -389,7 +406,6 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jPopupMenu1 = new javax.swing.JPopupMenu();
         jpToolbar = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
@@ -406,8 +422,6 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
         pnStatus = new javax.swing.JPanel();
-
-        jPopupMenu1.setComponentPopupMenu(jPopupMenu1);
 
         setName("OXPs/OXZs"); // NOI18N
         setLayout(new java.awt.BorderLayout());
@@ -713,7 +727,6 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
-    private javax.swing.JPopupMenu jPopupMenu1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JTable jTable1;
