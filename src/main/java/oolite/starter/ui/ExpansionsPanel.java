@@ -387,7 +387,7 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
 
     @Override
     public void activatedInstallation(Installation installation) {
-        log.error("activatedInstallation({})", installation);
+        log.debug("activatedInstallation({})", installation);
         
         try {
             update();
