@@ -8,6 +8,10 @@ import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Desktop;
 import java.awt.Dimension;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
+import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -18,13 +22,16 @@ import java.time.format.FormatStyle;
 import java.time.temporal.TemporalAccessor;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.AbstractAction;
 import javax.swing.DefaultListModel;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.JTable;
 import javax.swing.RowFilter;
 import javax.swing.RowSorter;
@@ -108,6 +115,7 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
             if (!lse.getValueIsAdjusting()) {
                 // we have a final value - let's render it
                 showDetailsOfSelection();
+                setPopupMenu();
             }
         });
         jTable1.setDefaultRenderer(Object.class, new AnnotationRenderer(jTable1.getDefaultRenderer(Object.class), Configuration.COLOR_ATTENTION));
@@ -147,7 +155,7 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
             if (!"".equals(txtFilterText.getText())) {
                 try {
                     String re = "(?i)" + txtFilterText.getText();
-                    log.warn("re={}", re);
+                    log.trace("re={}", re);
                     filters.add(RowFilter.regexFilter(re));
                 } catch (Exception e) {
                     log.info("Cannot apply regexp filter", e);
@@ -161,6 +169,10 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
         updateBadges();
     }
     
+    /**
+     * Sets the details panel data to the selected row.
+     * Usually call this when the selected row changed.
+     */
     private void showDetailsOfSelection() {
         int rowIndex = jTable1.getSelectedRow();
         if (rowIndex >=0) {
@@ -171,7 +183,100 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
             ep.setData(null);
         }
     }
-    
+
+
+    /**
+     * Sets the JTable popup menu.
+     * Usually call this when the selected row changed.
+     */
+    private void setPopupMenu() {
+        JPopupMenu popupMenu = new JPopupMenu();
+        int rowIndex = jTable1.getSelectedRow();
+        if (rowIndex >=0) {
+            rowIndex = jTable1.convertRowIndexToModel(rowIndex);
+            final Expansion row = model.getRow(rowIndex);
+            
+            if (row.isOnline()) {
+                popupMenu.add(new AbstractAction("Copy Download URL") {
+                    @Override
+                    public void actionPerformed(ActionEvent ae) {
+                        StringSelection stringSelection = new StringSelection(row.getDownloadUrl());
+                        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+                        clipboard.setContents(stringSelection, null);
+                        log.warn("Download URL copied to clipboard");
+                        
+                        // todo: add user notification, some balloon popup
+                    }
+                });
+            }
+            if (!row.isLocal()) {
+                popupMenu.add(new AbstractAction("Install") {
+                    @Override
+                    public void actionPerformed(ActionEvent ae) {
+                        // todo: Run in background thread
+                        // todo: notify user about result
+                        try {
+                            row.install();
+                            setPopupMenu();
+                        } catch (Exception e) {
+                            log.error("Could not install {}", row);
+                        }
+                    }
+                });
+            } else {
+                if (!row.isNested()) {
+                    if (row.isEnabled()) {
+                        popupMenu.add(new AbstractAction("Disable") {
+                            @Override
+                            public void actionPerformed(ActionEvent ae) {
+                                // todo: Run in background thread
+                                // todo: notify user about result
+                                try {
+                                    row.disable();
+                                    setPopupMenu();
+                                } catch (Exception e) {
+                                    log.error("Could not disable {}", row);
+                                }
+                            }
+                        });
+                    } else {
+                        popupMenu.add(new AbstractAction("Enable") {
+                            @Override
+                            public void actionPerformed(ActionEvent ae) {
+                                // todo: Run in background thread
+                                // todo: notify user about result
+                                try {
+                                    row.enable();
+                                    setPopupMenu();
+                                } catch (Exception e) {
+                                    log.error("Could not enable {}", row);
+                                }
+                            }
+                        });
+                    }
+                }
+
+                if (popupMenu.getComponentCount()>0) {
+                    popupMenu.add(new JSeparator());
+                }
+                popupMenu.add(new AbstractAction("Delete") {
+                    @Override
+                    public void actionPerformed(ActionEvent ae) {
+                        // todo: Run in background thread
+                        // todo: notify user about result
+                        try {
+                            row.remove();
+                            setPopupMenu();
+                        } catch (Exception e) {
+                            log.error("Could not remove {}", row);
+                        }
+                    }
+                });
+            }
+        }
+        jTable1.setComponentPopupMenu(popupMenu);
+    }
+
     /**
      * Sets the Oolite instance to run the savegames from.
      * 
@@ -283,6 +388,7 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jPopupMenu1 = new javax.swing.JPopupMenu();
         jpToolbar = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
@@ -297,8 +403,10 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
         btReload = new javax.swing.JButton();
         jSplitPane1 = new javax.swing.JSplitPane();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new MyJTable();
+        jTable1 = new javax.swing.JTable();
         pnStatus = new javax.swing.JPanel();
+
+        jPopupMenu1.setComponentPopupMenu(jPopupMenu1);
 
         setName("OXPs/OXZs"); // NOI18N
         setLayout(new java.awt.BorderLayout());
@@ -448,6 +556,7 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
 
         add(jpToolbar, java.awt.BorderLayout.PAGE_START);
 
+        jSplitPane1.setDividerSize(7);
         jSplitPane1.setResizeWeight(0.5);
         jSplitPane1.setOneTouchExpandable(true);
 
@@ -603,6 +712,7 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
+    private javax.swing.JPopupMenu jPopupMenu1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JTable jTable1;

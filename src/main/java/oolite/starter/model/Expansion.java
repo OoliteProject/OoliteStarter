@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import oolite.starter.Oolite;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -758,5 +760,17 @@ public class Expansion implements Comparable<Expansion> {
             result.add(er);
         }
         return result;
+    }
+
+    /**
+     * Returns true if this expansion is nested inside another expansion directory.
+     * 
+     * @return true if it is nested, false otherwise
+     */
+    public boolean isNested() {
+        Pattern p = Pattern.compile("\\.oxp.+\\.oxp", Pattern.CASE_INSENSITIVE);
+        String file = String.valueOf(getLocalFile());
+        Matcher m = p.matcher(file);
+        return m.find();
     }
 }

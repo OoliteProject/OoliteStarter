@@ -227,6 +227,7 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
 
         add(jPanel2, java.awt.BorderLayout.PAGE_START);
 
+        jSplitPane1.setDividerSize(7);
         jSplitPane1.setOneTouchExpandable(true);
 
         jScrollPane1.setMinimumSize(new java.awt.Dimension(300, 16));
