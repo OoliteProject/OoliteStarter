@@ -20,6 +20,7 @@
     <Logger level="info" name="oolite.starter.Configuration"/>
     <Logger level="warn" name="oolite.starter.Oolite"/>
     <Logger level="info" name="oolite.starter.GithubVersionChecker"/>
+    <Logger level="info" name="oolite.starter.MainFrame"/>
     <Logger level="warn" name="oolite.starter.model.ProcessData"/>
     <Logger level="info" name="oolite.starter.ui.AnnotationRenderer"/>
     <Logger level="info" name="oolite.starter.ui.ExpansionsPanel"/>
@@ -27,12 +28,13 @@
     <Logger level="warn" name="oolite.starter.ui.InstallationTableModel"/>
     <Logger level="warn" name="oolite.starter.ui.InstallationForm"/>
     <Logger level="info" name="oolite.starter.ui.InstallationsPanel"/>
-    <Logger level="info" name="oolite.starter.ui.MyJTable"/>
+    <Logger level="info" name="oolite.starter.ui.MrGimlet"/>
     <Logger level="warn" name="oolite.starter.ui.ScanOolitesSwingWorker"/>
     <Logger level="info" name="oolite.starter.ui.SplashPanel"/>
     <Logger level="info" name="oolite.starter.ui.StartGamePanel"/>
     <Logger level="info" name="oolite.starter.ui.OoliteFileChooserAccessory"/>
     <Logger level="warn" name="oolite.starter.util.PlistUtil"/>
+    <Logger level="info" name="oolite.starter.ui.Util"/>
     <Logger level="warn" name="oolite.starter.util.XmlUtil"/>
     <Logger level="warn" name="oolite.starter.XmlUtil"/>
     

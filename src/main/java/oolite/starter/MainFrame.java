@@ -56,7 +56,7 @@ public class MainFrame extends javax.swing.JFrame {
             String msg = String.format("<html><p>Heho, Kid! You've got a problem here that is technical, not financial.</p><p>The configuration file %s was not found.</p><p>I’m a busy frog, I can’t stay here all day to watching you poke buttons. So let's use defaults.</p></html>", confFile.getAbsolutePath());
             log.warn(msg);
             
-            MrGimlet.showMessage(null, msg);
+            MrGimlet.showMessage(null, msg, 0);
             
             configuration = new Configuration();
         }
@@ -263,20 +263,22 @@ public class MainFrame extends javax.swing.JFrame {
                         message.append("Hit the Scan or Add button and fill in the form, at least once to add Oolite versions.");
                         message.append("</html>");
 
-                        MrGimlet.showMessage(mf, message.toString());
+                        MrGimlet.showMessage(mf.getRootPane(), message.toString(), 0);
                     } else if (mf.configuration.getActiveInstallation() == null) {
                         // point user to creating an active installation
+                        mf.jTabbedPane1.setEnabledAt(0, false);
+                        mf.jTabbedPane1.setEnabledAt(1, false);
                         mf.jTabbedPane1.setSelectedIndex(2);
 
                         StringBuilder message = new StringBuilder("<html>");
-                        message.append("<p>Much better, son. But still I see a lot of blanks... Kid, now do something about it.</p>");
+                        message.append("<p>Much better, son. But there is still something to do:</p>");
                         message.append("<p>Decide for one of your Oolite versions. Otherwise this Starter would not know what to do.<br/>");
                         message.append("<p>Choose one from the list and click Select.");
                         message.append("</html>");
  
-                        MrGimlet.showMessage(mf, message.toString());
+                        MrGimlet.showMessage(mf.getRootPane(), message.toString(), 0);
                     } else {
-                        gvc.maybeAnnounceUpdate(mf);
+                        gvc.maybeAnnounceUpdate(mf.getRootPane());
                     }
 
                 } catch (InterruptedException e) {

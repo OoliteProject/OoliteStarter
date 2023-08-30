@@ -159,7 +159,7 @@ public class GithubVersionChecker {
             Semver latest = getLatestVersion();
             if (latest != null) {
                 String message = getHtmlUserMessage(latest);
-                EventQueue.invokeLater(() -> MrGimlet.showMessage(parentComponent, message) );
+                EventQueue.invokeLater(() -> MrGimlet.showMessage(parentComponent, message, 10000) );
             }
         } catch (IOException e) {
             log.info("Could not check for update", e);

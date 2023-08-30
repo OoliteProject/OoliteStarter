@@ -285,7 +285,7 @@ public class ExpansionPanel extends javax.swing.JPanel implements PropertyChange
 
         jScrollPane4.setViewportView(lsOptional);
 
-        btWiki.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/info_FILL0_wght400_GRAD0_opsz24.png"))); // NOI18N
+        btWiki.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/OoliteIcon24.png"))); // NOI18N
         btWiki.setText("Wiki");
         btWiki.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         btWiki.addActionListener(new java.awt.event.ActionListener() {

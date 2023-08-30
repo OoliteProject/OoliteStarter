@@ -201,12 +201,18 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
                     @Override
                     public void actionPerformed(ActionEvent ae) {
                         String s = row.getDownloadUrl();
-                        StringSelection stringSelection = new StringSelection(s);
+
                         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-                        clipboard.setContents(stringSelection, null);
-                        log.info("Download URL '{}' copied to clipboard", s);
-                        
-                        // todo: add user notification, some balloon popup
+                        if (s != null) {
+                            StringSelection stringSelection = new StringSelection(s);
+                            clipboard.setContents(stringSelection, null);
+                            log.info("Download URL '{}' copied to clipboard", s);
+                            
+                            MrGimlet.showMessage(SwingUtilities.getRootPane(jTable1), "In your pocket!");
+                        } else {
+                            clipboard.setContents(new StringSelection(""), null);
+                            MrGimlet.showMessage(jTable1, "There is no URL to copy, son.");
+                        }
                     }
                 });
             }
@@ -215,12 +221,13 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
                     @Override
                     public void actionPerformed(ActionEvent ae) {
                         // todo: Run in background thread
-                        // todo: notify user about result
                         try {
                             row.install();
+                            MrGimlet.showMessage(btExport, "Installation triggered.");
                             setPopupMenu();
                         } catch (Exception e) {
                             log.error("Could not install {}", row);
+                            MrGimlet.showMessage(btExport, "Could not install. Check logfile.", 0);
                         }
                     }
                 });
@@ -251,9 +258,11 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
                                 // todo: notify user about result
                                 try {
                                     row.disable();
+                                    MrGimlet.showMessage(btExport, "Expansion disabled.");
                                     setPopupMenu();
                                 } catch (Exception e) {
                                     log.error("Could not disable {}", row);
+                                    MrGimlet.showMessage(btExport, "Could not disable. Check logfile.", 0);
                                 }
                             }
                         });
@@ -262,12 +271,13 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
                             @Override
                             public void actionPerformed(ActionEvent ae) {
                                 // todo: Run in background thread
-                                // todo: notify user about result
                                 try {
                                     row.enable();
+                                    MrGimlet.showMessage(btExport, "Expansion enabled.");
                                     setPopupMenu();
                                 } catch (Exception e) {
                                     log.error("Could not enable {}", row);
+                                    MrGimlet.showMessage(btExport, "Could not enable. Check logfile.", 0);
                                 }
                             }
                         });
@@ -281,12 +291,13 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
                     @Override
                     public void actionPerformed(ActionEvent ae) {
                         // todo: Run in background thread
-                        // todo: notify user about result
                         try {
                             row.remove();
+                            MrGimlet.showMessage(btExport, "Expansion removed.");
                             setPopupMenu();
                         } catch (Exception e) {
                             log.error("Could not remove {}", row);
+                            MrGimlet.showMessage(btExport, "Could not remove. Check logfile.", 0);
                         }
                     }
                 });
