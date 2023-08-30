@@ -816,20 +816,20 @@ public class Oolite implements PropertyChangeListener {
         List<Expansion> remoteList = getOnlineExpansions();
         
         localList.addAll(remoteList);
-        for (Expansion local: localList) {
-            if (resultList.contains(local)) {
-                int index = resultList.indexOf(local);
-                Expansion remote = resultList.get(index);
+        for (Expansion current: localList) {
+            if (resultList.contains(current)) {
+                int index = resultList.indexOf(current);
+                Expansion previous = resultList.get(index);
                 
-                remote.setOnline( remote.isOnline() || local.isOnline());
-                if (local.getLocalFile() != null) {
-                    remote.setLocalFile(local.getLocalFile());
+                previous.setOnline( previous.isOnline() || current.isOnline());
+                if (current.getLocalFile() != null) {
+                    previous.setLocalFile(current.getLocalFile());
                 }
-//                if (local.getDownloadUrl() != null) {
-//                    remote.setDownloadUrl(local.getDownloadUrl());
-//                }
+                if (current.getDownloadUrl() != null) {
+                    previous.setDownloadUrl(current.getDownloadUrl());
+                }
             } else {
-                resultList.add(local);
+                resultList.add(current);
             }
         }
         
@@ -910,6 +910,7 @@ public class Oolite implements PropertyChangeListener {
                         if (expansion != null) {
                             expansion.setOolite(this);
                             expansion.setLocalFile(f);
+                            expansion.setFileSize(f.length());
                             result.add(expansion);
                         }
                     } catch (Exception e) {

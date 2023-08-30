@@ -200,10 +200,11 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
                 popupMenu.add(new AbstractAction("Copy Download URL") {
                     @Override
                     public void actionPerformed(ActionEvent ae) {
-                        StringSelection stringSelection = new StringSelection(row.getDownloadUrl());
+                        String s = row.getDownloadUrl();
+                        StringSelection stringSelection = new StringSelection(s);
                         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
                         clipboard.setContents(stringSelection, null);
-                        log.warn("Download URL copied to clipboard");
+                        log.info("Download URL '{}' copied to clipboard", s);
                         
                         // todo: add user notification, some balloon popup
                     }
