@@ -51,6 +51,7 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
+import oolite.starter.model.Command;
 import oolite.starter.model.Expansion;
 import oolite.starter.model.ExpansionReference;
 import oolite.starter.model.Installation;
@@ -730,7 +731,7 @@ public class Oolite implements PropertyChangeListener {
     public Expansion createExpansionFromManifest(InputStream manifest, String sourceName) throws IOException {
         log.debug("createExpansion({}, {})", manifest, sourceName);
         // parse plist, then create Expansion from that
-        PlistParser.DictionaryContext dc = PlistUtil.parsePListDict(manifest, sourceName);
+        PlistParser.DictionaryContext dc = (PlistParser.DictionaryContext)PlistUtil.parsePListDict(manifest, sourceName);
         return createExpansionFromManifest(dc);
     }
     
@@ -789,7 +790,7 @@ public class Oolite implements PropertyChangeListener {
             requires.reset();
             try {
                 // parse plist, then create Expansion from that
-                PlistParser.DictionaryContext dc = PlistUtil.parsePListDict(requires, sourceName);
+                PlistParser.DictionaryContext dc = (PlistParser.DictionaryContext)PlistUtil.parsePListDict(requires, sourceName);
                 Expansion expansion = createExpansionFromRequiresPlist(dc);
                 expansion.setIdentifier(oxp);
                 expansion.setTitle(oxpTitle);
@@ -859,7 +860,7 @@ public class Oolite implements PropertyChangeListener {
         for (URL url: configuration.getExpansionManagerURLs()) {
             log.debug("downloading {}", url);
             try (InputStream in = url.openStream()) {
-                PlistParser.ListContext lc = PlistUtil.parsePListList(in, url.toString());
+                PlistParser.ListContext lc = (PlistParser.ListContext)PlistUtil.parsePListList(in, url.toString());
                 
                 for (PlistParser.ValueContext vc: lc.value()) {
                     Expansion expansion = createExpansion(vc);
@@ -1173,6 +1174,10 @@ public class Oolite implements PropertyChangeListener {
      * 
      * @param source the file to read from
      * @param expansions the expansions to work on
+     * 
+     * @deprecated Use the new separate functions to read a file and create
+     * references, then translate it into a command line, finally inject the 
+     * command list into the ExpansionManager
      */
     public void setEnabledExpansions(File source, List<Expansion> expansions, ProgressMonitor pm) throws IOException, ParserConfigurationException, SAXException, XPathExpressionException {
         pm.setMinimum(0);
@@ -1253,9 +1258,52 @@ public class Oolite implements PropertyChangeListener {
     }
     
     /**
+     * Parses the list of expansions from a expansion set xml file
+     * and returns a list of expansion references.
+     * 
+     * @param source the file to read from
+     */
+    public NodeList parseExpansionSet(File source) throws ParserConfigurationException, SAXException, IOException, XPathExpressionException {
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        // to be compliant, completely disable DOCTYPE declaration:
+        dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+        // or completely disable external entities declarations:
+        dbf.setFeature("http://xml.org/sax/features/external-general-entities", false);
+        dbf.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+        // or prohibit the use of all protocols by external entities:
+        dbf.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+        dbf.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
+        // or disable entity expansion but keep in mind that this doesn't prevent fetching external entities
+        // and this solution is not correct for OpenJDK < 13 due to a bug: https://bugs.openjdk.java.net/browse/JDK-8206132
+        dbf.setExpandEntityReferences(false);
+        
+        DocumentBuilder db = dbf.newDocumentBuilder();
+        Document doc = db.parse(source);
+        XPath xpath = XPathFactory.newInstance().newXPath();
+        NodeList nl = (NodeList)xpath.evaluate("/ExpansionList/Expansion", doc, XPathConstants.NODESET);
+        
+        return nl;
+    }
+    
+    /**
+     * Builds a list of commands that resembles the difference between the
+     * current status of expansions and the target.
+     * 
+     * @param expansions where we are
+     * @param target where we want to be
+     * @return the list of commands to get there
+     */
+    public List<Command> buildCommandList(List<Expansion> expansions, NodeList target) {
+        // todo: implementation required
+        return null;
+    }
+    
+    /**
      * Writes the list of currently enabled expansions as xml file.
      * 
      * @param destination the file to write to
+     * 
+     * @see setEnabledExpansions
      */
     public void exportEnabledExpansions(File destination) throws IOException, ParserConfigurationException, TransformerException {
         List<Expansion> expansions = getAllExpansions();
@@ -1683,7 +1731,7 @@ public class Oolite implements PropertyChangeListener {
         log.debug("getVersionFromManifest({})", f);
         
         try (InputStream in = new FileInputStream(f)) {
-            PlistParser.DictionaryContext dc = PlistUtil.parsePListDict(in, f.getAbsolutePath());
+            PlistParser.DictionaryContext dc = (PlistParser.DictionaryContext)PlistUtil.parsePListDict(in, f.getAbsolutePath());
 
             for (PlistParser.KeyvaluepairContext kvc: dc.keyvaluepair()) {
                 String key = kvc.STRING().getText();
@@ -1987,4 +2035,5 @@ public class Oolite implements PropertyChangeListener {
                         .replace("[", "%5B")
                         .replace("]", "%5D");
     }
+    
 }

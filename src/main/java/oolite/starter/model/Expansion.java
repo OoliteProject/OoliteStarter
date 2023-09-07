@@ -697,9 +697,11 @@ public class Expansion implements Comparable<Expansion> {
      */
     public List<ExpansionReference> getRequiredRefs() {
         List<ExpansionReference> result = new ArrayList<>();
-        for (String name: getRequiresOxps()) {
-            ExpansionReference er = oolite.getExpansionReference(name);
-            result.add(er);
+        if (getRequiresOxps() != null) {
+            for (String name: getRequiresOxps()) {
+                ExpansionReference er = oolite.getExpansionReference(name);
+                result.add(er);
+            }
         }
         return result;
     }

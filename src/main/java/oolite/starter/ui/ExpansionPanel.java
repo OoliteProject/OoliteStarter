@@ -13,7 +13,9 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.border.LineBorder;
 import oolite.starter.Configuration;
+import oolite.starter.ExpansionManager;
 import oolite.starter.Oolite;
+import oolite.starter.model.Command;
 import oolite.starter.model.Expansion;
 import oolite.starter.model.ExpansionReference;
 import org.apache.logging.log4j.LogManager;
@@ -404,7 +406,7 @@ public class ExpansionPanel extends javax.swing.JPanel implements PropertyChange
     private void btInstallActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btInstallActionPerformed
         log.debug("btInstallActionPerformed({})", evt);
         try {
-            new ExpansionWorker(data, ExpansionWorker.Action.INSTALL, this).execute();
+            ExpansionManager.getInstance().addCommand(new Command(Command.Action.install, data));
         } catch (Exception e) {
             log.error("Could not trigger install", e);
         }
@@ -413,7 +415,7 @@ public class ExpansionPanel extends javax.swing.JPanel implements PropertyChange
     private void btEnableActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btEnableActionPerformed
         log.debug("btEnableActionPerformed({})", evt);
         try {
-            new ExpansionWorker(data, ExpansionWorker.Action.ENABLE, this).execute();
+            ExpansionManager.getInstance().addCommand(new Command(Command.Action.enable, data));
         } catch (Exception e) {
             log.error("Could not trigger enable", e);
         }
@@ -422,7 +424,7 @@ public class ExpansionPanel extends javax.swing.JPanel implements PropertyChange
     private void btDisableActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btDisableActionPerformed
         log.debug("btDisableActionPerformed({})", evt);
         try {
-            new ExpansionWorker(data, ExpansionWorker.Action.DISABLE, this).execute();
+            ExpansionManager.getInstance().addCommand(new Command(Command.Action.disable, data));
         } catch (Exception e) {
             log.error("Could not trigger disable", e);
         }
@@ -431,12 +433,12 @@ public class ExpansionPanel extends javax.swing.JPanel implements PropertyChange
     private void btRemoveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btRemoveActionPerformed
         log.debug("btRemoveActionPerformed({})", evt);
         
-        if (!data.isOnline() && JOptionPane.showConfirmDialog(btRemove, "Great! Getting rid of stuff!! But are you sure?", "Delete...", JOptionPane.YES_NO_OPTION) != JOptionPane.YES_OPTION) {
+        if (!data.isOnline() && JOptionPane.showConfirmDialog(btRemove, "Great! Getting rid of stuff!! But there is no way back. Are you sure?", "Delete...", JOptionPane.YES_NO_OPTION) != JOptionPane.YES_OPTION) {
             return;
         }
         
         try {
-            new ExpansionWorker(data, ExpansionWorker.Action.REMOVE, this).execute();
+            ExpansionManager.getInstance().addCommand(new Command(Command.Action.delete, data));
         } catch (Exception e) {
             log.error("Could not trigger remove", e);
         }

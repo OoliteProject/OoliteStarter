@@ -80,9 +80,12 @@ public class MainFrame extends javax.swing.JFrame {
         sgp.setOolite(oolite);
         jTabbedPane1.add(sgp);
 
+        ExpansionManager em = ExpansionManager.getInstance();
+        
         ExpansionsPanel ep = new ExpansionsPanel();
         ep.setOolite(oolite);
         jTabbedPane1.add(ep);
+        em.addExpansionManagerListener(ep);
 
         InstallationsPanel ip = new InstallationsPanel();
         ip.setConfiguration(configuration);

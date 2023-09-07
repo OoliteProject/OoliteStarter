@@ -22,8 +22,10 @@ import java.time.format.FormatStyle;
 import java.time.temporal.TemporalAccessor;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Queue;
 import javax.swing.AbstractAction;
 import javax.swing.DefaultListModel;
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -44,22 +46,28 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableRowSorter;
 import oolite.starter.Configuration;
+import oolite.starter.ExpansionManager;
 import oolite.starter.Oolite;
+import oolite.starter.model.Command;
 import oolite.starter.model.Expansion;
 import oolite.starter.model.ExpansionReference;
 import oolite.starter.model.Installation;
 import oolite.starter.model.ProcessData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.w3c.dom.NodeList;
 
 /**
  *
  * @author hiran
  */
-public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.OoliteListener {
+public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.OoliteListener, ExpansionManager.ExpansionManagerListener {
     private static final Logger log = LogManager.getLogger();
     
     private static final String EXPANSIONSPANEL_COULD_NOT_RELOAD = "Could not reload";
+    
+    private ExpansionManagerPanel emp;
+    private JDialog emd;
 
     class MyRowStatusFilter extends RowFilter<ExpansionsTableModel, Integer> {
         
@@ -145,10 +153,39 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
 
         ep = new ExpansionPanel();
         jSplitPane1.setRightComponent(ep);
+        
+        setPopupMenu();
+        
+        txtEMStatus.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (emp == null) {
+                    emp = new ExpansionManagerPanel();
+                    emp.setData(ExpansionManager.getInstance());
+                    
+                    if (emd != null) {
+                        emd.dispose();
+                        emd = null;
+                    }
+                    
+                }
+                
+                if (emd == null) {
+                    emd = new JDialog(SwingUtilities.windowForComponent(ExpansionsPanel.this));
+                    emd.getContentPane().add(emp);
+                    emd.pack();
+                    emd.setLocationRelativeTo(SwingUtilities.windowForComponent(ExpansionsPanel.this));
+                }
+                
+                emd.setVisible(true);
+                emd.requestFocus();
+            }
+
+        });
     }
     
     private void applyFilter() {
-        log.warn("applyFilter()");
+        log.debug("applyFilter()");
         if (trw != null) {
             List<RowFilter<ExpansionsTableModel, Integer>> filters = new ArrayList<>();
             filters.add(new MyRowStatusFilter(String.valueOf(cbFilterMode.getSelectedItem()), txtFilterText.getText()));
@@ -220,15 +257,19 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
                 popupMenu.add(new AbstractAction("Install") {
                     @Override
                     public void actionPerformed(ActionEvent ae) {
-                        // todo: Run in background thread
-                        try {
-                            row.install();
-                            MrGimlet.showMessage(btExport, "Installation triggered.");
-                            setPopupMenu();
-                        } catch (Exception e) {
-                            log.error("Could not install {}", row);
-                            MrGimlet.showMessage(btExport, "Could not install. Check logfile.", 0);
-                        }
+                        
+                        Command command = new Command(Command.Action.install, row);
+                        ExpansionManager.getInstance().addCommand(command);
+                        
+//                        // todo: Run in background thread
+//                        try {
+//                            row.install();
+//                            MrGimlet.showMessage(btExport, "Installation triggered.");
+//                            setPopupMenu();
+//                        } catch (Exception e) {
+//                            log.error("Could not install {}", row, e);
+//                            MrGimlet.showMessage(btExport, "Could not install. Check logfile.", 0);
+//                        }
                     }
                 });
             } else {
@@ -255,30 +296,37 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
                             @Override
                             public void actionPerformed(ActionEvent ae) {
                                 // todo: Run in background thread
-                                // todo: notify user about result
-                                try {
-                                    row.disable();
-                                    MrGimlet.showMessage(btExport, "Expansion disabled.");
-                                    setPopupMenu();
-                                } catch (Exception e) {
-                                    log.error("Could not disable {}", row);
-                                    MrGimlet.showMessage(btExport, "Could not disable. Check logfile.", 0);
-                                }
+                                
+                                Command command = new Command(Command.Action.disable, row);
+                                ExpansionManager.getInstance().addCommand(command);
+                        
+//                                // todo: notify user about result
+//                                try {
+//                                    row.disable();
+//                                    MrGimlet.showMessage(btExport, "Expansion disabled.");
+//                                    setPopupMenu();
+//                                } catch (Exception e) {
+//                                    log.error("Could not disable {}", row, e);
+//                                    MrGimlet.showMessage(btExport, "Could not disable. Check logfile.", 0);
+//                                }
                             }
                         });
                     } else {
                         popupMenu.add(new AbstractAction("Enable") {
                             @Override
                             public void actionPerformed(ActionEvent ae) {
-                                // todo: Run in background thread
-                                try {
-                                    row.enable();
-                                    MrGimlet.showMessage(btExport, "Expansion enabled.");
-                                    setPopupMenu();
-                                } catch (Exception e) {
-                                    log.error("Could not enable {}", row);
-                                    MrGimlet.showMessage(btExport, "Could not enable. Check logfile.", 0);
-                                }
+                                
+                                Command command = new Command(Command.Action.enable, row);
+                                ExpansionManager.getInstance().addCommand(command);
+                        
+//                                try {
+//                                    row.enable();
+//                                    MrGimlet.showMessage(btExport, "Expansion enabled.");
+//                                    setPopupMenu();
+//                                } catch (Exception e) {
+//                                    log.error("Could not enable {}", row, e);
+//                                    MrGimlet.showMessage(btExport, "Could not enable. Check logfile.", 0);
+//                                }
                             }
                         });
                     }
@@ -290,15 +338,18 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
                 popupMenu.add(new AbstractAction("Delete") {
                     @Override
                     public void actionPerformed(ActionEvent ae) {
-                        // todo: Run in background thread
-                        try {
-                            row.remove();
-                            MrGimlet.showMessage(btExport, "Expansion removed.");
-                            setPopupMenu();
-                        } catch (Exception e) {
-                            log.error("Could not remove {}", row);
-                            MrGimlet.showMessage(btExport, "Could not remove. Check logfile.", 0);
-                        }
+                                
+                        Command command = new Command(Command.Action.delete, row);
+                        ExpansionManager.getInstance().addCommand(command);
+                        
+//                        try {
+//                            row.remove();
+//                            MrGimlet.showMessage(btExport, "Expansion removed.");
+//                            setPopupMenu();
+//                        } catch (Exception e) {
+//                            log.error("Could not remove {}", row, e);
+//                            MrGimlet.showMessage(btExport, "Could not remove. Check logfile.", 0);
+//                        }
                     }
                 });
             }
@@ -416,6 +467,7 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        java.awt.GridBagConstraints gridBagConstraints;
 
         jpToolbar = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
@@ -432,7 +484,9 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
         jSplitPane1 = new javax.swing.JSplitPane();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
+        jPanel1 = new javax.swing.JPanel();
         pnStatus = new javax.swing.JPanel();
+        txtEMStatus = new javax.swing.JLabel();
 
         setName("OXPs/OXZs"); // NOI18N
         setLayout(new java.awt.BorderLayout());
@@ -577,7 +631,7 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
                         .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jPanel3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(0, 6, Short.MAX_VALUE))
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
         add(jpToolbar, java.awt.BorderLayout.PAGE_START);
@@ -604,8 +658,24 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
 
         add(jSplitPane1, java.awt.BorderLayout.CENTER);
 
+        jPanel1.setLayout(new java.awt.GridBagLayout());
+
         pnStatus.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
-        add(pnStatus, java.awt.BorderLayout.PAGE_END);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.weightx = 1.0;
+        jPanel1.add(pnStatus, gridBagConstraints);
+
+        txtEMStatus.setText("Ready");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        jPanel1.add(txtEMStatus, gridBagConstraints);
+
+        add(jPanel1, java.awt.BorderLayout.PAGE_END);
     }// </editor-fold>//GEN-END:initComponents
 
     private void cbFilterModeItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbFilterModeItemStateChanged
@@ -624,8 +694,16 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
             jfc.addChoosableFileFilter(filter);
             jfc.setFileFilter(filter);
             if (jfc.showDialog(this, "Activate") == JFileChooser.APPROVE_OPTION) {
-                update();
-                new ActivationWorker(oolite, expansions, jfc.getSelectedFile(), this).execute();
+                log.warn("activating {}", jfc.getSelectedFile());
+
+                // todo: create a plan and show it
+                NodeList nl = oolite.parseExpansionSet(jfc.getSelectedFile());
+                List<Command> commands = oolite.buildCommandList(expansions, nl);
+                ExpansionManager.getInstance().addCommands(commands);
+
+                // if approved, inject it for execution
+//                update();
+//                new ActivationWorker(oolite, expansions, jfc.getSelectedFile(), this).execute();
             }
         } catch (Exception e) {
             log.error("Could not trigger activate", e);
@@ -735,6 +813,7 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
     private javax.swing.JButton btValidate;
     private javax.swing.JComboBox<String> cbFilterMode;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
@@ -744,6 +823,7 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
     private javax.swing.JPanel jpToolbar;
     private javax.swing.JLabel lbFilterText;
     private javax.swing.JPanel pnStatus;
+    private javax.swing.JLabel txtEMStatus;
     private javax.swing.JTextField txtFilterText;
     // End of variables declaration//GEN-END:variables
 
@@ -756,4 +836,12 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
     public void terminated() {
         SwingUtilities.invokeLater(this::update);
     }
+
+    @Override
+    public void updateStatus(ExpansionManager.Status status, Queue<Command> queue) {
+        log.warn("updateStatus(...)");
+        String s = String.valueOf(status) + " (" + String.valueOf(queue.size()) + ")";
+        txtEMStatus.setText(s);
+    }
+    
 }
