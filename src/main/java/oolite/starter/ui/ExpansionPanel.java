@@ -227,7 +227,7 @@ public class ExpansionPanel extends javax.swing.JPanel implements PropertyChange
             }
         });
 
-        btEnable.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/check_circle_FILL0_wght400_GRAD0_opsz24.png"))); // NOI18N
+        btEnable.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/switches_enable_FILL0_wght400_GRAD0_opsz24.png"))); // NOI18N
         btEnable.setText("Enable");
         btEnable.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         btEnable.addActionListener(new java.awt.event.ActionListener() {
@@ -236,7 +236,7 @@ public class ExpansionPanel extends javax.swing.JPanel implements PropertyChange
             }
         });
 
-        btDisable.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/unpublished_FILL0_wght400_GRAD0_opsz24.png"))); // NOI18N
+        btDisable.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/switches_disable_FILL0_wght400_GRAD0_opsz24.png"))); // NOI18N
         btDisable.setText("Disable");
         btDisable.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         btDisable.addActionListener(new java.awt.event.ActionListener() {

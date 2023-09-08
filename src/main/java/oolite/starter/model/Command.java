@@ -16,7 +16,18 @@ public class Command extends SwingWorker<Result, Object> {
     private static final Logger log = LogManager.getLogger();
 
     public enum Action {
-        install, delete, enable, disable;
+        // install the expansion
+        install, 
+        // delete the expansion
+        delete, 
+        // enable the expansion
+        enable, 
+        // disable the expansion
+        disable, 
+        // we cannot resolve the expansion
+        unknown,
+        // we alreadz have the expansion
+        keep;
     }
     
     public enum Result {
@@ -36,10 +47,28 @@ public class Command extends SwingWorker<Result, Object> {
         this.action = action;
         this.expansion = expansion;
     }
+
+    /**
+     * Returns this command's action.
+     * 
+     * @return the action
+     */
+    public Action getAction() {
+        return action;
+    }
+
+    /**
+     * Returns this command's expansion.
+     * 
+     * @return the expansion
+     */
+    public Expansion getExpansion() {
+        return expansion;
+    }
     
     @Override
     protected Result doInBackground() throws Exception {
-        log.warn("doInBackground()");
+        log.debug("doInBackground()");
         
         switch (action) {
             case delete:
@@ -54,11 +83,19 @@ public class Command extends SwingWorker<Result, Object> {
             case install:
                 expansion.install();
                 break;
+            case unknown:
+                // nothing to do
+                break;
+            case keep:
+                // nothing to do
+                break;
             default:
                 throw new IllegalStateException(String.format("Unknown action %s", action));
         }
         
-        log.warn("doInBackground terminated");
+        Thread.sleep(4000);
+        
+        log.debug("doInBackground terminated");
         return Result.success;
     }
 

@@ -18,12 +18,14 @@
   <Loggers>
         <!-- error, warn, info, debug, trace -->
     <Logger level="info" name="oolite.starter.Configuration"/>
-    <Logger level="debug" name="oolite.starter.ExpansionManager"/>
+    <Logger level="info" name="oolite.starter.ExpansionManager"/>
     <Logger level="warn" name="oolite.starter.Oolite"/>
     <Logger level="info" name="oolite.starter.GithubVersionChecker"/>
     <Logger level="info" name="oolite.starter.MainFrame"/>
+    <Logger level="info" name="oolite.starter.model.Command"/>
     <Logger level="warn" name="oolite.starter.model.ProcessData"/>
     <Logger level="info" name="oolite.starter.ui.AnnotationRenderer"/>
+    <Logger level="info" name="oolite.starter.ui.DeferredDocumentChangeListener"/>
     <Logger level="info" name="oolite.starter.ui.ExpansionsPanel"/>
     <Logger level="warn" name="oolite.starter.ui.ExpansionReferenceCellRenderer"/>
     <Logger level="warn" name="oolite.starter.ui.InstallationTableModel"/>

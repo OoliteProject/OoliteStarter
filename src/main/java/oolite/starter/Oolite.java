@@ -1294,8 +1294,48 @@ public class Oolite implements PropertyChangeListener {
      * @return the list of commands to get there
      */
     public List<Command> buildCommandList(List<Expansion> expansions, NodeList target) {
-        // todo: implementation required
-        return null;
+        List<Command> result = new ArrayList<>();
+
+        TreeMap<String, String> enabledAddons = new TreeMap<>();
+        for (int i = 0; i < target.getLength(); i++) {
+            Element e = (Element)target.item(i);
+            enabledAddons.put(e.getAttribute(OOLITE_IDENTIFIER) + ":" + e.getAttribute(OOLITE_VERSION), e.getAttribute("downloadUrl"));
+        }
+
+        for (Expansion expansion: expansions) {
+            String i = expansion.getIdentifier() + ":" + expansion.getVersion();
+            if (expansion.isLocal() && expansion.isEnabled() && !enabledAddons.containsKey(i)) {
+                result.add(new Command(Command.Action.disable, expansion));
+                //expansion.disable();
+            }
+        }
+
+        // now install what may be MISSING
+        TreeMap<String, Expansion> expansionMap = new TreeMap<>();
+        for (Expansion expansion: expansions) { 
+            expansionMap.put(expansion.getIdentifier() + ":" + expansion.getVersion(), expansion);
+        }
+        for (String i: enabledAddons.keySet()) {
+            log.debug("checking {}", i);
+            Expansion expansion = expansionMap.get(i);
+            if (expansion == null) {
+                log.error("Don't know how to handle {}", i);
+                Expansion e = new Expansion();
+                e.setTitle(i);
+                result.add(new Command(Command.Action.unknown, e));
+            } else if (expansion.isLocal() && expansion.isEnabled()) {
+                // already here - do nothing
+                log.info("{} is already installed & enabled - doing nothing", i);
+                result.add(new Command(Command.Action.keep, expansion));
+            } else if (expansion.isLocal() && !expansion.isEnabled()) {
+                log.info("{} is already installed but disabled - enabling", i);
+                result.add(new Command(Command.Action.enable, expansion));
+            } else {
+                result.add(new Command(Command.Action.install, expansion));
+            }
+        }
+
+        return result;
     }
     
     /**

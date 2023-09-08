@@ -2,7 +2,7 @@
  */
 package oolite.starter.ui;
 
-import java.util.Queue;
+import java.util.List;
 import javax.swing.DefaultListModel;
 import oolite.starter.ExpansionManager;
 import oolite.starter.model.Command;
@@ -20,6 +20,7 @@ public class ExpansionManagerPanel extends javax.swing.JPanel implements Expansi
      */
     public ExpansionManagerPanel() {
         initComponents();
+        jList1.setCellRenderer(new CommandCellRenderer());
     }
     
     
@@ -39,7 +40,11 @@ public class ExpansionManagerPanel extends javax.swing.JPanel implements Expansi
             jTextField1.setText("");
             jList1.setModel(new DefaultListModel<Command>());
         } else {
-            jTextField1.setText(String.valueOf(data.getStatus()));
+            String s = String.valueOf(data.getStatus());
+            if (!data.getCommands().isEmpty()) {
+                s = s + " (" + data.getCommands().size() + ")";
+            }
+            jTextField1.setText(s);
             DefaultListModel dlm = new DefaultListModel<Command>();
             dlm.addAll(data.getCommands());
             jList1.setModel(dlm);
@@ -112,7 +117,7 @@ public class ExpansionManagerPanel extends javax.swing.JPanel implements Expansi
     // End of variables declaration//GEN-END:variables
 
     @Override
-    public void updateStatus(ExpansionManager.Status status, Queue<Command> queue) {
+    public void updateStatus(ExpansionManager.Status status, List<Command> queue) {
         update();
     }
 }

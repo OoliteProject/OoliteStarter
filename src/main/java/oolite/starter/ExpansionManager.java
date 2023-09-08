@@ -5,9 +5,6 @@ package oolite.starter;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Queue;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingDeque;
 import javax.swing.SwingWorker;
 import javax.swing.Timer;
 import oolite.starter.model.Command;
@@ -33,10 +30,10 @@ public class ExpansionManager {
          * @param status the status
          * @param queue the queue
          */
-        public void updateStatus(Status status, Queue<Command> queue);
+        public void updateStatus(Status status, List<Command> queue);
     }
 
-    private BlockingQueue<Command> commands;
+    private List<Command> commands;
     private List<ExpansionManagerListener> listeners;
     private Status status;
     private Timer timer;
@@ -46,10 +43,10 @@ public class ExpansionManager {
     
     private ExpansionManager() {
         listeners = new ArrayList<>();
-        commands = new LinkedBlockingDeque<>();
+        commands = new ArrayList<>();
         status = Status.Ready;
         
-        timer = new Timer(1000, (ae) -> {
+        timer = new Timer(333, (ae) -> {
             log.trace("ExpansionManager checking queue...");
             
             if (commands.isEmpty()) {
@@ -61,21 +58,15 @@ public class ExpansionManager {
                 synchronized(this) {
                     if (activeCommand == null) {
                         // triggerNext
-                        activeCommand = commands.peek();
+                        activeCommand = commands.get(0);
                         status = Status.Processing;
-                        log.warn("Triggering {}", activeCommand);
+                        log.debug("Triggering {}", activeCommand);
                         activeCommand.execute();
                         fireUpdateStatus();
-                    } else if (activeCommand.getState() != SwingWorker.StateValue.DONE) {
-                        log.warn("think this is running: {}", activeCommand);
-                    } else {
-                        log.warn("command is finished! {}", activeCommand);
-                        try {
-                            // remove from queue
-                            commands.take();
-                        } catch (InterruptedException ex) {
-                            log.warn("take from queue interrupted", ex);
-                        }
+                    } else if (activeCommand.getState() == SwingWorker.StateValue.DONE) {
+                        log.debug("command is finished! {}", activeCommand);
+                        // remove from queue
+                        commands.remove(activeCommand);
                         activeCommand = null;
                     }
                 }
@@ -143,7 +134,12 @@ public class ExpansionManager {
             return; 
         }
         
-        commands.addAll(commands);
+        for (Command c: commands) {
+            if (c.getAction() != Command.Action.keep) {
+                this.commands.add(c);
+            }
+        }
+        
         // ensure we have a running thread
         fireUpdateStatus();
     }

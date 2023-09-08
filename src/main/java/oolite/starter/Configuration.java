@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -57,6 +58,8 @@ public class Configuration {
     private Installation activeInstallation;
     
     private List<URL> expansionManagerURLs;
+    
+    private Duration updateCheckInterval;
 
     /**
      * Creates a new Configuration instance.
@@ -67,6 +70,7 @@ public class Configuration {
         expansionManagerURLs.add(new URL("https://addons.oolite.space/api/1.0/overview/"));
         
         installations = new ArrayList<>();
+        updateCheckInterval = Duration.ofDays(1);
     }
 
     /**
@@ -79,6 +83,14 @@ public class Configuration {
         this();
         
         this.loadConfiguration(f);
+    }
+
+    /**
+     * Returns the minimum duration between update checks.
+     * @return the duration
+     */
+    public Duration getUpdateCheckInterval() {
+        return updateCheckInterval;
     }
     
     /**
@@ -99,6 +111,13 @@ public class Configuration {
             urls.add(new URL(eExpansionManagerUrl.getTextContent()));
         }
         expansionManagerURLs = urls;
+        
+        try {
+            String i = xpath.evaluate("/OoliteStarter/ExpansionManager/updateCheckInterval", doc);
+            this.updateCheckInterval = Duration.parse(i);
+        } catch (Exception e) {
+            log.info("Still using default udpate interval.", e);
+        }
         
         // load installations
         nl = (NodeList)xpath.evaluate("/OoliteStarter/Installations/Installation", doc, XPathConstants.NODESET);
@@ -146,6 +165,10 @@ public class Configuration {
             Element eUrl = doc.createElement("manifestUrl");
             eUrl.setTextContent(url.toString());
             expansionManager.appendChild(eUrl);
+            
+            Element updateCheckInterval = doc.createElement("updateCheckInterval");
+            updateCheckInterval.setTextContent(String.valueOf(this.updateCheckInterval));
+            expansionManager.appendChild(updateCheckInterval);
         }
         root.appendChild(expansionManager);
 

@@ -8,12 +8,18 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.List;
+import javax.swing.DefaultListModel;
+import javax.swing.JComponent;
+import javax.swing.JList;
+import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.Timer;
 import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import net.java.balloontip.BalloonTip;
+import oolite.starter.model.Command;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -179,6 +185,21 @@ public class Util {
         balloon.setVisible(true);
         
         new BalloonHandler(balloon, onStop, time, refreshRate).start();
+    }
+    
+    /**
+     * Creates a component to show a list of commands to the user.
+     * 
+     * @param commands the commands to show
+     * @return the component
+     */
+    public static JComponent createCommandListPanel(List<Command> commands) {
+        DefaultListModel<Command> dlm = new DefaultListModel<>();
+        dlm.addAll(commands);
+        JList list = new JList(dlm);
+        JScrollPane jsp = new JScrollPane(list);
+        list.setCellRenderer(new CommandCellRenderer());
+        return jsp;
     }
     
 }

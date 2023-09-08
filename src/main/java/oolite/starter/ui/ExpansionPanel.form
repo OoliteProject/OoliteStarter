@@ -186,7 +186,7 @@
     <Component class="javax.swing.JButton" name="btEnable">
       <Properties>
         <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-          <Image iconType="3" name="/icons/check_circle_FILL0_wght400_GRAD0_opsz24.png"/>
+          <Image iconType="3" name="/icons/switches_enable_FILL0_wght400_GRAD0_opsz24.png"/>
         </Property>
         <Property name="text" type="java.lang.String" value="Enable"/>
         <Property name="horizontalAlignment" type="int" value="2"/>
@@ -198,7 +198,7 @@
     <Component class="javax.swing.JButton" name="btDisable">
       <Properties>
         <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-          <Image iconType="3" name="/icons/unpublished_FILL0_wght400_GRAD0_opsz24.png"/>
+          <Image iconType="3" name="/icons/switches_disable_FILL0_wght400_GRAD0_opsz24.png"/>
         </Property>
         <Property name="text" type="java.lang.String" value="Disable"/>
         <Property name="horizontalAlignment" type="int" value="2"/>
