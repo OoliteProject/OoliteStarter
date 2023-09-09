@@ -1319,10 +1319,12 @@ public class Oolite implements PropertyChangeListener {
             log.debug("checking {}", i);
             Expansion expansion = expansionMap.get(i);
             if (expansion == null) {
-                log.error("Don't know how to handle {}", i);
                 Expansion e = new Expansion();
+                e.setOolite(this);
                 e.setTitle(i);
-                result.add(new Command(Command.Action.unknown, e));
+                e.setDownloadUrl(enabledAddons.get(i));
+                result.add(new Command(Command.Action.install, e));
+                log.warn("Trying expansionset download {}", e);
             } else if (expansion.isLocal() && expansion.isEnabled()) {
                 // already here - do nothing
                 log.info("{} is already installed & enabled - doing nothing", i);

@@ -503,13 +503,16 @@ public class ExpansionTest {
         log.info("testToString");
         
         Expansion expansion = new Expansion();
-        assertEquals("oolite.starter.model.Expansion(nullnull)", expansion.toString());
+        assertEquals("oolite.starter.model.Expansion(null, null, null)", expansion.toString());
         
         expansion.setIdentifier("identifier");
-        assertEquals("oolite.starter.model.Expansion(identifiernull)", expansion.toString());
+        assertEquals("oolite.starter.model.Expansion(identifier, null, null)", expansion.toString());
         
         expansion.setVersion("version");
-        assertEquals("oolite.starter.model.Expansion(identifierversion)", expansion.toString());
+        assertEquals("oolite.starter.model.Expansion(identifier, version, null)", expansion.toString());
+        
+        expansion.setDownloadUrl("url");
+        assertEquals("oolite.starter.model.Expansion(identifier, version, url)", expansion.toString());
     }
     
     @Test

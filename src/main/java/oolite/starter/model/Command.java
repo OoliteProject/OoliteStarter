@@ -70,33 +70,38 @@ public class Command extends SwingWorker<Result, Object> {
     protected Result doInBackground() throws Exception {
         log.debug("doInBackground()");
         
-        switch (action) {
-            case delete:
-                expansion.remove();
-                break;
-            case disable:
-                expansion.disable();
-                break;
-            case enable:
-                expansion.enable();
-                break;
-            case install:
-                expansion.install();
-                break;
-            case unknown:
-                // nothing to do
-                break;
-            case keep:
-                // nothing to do
-                break;
-            default:
-                throw new IllegalStateException(String.format("Unknown action %s", action));
+        try {
+            switch (action) {
+                case delete:
+                    expansion.remove();
+                    break;
+                case disable:
+                    expansion.disable();
+                    break;
+                case enable:
+                    expansion.enable();
+                    break;
+                case install:
+                    expansion.install();
+                    break;
+                case unknown:
+                    // nothing to do
+                    break;
+                case keep:
+                    // nothing to do
+                    break;
+                default:
+                    throw new IllegalStateException(String.format("Unknown action %s", action));
+            }
+            
+            return Result.success;
+            
+        } catch (Exception e) {
+            log.error("Could not {}", action, e);
+            return Result.failure;
+        } finally {
+            log.debug("doInBackground terminated");
         }
-        
-        Thread.sleep(4000);
-        
-        log.debug("doInBackground terminated");
-        return Result.success;
     }
 
     @Override

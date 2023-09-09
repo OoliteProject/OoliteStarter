@@ -5,7 +5,8 @@ package oolite.starter;
 
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.SwingWorker;
+import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 import javax.swing.Timer;
 import oolite.starter.model.Command;
 import org.apache.logging.log4j.LogManager;
@@ -18,8 +19,11 @@ import org.apache.logging.log4j.Logger;
 public class ExpansionManager {
     private static final Logger log = LogManager.getLogger();
     
-    public enum Status {
-        Ready, Processing;
+    public enum Activity {
+        Processing, Idle, Errors;
+    }
+    
+    public record Status (int queueSize, int processing, int failed, Activity activity) {
     }
     
     public interface ExpansionManagerListener {
@@ -35,39 +39,63 @@ public class ExpansionManager {
 
     private List<Command> commands;
     private List<ExpansionManagerListener> listeners;
-    private Status status;
+    private Activity activity;
     private Timer timer;
-    private Command activeCommand;
+    private int parallelThreads = 10;
             
     private static ExpansionManager instance;
     
     private ExpansionManager() {
         listeners = new ArrayList<>();
         commands = new ArrayList<>();
-        status = Status.Ready;
+        activity = Activity.Idle;
         
-        timer = new Timer(333, (ae) -> {
+        timer = new Timer(1000, (ae) -> {
             log.trace("ExpansionManager checking queue...");
             
             if (commands.isEmpty()) {
-                if (status != status.Ready) {
-                    status = Status.Ready;
-                    fireUpdateStatus();
+                if (activity != Activity.Idle) {
+                    activity = Activity.Idle;
+                    fireUpdateStatus(new Status(0, 0, 0, activity));
                 }
             } else {
-                synchronized(this) {
-                    if (activeCommand == null) {
-                        // triggerNext
-                        activeCommand = commands.get(0);
-                        status = Status.Processing;
-                        log.debug("Triggering {}", activeCommand);
-                        activeCommand.execute();
+                int commandCount0 = commands.size();
+                if (getFailedCount() == commandCount0) {
+                    if (activity != Activity.Errors) {
+                        activity = Activity.Errors;
+                        fireUpdateStatus(new Status(0, 0, 0, activity));
+                    }
+                } else {
+                    synchronized(this) {
+                        // remove done commands
+                        List<Command> done = commands
+                                .stream()
+                                .filter((t) -> t.getState() == Command.StateValue.DONE)
+                                .filter((t) -> {
+                                    try {
+                                        return t.get() == Command.Result.success;
+                                    } catch (InterruptedException | ExecutionException e) {
+                                        return false;
+                                    }
+                                })
+                                .collect(Collectors.toList());
+                        commands.removeAll(done);
+
+                        // trigger up to parallelTreads
+                        commands
+                                .stream()
+                                .filter(t -> t.getAction() != Command.Action.unknown)
+                                .filter(t -> t.getState() != Command.StateValue.DONE)
+                                .limit(parallelThreads)
+                                .filter(t -> t.getState() == Command.StateValue.PENDING)
+                                .forEach((t) -> {
+                                    t.execute();
+                                });
+                    }
+                    int commandCount1 = commands.size();
+                    if (activity == activity.Idle || (commandCount1 - commandCount0) != 0) {
+                        activity = Activity.Processing;
                         fireUpdateStatus();
-                    } else if (activeCommand.getState() == SwingWorker.StateValue.DONE) {
-                        log.debug("command is finished! {}", activeCommand);
-                        // remove from queue
-                        commands.remove(activeCommand);
-                        activeCommand = null;
                     }
                 }
             }
@@ -107,6 +135,25 @@ public class ExpansionManager {
     }
     
     private void fireUpdateStatus() {
+        long processing = commands
+                .stream()
+                .filter((t) -> t.getState() == Command.StateValue.STARTED)
+                .count();
+        long failed = commands
+                .stream()
+                .filter((t) -> {
+                    try {
+                        return t.getState() == Command.StateValue.DONE && t.get() == Command.Result.failure;
+                    } catch (Exception e) {
+                        return false;
+                    }
+                })
+                .count();
+
+        fireUpdateStatus(getStatus());
+    }
+    
+    private void fireUpdateStatus(Status status) {
         for (ExpansionManagerListener listener: listeners) {
             listener.updateStatus(status, commands);
         }
@@ -144,13 +191,31 @@ public class ExpansionManager {
         fireUpdateStatus();
     }
     
+    private long getFailedCount() {
+        return commands.stream()
+            .filter((t) -> {
+                try {
+                    return t.getState() == Command.StateValue.DONE && t.get() == Command.Result.failure;
+                } catch (Exception e) {
+                    return false;
+                }
+            })
+            .count();
+    }
+    
     /**
      * Returns the status of this ExpansionManager.
      * 
      * @return the status
      */
     public Status getStatus() {
-        return status;
+        long processing = commands
+                .stream()
+                .filter((t) -> t.getState() == Command.StateValue.STARTED)
+                .count();
+        long failed = getFailedCount();
+
+        return new Status(commands.size(), (int)processing, (int)failed, activity);
     }
     
     /**

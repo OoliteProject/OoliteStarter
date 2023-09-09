@@ -44,13 +44,17 @@ public class CommandCellRenderer extends JPanel implements ListCellRenderer<Comm
         setLayout(new GridBagLayout());
         
         lbIcon = new JLabel(iiWarn);
+        lbIcon.setOpaque(false);
         add(lbIcon, new GridBagConstraints(0, 0, 1, 1, 0, 0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0,5,0,5), 0, 0));
         
+        lbIcon.setOpaque(false);
         lbAction = new JLabel();
         add(lbAction, new GridBagConstraints(1, 0, 1, 1, 0, 0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0,5,0,5), 0, 0));
         
         lbTitle = new JLabel();
+        lbTitle.setOpaque(false);
         add(lbTitle, new GridBagConstraints(2, 0, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0,5,0,5), 0, 0));
+        
     }
 
     @Override
@@ -77,8 +81,27 @@ public class CommandCellRenderer extends JPanel implements ListCellRenderer<Comm
             default:
                 lbIcon.setIcon(null);
         }
-        lbAction.setText(String.valueOf(command.getAction()));
+        String a = String.valueOf(command.getAction());
+        if (command.getState() == Command.StateValue.DONE) {
+            try {
+                a = a + " " + String.valueOf(command.get());
+            } catch (Exception e) {
+                a = a + " Exception";
+            }
+        } else {
+            a = a + " " + String.valueOf(command.getState());
+        }
+        lbAction.setText(a);
         lbTitle.setText(command.getExpansion().getTitle() + " @ " + command.getExpansion().getVersion());
+
+        if (isSelected) {
+            setBackground(list.getSelectionBackground());
+            setForeground(list.getSelectionForeground());
+        } else {
+            setBackground(list.getBackground());
+            setForeground(list.getForeground());
+        }
+        setEnabled(list.isEnabled());
         
         return this;
     }

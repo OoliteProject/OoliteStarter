@@ -632,7 +632,7 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
         gridBagConstraints.weightx = 1.0;
         jPanel1.add(pnStatus, gridBagConstraints);
 
-        txtEMStatus.setText("Ready");
+        txtEMStatus.setText("Idle");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 0;
@@ -810,10 +810,10 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
     @Override
     public void updateStatus(ExpansionManager.Status status, List<Command> queue) {
         log.debug("updateStatus(...)");
-        String s = String.valueOf(status) + " (" + String.valueOf(queue.size()) + ")";
+        String s = String.valueOf(status.activity()) + " (" + String.valueOf(status.processing()) + ")";
         txtEMStatus.setText(s);
         
-        if (status == ExpansionManager.Status.Ready && queue.isEmpty()) {
+        if (status.activity() == ExpansionManager.Activity.Idle && status.queueSize() == 0) {
             MrGimlet.showMessage(this, "All done, kiddo. What are you waiting for?");
         }
     }
