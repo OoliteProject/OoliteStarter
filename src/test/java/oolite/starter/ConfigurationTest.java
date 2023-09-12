@@ -79,7 +79,7 @@ public class ConfigurationTest {
         List<File> addonDirs = c.getAddonDirs();
         assertEquals(4, addonDirs.size());
         assertEquals("/home/user/GNUstep/Applications/Oolite/DeactivatedAddOns", String.valueOf(c.getDeactivatedAddonsDir()));
-        assertEquals("[https://addons.oolite.space/api/1.0/overview/, http://addons.oolite.org/api/1.0/overview/]", String.valueOf(c.getExpansionManagerURLs()));
+        assertEquals("[https://addons.oolite.space/api/1.0/overview, http://addons.oolite.org/api/1.0/overview]", String.valueOf(c.getExpansionManagerURLs()));
         assertEquals("/home/user/GNUstep/Library/ApplicationSupport/Oolite/ManagedAddOns", String.valueOf(c.getManagedAddonsDir()));
         assertEquals("/home/user/GNUstep/Applications/Oolite/oolite.app/oolite-wrapper", c.getOoliteCommand());
         assertEquals("/home/user/oolite-saves", String.valueOf(c.getSaveGameDir()));

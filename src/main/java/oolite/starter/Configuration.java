@@ -44,6 +44,7 @@ public class Configuration {
     
     private static final String CONF_NO_ACTIVE_INSTALLATION = "No active installation";
     public static final Color COLOR_ATTENTION = new Color(160, 80, 0);
+    private static final String defaultUrl = "https://addons.oolite.space/api/1.0/overview";
 
     private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
     
@@ -67,7 +68,7 @@ public class Configuration {
      */
     public Configuration() throws MalformedURLException {
         expansionManagerURLs = new ArrayList<>();
-        expansionManagerURLs.add(new URL("https://addons.oolite.space/api/1.0/overview/"));
+        expansionManagerURLs.add(new URL(defaultUrl));
         
         installations = new ArrayList<>();
         updateCheckInterval = Duration.ofDays(1);

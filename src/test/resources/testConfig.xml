@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <OoliteStarter starter-version="" stored="2023-06-18T12:56:04.804206835Z">
     <ExpansionManager>
-        <manifestUrl>https://addons.oolite.space/api/1.0/overview/</manifestUrl>
-        <manifestUrl>http://addons.oolite.org/api/1.0/overview/</manifestUrl>
+        <manifestUrl>https://addons.oolite.space/api/1.0/overview</manifestUrl>
+        <manifestUrl>http://addons.oolite.org/api/1.0/overview</manifestUrl>
     </ExpansionManager>
     <Installations>
         <Installation active="false">
