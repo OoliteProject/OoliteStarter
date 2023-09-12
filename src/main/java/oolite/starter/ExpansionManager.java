@@ -84,7 +84,7 @@ public class ExpansionManager {
                         // trigger up to parallelTreads
                         commands
                                 .stream()
-                                .filter(t -> t.getAction() != Command.Action.unknown)
+                                //.filter(t -> t.getAction() != Command.Action.unknown)
                                 .filter(t -> t.getState() != Command.StateValue.DONE)
                                 .limit(parallelThreads)
                                 .filter(t -> t.getState() == Command.StateValue.PENDING)

@@ -21,6 +21,7 @@ import java.lang.module.ModuleDescriptor;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -811,7 +812,7 @@ public class Oolite implements PropertyChangeListener {
      * 
      * @return the list
      */
-    public List<Expansion> getAllExpansions() throws MalformedURLException {
+    public List<Expansion> getAllExpansions() throws MalformedURLException, IOException {
         log.debug("getAllExpansions()");
         List<Expansion> resultList = new ArrayList<>();
         List<Expansion> localList = getLocalExpansions();
@@ -849,7 +850,7 @@ public class Oolite implements PropertyChangeListener {
      * 
      * @return the list
      */
-    public List<Expansion> getOnlineExpansions() throws MalformedURLException {
+    public List<Expansion> getOnlineExpansions() throws MalformedURLException, IOException {
         log.debug("getOnlineExpansion()");
         if (configuration == null) {
             throw new IllegalStateException(OOLITE_CONFIGURATION_MUST_NOT_BE_NULL);
@@ -859,7 +860,24 @@ public class Oolite implements PropertyChangeListener {
         
         for (URL url: configuration.getExpansionManagerURLs()) {
             log.debug("downloading {}", url);
-            try (InputStream in = url.openStream()) {
+
+            URLConnection urlconnection = url.openConnection();
+            if (urlconnection instanceof HttpURLConnection conn) {
+                conn.setReadTimeout(5000);
+                int status = conn.getResponseCode();
+                log.info("HTTP status for {}: {}", url, status);
+                
+                while (status != HttpURLConnection.HTTP_OK) {
+                    String newUrl = conn.getHeaderField("Location");
+                    conn = (HttpURLConnection)new URL(newUrl).openConnection();
+                    conn.setReadTimeout(5000);
+                    status = conn.getResponseCode();
+                    log.info("HTTP status for {}: {}", newUrl, status);
+                }
+                urlconnection = conn;
+            }
+            
+            try (InputStream in = urlconnection.getInputStream()) {
                 PlistParser.ListContext lc = (PlistParser.ListContext)PlistUtil.parsePListList(in, url.toString());
                 
                 for (PlistParser.ValueContext vc: lc.value()) {
@@ -1323,7 +1341,7 @@ public class Oolite implements PropertyChangeListener {
                 e.setOolite(this);
                 e.setTitle(i);
                 e.setDownloadUrl(enabledAddons.get(i));
-                result.add(new Command(Command.Action.install, e));
+                result.add(new Command(Command.Action.unknown, e));
                 log.warn("Trying expansionset download {}", e);
             } else if (expansion.isLocal() && expansion.isEnabled()) {
                 // already here - do nothing

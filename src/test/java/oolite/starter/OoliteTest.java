@@ -234,7 +234,7 @@ public class OoliteTest {
     }
     
     @Test
-    public void testGetOnlineExpansions() throws MalformedURLException {
+    public void testGetOnlineExpansions() throws MalformedURLException, IOException {
         log.debug("testGetOnlineExpansions");
         
         Oolite oolite = new Oolite();
@@ -248,7 +248,7 @@ public class OoliteTest {
     }
 
     @Test
-    public void testGetOnlineExpansions2() throws MalformedURLException {
+    public void testGetOnlineExpansions2() throws MalformedURLException, IOException {
         log.info("testGetOnlineExpansions2");
         
         Oolite oolite = new Oolite();

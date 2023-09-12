@@ -85,8 +85,7 @@ public class Command extends SwingWorker<Result, Object> {
                     expansion.install();
                     break;
                 case unknown:
-                    // nothing to do
-                    break;
+                    throw new UnsupportedOperationException("Cannot handle unknown action");
                 case keep:
                     // nothing to do
                     break;
