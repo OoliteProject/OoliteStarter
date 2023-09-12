@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import oolite.starter.Oolite;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -609,7 +611,7 @@ public class Expansion implements Comparable<Expansion> {
     public String toString() {
         StringBuilder sb = new StringBuilder(getClass().getName());
         sb.append("(");
-        sb.append(getIdentifier() + getVersion());
+        sb.append(getIdentifier() + ", " + getVersion() + ", " + getDownloadUrl());
         sb.append(")");
         return sb.toString();
     }
@@ -695,9 +697,11 @@ public class Expansion implements Comparable<Expansion> {
      */
     public List<ExpansionReference> getRequiredRefs() {
         List<ExpansionReference> result = new ArrayList<>();
-        for (String name: getRequiresOxps()) {
-            ExpansionReference er = oolite.getExpansionReference(name);
-            result.add(er);
+        if (getRequiresOxps() != null) {
+            for (String name: getRequiresOxps()) {
+                ExpansionReference er = oolite.getExpansionReference(name);
+                result.add(er);
+            }
         }
         return result;
     }
@@ -758,5 +762,17 @@ public class Expansion implements Comparable<Expansion> {
             result.add(er);
         }
         return result;
+    }
+
+    /**
+     * Returns true if this expansion is nested inside another expansion directory.
+     * 
+     * @return true if it is nested, false otherwise
+     */
+    public boolean isNested() {
+        Pattern p = Pattern.compile("\\.oxp.+\\.oxp", Pattern.CASE_INSENSITIVE);
+        String file = String.valueOf(getLocalFile());
+        Matcher m = p.matcher(file);
+        return m.find();
     }
 }

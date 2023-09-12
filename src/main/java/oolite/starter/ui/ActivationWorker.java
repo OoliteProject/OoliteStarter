@@ -16,6 +16,7 @@ import org.apache.logging.log4j.Logger;
 /**
  *
  * @author hiran
+ * @deprecated use Command and ExpansionManager in future
  */
 public class ActivationWorker extends SwingWorker<Object, Void> {
     private static final Logger log = LogManager.getLogger();

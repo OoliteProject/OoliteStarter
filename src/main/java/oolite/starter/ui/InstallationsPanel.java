@@ -328,6 +328,7 @@ public class InstallationsPanel extends javax.swing.JPanel {
         add(jPanel1, java.awt.BorderLayout.PAGE_START);
 
         jSplitPane1.setDividerLocation(300);
+        jSplitPane1.setDividerSize(7);
         jSplitPane1.setResizeWeight(0.5);
         jSplitPane1.setOneTouchExpandable(true);
 

@@ -56,7 +56,7 @@ public class MainFrame extends javax.swing.JFrame {
             String msg = String.format("<html><p>Heho, Kid! You've got a problem here that is technical, not financial.</p><p>The configuration file %s was not found.</p><p>I’m a busy frog, I can’t stay here all day to watching you poke buttons. So let's use defaults.</p></html>", confFile.getAbsolutePath());
             log.warn(msg);
             
-            MrGimlet.showMessage(null, msg);
+            MrGimlet.showMessage(null, msg, 0);
             
             configuration = new Configuration();
         }
@@ -80,9 +80,12 @@ public class MainFrame extends javax.swing.JFrame {
         sgp.setOolite(oolite);
         jTabbedPane1.add(sgp);
 
+        ExpansionManager em = ExpansionManager.getInstance();
+        
         ExpansionsPanel ep = new ExpansionsPanel();
         ep.setOolite(oolite);
         jTabbedPane1.add(ep);
+        em.addExpansionManagerListener(ep);
 
         InstallationsPanel ip = new InstallationsPanel();
         ip.setConfiguration(configuration);
@@ -90,6 +93,15 @@ public class MainFrame extends javax.swing.JFrame {
 
         AboutPanel ap = new AboutPanel("text/html", getClass().getResource("/about.html"));
         jTabbedPane1.add("About", ap);
+    }
+
+    /**
+     * Return the configuraton.
+     * 
+     * @return  the configuration
+     */
+    public Configuration getConfiguration() {
+        return configuration;
     }
 
     /**
@@ -219,13 +231,16 @@ public class MainFrame extends javax.swing.JFrame {
             protected MainFrame doInBackground() throws Exception {
                 Instant i0 = Instant.now();
 
+                log.info("Initialize UI...");
                 MainFrame mf = new MainFrame();
                 mf.pack();
                 mf.setLocationRelativeTo(null);
 
                 Instant i1 = Instant.now();
 
+                log.info("Check for new version...");
                 gvc = new GithubVersionChecker();
+                gvc.setUpdateCheckInterval(mf.getConfiguration().getUpdateCheckInterval());
                 gvc.init();
 
                 Duration spent = Duration.between(i0, i1);
@@ -251,9 +266,8 @@ public class MainFrame extends javax.swing.JFrame {
                         newSplash = null;
                     }
 
-                    if (mf.configuration.getActiveInstallation() == null) {
+                    if (mf.configuration.getInstallations().isEmpty()) {
                         // point user to creating an active installation
-        
                         mf.jTabbedPane1.setEnabledAt(0, false);
                         mf.jTabbedPane1.setEnabledAt(1, false);
                         mf.jTabbedPane1.setSelectedIndex(2);
@@ -261,14 +275,25 @@ public class MainFrame extends javax.swing.JFrame {
                         StringBuilder message = new StringBuilder("<html>");
                         message.append("<p>I see a lot of blanks on this here board... Kid, you gotta do something about it.</p>");
                         message.append("<p>Have at least one active Oolite version. You need one. It's pretty much compulsory.<br/>");
-                        message.append("Hit the Add button and fill in the form, at least once to add Oolite versions.<br/>");
-                        message.append("Don't forget to select one of them, then hit the Activate button.</p>");
-                        message.append("<p>Then you can juggle OXPs or start the game. And maybe touch the Save button once in a while.</p>");
+                        message.append("Hit the Scan or Add button and fill in the form, at least once to add Oolite versions.");
                         message.append("</html>");
 
-                        MrGimlet.showMessage(mf, message.toString());
+                        MrGimlet.showMessage(mf.getRootPane(), message.toString(), 0);
+                    } else if (mf.configuration.getActiveInstallation() == null) {
+                        // point user to creating an active installation
+                        mf.jTabbedPane1.setEnabledAt(0, false);
+                        mf.jTabbedPane1.setEnabledAt(1, false);
+                        mf.jTabbedPane1.setSelectedIndex(2);
+
+                        StringBuilder message = new StringBuilder("<html>");
+                        message.append("<p>Much better, son. But there is still something to do:</p>");
+                        message.append("<p>Decide for one of your Oolite versions. Otherwise this Starter would not know what to do.<br/>");
+                        message.append("<p>Choose one from the list and click Select.");
+                        message.append("</html>");
+ 
+                        MrGimlet.showMessage(mf.getRootPane(), message.toString(), 0);
                     } else {
-                        gvc.maybeAnnounceUpdate(mf);
+                        gvc.maybeAnnounceUpdate(mf.getRootPane());
                     }
 
                 } catch (InterruptedException e) {

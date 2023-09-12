@@ -11,12 +11,15 @@ import java.util.TreeMap;
 import javax.swing.SwingUtilities;
 import javax.swing.table.AbstractTableModel;
 import oolite.starter.model.Expansion;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  *
  * @author hiran
  */
 public class ExpansionsTableModel extends AbstractTableModel implements PropertyChangeListener {
+    private static final Logger log = LogManager.getLogger();
    
     private transient List<Expansion> data;
     private Map<String, Integer> siblingCount;
@@ -108,16 +111,21 @@ public class ExpansionsTableModel extends AbstractTableModel implements Property
     
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        Expansion row = data.get(rowIndex);
-        switch(columnIndex) {
-            case 0: return row.getTitle();
-            case 1: return row.getUploadDate();
-            case 2: return row.getIdentifier() + ":" + row.getVersion();
-            case 3: return row.getVersion();
-            case 4: return row.getCategory();
-            case 5: return row.getTags();
-            case 6: return getStatusString(row);
-            default: return "n/a";
+        try {
+            Expansion row = data.get(rowIndex);
+            switch(columnIndex) {
+                case 0: return row.getTitle();
+                case 1: return row.getUploadDate();
+                case 2: return row.getIdentifier() + ":" + row.getVersion();
+                case 3: return row.getVersion();
+                case 4: return row.getCategory();
+                case 5: return row.getTags();
+                case 6: return getStatusString(row);
+                default: return "n/a";
+            }
+        } catch (IndexOutOfBoundsException e) {
+            log.warn("Access error", e);
+            return null;
         }
     }
 

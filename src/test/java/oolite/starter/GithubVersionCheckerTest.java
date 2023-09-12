@@ -8,6 +8,7 @@ import java.awt.Component;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.time.Duration;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -67,8 +68,10 @@ public class GithubVersionCheckerTest {
         System.out.println("testInit2");
 
         GithubVersionChecker instance = new GithubVersionChecker();
+        instance.setUpdateCheckInterval(Duration.ofSeconds(0));
         instance.init();
-        assertNotNull(instance.getLatestVersion());
+        Semver s = instance.getLatestVersion();
+        assertNotNull(s);
     }
 
     /**
@@ -101,6 +104,7 @@ public class GithubVersionCheckerTest {
         System.out.println("getLatestVersion");
 
         GithubVersionChecker instance = new GithubVersionChecker();
+        instance.setUpdateCheckInterval(Duration.ofSeconds(0));
         instance.init();
         
         Semver v = instance.getLatestVersion();
