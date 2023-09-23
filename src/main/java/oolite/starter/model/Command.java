@@ -18,6 +18,8 @@ public class Command extends SwingWorker<Result, Object> {
     public enum Action {
         // install the expansion
         install, 
+        // install the alternative expansion
+        installAlternative, 
         // delete the expansion
         delete, 
         // enable the expansion
@@ -26,7 +28,7 @@ public class Command extends SwingWorker<Result, Object> {
         disable, 
         // we cannot resolve the expansion
         unknown,
-        // we alreadz have the expansion
+        // we already have the expansion
         keep;
     }
     
@@ -36,6 +38,7 @@ public class Command extends SwingWorker<Result, Object> {
     
     private Action action;
     private Expansion expansion;
+    private Exception exception;
 
     /**
      * Creates a new command.
@@ -66,6 +69,15 @@ public class Command extends SwingWorker<Result, Object> {
         return expansion;
     }
     
+    /**
+     * Returns this command's exception (in case it failed).
+     * 
+     * @return the exception
+     */
+    public Exception getException() {
+        return exception;
+    }
+    
     @Override
     protected Result doInBackground() throws Exception {
         log.debug("doInBackground()");
@@ -82,10 +94,11 @@ public class Command extends SwingWorker<Result, Object> {
                     expansion.enable();
                     break;
                 case install:
+                case installAlternative:
                     expansion.install();
                     break;
                 case unknown:
-                    throw new UnsupportedOperationException("Cannot handle unknown action");
+                    throw new UnsupportedOperationException("Ran out of ideas");
                 case keep:
                     // nothing to do
                     break;
@@ -97,6 +110,7 @@ public class Command extends SwingWorker<Result, Object> {
             
         } catch (Exception e) {
             log.error("Could not {}", action, e);
+            this.exception = e;
             return Result.failure;
         } finally {
             log.debug("doInBackground terminated");

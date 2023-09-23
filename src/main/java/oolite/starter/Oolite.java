@@ -1329,13 +1329,19 @@ public class Oolite implements PropertyChangeListener {
         }
 
         // now install what may be MISSING
+        // for that we prepare a list from which to pull Expansions
         TreeMap<String, Expansion> expansionMap = new TreeMap<>();
         for (Expansion expansion: expansions) { 
             expansionMap.put(expansion.getIdentifier() + ":" + expansion.getVersion(), expansion);
+            expansionMap.put(expansion.getIdentifier(), expansion);
         }
         for (String i: enabledAddons.keySet()) {
             log.debug("checking {}", i);
             Expansion expansion = expansionMap.get(i);
+            if (expansion == null) {
+                String i2 = i.substring(0, i.indexOf(':'));
+                expansion = expansionMap.get(i2);
+            }
             if (expansion == null) {
                 Expansion e = new Expansion();
                 e.setOolite(this);
@@ -1351,7 +1357,12 @@ public class Oolite implements PropertyChangeListener {
                 log.info("{} is already installed but disabled - enabling", i);
                 result.add(new Command(Command.Action.enable, expansion));
             } else {
-                result.add(new Command(Command.Action.install, expansion));
+                String i2 = i.substring(i.indexOf(':'));
+                if (i2.equals(expansion.getVersion())) {
+                    result.add(new Command(Command.Action.install, expansion));
+                } else {
+                    result.add(new Command(Command.Action.installAlternative, expansion));
+                }
             }
         }
 

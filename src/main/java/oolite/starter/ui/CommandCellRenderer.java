@@ -59,9 +59,14 @@ public class CommandCellRenderer extends JPanel implements ListCellRenderer<Comm
 
     @Override
     public Component getListCellRendererComponent(JList<? extends Command> list, Command command, int index, boolean isSelected, boolean isFocused) {
+        String a = String.valueOf(command.getAction());
+        String b = command.getExpansion().getTitle() + " @ " + command.getExpansion().getVersion();
         switch (command.getAction()) {
             case install:
                 lbIcon.setIcon(iiInstall);
+                break;
+            case installAlternative:
+                lbIcon.setIcon(iiWarn);
                 break;
             case enable:
                 lbIcon.setIcon(iiEnable);
@@ -71,6 +76,7 @@ public class CommandCellRenderer extends JPanel implements ListCellRenderer<Comm
                 break;
             case unknown:
                 lbIcon.setIcon(iiError);
+                b += " - Have no download URL";
                 break;
             case disable:
                 lbIcon.setIcon(iiDisable);
@@ -81,18 +87,23 @@ public class CommandCellRenderer extends JPanel implements ListCellRenderer<Comm
             default:
                 lbIcon.setIcon(null);
         }
-        String a = String.valueOf(command.getAction());
         if (command.getState() == Command.StateValue.DONE) {
             try {
                 a = a + " " + String.valueOf(command.get());
             } catch (Exception e) {
                 a = a + " Exception";
+                b = b + "\n" + e.getMessage();
             }
         } else {
             a = a + " " + String.valueOf(command.getState());
         }
+        
+        if (command.getException() != null) {
+            b += " - " + command.getException().getMessage();
+        }
+        
         lbAction.setText(a);
-        lbTitle.setText(command.getExpansion().getTitle() + " @ " + command.getExpansion().getVersion());
+        lbTitle.setText(b);
 
         if (isSelected) {
             setBackground(list.getSelectionBackground());
