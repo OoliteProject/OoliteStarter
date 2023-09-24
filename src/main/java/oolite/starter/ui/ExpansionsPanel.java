@@ -769,6 +769,11 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
         log.debug("btReloadActionPerformed({})", evt);
         try {
             update();
+
+            List<Command> updates = oolite.checkForUpdates(expansions);
+            if (!updates.isEmpty()) {
+                MrGimlet.showMessage(this, "Updated expansions available.");
+            }
         } catch (Exception e) {
             log.error(EXPANSIONSPANEL_COULD_NOT_RELOAD, e);
             JOptionPane.showMessageDialog(null, EXPANSIONSPANEL_COULD_NOT_RELOAD);

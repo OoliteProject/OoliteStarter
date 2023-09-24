@@ -177,6 +177,63 @@ public class Oolite implements PropertyChangeListener {
         }
     }
 
+    /**
+     * Checks for updates and returns a list of commands.
+     * These commands will uninstall the old expansions and install the new ones instead.
+     * 
+     * @param expansions 
+     * @return the list of commands to be up to date, or null if there is nothing to do
+     */
+    public List<Command> checkForUpdates(List<Expansion> expansions) {
+        log.warn("checkForUpdates(...)");
+        List<Command> result = new ArrayList<>();
+        
+        expansions.stream()
+            .filter((t) -> t.isEnabled())
+            .forEach((t) -> {
+                expansions.stream()
+                    .filter((t2) -> t.getIdentifier().equals(t2.getIdentifier()))
+                    .filter((t2) -> {
+                        ModuleDescriptor.Version v1 = null;
+                        ModuleDescriptor.Version v2 = null;
+                        try {
+                            String v = t.getVersion();
+                            if (v.startsWith("v")) {
+                                v = v.substring(1);
+                            }
+                            v1 = ModuleDescriptor.Version.parse(v);
+                        } catch (IllegalArgumentException iae) {
+                            log.warn("Problem on {} {}", t.getIdentifier(), t.getVersion(), iae);
+                        }
+
+                        try {
+                            String v = t2.getVersion();
+                            if (v.startsWith("v")) {
+                                v = v.substring(1);
+                            }
+                            v2 = ModuleDescriptor.Version.parse(v);
+                        } catch (IllegalArgumentException iae) {
+                            log.warn("Problem on {} {}", t2.getIdentifier(), t2.getVersion(), iae);
+                        }
+
+                        if (v1 == null) {
+                            return false;
+                        } else {
+                            return v1.compareTo(v2) < 0;
+                        }
+                    })
+                    .forEach((t2) -> {
+                        log.debug("{} -- {}", t.getIdentifier(), t.getVersion());
+                        log.debug("    {} -- {}", t2.getIdentifier(), t2.getVersion());
+
+                        result.add(new Command(Command.Action.delete, t));
+                        result.add(new Command(Command.Action.install, t2));
+                    });
+            });
+        
+        return result;
+    }
+
     public interface OoliteListener {
         
         /**
@@ -321,7 +378,14 @@ public class Oolite implements PropertyChangeListener {
         }
         return result;
     }
-    
+
+    /**
+     * Returns true if the expansion is contained in the list of ExpansionReferences.
+     * 
+     * @param list the list of ExpansionReferences
+     * @param expansion the expansion to search for
+     * @return true if found, false otherwise
+     */
     protected boolean contains(List<ExpansionReference> list, Expansion expansion) {
         for (ExpansionReference ref: list) {
             if (expansion.getLocalFile().getName().endsWith(ref.getName())) {
