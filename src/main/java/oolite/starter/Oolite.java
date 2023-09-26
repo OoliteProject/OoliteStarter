@@ -82,7 +82,7 @@ public class Oolite implements PropertyChangeListener {
     private static final String OOLITE_USER_HOME = "user.home";
     private static final String OOLITE_VERSION = "version";
     private static final String OOLITE_XML_HEADER = "<?xml";
-    
+
     private boolean terminate = false;
     private int running = 0;
 
@@ -686,6 +686,50 @@ public class Oolite implements PropertyChangeListener {
     /**
      * Creates an Expansion from a manifest dictionary context.
      * 
+     * @param doc the XML DOM to read from
+     * @return the Expansion
+     */    
+    public Expansion createExpansionFromManifest(Document doc) throws XPathExpressionException {
+        log.debug("createExpansion({})", doc);
+        Element root = doc.getDocumentElement();
+        if (!"plist".equals(root.getNodeName())) {
+            throw new IllegalArgumentException("Expected plist to parse");
+        }
+        if (!"1.0".equals(root.getAttribute("version"))) {
+            throw new IllegalArgumentException("Expected plist version 1.0");
+        }
+
+//        Map<String, Object> manifest = XmlUtil.parseDict((Element)root.getElementsByTagName("dict").item(0));
+        
+        Expansion result = new Expansion();
+        
+        XPath xpath = XPathFactory.newInstance().newXPath();
+        result.setIdentifier(xpath.evaluate("/plist/dict/key[.='identifier']/following-sibling::string", doc));
+        result.setRequiredOoliteVersion(xpath.evaluate("/plist/dict/key[.='required_oolite_version']/following-sibling::string", doc));
+        result.setTitle(xpath.evaluate("/plist/dict/key[.='title']/following-sibling::string", doc));
+        result.setVersion(xpath.evaluate("/plist/dict/key[.='version']/following-sibling::string", doc));
+        result.setCategory(xpath.evaluate("/plist/dict/key[.='category']/following-sibling::string", doc));
+        result.setDescription(xpath.evaluate("/plist/dict/key[.='description']/following-sibling::string", doc));
+        result.setDownloadUrl(xpath.evaluate("/plist/dict/key[.='download_url']/following-sibling::string", doc));
+        result.setAuthor(xpath.evaluate("/plist/dict/key[.='author']/following-sibling::string", doc));
+        result.setInformationUrl(xpath.evaluate("/plist/dict/key[.='information_url']/following-sibling::string", doc));
+        result.setLicense(xpath.evaluate("/plist/dict/key[.='license']/following-sibling::string", doc));
+        result.setMaximumOoliteVersion(xpath.evaluate("/plist/dict/key[.='maximum_oolite_version']/following-sibling::array", doc)); 
+        // TODO: May need better array parsing
+        result.setTags(xpath.evaluate("/plist/dict/key[.='tags']/following-sibling::array", doc)); 
+        // TODO: Needs implementation
+        //result.setConflictOxps(...);
+        // TODO: Needs implementation
+        //result.setRequiresOxps(...);
+        // TODO: Needs implementation
+        //result.setOptionalOxps(...);
+        
+        return result;
+    }
+    
+    /**
+     * Creates an Expansion from a manifest dictionary context.
+     * 
      * @param dc the dictionary context to read
      * @return the Expansion
      */    
@@ -793,11 +837,28 @@ public class Oolite implements PropertyChangeListener {
      * @param sourceName name of the source for the input stream
      * @return the Expansion
      */    
-    public Expansion createExpansionFromManifest(InputStream manifest, String sourceName) throws IOException {
+    public Expansion createExpansionFromManifest(InputStream manifest, String sourceName) throws IOException, ParserConfigurationException, SAXException, XPathExpressionException {
         log.debug("createExpansion({}, {})", manifest, sourceName);
-        // parse plist, then create Expansion from that
-        PlistParser.DictionaryContext dc = (PlistParser.DictionaryContext)PlistUtil.parsePListDict(manifest, sourceName);
-        return createExpansionFromManifest(dc);
+        InputStream in = Util.getBufferedStream(manifest);
+        
+        // TODO: What to do with XML based manifests?
+        in.mark(10);
+
+        Scanner sc = new Scanner(in);
+        if (OOLITE_XML_HEADER.equals(sc.next())) {
+            log.warn("XML content found in {}", sourceName);
+            in.reset();
+            
+            Document doc = XmlUtil.parseXmlStream(in);
+            return createExpansionFromManifest(doc);
+        } else {
+            in.reset();
+
+            // parse plist, then create Expansion from that
+            PlistParser.DictionaryContext dc = (PlistParser.DictionaryContext)PlistUtil.parsePListDict(in, sourceName);
+            return createExpansionFromManifest(dc);
+        }
+        
     }
     
     /**
@@ -931,8 +992,11 @@ public class Oolite implements PropertyChangeListener {
                 int status = conn.getResponseCode();
                 log.info("HTTP status for {}: {}", url, status);
                 
-                while (status != HttpURLConnection.HTTP_OK) {
+                int redirectCount = 5;
+                while ((status == HttpURLConnection.HTTP_MOVED_PERM || status == HttpURLConnection.HTTP_MOVED_TEMP) && redirectCount > 0) {
+                    redirectCount--;
                     String newUrl = conn.getHeaderField("Location");
+                    log.warn("Follow redirect to '{}'", newUrl);
                     conn = (HttpURLConnection)new URL(newUrl).openConnection();
                     conn.setReadTimeout(5000);
                     status = conn.getResponseCode();
@@ -1037,7 +1101,7 @@ public class Oolite implements PropertyChangeListener {
      * @param f the file to investigate
      * @return the expansion found, or null
      */
-    private Expansion getExpansionFrom(File f) {
+    private Expansion getExpansionFrom(File f) throws ParserConfigurationException, SAXException, XPathExpressionException {
         log.debug("getExpansionsFrom({})", f);
         try {
             if (f.isDirectory()) {
@@ -1065,7 +1129,7 @@ public class Oolite implements PropertyChangeListener {
         return null;
     }
     
-    private Expansion getExpansionFromOxp(File f) throws IOException {
+    private Expansion getExpansionFromOxp(File f) throws IOException, ParserConfigurationException, SAXException, XPathExpressionException {
         log.debug("getExpansionsFromOxp({})", f);
         File manifestFile = new File(f, "manifest.plist");
         if (manifestFile.isFile()) {
@@ -1080,7 +1144,7 @@ public class Oolite implements PropertyChangeListener {
         return null;
     }
     
-    private Expansion getExpansionFromOxz(File f) throws IOException {
+    private Expansion getExpansionFromOxz(File f) throws IOException, ParserConfigurationException, SAXException, XPathExpressionException {
         log.debug("getExpansionsfromOxz({})", f);
         
         try (ZipFile zipFile = new ZipFile(f)) {

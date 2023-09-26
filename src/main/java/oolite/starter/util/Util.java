@@ -2,7 +2,10 @@
  */
 package oolite.starter.util;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Locale;
 import java.util.Scanner;
 import org.apache.logging.log4j.LogManager;
@@ -15,6 +18,8 @@ import org.apache.logging.log4j.Logger;
 public class Util {
     public static final Logger log = LogManager.getLogger();
 
+    private static String EXCEPTION_IN_MUST_NOT_BE_NULL = "in must not be null";
+        
     /**
      * Prevent creating instances.
      */
@@ -91,5 +96,32 @@ public class Util {
      */
     public static boolean isMac() {
         return OSType.MACOS == getOperatingSystemType();
+    }
+
+    /**
+     * Copies a stream into a memory buffer and returns it for reading.
+     * This allows the file to be re-read if need be.
+     * 
+     * @param in The inputstream to read from
+     * @return the re-readable memory based InputStream
+     * @throws IOException something went wrong
+     * 
+     */
+    public static InputStream getBufferedStream(InputStream in) throws IOException {
+        log.debug("getBufferedStream(...)");
+        if (in == null) {
+            throw new IllegalArgumentException(EXCEPTION_IN_MUST_NOT_BE_NULL);
+        }
+        
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        byte[] buffer = new byte[4096];
+        int read = 0;
+        while ( (read = in.read(buffer))>=0) {
+            bos.write(buffer, 0, read);
+        }
+        bos.flush();
+        bos.close();
+        
+        return new ByteArrayInputStream(bos.toByteArray());
     }
 }

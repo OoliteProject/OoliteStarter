@@ -143,7 +143,7 @@ public class OoliteTest {
     }
     
     @Test
-    public void testCreateExpansion_InputStream() throws IOException {
+    public void testCreateExpansion_InputStream() throws IOException, ParserConfigurationException, SAXException, XPathExpressionException {
         log.info("testCreateExpansion_InputStream");
         
         //URL url = getClass().getResource("/data/Jameson.oolite-save");
@@ -160,7 +160,7 @@ public class OoliteTest {
     }
     
     @Test
-    public void testCreateExpansion_InputStream2() throws IOException {
+    public void testCreateExpansion_InputStream2() throws IOException, ParserConfigurationException, SAXException, XPathExpressionException {
         log.info("testCreateExpansion_InputStream2");
         
         URL url = getClass().getResource("/data/expansion.plist");
