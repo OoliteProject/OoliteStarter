@@ -136,6 +136,9 @@ public class ExpansionsTableModel extends AbstractTableModel implements Property
      * @return the Expansion
      */
     public Expansion getRow(int rowIndex) {
+        if (rowIndex > data.size()) {
+            rowIndex = data.size() - 1;
+        }
         return data.get(rowIndex);
     }
     
