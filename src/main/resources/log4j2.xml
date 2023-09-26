@@ -37,7 +37,7 @@
     <Logger level="info" name="oolite.starter.ui.StartGamePanel"/>
     <Logger level="info" name="oolite.starter.ui.OoliteFileChooserAccessory"/>
     <Logger level="warn" name="oolite.starter.util.PlistUtil"/>
-    <Logger level="info" name="oolite.starter.ui.Util"/>
+    <Logger level="info" name="oolite.starter.util.Util"/>
     <Logger level="warn" name="oolite.starter.util.XmlUtil"/>
     <Logger level="warn" name="oolite.starter.XmlUtil"/>
     
