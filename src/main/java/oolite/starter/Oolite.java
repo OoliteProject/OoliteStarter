@@ -77,6 +77,7 @@ public class Oolite implements PropertyChangeListener {
     private static final Logger logOolite = LogManager.getLogger("Oolite");
     
     private static final String OOLITE_CONFIGURATION_MUST_NOT_BE_NULL = "configuration must not be null";
+    private static final String OOLITE_DOWNLOAD_URL = "downloadUrl";
     private static final String OOLITE_EXPANSION_FQN = "org.oolite.hiran.OoliteStarter.oxp";
     private static final String OOLITE_IDENTIFIER = "identifier";
     private static final String OOLITE_USER_HOME = "user.home";
@@ -226,8 +227,8 @@ public class Oolite implements PropertyChangeListener {
                         log.debug("{} -- {}", t.getIdentifier(), t.getVersion());
                         log.debug("    {} -- {}", t2.getIdentifier(), t2.getVersion());
 
-                        result.add(new Command(Command.Action.delete, t));
-                        result.add(new Command(Command.Action.install, t2));
+                        result.add(new Command(Command.Action.DELETE, t));
+                        result.add(new Command(Command.Action.INSTALL, t2));
                     });
             });
         
@@ -546,6 +547,9 @@ public class Oolite implements PropertyChangeListener {
                     cmd.add("-P");
                     cmd.add(String.valueOf(ph.pid()));
                     run(cmd, new File("."));
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    log.info("Could not run pkill");
                 } catch (Exception e) {
                     log.info("Could not run pkill");
                 }
@@ -695,7 +699,7 @@ public class Oolite implements PropertyChangeListener {
         if (!"plist".equals(root.getNodeName())) {
             throw new IllegalArgumentException("Expected plist to parse");
         }
-        if (!"1.0".equals(root.getAttribute("version"))) {
+        if (!"1.0".equals(root.getAttribute(OOLITE_VERSION))) {
             throw new IllegalArgumentException("Expected plist version 1.0");
         }
 
@@ -1334,15 +1338,15 @@ public class Oolite implements PropertyChangeListener {
         pm.setNote("parseing " + source.getName() + "...");
         
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-        // to be compliant, completely disable DOCTYPE declaration:
+        // to be compliant, completely DISABLE DOCTYPE declaration:
         dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
-        // or completely disable external entities declarations:
+        // or completely DISABLE external entities declarations:
         dbf.setFeature("http://xml.org/sax/features/external-general-entities", false);
         dbf.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
         // or prohibit the use of all protocols by external entities:
         dbf.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
         dbf.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
-        // or disable entity expansion but keep in mind that this doesn't prevent fetching external entities
+        // or DISABLE entity expansion but KEEP in mind that this doesn't prevent fetching external entities
         // and this solution is not correct for OpenJDK < 13 due to a bug: https://bugs.openjdk.java.net/browse/JDK-8206132
         dbf.setExpandEntityReferences(false);
         
@@ -1354,7 +1358,7 @@ public class Oolite implements PropertyChangeListener {
         TreeMap<String, String> enabledAddons = new TreeMap<>();
         for (int i = 0; i < nl.getLength(); i++) {
             Element e = (Element)nl.item(i);
-            enabledAddons.put(e.getAttribute(OOLITE_IDENTIFIER) + ":" + e.getAttribute(OOLITE_VERSION), e.getAttribute("downloadUrl"));
+            enabledAddons.put(e.getAttribute(OOLITE_IDENTIFIER) + ":" + e.getAttribute(OOLITE_VERSION), e.getAttribute(OOLITE_DOWNLOAD_URL));
         }
 
         progress++;
@@ -1374,7 +1378,7 @@ public class Oolite implements PropertyChangeListener {
             pm.setProgress(progress);
         }
 
-        // now install what may be MISSING
+        // now INSTALL what may be MISSING
         pm.setNote("Installing missing expansions...");
         TreeMap<String, Expansion> expansionMap = new TreeMap<>();
         for (Expansion expansion: expansions) { 
@@ -1411,15 +1415,15 @@ public class Oolite implements PropertyChangeListener {
      */
     public NodeList parseExpansionSet(File source) throws ParserConfigurationException, SAXException, IOException, XPathExpressionException {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-        // to be compliant, completely disable DOCTYPE declaration:
+        // to be compliant, completely DISABLE DOCTYPE declaration:
         dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
-        // or completely disable external entities declarations:
+        // or completely DISABLE external entities declarations:
         dbf.setFeature("http://xml.org/sax/features/external-general-entities", false);
         dbf.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
         // or prohibit the use of all protocols by external entities:
         dbf.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
         dbf.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
-        // or disable entity expansion but keep in mind that this doesn't prevent fetching external entities
+        // or DISABLE entity expansion but KEEP in mind that this doesn't prevent fetching external entities
         // and this solution is not correct for OpenJDK < 13 due to a bug: https://bugs.openjdk.java.net/browse/JDK-8206132
         dbf.setExpandEntityReferences(false);
         
@@ -1445,18 +1449,18 @@ public class Oolite implements PropertyChangeListener {
         TreeMap<String, String> enabledAddons = new TreeMap<>();
         for (int i = 0; i < target.getLength(); i++) {
             Element e = (Element)target.item(i);
-            enabledAddons.put(e.getAttribute(OOLITE_IDENTIFIER) + ":" + e.getAttribute(OOLITE_VERSION), e.getAttribute("downloadUrl"));
+            enabledAddons.put(e.getAttribute(OOLITE_IDENTIFIER) + ":" + e.getAttribute(OOLITE_VERSION), e.getAttribute(OOLITE_DOWNLOAD_URL));
         }
 
         for (Expansion expansion: expansions) {
             String i = expansion.getIdentifier() + ":" + expansion.getVersion();
             if (expansion.isLocal() && expansion.isEnabled() && !enabledAddons.containsKey(i)) {
-                result.add(new Command(Command.Action.disable, expansion));
-                //expansion.disable();
+                result.add(new Command(Command.Action.DISABLE, expansion));
+                //expansion.DISABLE();
             }
         }
 
-        // now install what may be MISSING
+        // now INSTALL what may be MISSING
         // for that we prepare a list from which to pull Expansions
         TreeMap<String, Expansion> expansionMap = new TreeMap<>();
         for (Expansion expansion: expansions) { 
@@ -1475,21 +1479,21 @@ public class Oolite implements PropertyChangeListener {
                 e.setOolite(this);
                 e.setTitle(i);
                 e.setDownloadUrl(enabledAddons.get(i));
-                result.add(new Command(Command.Action.unknown, e));
+                result.add(new Command(Command.Action.UNKNOWN, e));
                 log.warn("Trying expansionset download {}", e);
             } else if (expansion.isLocal() && expansion.isEnabled()) {
                 // already here - do nothing
                 log.info("{} is already installed & enabled - doing nothing", i);
-                result.add(new Command(Command.Action.keep, expansion));
+                result.add(new Command(Command.Action.KEEP, expansion));
             } else if (expansion.isLocal() && !expansion.isEnabled()) {
                 log.info("{} is already installed but disabled - enabling", i);
-                result.add(new Command(Command.Action.enable, expansion));
+                result.add(new Command(Command.Action.ENABLE, expansion));
             } else {
                 String i2 = i.substring(i.indexOf(':'));
                 if (i2.equals(expansion.getVersion())) {
-                    result.add(new Command(Command.Action.install, expansion));
+                    result.add(new Command(Command.Action.INSTALL, expansion));
                 } else {
-                    result.add(new Command(Command.Action.installAlternative, expansion));
+                    result.add(new Command(Command.Action.INSTALL_ALTERNATIVE, expansion));
                 }
             }
         }
@@ -1519,7 +1523,7 @@ public class Oolite implements PropertyChangeListener {
                 Element element = doc.createElement("Expansion");
                 element.setAttribute(OOLITE_IDENTIFIER, expansion.getIdentifier());
                 element.setAttribute(OOLITE_VERSION, expansion.getVersion());
-                element.setAttribute("downloadUrl", expansion.getDownloadUrl());
+                element.setAttribute(OOLITE_DOWNLOAD_URL, expansion.getDownloadUrl());
                 root.appendChild(element);
             }
         }
@@ -1721,7 +1725,7 @@ public class Oolite implements PropertyChangeListener {
     public ExpansionReference getExpansionReference(String name) {
         log.debug("getExpansionReference({})", name);
         if (configuration == null) {
-            throw new IllegalStateException("configuration must not be null");
+            throw new IllegalStateException(OOLITE_CONFIGURATION_MUST_NOT_BE_NULL);
         }
         
         ExpansionReference result = null;

@@ -16,24 +16,24 @@ public class Command extends SwingWorker<Result, Object> {
     private static final Logger log = LogManager.getLogger();
 
     public enum Action {
-        // install the expansion
-        install, 
-        // install the alternative expansion
-        installAlternative, 
-        // delete the expansion
-        delete, 
-        // enable the expansion
-        enable, 
-        // disable the expansion
-        disable, 
+        // INSTALL the expansion
+        INSTALL, 
+        // INSTALL the alternative expansion
+        INSTALL_ALTERNATIVE, 
+        // DELETE the expansion
+        DELETE, 
+        // ENABLE the expansion
+        ENABLE, 
+        // DISABLE the expansion
+        DISABLE, 
         // we cannot resolve the expansion
-        unknown,
+        UNKNOWN,
         // we already have the expansion
-        keep;
+        KEEP;
     }
     
     public enum Result {
-        success, failure;
+        SUCCESS, FAILURE;
     }
     
     private Action action;
@@ -84,34 +84,34 @@ public class Command extends SwingWorker<Result, Object> {
         
         try {
             switch (action) {
-                case delete:
+                case DELETE:
                     expansion.remove();
                     break;
-                case disable:
+                case DISABLE:
                     expansion.disable();
                     break;
-                case enable:
+                case ENABLE:
                     expansion.enable();
                     break;
-                case install:
-                case installAlternative:
+                case INSTALL:
+                case INSTALL_ALTERNATIVE:
                     expansion.install();
                     break;
-                case unknown:
+                case UNKNOWN:
                     throw new UnsupportedOperationException("Ran out of ideas");
-                case keep:
+                case KEEP:
                     // nothing to do
                     break;
                 default:
                     throw new IllegalStateException(String.format("Unknown action %s", action));
             }
             
-            return Result.success;
+            return Result.SUCCESS;
             
         } catch (Exception e) {
             log.error("Could not {}", action, e);
             this.exception = e;
-            return Result.failure;
+            return Result.FAILURE;
         } finally {
             log.debug("doInBackground terminated");
         }

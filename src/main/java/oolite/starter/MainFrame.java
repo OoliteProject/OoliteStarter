@@ -135,6 +135,7 @@ public class MainFrame extends javax.swing.JFrame {
             try {
                 Thread.sleep(3000);
             } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
                 log.debug("thread interrupted while waiting for Oolite to shutdown", e);
             }
         }

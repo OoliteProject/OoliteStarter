@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
+import javax.swing.SwingWorker;
 import javax.swing.Timer;
 import oolite.starter.model.Command;
 import org.apache.logging.log4j.LogManager;
@@ -20,7 +21,7 @@ public class ExpansionManager {
     private static final Logger log = LogManager.getLogger();
     
     public enum Activity {
-        Processing, Idle, Errors;
+        PROCESSING, IDLE, ERRORS;
     }
     
     public record Status (int queueSize, int processing, int failed, Activity activity) {
@@ -48,21 +49,21 @@ public class ExpansionManager {
     private ExpansionManager() {
         listeners = new ArrayList<>();
         commands = new ArrayList<>();
-        activity = Activity.Idle;
+        activity = Activity.IDLE;
         
         timer = new Timer(1000, (ae) -> {
             log.trace("ExpansionManager checking queue...");
             
             if (commands.isEmpty()) {
-                if (activity != Activity.Idle) {
-                    activity = Activity.Idle;
+                if (activity != Activity.IDLE) {
+                    activity = Activity.IDLE;
                     fireUpdateStatus(new Status(0, 0, 0, activity));
                 }
             } else {
                 int commandCount0 = commands.size();
                 if (getFailedCount() == commandCount0) {
-                    if (activity != Activity.Errors) {
-                        activity = Activity.Errors;
+                    if (activity != Activity.ERRORS) {
+                        activity = Activity.ERRORS;
                         fireUpdateStatus(new Status(0, 0, 0, activity));
                     }
                 } else {
@@ -70,11 +71,12 @@ public class ExpansionManager {
                         // remove done commands
                         List<Command> done = commands
                                 .stream()
-                                .filter((t) -> t.getState() == Command.StateValue.DONE)
+                                .filter((t) -> t.getState() == SwingWorker.StateValue.DONE)
                                 .filter((t) -> {
                                     try {
-                                        return t.get() == Command.Result.success;
+                                        return t.get() == Command.Result.SUCCESS;
                                     } catch (InterruptedException | ExecutionException e) {
+                                        Thread.currentThread().interrupt();
                                         return false;
                                     }
                                 })
@@ -84,17 +86,17 @@ public class ExpansionManager {
                         // trigger up to parallelTreads
                         commands
                                 .stream()
-                                //.filter(t -> t.getAction() != Command.Action.unknown)
-                                .filter(t -> t.getState() != Command.StateValue.DONE)
+                                //.filter(t -> t.getAction() != Command.Action.UNKNOWN)
+                                .filter(t -> t.getState() != SwingWorker.StateValue.DONE)
                                 .limit(parallelThreads)
-                                .filter(t -> t.getState() == Command.StateValue.PENDING)
+                                .filter(t -> t.getState() == SwingWorker.StateValue.PENDING)
                                 .forEach((t) -> {
                                     t.execute();
                                 });
                     }
                     int commandCount1 = commands.size();
-                    if (activity == activity.Idle || (commandCount1 - commandCount0) != 0) {
-                        activity = Activity.Processing;
+                    if (activity == activity.IDLE || (commandCount1 - commandCount0) != 0) {
+                        activity = Activity.PROCESSING;
                         fireUpdateStatus();
                     }
                 }
@@ -137,13 +139,16 @@ public class ExpansionManager {
     private void fireUpdateStatus() {
         long processing = commands
                 .stream()
-                .filter((t) -> t.getState() == Command.StateValue.STARTED)
+                .filter((t) -> t.getState() == SwingWorker.StateValue.STARTED)
                 .count();
         long failed = commands
                 .stream()
                 .filter((t) -> {
                     try {
-                        return t.getState() == Command.StateValue.DONE && t.get() == Command.Result.failure;
+                        return t.getState() == SwingWorker.StateValue.DONE && t.get() == Command.Result.FAILURE;
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                        return false;
                     } catch (Exception e) {
                         return false;
                     }
@@ -182,7 +187,7 @@ public class ExpansionManager {
         }
         
         for (Command c: commands) {
-            if (c.getAction() != Command.Action.keep) {
+            if (c.getAction() != Command.Action.KEEP) {
                 this.commands.add(c);
             }
         }
@@ -195,7 +200,10 @@ public class ExpansionManager {
         return commands.stream()
             .filter((t) -> {
                 try {
-                    return t.getState() == Command.StateValue.DONE && t.get() == Command.Result.failure;
+                    return t.getState() == SwingWorker.StateValue.DONE && t.get() == Command.Result.FAILURE;
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    return false;
                 } catch (Exception e) {
                     return false;
                 }
@@ -211,7 +219,7 @@ public class ExpansionManager {
     public Status getStatus() {
         long processing = commands
                 .stream()
-                .filter((t) -> t.getState() == Command.StateValue.STARTED)
+                .filter((t) -> t.getState() == SwingWorker.StateValue.STARTED)
                 .count();
         long failed = getFailedCount();
 

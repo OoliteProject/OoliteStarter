@@ -406,7 +406,7 @@ public class ExpansionPanel extends javax.swing.JPanel implements PropertyChange
     private void btInstallActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btInstallActionPerformed
         log.debug("btInstallActionPerformed({})", evt);
         try {
-            ExpansionManager.getInstance().addCommand(new Command(Command.Action.install, data));
+            ExpansionManager.getInstance().addCommand(new Command(Command.Action.INSTALL, data));
         } catch (Exception e) {
             log.error("Could not trigger install", e);
         }
@@ -415,7 +415,7 @@ public class ExpansionPanel extends javax.swing.JPanel implements PropertyChange
     private void btEnableActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btEnableActionPerformed
         log.debug("btEnableActionPerformed({})", evt);
         try {
-            ExpansionManager.getInstance().addCommand(new Command(Command.Action.enable, data));
+            ExpansionManager.getInstance().addCommand(new Command(Command.Action.ENABLE, data));
         } catch (Exception e) {
             log.error("Could not trigger enable", e);
         }
@@ -424,7 +424,7 @@ public class ExpansionPanel extends javax.swing.JPanel implements PropertyChange
     private void btDisableActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btDisableActionPerformed
         log.debug("btDisableActionPerformed({})", evt);
         try {
-            ExpansionManager.getInstance().addCommand(new Command(Command.Action.disable, data));
+            ExpansionManager.getInstance().addCommand(new Command(Command.Action.DISABLE, data));
         } catch (Exception e) {
             log.error("Could not trigger disable", e);
         }
@@ -438,7 +438,7 @@ public class ExpansionPanel extends javax.swing.JPanel implements PropertyChange
         }
         
         try {
-            ExpansionManager.getInstance().addCommand(new Command(Command.Action.delete, data));
+            ExpansionManager.getInstance().addCommand(new Command(Command.Action.DELETE, data));
         } catch (Exception e) {
             log.error("Could not trigger remove", e);
         }

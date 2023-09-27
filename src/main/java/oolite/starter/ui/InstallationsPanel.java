@@ -51,11 +51,14 @@ public class InstallationsPanel extends javax.swing.JPanel {
     private transient Configuration configuration;
     
     private boolean configDirty;
+    private Random random;
 
     /**
      * Creates new form InstallationsPanel.
      */
     public InstallationsPanel() {
+        random = new Random();
+        
         initComponents();
         
         installationDetails = new InstallationForm();
@@ -488,7 +491,7 @@ public class InstallationsPanel extends javax.swing.JPanel {
                 sb.append("<p>Nice try, kiddo!</p><p>Your configuration was stored in ").append(f.getAbsolutePath()).append(".</p>");
                 sb.append("<p>But... you still ain't got any Oolite version selected. Work on that, or I can't let you go.</p>");
             } else {
-                switch(new Random().nextInt(3)) {
+                switch(random.nextInt(3)) {
                     case 0:
                         sb.append("<p>Smart move, kiddo!</p><p>Your configuration was stored in ").append(f.getAbsolutePath()).append(".</p>");
                         sb.append("<p>Next time we won't have to fasten these screws again.</p>");

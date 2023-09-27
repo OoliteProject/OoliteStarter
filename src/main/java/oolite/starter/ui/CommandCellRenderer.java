@@ -12,6 +12,7 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.ListCellRenderer;
+import javax.swing.SwingWorker;
 import oolite.starter.model.Command;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -62,34 +63,38 @@ public class CommandCellRenderer extends JPanel implements ListCellRenderer<Comm
         String a = String.valueOf(command.getAction());
         String b = command.getExpansion().getTitle() + " @ " + command.getExpansion().getVersion();
         switch (command.getAction()) {
-            case install:
+            case INSTALL:
                 lbIcon.setIcon(iiInstall);
                 break;
-            case installAlternative:
+            case INSTALL_ALTERNATIVE:
                 lbIcon.setIcon(iiWarn);
                 break;
-            case enable:
+            case ENABLE:
                 lbIcon.setIcon(iiEnable);
                 break;
-            case keep:
+            case KEEP:
                 lbIcon.setIcon(iiKeep);
                 break;
-            case unknown:
+            case UNKNOWN:
                 lbIcon.setIcon(iiError);
                 b += " - Have no download URL";
                 break;
-            case disable:
+            case DISABLE:
                 lbIcon.setIcon(iiDisable);
                 break;
-            case delete:
+            case DELETE:
                 lbIcon.setIcon(iiDelete);
                 break;
             default:
                 lbIcon.setIcon(null);
         }
-        if (command.getState() == Command.StateValue.DONE) {
+        if (command.getState() == SwingWorker.StateValue.DONE) {
             try {
                 a = a + " " + String.valueOf(command.get());
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                a = a + " Exception";
+                b = b + "\n" + e.getMessage();
             } catch (Exception e) {
                 a = a + " Exception";
                 b = b + "\n" + e.getMessage();

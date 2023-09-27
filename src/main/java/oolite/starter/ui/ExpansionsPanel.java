@@ -263,7 +263,7 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
                 popupMenu.add(new AbstractAction("Install", iiInstall) {
                     @Override
                     public void actionPerformed(ActionEvent ae) {
-                        Command command = new Command(Command.Action.install, row);
+                        Command command = new Command(Command.Action.INSTALL, row);
                         ExpansionManager.getInstance().addCommand(command);
                     }
                 });
@@ -290,7 +290,7 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
                         popupMenu.add(new AbstractAction("Disable", iiDisable) {
                             @Override
                             public void actionPerformed(ActionEvent ae) {
-                                Command command = new Command(Command.Action.disable, row);
+                                Command command = new Command(Command.Action.DISABLE, row);
                                 ExpansionManager.getInstance().addCommand(command);                        
                             }
                         });
@@ -298,7 +298,7 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
                         popupMenu.add(new AbstractAction("Enable", iiEnable) {
                             @Override
                             public void actionPerformed(ActionEvent ae) {
-                                Command command = new Command(Command.Action.enable, row);
+                                Command command = new Command(Command.Action.ENABLE, row);
                                 ExpansionManager.getInstance().addCommand(command);
                             }
                         });
@@ -311,7 +311,7 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
                 popupMenu.add(new AbstractAction("Delete", iiDelete) {
                     @Override
                     public void actionPerformed(ActionEvent ae) {
-                        Command command = new Command(Command.Action.delete, row);
+                        Command command = new Command(Command.Action.DELETE, row);
                         ExpansionManager.getInstance().addCommand(command);
                     }
                 });
@@ -383,7 +383,7 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
             jTable1.setModel(model);
             jTable1.getColumnModel().getColumn(1).setCellRenderer(new DefaultTableCellRenderer() {
                 
-                private DateTimeFormatter dtf = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM);
+                private transient DateTimeFormatter dtf = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM);
 
                 @Override
                 public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
@@ -818,7 +818,7 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
         String s = String.valueOf(status.activity()) + " (" + String.valueOf(status.processing()) + ")";
         txtEMStatus.setText(s);
         
-        if (status.activity() == ExpansionManager.Activity.Idle && status.queueSize() == 0) {
+        if (status.activity() == ExpansionManager.Activity.IDLE && status.queueSize() == 0) {
             MrGimlet.showMessage(this, "All done, kiddo. What are you waiting for?");
         }
     }

@@ -65,6 +65,7 @@ public class SplashPanel extends JPanel implements MouseListener, MouseMotionLis
 
     @Override
     public void mouseClicked(MouseEvent me) {
+        // not needed
     }
 
     @Override
@@ -78,14 +79,17 @@ public class SplashPanel extends JPanel implements MouseListener, MouseMotionLis
 
     @Override
     public void mouseReleased(MouseEvent me) {
+        // not needed
     }
 
     @Override
     public void mouseEntered(MouseEvent me) {
+        // not needed
     }
 
     @Override
     public void mouseExited(MouseEvent me) {
+        // not needed
     }
 
     @Override
@@ -101,5 +105,6 @@ public class SplashPanel extends JPanel implements MouseListener, MouseMotionLis
 
     @Override
     public void mouseMoved(MouseEvent me) {
+        // not needed
     }
 }
