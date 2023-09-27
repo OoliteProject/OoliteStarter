@@ -2,6 +2,7 @@
  */
 package oolite.starter.model;
 
+import java.awt.Color;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
@@ -614,5 +615,97 @@ public class ExpansionTest {
         
         expansion.setVersion("v1");
         assertEquals(3227862, expansion.hashCode());
+    }
+    
+    @Test
+    public void testEMStatus() {
+        log.info("testEMStatus");
+        
+        Expansion.EMStatus instance = new Expansion.EMStatus();
+        assertNull(instance.getColor());
+        assertEquals(false, instance.isConflicting());
+        assertEquals(false, instance.isIncompatible());
+        assertEquals(false, instance.isLatest());
+        assertEquals(false, instance.isMissingDeps());
+        
+        instance.setColor(Color.yellow);
+        assertEquals(Color.yellow, instance.getColor());
+        
+        instance.setConflicting(true);
+        assertTrue(instance.isConflicting());
+        
+        instance.setIncompatible(true);
+        assertTrue(instance.isIncompatible());
+        
+        instance.setLatest(true);
+        assertTrue(instance.isLatest());
+        
+        instance.setMissingDeps(true);
+        assertTrue(instance.isMissingDeps());
+    }
+    
+    @Test
+    public void testEMStatus2() {
+        log.info("testEMStatus2");
+        
+        Color color = Color.BLUE;
+        Expansion.EMStatus instance = new Expansion.EMStatus(color, false, false, false, false);
+        assertEquals(color, instance.getColor());
+        assertEquals(false, instance.isConflicting());
+        assertEquals(false, instance.isIncompatible());
+        assertEquals(false, instance.isLatest());
+        assertEquals(false, instance.isMissingDeps());
+    }
+    
+    @Test
+    public void testEMStatus3() {
+        log.info("testEMStatus3");
+        
+        Color color = Color.black;
+        Expansion.EMStatus instance = new Expansion.EMStatus(color, true, false, false, false);
+        assertEquals(color, instance.getColor());
+        assertEquals(false, instance.isConflicting());
+        assertEquals(false, instance.isIncompatible());
+        assertEquals(true, instance.isLatest());
+        assertEquals(false, instance.isMissingDeps());
+    }
+    
+    @Test
+    public void testEMStatus4() {
+        log.info("testEMStatus4");
+        
+        Color color = Color.yellow;
+        Expansion.EMStatus instance = new Expansion.EMStatus(color, true, true, false, false);
+        assertEquals(color, instance.getColor());
+        assertEquals(true, instance.isConflicting());
+        assertEquals(false, instance.isIncompatible());
+        assertEquals(true, instance.isLatest());
+        assertEquals(false, instance.isMissingDeps());
+    }
+    
+    @Test
+    public void testEMStatus5() {
+        log.info("testEMStatus5");
+        
+        Color color = Color.CYAN;
+        Expansion.EMStatus instance = new Expansion.EMStatus(color, true, true, true, false);
+        assertEquals(color, instance.getColor());
+        assertEquals(true, instance.isConflicting());
+        assertEquals(false, instance.isIncompatible());
+        assertEquals(true, instance.isLatest());
+        assertEquals(true, instance.isMissingDeps());
+    }
+    
+    @Test
+    public void testEMStatus6() {
+        log.info("testEMStatus6");
+        
+        Color color = Color.PINK;
+        Expansion.EMStatus instance = new Expansion.EMStatus(color, true, true, true, true);
+        assertEquals(color, instance.getColor());
+        assertEquals(true, instance.isConflicting());
+        assertEquals(true, instance.isIncompatible());
+        assertEquals(true, instance.isLatest());
+        assertEquals(true, instance.isMissingDeps());
     }
 }
