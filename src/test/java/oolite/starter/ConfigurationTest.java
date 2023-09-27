@@ -6,6 +6,7 @@ package oolite.starter;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.time.Duration;
 import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
@@ -109,5 +110,14 @@ public class ConfigurationTest {
         assertEquals(i, c.getActiveInstallation());
         c.activateInstallation((Installation)null);
         assertNull(c.getActiveInstallation());
+    }
+    
+    @Test
+    public void testGetUpdateCheckInterval() throws IOException, ParserConfigurationException, SAXException, XPathExpressionException {
+        log.info("testGetUpdateCheckInterval");
+        
+        Configuration c = new Configuration(new File("src/test/resources/testConfig.xml"));
+        assertEquals(Duration.ofDays(1), c.getUpdateCheckInterval());
+
     }
 }

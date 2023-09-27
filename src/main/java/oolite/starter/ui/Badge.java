@@ -44,7 +44,9 @@ public class Badge extends javax.swing.JPanel {
      * 
      * @param name 
      */
+    @Override
     public void setName(String name) {
+        super.setName(name);
         jlName.setText(name);
     }
 

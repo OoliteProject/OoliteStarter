@@ -61,7 +61,7 @@ public class AnnotationRenderer implements TableCellRenderer {
                 g2d.setStroke(new BasicStroke(3));
                 g2d.drawLine(0, baseLine, c.getWidth(), baseLine);
                 Rectangle2D r = g2d.getFont().getStringBounds(indicator, frc);
-                g2d.drawString(indicator, (int)(c.getWidth()-r.getWidth()), (int)(c.getHeight() - 1));
+                g2d.drawString(indicator, (int)(c.getWidth()-r.getWidth()), c.getHeight() - 1);
             }
         }
     }
@@ -113,7 +113,6 @@ public class AnnotationRenderer implements TableCellRenderer {
                 }
                 
                 if (!indicator.isEmpty()) {
-                    //layerUI.setIndicator(indicator);
                     c = new JLayer<JComponent>(c, layerUI);
                 }
             }

@@ -45,7 +45,7 @@ public class ExpansionManagerPanel extends javax.swing.JPanel implements Expansi
                 s = s + " (" + data.getCommands().size() + ")";
             }
             jTextField1.setText(s);
-            DefaultListModel dlm = new DefaultListModel<Command>();
+            DefaultListModel<Command> dlm = new DefaultListModel<>();
             dlm.addAll(data.getCommands());
             jList1.setModel(dlm);
         }

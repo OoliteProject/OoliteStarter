@@ -18,7 +18,7 @@ import org.apache.logging.log4j.Logger;
 public class Util {
     public static final Logger log = LogManager.getLogger();
 
-    private static String EXCEPTION_IN_MUST_NOT_BE_NULL = "in must not be null";
+    private static final String EXCEPTION_IN_MUST_NOT_BE_NULL = "in must not be null";
         
     /**
      * Prevent creating instances.

@@ -120,7 +120,7 @@ public class Configuration {
             if (log.isDebugEnabled()) {
                 log.debug("Still using default udpate interval.", e);
             } else {
-                log.info("Still using default udpate interval: ", e.getMessage());
+                log.info("Still using default udpate interval: {}", e.getMessage());
             }
         }
         

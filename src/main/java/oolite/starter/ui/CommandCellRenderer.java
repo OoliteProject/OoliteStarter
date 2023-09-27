@@ -90,7 +90,7 @@ public class CommandCellRenderer extends JPanel implements ListCellRenderer<Comm
         }
         if (command.getState() == SwingWorker.StateValue.DONE) {
             try {
-                a = a + " " + String.valueOf(command.get());
+                a = a + " " + command.get();
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
                 a = a + " Exception";
@@ -100,7 +100,7 @@ public class CommandCellRenderer extends JPanel implements ListCellRenderer<Comm
                 b = b + "\n" + e.getMessage();
             }
         } else {
-            a = a + " " + String.valueOf(command.getState());
+            a = a + " " + command.getState();
         }
         
         if (command.getException() != null) {

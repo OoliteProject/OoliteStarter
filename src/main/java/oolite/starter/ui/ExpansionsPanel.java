@@ -71,6 +71,7 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
     private static final ImageIcon iiDelete = new ImageIcon(ExpansionReferenceCellRenderer.class.getResource("/icons/delete_forever_FILL0_wght400_GRAD0_opsz24.png"));
     private static final ImageIcon iiCopy = new ImageIcon(ExpansionReferenceCellRenderer.class.getResource("/icons/content_copy_FILL0_wght400_GRAD0_opsz24.png"));
     private static final ImageIcon iiBrowse = new ImageIcon(ExpansionReferenceCellRenderer.class.getResource("/icons/folder_open_FILL0_wght400_GRAD0_opsz24.png"));
+    private static final String REGEX_HELP_URL = "https://www.regular-expressions.info/tutorial.html";
     
     private ExpansionManagerPanel emp;
     private JDialog emd;
@@ -147,9 +148,7 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
             @Override
             public void mouseClicked(MouseEvent e) {
                 try {
-                    //Desktop.getDesktop().browse(new URI("https://en.wikipedia.org/wiki/Regular_expression"));
-                    //Desktop.getDesktop().browse(new URI("https://www.regular-expressions.info/quickstart.html"));
-                    Desktop.getDesktop().browse(new URI("https://www.regular-expressions.info/tutorial.html"));
+                    Desktop.getDesktop().browse(new URI(REGEX_HELP_URL));
                 } catch (Exception ex) {
                     log.info("Could not browse", ex);
                 }
@@ -279,7 +278,6 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
                         }
                         try {
                             Desktop.getDesktop().open(row.getLocalFile());
-                            return;
                         } catch (Exception e) {
                             log.warn("Could not open file", e);
                         }
@@ -815,7 +813,7 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
     @Override
     public void updateStatus(ExpansionManager.Status status, List<Command> queue) {
         log.debug("updateStatus(...)");
-        String s = String.valueOf(status.activity()) + " (" + String.valueOf(status.processing()) + ")";
+        String s = String.valueOf(status.activity()) + " (" + status.processing() + ")";
         txtEMStatus.setText(s);
         
         if (status.activity() == ExpansionManager.Activity.IDLE && status.queueSize() == 0) {

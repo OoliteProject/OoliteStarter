@@ -5,6 +5,7 @@ package oolite.starter.ui;
 import java.awt.Desktop;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.text.html.HTMLDocument;
 import org.apache.commons.io.IOUtils;
@@ -53,7 +54,7 @@ public class AboutPanel extends javax.swing.JPanel {
         initComponents();
         jEditorPane1.setContentType(contentType);
         
-        String content = IOUtils.toString( getClass().getResource("/about.html"), "UTF8");
+        String content = IOUtils.toString( getClass().getResource("/about.html"), StandardCharsets.UTF_8);
         jEditorPane1.setText(content);
         if ("text/html".equals(contentType)) {
             HTMLDocument doc = (HTMLDocument)jEditorPane1.getDocument();
