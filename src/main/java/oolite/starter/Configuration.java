@@ -117,7 +117,11 @@ public class Configuration {
             String i = xpath.evaluate("/OoliteStarter/ExpansionManager/updateCheckInterval", doc);
             this.updateCheckInterval = Duration.parse(i);
         } catch (Exception e) {
-            log.info("Still using default udpate interval.", e);
+            if (log.isDebugEnabled()) {
+                log.debug("Still using default udpate interval.", e);
+            } else {
+                log.info("Still using default udpate interval: ", e.getMessage());
+            }
         }
         
         // load installations

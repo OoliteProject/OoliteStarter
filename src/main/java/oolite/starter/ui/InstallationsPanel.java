@@ -9,9 +9,9 @@ import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -51,13 +51,13 @@ public class InstallationsPanel extends javax.swing.JPanel {
     private transient Configuration configuration;
     
     private boolean configDirty;
-    private Random random;
+    private SecureRandom random;
 
     /**
      * Creates new form InstallationsPanel.
      */
     public InstallationsPanel() {
-        random = new Random();
+        random = new SecureRandom();
         
         initComponents();
         

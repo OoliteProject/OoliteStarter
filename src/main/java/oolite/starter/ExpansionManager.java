@@ -137,24 +137,6 @@ public class ExpansionManager {
     }
     
     private void fireUpdateStatus() {
-        long processing = commands
-                .stream()
-                .filter((t) -> t.getState() == SwingWorker.StateValue.STARTED)
-                .count();
-        long failed = commands
-                .stream()
-                .filter((t) -> {
-                    try {
-                        return t.getState() == SwingWorker.StateValue.DONE && t.get() == Command.Result.FAILURE;
-                    } catch (InterruptedException e) {
-                        Thread.currentThread().interrupt();
-                        return false;
-                    } catch (Exception e) {
-                        return false;
-                    }
-                })
-                .count();
-
         fireUpdateStatus(getStatus());
     }
     
