@@ -11,6 +11,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
 import oolite.starter.model.Expansion;
@@ -26,6 +28,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import org.mockito.Mockito;
+import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 /**
@@ -528,5 +531,91 @@ public class OoliteTest {
         assertEquals(ExpansionReference.Status.SURPLUS, result.get(0).getStatus());
         assertEquals("A", result.get(1).getName());
         assertEquals(ExpansionReference.Status.MISSING, result.get(1).getStatus());
+    }
+    
+    @Test
+    public void testContains() {
+        log.info("testContains");
+        
+        Oolite instance = new Oolite();
+        try {
+            instance.contains(null, null);
+            fail("expected exception");
+        } catch (IllegalArgumentException e) {
+            assertEquals("list must not be null", e.getMessage());
+            log.debug("caught expected exception", e);
+        }
+    }
+    
+    @Test
+    public void testContains2() {
+        log.info("testContains2");
+        
+        Oolite instance = new Oolite();
+        List<ExpansionReference> list = new ArrayList<>();
+        list.add(new ExpansionReference("myexpansion"));
+        try {
+            instance.contains(list, null);
+            fail("expected exception");
+        } catch (IllegalArgumentException e) {
+            assertEquals("expansion must not be null", e.getMessage());
+            log.debug("caught expected exception", e);
+        }
+    }
+    
+    @Test
+    public void testContains3() {
+        log.info("testContains3");
+        
+        Oolite instance = new Oolite();
+        List<ExpansionReference> list = new ArrayList<>();
+        list.add(new ExpansionReference("myexpansion"));
+        Expansion expansion = new Expansion();
+        expansion.setLocalFile(new File("other"));
+        assertFalse(instance.contains(list, expansion));
+    }
+    
+    @Test
+    public void testContains4() {
+        log.info("testContains4");
+        
+        Oolite instance = new Oolite();
+        List<ExpansionReference> list = new ArrayList<>();
+        list.add(new ExpansionReference("myexpansion"));
+        Expansion expansion = new Expansion();
+        expansion.setLocalFile(new File("myexpansion"));
+        assertTrue(instance.contains(list, expansion));
+    }
+    
+    @Test
+    public void testCreateExpansionFromManifest() throws XPathExpressionException {
+        log.info("testCreateExpansionFromManifest");
+        
+        Oolite instance = new Oolite();
+        try {
+            instance.createExpansionFromManifest((Document)null);
+            fail("expected exception");
+        } catch (IllegalArgumentException e) {
+            assertEquals("doc must not be null", e.getMessage());
+            log.debug("caught expected exception", e);
+        }
+    }
+    
+    @Test
+    public void testCreateExpansionFromManifest2() throws XPathExpressionException, ParserConfigurationException {
+        log.info("testCreateExpansionFromManifest2");
+        
+        DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+        Document doc = db.newDocument();
+        Oolite instance = new Oolite();
+        
+        
+        try {
+            instance.createExpansionFromManifest(doc);
+            fail("expected exception");
+        } catch (IllegalArgumentException e) {
+            assertEquals("doc must have root element", e.getMessage());
+            log.debug("caught expected exception", e);
+        }
     }
 }

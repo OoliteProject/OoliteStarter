@@ -175,6 +175,13 @@ public class Oolite implements PropertyChangeListener {
             }
         }
     }
+    
+    private ModuleDescriptor.Version parseVersion(String version) {
+        if (version.startsWith("v")) {
+            version = version.substring(1);
+        }
+        return ModuleDescriptor.Version.parse(version);
+    }
 
     /**
      * Checks for updates and returns a list of commands.
@@ -196,21 +203,13 @@ public class Oolite implements PropertyChangeListener {
                         ModuleDescriptor.Version v1 = null;
                         ModuleDescriptor.Version v2 = null;
                         try {
-                            String v = t.getVersion();
-                            if (v.startsWith("v")) {
-                                v = v.substring(1);
-                            }
-                            v1 = ModuleDescriptor.Version.parse(v);
+                            v1 = parseVersion(t.getVersion());
                         } catch (IllegalArgumentException iae) {
                             log.warn("Problem on {} {}", t.getIdentifier(), t.getVersion(), iae);
                         }
 
                         try {
-                            String v = t2.getVersion();
-                            if (v.startsWith("v")) {
-                                v = v.substring(1);
-                            }
-                            v2 = ModuleDescriptor.Version.parse(v);
+                            v2 = parseVersion(t2.getVersion());
                         } catch (IllegalArgumentException iae) {
                             log.warn("Problem on {} {}", t2.getIdentifier(), t2.getVersion(), iae);
                         }
@@ -386,6 +385,13 @@ public class Oolite implements PropertyChangeListener {
      * @return true if found, false otherwise
      */
     protected boolean contains(List<ExpansionReference> list, Expansion expansion) {
+        log.debug("contains({}, {})", list, expansion);
+        if (list == null) {
+            throw new IllegalArgumentException("list must not be null");
+        }
+        if (expansion == null) {
+            throw new IllegalArgumentException("expansion must not be null");
+        }
         for (ExpansionReference ref: list) {
             if (expansion.getLocalFile().getName().endsWith(ref.getName())) {
                 return true;
@@ -693,7 +699,14 @@ public class Oolite implements PropertyChangeListener {
      */    
     public Expansion createExpansionFromManifest(Document doc) throws XPathExpressionException {
         log.debug("createExpansion({})", doc);
+        if (doc == null) {
+            throw new IllegalArgumentException("doc must not be null");
+        }
+        
         Element root = doc.getDocumentElement();
+        if (root == null) {
+            throw new IllegalArgumentException("doc must have root element");
+        }
         if (!"plist".equals(root.getNodeName())) {
             throw new IllegalArgumentException("Expected plist to parse");
         }
