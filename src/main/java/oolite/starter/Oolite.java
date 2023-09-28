@@ -172,26 +172,28 @@ public class Oolite implements PropertyChangeListener {
                     t.getEMStatus().setConflicting(false);
         });
         
-        for (Expansion e: expansions) {
-            try {
-                List<String> conflicts = e.getConflictOxps();
-                if (conflicts != null) {
-                    for (String ref: conflicts) {
-                        List<Expansion> cs = getExpansionByReference(ref, expansions, true);
-                        if (!cs.isEmpty()) {
-                            log.info("Expansion {} conflicts with {}", e.getIdentifier(), cs);
-                            e.getEMStatus().setConflicting(true);
+        expansions.stream()
+            .filter(t -> t.isEnabled())
+            .forEach(e -> {
+                try {
+                    List<String> conflicts = e.getConflictOxps();
+                    if (conflicts != null) {
+                        for (String ref: conflicts) {
+                            List<Expansion> cs = getExpansionByReference(ref, expansions, true);
+                            if (!cs.isEmpty()) {
+                                log.info("Expansion {} conflicts with {}", e.getIdentifier(), cs);
+                                e.getEMStatus().setConflicting(true);
+                            }
+                            cs.stream()
+                              .forEach(t -> {
+                                  t.getEMStatus().setConflicting(true);
+                            });
                         }
-                        cs.stream()
-                          .forEach(t -> {
-                              t.getEMStatus().setConflicting(true);
-                        });
                     }
+                } catch (Exception ex) {
+                    log.warn("Could not assess conflicts for {}", e.getIdentifier(), ex);
                 }
-            } catch (Exception ex) {
-                log.warn("Could not assess conflicts for {}", e.getIdentifier(), ex);
-            }
-        }
+            });
     }
     
     private ModuleDescriptor.Version parseVersion(String version) {

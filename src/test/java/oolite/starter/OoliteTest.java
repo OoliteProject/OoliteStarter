@@ -788,7 +788,7 @@ public class OoliteTest {
         Expansion e1 = Mockito.mock(Expansion.class);
         Expansion.EMStatus ems1 = new Expansion.EMStatus();
         Mockito.when(e1.getEMStatus()).thenReturn(ems1);
-        Mockito.when(e1.getIdentifier()).thenReturn("e1");
+        e1.setIdentifier("e1");
         Mockito.when(e1.getConflictOxps()).thenReturn(Arrays.asList("e2:1", "e3:1"));
         Mockito.when(e1.isEnabled()).thenReturn(true);
         //e1.setOolite(instance);
@@ -806,10 +806,10 @@ public class OoliteTest {
         //e3.setOolite(instance);
         Expansion e4 = Mockito.mock(Expansion.class);
         Expansion.EMStatus ems4 = new Expansion.EMStatus();
-        Mockito.when(e4.getEMStatus()).thenReturn(ems3);
-        Mockito.when(e4.getIdentifier()).thenReturn("e3");
+        Mockito.when(e4.getEMStatus()).thenReturn(ems4);
+        Mockito.when(e4.getIdentifier()).thenReturn("e4");
         Mockito.when(e4.isEnabled()).thenReturn(true);
-        //e3.setOolite(instance);
+        //e4.setOolite(instance);
         List<Expansion> expansions = new ArrayList<>();
         expansions.add(e1);
         expansions.add(e2);
@@ -821,6 +821,6 @@ public class OoliteTest {
         assertEquals(true, e1.getEMStatus().isConflicting());
         assertEquals(true, e2.getEMStatus().isConflicting());
         assertEquals(true, e3.getEMStatus().isConflicting());
-        assertEquals(true, e4.getEMStatus().isConflicting());
+        assertEquals(false, e4.getEMStatus().isConflicting());
     }
 }
