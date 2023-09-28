@@ -125,6 +125,12 @@ public class Oolite implements PropertyChangeListener {
      */
     List<Expansion> getExpansionByReference(String reference, List<Expansion> expansions, boolean checkEnabled) {
         log.debug("getExpansionByReference({}, {})", reference, expansions);
+        if (reference == null) {
+            throw new IllegalArgumentException("reference must not be null");
+        }
+        if (expansions == null) {
+            throw new IllegalArgumentException("expansions must not be null");
+        }
         
         // first find the full reference
         for (Expansion e: expansions) {
@@ -156,9 +162,17 @@ public class Oolite implements PropertyChangeListener {
 
     void validateConflicts(List<Expansion> expansions) {
         log.debug("validateConflicts({})", expansions);
-        for (Expansion e: expansions) {
-            e.getEMStatus().setConflicting(false);
+        if (expansions == null) {
+            throw new IllegalArgumentException("expansions must not be null");
+        }
 
+        // reset conflict flag
+        expansions.stream()
+                .forEach(t -> {
+                    t.getEMStatus().setConflicting(false);
+        });
+        
+        for (Expansion e: expansions) {
             try {
                 List<String> conflicts = e.getConflictOxps();
                 if (conflicts != null) {
@@ -168,6 +182,10 @@ public class Oolite implements PropertyChangeListener {
                             log.info("Expansion {} conflicts with {}", e.getIdentifier(), cs);
                             e.getEMStatus().setConflicting(true);
                         }
+                        cs.stream()
+                          .forEach(t -> {
+                              t.getEMStatus().setConflicting(true);
+                        });
                     }
                 }
             } catch (Exception ex) {
@@ -1334,10 +1352,10 @@ public class Oolite implements PropertyChangeListener {
      * @param expansions the expansions to work on
      * 
      * @deprecated Use the new separate functions to read a file and create
-     * references, then translate it into a command line, finally inject the 
+     * references, then translate it into a command list, finally inject the 
      * command list into the ExpansionManager
      */
-    @Deprecated
+    @Deprecated(since = "1.20")
     public void setEnabledExpansions(File source, List<Expansion> expansions, ProgressMonitor pm) throws IOException, ParserConfigurationException, SAXException, XPathExpressionException {
         pm.setMinimum(0);
         pm.setMaximum(expansions.size() + 2);

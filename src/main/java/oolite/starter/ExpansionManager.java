@@ -116,6 +116,15 @@ public class ExpansionManager {
     }
     
     /**
+     * Resets the ExpansionManager. Old errors or running state will be
+     * forgotten. This method mainly supports unit testing.
+     */
+    public void reset() {
+        commands = new ArrayList<>();
+        activity = Activity.IDLE;
+    }
+    
+    /**
      * Factory method that ensures we have only one instance.
      * 
      * @return the instance

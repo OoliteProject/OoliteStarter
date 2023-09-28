@@ -8,15 +8,16 @@
 
   <Loggers>
     <!-- error, warn, info, debug, trace -->
-    <Logger level="warn" name="oolite.starter.ConfigurationTest"/>
-    <Logger level="warn" name="oolite.starter.GithubVersionChecker"/>
-    <Logger level="warn" name="oolite.starter.model.ExpansionTest"/>
-    <Logger level="warn" name="oolite.starter.model.ExpansionReferenceTest"/>
-    <Logger level="warn" name="oolite.starter.model.InstallationTest"/>
-    <Logger level="warn" name="oolite.starter.model.SaveGameTest"/>
-    <Logger level="info" name="oolite.starter.Oolite"/>
-    <Logger level="info" name="oolite.starter.OoliteTest"/>
-    <Logger level="warn" name="oolite.starter.XmlUtil"/>
+    <Logger level="warn"  name="oolite.starter.ConfigurationTest"/>
+    <Logger level="debug" name="oolite.starter.ExpansionManager"/>
+    <Logger level="warn"  name="oolite.starter.GithubVersionChecker"/>
+    <Logger level="warn"  name="oolite.starter.model.ExpansionTest"/>
+    <Logger level="warn"  name="oolite.starter.model.ExpansionReferenceTest"/>
+    <Logger level="warn"  name="oolite.starter.model.InstallationTest"/>
+    <Logger level="warn"  name="oolite.starter.model.SaveGameTest"/>
+    <Logger level="info"  name="oolite.starter.Oolite"/>
+    <Logger level="info"  name="oolite.starter.OoliteTest"/>
+    <Logger level="warn"  name="oolite.starter.XmlUtil"/>
     
     <Root level="TRACE">
       <AppenderRef ref="Console"/>

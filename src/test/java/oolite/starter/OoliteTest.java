@@ -10,6 +10,7 @@ import java.net.ConnectException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -205,6 +206,31 @@ public class OoliteTest {
         assertEquals("Jameson", sg.getPlayerName());
         assertEquals("Cobra Mark III", sg.getShipClassName());
         assertEquals(1000, sg.getCredits());
+    }
+
+    /**
+     * Test with a savegame including resource paths.
+     * @throws IOException 
+     */
+    @Test
+    public void testCreateSaveGame3() throws IOException {
+        log.info("testCreateSaveGame3");
+        
+        File sgFile = new File("src/test/resources/data/Jaeger3.oolite-save");
+        
+        Configuration configuration = Mockito.mock(Configuration.class);
+        Mockito.when(configuration.getAddonsDir()).thenReturn(new File("src/test/resources/data"));
+        Mockito.when(configuration.getManagedAddonsDir()).thenReturn(new File("src/test/resources/data"));
+        Oolite oolite = new Oolite();
+        oolite.setConfiguration(configuration);
+        SaveGame sg = oolite.createSaveGame(sgFile);
+        assertEquals("Jaeger3", sg.getName());
+        assertEquals("Riinus", sg.getCurrentSystemName());
+        assertEquals("1.91", sg.getOoliteVersion());
+        assertEquals("Bright", sg.getPlayerName());
+        assertEquals("Imperial Courier", sg.getShipClassName());
+        assertEquals(999999986792078L, sg.getCredits());
+        assertEquals(100, sg.getExpansions().size());
     }
     
     @Test
@@ -617,5 +643,184 @@ public class OoliteTest {
             assertEquals("doc must have root element", e.getMessage());
             log.debug("caught expected exception", e);
         }
+    }
+    
+    @Test
+    public void testGetExpansionByReference() {
+        log.info("testGetExpansionByReference()");
+
+        Oolite instance = new Oolite();
+        try {
+            instance.getExpansionByReference(null, null, false);
+            fail("expected exception");
+        } catch (IllegalArgumentException e) {
+            assertEquals("reference must not be null", e.getMessage());
+            log.debug("caught expected exception", e);
+        }
+    }
+    
+    @Test
+    public void testGetExpansionByReference2() {
+        log.info("testGetExpansionByReference2()");
+
+        Oolite instance = new Oolite();
+        String reference = "";
+        try {
+            instance.getExpansionByReference(reference, null, false);
+            fail("expected exception");
+        } catch (IllegalArgumentException e) {
+            assertEquals("expansions must not be null", e.getMessage());
+            log.debug("caught expected exception", e);
+        }
+    }
+    
+    @Test
+    public void testGetExpansionByReference3() {
+        log.info("testGetExpansionByReference3()");
+
+        Oolite instance = new Oolite();
+        String reference = "";
+        List<Expansion> expansions = new ArrayList<>();
+        List<Expansion> result = instance.getExpansionByReference(reference, expansions, false);
+        assertNotNull(result);
+        assertEquals(0, result.size());
+    }
+    
+    @Test
+    public void testGetExpansionByReference4() {
+        log.info("testGetExpansionByReference4()");
+
+        Oolite instance = new Oolite();
+        String reference = "foolike";
+        Expansion e1 = new Expansion();
+        e1.setIdentifier("foobar");
+        Expansion e2 = new Expansion();
+        e2.setIdentifier("foolike");
+        List<Expansion> expansions = new ArrayList<>();
+        expansions.add(e1);
+        expansions.add(e2);
+        
+        List<Expansion> result = instance.getExpansionByReference(reference, expansions, false);
+        assertNotNull(result);
+        assertEquals(1, result.size());
+    }
+    
+    @Test
+    public void testGetExpansionByReference5() {
+        log.info("testGetExpansionByReference5()");
+
+        Oolite instance = new Oolite();
+        String reference = "foolike";
+        Expansion e1 = new Expansion();
+        e1.setIdentifier("foobar");
+        e1.setOolite(instance);
+        Expansion e2 = new Expansion();
+        e2.setIdentifier("foolike");
+        e2.setOolite(instance);
+        List<Expansion> expansions = new ArrayList<>();
+        expansions.add(e1);
+        expansions.add(e2);
+        
+        List<Expansion> result = instance.getExpansionByReference(reference, expansions, true);
+        assertNotNull(result);
+        assertEquals(0, result.size());
+    }
+    
+    @Test
+    public void testGetExpansionByReference6() {
+        log.info("testGetExpansionByReference6()");
+
+        Oolite instance = new Oolite();
+        String reference = "foolike:1";
+        Expansion e1 = new Expansion();
+        e1.setIdentifier("foobar");
+        Expansion e2 = new Expansion();
+        e2.setIdentifier("foolike");
+        List<Expansion> expansions = new ArrayList<>();
+        expansions.add(e1);
+        expansions.add(e2);
+        
+        List<Expansion> result = instance.getExpansionByReference(reference, expansions, false);
+        assertNotNull(result);
+        assertEquals(1, result.size());
+    }
+    
+    @Test
+    public void testGetExpansionByReference7() {
+        log.info("testGetExpansionByReference7()");
+
+        Oolite instance = new Oolite();
+        String reference = "foolike:1";
+        Expansion e1 = new Expansion();
+        e1.setIdentifier("foobar");
+        e1.setOolite(instance);
+        Expansion e2 = new Expansion();
+        e2.setIdentifier("foolike");
+        e2.setOolite(instance);
+        List<Expansion> expansions = new ArrayList<>();
+        expansions.add(e1);
+        expansions.add(e2);
+        
+        List<Expansion> result = instance.getExpansionByReference(reference, expansions, true);
+        assertNotNull(result);
+        assertEquals(0, result.size());
+    }
+    
+    @Test
+    public void testValidateConflicts() {
+        log.info("testValidateConflicts()");
+
+        Oolite instance = new Oolite();
+        try {
+            instance.validateConflicts(null);
+            fail("expected exception");
+        } catch (IllegalArgumentException e) {
+            assertEquals("expansions must not be null", e.getMessage());
+            log.debug("caught expected exception", e);
+        }
+    }
+    
+    @Test
+    public void testValidateConflicts2() {
+        log.info("testValidateConflicts2()");
+
+        Oolite instance = new Oolite();
+        Expansion e1 = Mockito.mock(Expansion.class);
+        Expansion.EMStatus ems1 = new Expansion.EMStatus();
+        Mockito.when(e1.getEMStatus()).thenReturn(ems1);
+        Mockito.when(e1.getIdentifier()).thenReturn("e1");
+        Mockito.when(e1.getConflictOxps()).thenReturn(Arrays.asList("e2:1", "e3:1"));
+        Mockito.when(e1.isEnabled()).thenReturn(true);
+        //e1.setOolite(instance);
+        Expansion e2 = Mockito.mock(Expansion.class);
+        Expansion.EMStatus ems2 = new Expansion.EMStatus();
+        Mockito.when(e2.getEMStatus()).thenReturn(ems2);
+        Mockito.when(e2.getIdentifier()).thenReturn("e2");
+        Mockito.when(e2.isEnabled()).thenReturn(true);
+        //e2.setOolite(instance);
+        Expansion e3 = Mockito.mock(Expansion.class);
+        Expansion.EMStatus ems3 = new Expansion.EMStatus();
+        Mockito.when(e3.getEMStatus()).thenReturn(ems3);
+        Mockito.when(e3.getIdentifier()).thenReturn("e3");
+        Mockito.when(e3.isEnabled()).thenReturn(true);
+        //e3.setOolite(instance);
+        Expansion e4 = Mockito.mock(Expansion.class);
+        Expansion.EMStatus ems4 = new Expansion.EMStatus();
+        Mockito.when(e4.getEMStatus()).thenReturn(ems3);
+        Mockito.when(e4.getIdentifier()).thenReturn("e3");
+        Mockito.when(e4.isEnabled()).thenReturn(true);
+        //e3.setOolite(instance);
+        List<Expansion> expansions = new ArrayList<>();
+        expansions.add(e1);
+        expansions.add(e2);
+        expansions.add(e3);
+        expansions.add(e4);
+        
+        instance.validateConflicts(expansions);
+        
+        assertEquals(true, e1.getEMStatus().isConflicting());
+        assertEquals(true, e2.getEMStatus().isConflicting());
+        assertEquals(true, e3.getEMStatus().isConflicting());
+        assertEquals(true, e4.getEMStatus().isConflicting());
     }
 }

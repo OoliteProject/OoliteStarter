@@ -98,7 +98,7 @@ public class Command extends SwingWorker<Result, Object> {
                     expansion.install();
                     break;
                 case UNKNOWN:
-                    throw new UnsupportedOperationException("Ran out of ideas");
+                    throw new UnsupportedOperationException("Ran out of options");
                 case KEEP:
                     // nothing to do
                     break;
