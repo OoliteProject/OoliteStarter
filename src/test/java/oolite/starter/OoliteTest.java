@@ -16,8 +16,10 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
+import oolite.starter.model.Command;
 import oolite.starter.model.Expansion;
 import oolite.starter.model.ExpansionReference;
+import oolite.starter.model.Installation;
 import oolite.starter.model.ProcessData;
 import oolite.starter.model.SaveGame;
 import org.apache.logging.log4j.LogManager;
@@ -30,6 +32,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import org.mockito.Mockito;
 import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 /**
@@ -646,6 +649,31 @@ public class OoliteTest {
     }
     
     @Test
+    public void testCreateExpansionFromManifest3() throws XPathExpressionException, ParserConfigurationException, SAXException, IOException {
+        log.info("testCreateExpansionFromManifest3");
+        
+        DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+        Document doc = db.parse(new File("src/test/resources/data/manifest.xml"));
+        Oolite instance = new Oolite();
+        
+        Expansion result = instance.createExpansionFromManifest(doc);
+        
+        assertNotNull(result);
+        assertEquals(2, result.getConflictOxps().size());
+        assertEquals("oolite.conflictoxp.exp1:1.0", result.getConflictOxps().get(0));
+        assertEquals("oolite.conflictoxp.exp2:1.0", result.getConflictOxps().get(1));
+        assertEquals(3, result.getRequiresOxps().size());
+        assertEquals("oolite.requiredoxp.exp1:1.0", result.getRequiresOxps().get(0));
+        assertEquals("oolite.requiredoxp.exp2:1.0", result.getRequiresOxps().get(1));
+        assertEquals("oolite.requiredoxp.exp3:1.0", result.getRequiresOxps().get(2));
+        assertEquals(4, result.getOptionalOxps().size());
+        assertEquals("oolite.optionaloxp.exp1:1.0", result.getOptionalOxps().get(0));
+        assertEquals("oolite.optionaloxp.exp2:1.0", result.getOptionalOxps().get(1));
+        assertEquals("oolite.optionaloxp.exp3:1.0", result.getOptionalOxps().get(2));
+        assertEquals("oolite.optionaloxp.exp4:1.0", result.getOptionalOxps().get(3));
+    }
+    
+    @Test
     public void testGetExpansionByReference() {
         log.info("testGetExpansionByReference()");
 
@@ -823,4 +851,182 @@ public class OoliteTest {
         assertEquals(true, e3.getEMStatus().isConflicting());
         assertEquals(false, e4.getEMStatus().isConflicting());
     }
+    
+    @Test
+    public void testCheckForUpdates() {
+        log.info("testCheckForUpdates");
+        
+        Oolite instance = new Oolite();
+        try {
+            instance.checkForUpdates(null);
+            fail("expected exception");
+        } catch (IllegalArgumentException e) {
+            assertEquals("expansions must not be null", e.getMessage());
+            log.debug("caught expected exception", e);
+        }
+    }
+    
+    @Test
+    public void testCheckForUpdates2() {
+        log.info("testCheckForUpdates2");
+        
+        Oolite instance = new Oolite();
+        List<Expansion> expansions = new ArrayList<>();
+        List<Command> result = instance.checkForUpdates(expansions);
+        assertNotNull(result);
+        assertEquals(0, result.size());
+    }
+    
+    @Test
+    public void testCheckForUpdates3() {
+        log.info("testCheckForUpdates3");
+        
+        Oolite instance = new Oolite();
+        Expansion e1 = Mockito.mock(Expansion.class);
+        Expansion.EMStatus ems1 = new Expansion.EMStatus();
+        Mockito.when(e1.getEMStatus()).thenReturn(ems1);
+        Mockito.when(e1.isEnabled()).thenReturn(true);
+        Mockito.when(e1.getIdentifier()).thenReturn("expansion");
+        Mockito.when(e1.getVersion()).thenReturn("1.0");
+
+        Expansion e2 = Mockito.mock(Expansion.class);
+        Expansion.EMStatus ems2 = new Expansion.EMStatus();
+        Mockito.when(e2.getEMStatus()).thenReturn(ems2);
+        Mockito.when(e2.isEnabled()).thenReturn(false);
+        Mockito.when(e2.getIdentifier()).thenReturn("expansion");
+        Mockito.when(e2.getVersion()).thenReturn("1.1");
+        
+        List<Expansion> expansions = new ArrayList<>();
+        expansions.add(e1);
+        expansions.add(e2);
+        
+        List<Command> result = instance.checkForUpdates(expansions);
+        assertNotNull(result);
+        assertEquals(2, result.size());
+        assertEquals(Command.Action.DELETE, result.get(0).getAction());
+        assertEquals(e1, result.get(0).getExpansion());
+        assertEquals(Command.Action.INSTALL, result.get(1).getAction());
+        assertEquals(e2, result.get(1).getExpansion());
+    }
+    
+    @Test
+    public void testCheckSurplusExpansions() {
+        log.info("testCheckSurplusExpansions");
+
+        Oolite instance = new Oolite();
+        try {
+            instance.checkSurplusExpansions(null);
+            fail("expected exception");
+        } catch (IllegalArgumentException e) {
+            assertEquals("references must not be null", e.getMessage());
+            log.debug("caught expected exception", e);
+        }
+    }
+    
+    @Test
+    public void testCheckSurplusExpansions2() {
+        log.info("testCheckSurplusExpansions2");
+
+        File dir = new File("src/test/resources/data");
+        List<File> dirs = new ArrayList<>();
+        dirs.add(dir);
+        
+        Oolite instance = new Oolite();
+        Configuration configuration = Mockito.mock(Configuration.class);
+        Mockito.when(configuration.getDeactivatedAddonsDir()).thenReturn(dir);
+        Mockito.when(configuration.getAddonDirs()).thenReturn(dirs);
+        instance.setConfiguration(configuration);
+        
+        instance.setConfiguration(configuration);
+        List<ExpansionReference> references = new ArrayList<>();
+        references.add(new ExpansionReference("oolite.oxp.Norby.Addons_for_Beginners:1.5"));
+        
+        instance.checkSurplusExpansions(references);
+        
+        assertEquals(4, references.size());
+        assertEquals("oolite.oxp.Norby.Addons_for_Beginners:1.5", references.get(0).getName());
+        assertTrue(references.get(1).getName().endsWith("Asteroids3D1.2.oxp@0"));
+        assertTrue(references.get(2).getName().endsWith("Galactic_Navy 5.4.3.oxp@0"));
+        assertEquals("oolite.oxp.Norby.Addons_for_Beginners@1.5", references.get(3).getName());
+    }
+    
+    @Test
+    public void testParseVersion() {
+        log.info("testParseVersion");
+
+        Oolite instance = new Oolite();
+        try {
+            instance.parseVersion(null);
+            fail("expected exception");
+        } catch (IllegalArgumentException e) {
+            assertEquals("version must not be null", e.getMessage());
+            log.debug("caught expected exception", e);
+        }
+    }
+    
+    @Test
+    public void testParseVersion2() {
+        log.info("testParseVersion2");
+
+        Oolite instance = new Oolite();
+        assertEquals("1.2-blah.3", instance.parseVersion("1.2-blah.3").toString());
+    }
+    
+    @Test
+    public void testParseVersion3() {
+        log.info("testParseVersion3");
+
+        Oolite instance = new Oolite();
+        assertEquals("1.2", instance.parseVersion("v1.2").toString());
+    }
+    
+    @Test
+    public void testGetAllExpansions() throws IOException {
+        log.info("testGetAllExpansions");
+
+        File dir = new File("src/test/resources/data");
+        List<File> dirs = new ArrayList<>();
+        dirs.add(dir);
+        
+        Installation installation = Mockito.mock(Installation.class);
+        Mockito.when(installation.getVersion()).thenReturn("1.90");
+        Configuration configuration = Mockito.mock(Configuration.class);
+        Mockito.when(configuration.getActiveInstallation()).thenReturn(installation);
+        Mockito.when(configuration.getDeactivatedAddonsDir()).thenReturn(dir);
+        Mockito.when(configuration.getAddonsDir()).thenReturn(dir);
+        Mockito.when(configuration.getAddonDirs()).thenReturn(dirs);
+        Oolite instance = new Oolite();
+        instance.setConfiguration(configuration);
+        
+        List<Expansion> result = instance.getAllExpansions();
+        
+        assertNotNull(result);
+    }
+    
+    @Test
+    public void testParseExpansionSet() throws ParserConfigurationException, SAXException, IOException, XPathExpressionException {
+        log.info("testParseExpansionSet");
+        
+        Oolite instance = new Oolite();
+        try {
+            instance.parseExpansionSet(null);
+            fail("expected exception");
+        } catch (IllegalArgumentException e) {
+            assertEquals("source must not be null", e.getMessage());
+            log.debug("caught expected exception", e);
+        }
+    }
+    
+    @Test
+    public void testParseExpansionSet2() throws ParserConfigurationException, SAXException, IOException, XPathExpressionException {
+        log.info("testParseExpansionSet2");
+        
+        Oolite instance = new Oolite();
+        File file = new File("src/test/resources/data/Arquebus X Expansion Set.oolite-es");
+
+        NodeList nl = instance.parseExpansionSet(file);
+        assertNotNull(nl);
+        assertEquals(374, nl.getLength());
+    }
+    
 }

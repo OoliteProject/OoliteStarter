@@ -109,7 +109,7 @@ public class Command extends SwingWorker<Result, Object> {
             return Result.SUCCESS;
             
         } catch (Exception e) {
-            log.error("Could not {}", action, e);
+            log.warn("Could not {} {}", action, expansion.getIdentifier(), e);
             this.exception = e;
             return Result.FAILURE;
         } finally {

@@ -168,9 +168,7 @@ public class Oolite implements PropertyChangeListener {
 
         // reset conflict flag
         expansions.stream()
-                .forEach(t -> {
-                    t.getEMStatus().setConflicting(false);
-        });
+                .forEach(t -> t.getEMStatus().setConflicting(false) );
         
         expansions.stream()
             .filter(t -> t.isEnabled())
@@ -196,7 +194,11 @@ public class Oolite implements PropertyChangeListener {
             });
     }
     
-    private ModuleDescriptor.Version parseVersion(String version) {
+    protected ModuleDescriptor.Version parseVersion(String version) {
+        if (version == null) {
+            throw new IllegalArgumentException("version must not be null");
+        }
+        
         if (version.startsWith("v")) {
             version = version.substring(1);
         }
@@ -211,7 +213,11 @@ public class Oolite implements PropertyChangeListener {
      * @return the list of commands to be up to date, or null if there is nothing to do
      */
     public List<Command> checkForUpdates(List<Expansion> expansions) {
-        log.warn("checkForUpdates(...)");
+        log.debug("checkForUpdates(...)");
+        if (expansions == null) {
+            throw new IllegalArgumentException("expansions must not be null");
+        }
+        
         List<Command> result = new ArrayList<>();
         
         expansions.stream()
@@ -710,6 +716,23 @@ public class Oolite implements PropertyChangeListener {
         log.debug("createExpansion({})", vc);
         return createExpansionFromManifest(vc.dictionary());
     }
+    
+    protected List<String> parseDependencies(Document doc, String depname) throws XPathExpressionException {
+        List<String> result = new ArrayList<>();
+        
+        XPath xpath = XPathFactory.newInstance().newXPath();
+        NodeList nl = (NodeList)xpath.evaluate("/plist/dict/key[.='" + depname + "']/following-sibling::array[1]/dict", doc, XPathConstants.NODESET);
+        
+        for (int i=0; i< nl.getLength(); i++) {
+            Element dict = (Element)nl.item(i);
+            String identifier = xpath.evaluate("key[.='identifier']/following-sibling::string", dict);
+            String version = xpath.evaluate("key[.='version']/following-sibling::string", dict);
+            result.add(identifier + ":" + version);
+        }
+        
+        return result;
+    }
+            
 
     /**
      * Creates an Expansion from a manifest dictionary context.
@@ -750,12 +773,9 @@ public class Oolite implements PropertyChangeListener {
         result.setMaximumOoliteVersion(xpath.evaluate("/plist/dict/key[.='maximum_oolite_version']/following-sibling::array", doc)); 
         // TODO: May need better array parsing
         result.setTags(xpath.evaluate("/plist/dict/key[.='tags']/following-sibling::array", doc)); 
-        // TODO: Needs implementation
-        //result.setConflictOxps(...);
-        // TODO: Needs implementation
-        //result.setRequiresOxps(...);
-        // TODO: Needs implementation
-        //result.setOptionalOxps(...);
+        result.setConflictOxps(parseDependencies(doc, "conflict_oxps"));
+        result.setRequiresOxps(parseDependencies(doc, "requires_oxps"));
+        result.setOptionalOxps(parseDependencies(doc, "optional_oxps"));
         
         return result;
     }
@@ -1443,21 +1463,12 @@ public class Oolite implements PropertyChangeListener {
      * @param source the file to read from
      */
     public NodeList parseExpansionSet(File source) throws ParserConfigurationException, SAXException, IOException, XPathExpressionException {
-        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-        // to be compliant, completely DISABLE DOCTYPE declaration:
-        dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
-        // or completely DISABLE external entities declarations:
-        dbf.setFeature("http://xml.org/sax/features/external-general-entities", false);
-        dbf.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
-        // or prohibit the use of all protocols by external entities:
-        dbf.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
-        dbf.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
-        // or DISABLE entity expansion but KEEP in mind that this doesn't prevent fetching external entities
-        // and this solution is not correct for OpenJDK < 13 due to a bug: https://bugs.openjdk.java.net/browse/JDK-8206132
-        dbf.setExpandEntityReferences(false);
+        log.debug("parseExpansionSet({})", source);
+        if (source == null) {
+            throw new IllegalArgumentException("source must not be null");
+        }
         
-        DocumentBuilder db = dbf.newDocumentBuilder();
-        Document doc = db.parse(source);
+        Document doc = XmlUtil.parseXmlFile(source);
         XPath xpath = XPathFactory.newInstance().newXPath();
         return (NodeList)xpath.evaluate("/ExpansionList/Expansion", doc, XPathConstants.NODESET);
     }

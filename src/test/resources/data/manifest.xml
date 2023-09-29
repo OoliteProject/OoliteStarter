@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>identifier</key>
+	<string>oolite.oxp.EricWalch.PirateCove</string>
+	<key>required_oolite_version</key>
+	<string>1.74</string>
+	<key>title</key>
+	<string>Pirate Cove</string>
+	<key>version</key>
+	<string>1.4.2</string>
+	<key>category</key>
+	<string>Ambience</string>
+	<key>description</key>
+	<string>Adds pirate bases to te system that are situated in rock hermits.</string>
+	<key>author</key>
+	<string>Lazy Gun &amp; Eric Walch</string>
+	<key>information_url</key>
+	<string>http://wiki.alioth.net/index.php/Pirate_Coves_OXP</string>
+	<key>licence</key>
+	<string>CC-BY-NC-SA 3.0</string>
+	<key>tags</key>
+	<array>
+		<string>Hermits</string>
+		<string>Pirates</string>
+	</array>
+	<key>conflict_oxps</key>
+	<array>
+            <dict>
+                <key>identifier</key>
+                <string>oolite.conflictoxp.exp1</string>
+                <key>version</key>
+                <string>1.0</string>
+            </dict>
+            <dict>
+                <key>identifier</key>
+                <string>oolite.conflictoxp.exp2</string>
+                <key>version</key>
+                <string>1.0</string>
+            </dict>
+	</array>
+	<key>requires_oxps</key>
+	<array>
+            <dict>
+                <key>identifier</key>
+                <string>oolite.requiredoxp.exp1</string>
+                <key>version</key>
+                <string>1.0</string>
+            </dict>
+            <dict>
+                <key>identifier</key>
+                <string>oolite.requiredoxp.exp2</string>
+                <key>version</key>
+                <string>1.0</string>
+            </dict>
+            <dict>
+                <key>identifier</key>
+                <string>oolite.requiredoxp.exp3</string>
+                <key>version</key>
+                <string>1.0</string>
+            </dict>
+	</array>
+	<key>optional_oxps</key>
+	<array>
+            <dict>
+                <key>identifier</key>
+                <string>oolite.optionaloxp.exp1</string>
+                <key>version</key>
+                <string>1.0</string>
+            </dict>
+            <dict>
+                <key>identifier</key>
+                <string>oolite.optionaloxp.exp2</string>
+                <key>version</key>
+                <string>1.0</string>
+            </dict>
+            <dict>
+                <key>identifier</key>
+                <string>oolite.optionaloxp.exp3</string>
+                <key>version</key>
+                <string>1.0</string>
+            </dict>
+            <dict>
+                <key>identifier</key>
+                <string>oolite.optionaloxp.exp4</string>
+                <key>version</key>
+                <string>1.0</string>
+            </dict>
+	</array>
+</dict>
+</plist>

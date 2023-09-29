@@ -91,7 +91,7 @@ public class ExpansionManagerTest {
      */
     @Test
     public void testAddCommands() throws InterruptedException {
-        System.out.println("addCommands");
+        log.info("addCommands");
 
         ExpansionManager.ExpansionManagerListener listener = Mockito.mock(ExpansionManager.ExpansionManagerListener.class);
         ExpansionManager instance = ExpansionManager.getInstance();
@@ -116,7 +116,7 @@ public class ExpansionManagerTest {
      */
     @Test
     public void testAddCommands2() throws InterruptedException {
-        System.out.println("addCommands2");
+        log.info("addCommands2");
 
         ExpansionManager.ExpansionManagerListener listener = Mockito.mock(ExpansionManager.ExpansionManagerListener.class);
         ExpansionManager instance = ExpansionManager.getInstance();
@@ -143,7 +143,7 @@ public class ExpansionManagerTest {
      */
     @Test
     public void testGetStatus() {
-        System.out.println("getStatus");
+        log.info("getStatus");
 
         ExpansionManager instance = ExpansionManager.getInstance();
         instance.reset();
@@ -159,7 +159,7 @@ public class ExpansionManagerTest {
      */
     @Test
     public void testGetCommands() {
-        System.out.println("getCommands");
+        log.info("getCommands");
     }
 
     @Test

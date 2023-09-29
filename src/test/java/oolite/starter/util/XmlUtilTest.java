@@ -48,7 +48,7 @@ public class XmlUtilTest {
      */
     @Test
     public void testParseXmlStream() throws Exception {
-        System.out.println("parseXmlStream");
+        log.info("parseXmlStream");
         InputStream in = null;
         Document expResult = null;
         try {
@@ -65,7 +65,7 @@ public class XmlUtilTest {
      */
     @Test
     public void testParseXmlFile() throws Exception {
-        System.out.println("parseXmlFile");
+        log.info("parseXmlFile");
         File f = null;
         Document expResult = null;
         try {
