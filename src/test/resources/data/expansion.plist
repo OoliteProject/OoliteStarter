@@ -15,7 +15,13 @@
         "maximum_oolite_version" = "";
         "optional_oxps" = "";
         "required_oolite_version" = "";
-        "requires_oxps" = "";
+        "requires_oxps" = (
+            {
+                identifier = "oolite.oxp.Svengali.Library";
+                version = "1.7.1";
+                description = "Library is a collection of useful snippets, helpers and resources to simplify some common tasks used by AddOns.";
+            }
+        );
         "tags" = "";
         "illegal_key" = "";
 }

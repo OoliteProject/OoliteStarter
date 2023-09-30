@@ -58,6 +58,7 @@ import oolite.starter.model.ExpansionReference;
 import oolite.starter.model.Installation;
 import oolite.starter.model.ProcessData;
 import oolite.starter.model.SaveGame;
+import oolite.starter.util.HttpUtil;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -87,11 +88,24 @@ public class Oolite implements PropertyChangeListener {
     private boolean terminate = false;
     private int running = 0;
 
-    private void validateCompatibility(List<Expansion> resultList) {
+    /**
+     * Compares the given list of expansions with the currently activated
+     * installation.
+     * The result is updated in each expansion's EMStatus.
+     * 
+     * @param expansions the list of expansions to compare
+     */
+    protected void validateCompatibility(List<Expansion> expansions) {
         log.debug("validateCompatibility(...)");
+        if (configuration == null) {
+            throw new IllegalStateException(OOLITE_CONFIGURATION_MUST_NOT_BE_NULL);
+        }
+        if (expansions == null) {
+            throw new IllegalArgumentException("expansions must not be null");
+        }
         ModuleDescriptor.Version oolite =  ModuleDescriptor.Version.parse(configuration.getActiveInstallation().getVersion());
         
-        for (Expansion e: resultList) {
+        for (Expansion e: expansions) {
             try {
                 e.getEMStatus().setIncompatible(false);
 
@@ -665,8 +679,11 @@ public class Oolite implements PropertyChangeListener {
      * See https://wiki.alioth.net/index.php/Manifest.plist#Dependency_management_keys
      * @param vc 
      */
-    List<String> parseDependencyList(PlistParser.ValueContext vc) {
+    protected List<String> parseDependencyList(PlistParser.ValueContext vc) {
         log.debug("parseDependencyList({})", vc);
+        if (vc == null) {
+            throw new IllegalArgumentException("vc must not be null");
+        }
         
         List<String> result = new ArrayList<>();
         
@@ -1233,7 +1250,7 @@ public class Oolite implements PropertyChangeListener {
         }
         
         File file = new File(configuration.getManagedAddonsDir(), expansion.getIdentifier() + "@" + expansion.getVersion() + ".oxz");
-        downloadUrl(url, file);
+        HttpUtil.downloadUrl(url, file);
         
         if (!file.isFile())
             throw new IOException("expected file to exist after download: " + file.getAbsolutePath());
@@ -1302,28 +1319,6 @@ public class Oolite implements PropertyChangeListener {
         log.debug("Remove {}", expansion.getLocalFile());
         FileUtils.delete(expansion.getLocalFile());
         expansion.setLocalFile(null);
-    }
-    
-    private void downloadUrl(URL url, File file) throws IOException {
-        log.debug("downloadUrl({}, {})", url, file);
-        
-        HttpURLConnection conn = (HttpURLConnection)url.openConnection();
-        conn.setReadTimeout(5000);
-
-        int status = conn.getResponseCode();
-        log.info("HTTP status for {}: {}", url, status);
-        
-        while (status != HttpURLConnection.HTTP_OK) {
-            String newUrl = conn.getHeaderField("Location");
-            conn = (HttpURLConnection)new URL(newUrl).openConnection();
-            conn.setReadTimeout(5000);
-            status = conn.getResponseCode();
-            log.info("HTTP status for {}: {}", newUrl, status);
-        }
-        
-        try (InputStream in = conn.getInputStream()) {
-            FileUtils.copyToFile(in, file);
-        }
     }
     
     /**

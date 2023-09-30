@@ -146,7 +146,7 @@ public class OoliteTest {
         assertEquals(null, expansion.getIdentifier());
         assertEquals(null, expansion.getVersion());
         assertEquals("1.76", expansion.getRequiredOoliteVersion());
-        assertEquals(null, expansion.getMaximumOoliteVersion());
+        assertEquals("1.90", expansion.getMaximumOoliteVersion());
     }
     
     @Test
@@ -177,6 +177,19 @@ public class OoliteTest {
         
         assertEquals("oolite.oxp.cim.camera-drones", expansion.getIdentifier());
         assertEquals("1.4", expansion.getVersion());
+    }
+    
+    @Test
+    public void testCreateExpansion_InputStream3() throws IOException, ParserConfigurationException, SAXException, XPathExpressionException {
+        log.info("testCreateExpansion_InputStream3");
+        
+        URL url = getClass().getResource("/data/manifest.xml");
+        
+        Oolite oolite = new Oolite();
+        Expansion expansion = oolite.createExpansionFromManifest(url.openStream(), url.toString());
+        
+        assertEquals("oolite.oxp.EricWalch.PirateCove", expansion.getIdentifier());
+        assertEquals("1.4.2", expansion.getVersion());
     }
     
     @Test
@@ -1028,5 +1041,97 @@ public class OoliteTest {
         assertNotNull(nl);
         assertEquals(374, nl.getLength());
     }
+
+    @Test
+    public void testValidateCompatibility() {
+        log.info("testValidateCompatibility");
+
+        Oolite instance = new Oolite();
+        try {
+            instance.validateCompatibility(null);
+            fail("expected exception");
+        } catch (IllegalStateException e) {
+            assertEquals("configuration must not be null", e.getMessage());
+            log.debug("caught expected exception", e);
+        }
+    }
+
+    @Test
+    public void testValidateCompatibility2() {
+        log.info("testValidateCompatibility2");
+
+        Installation installation = Mockito.mock(Installation.class);
+        Mockito.when(installation.getVersion()).thenReturn("1.90");
+        Configuration configuration = Mockito.mock(Configuration.class);
+        Mockito.when(configuration.getActiveInstallation()).thenReturn(installation);
+        Oolite instance = new Oolite();
+        instance.setConfiguration(configuration);
+        try {
+            instance.validateCompatibility(null);
+            fail("expected exception");
+        } catch (IllegalArgumentException e) {
+            assertEquals("expansions must not be null", e.getMessage());
+            log.debug("caught expected exception", e);
+        }
+    }
+
+
+    /**
+     * e1 has no requirements
+     */
+    @Test
+    public void testValidateCompatibility3() {
+        log.info("testValidateCompatibility3");
+
+        Installation installation = Mockito.mock(Installation.class);
+        Mockito.when(installation.getVersion()).thenReturn("1.90");
+        Configuration configuration = Mockito.mock(Configuration.class);
+        Mockito.when(configuration.getActiveInstallation()).thenReturn(installation);
+        Oolite instance = new Oolite();
+        instance.setConfiguration(configuration);
+        
+        List<Expansion> expansions = new ArrayList<>();
+        Expansion e1 = new Expansion();
+        expansions.add(e1);
+        Expansion e2 = new Expansion();
+        e2.setRequiredOoliteVersion("1.88");
+        expansions.add(e2);
+        Expansion e3 = new Expansion();
+        e3.setRequiredOoliteVersion("1.92");
+        expansions.add(e3);
+        Expansion e4 = new Expansion();
+        e4.setRequiredOoliteVersion("1.92");
+        expansions.add(e4);
+        Expansion e5 = new Expansion();
+        e5.setMaximumOoliteVersion("1.92");
+        expansions.add(e5);
+        Expansion e6 = new Expansion();
+        e6.setMaximumOoliteVersion("1.88");
+        expansions.add(e6);
+
+        instance.validateCompatibility(expansions);
+        
+        assertEquals(6, expansions.size());
+        assertEquals(false, e1.getEMStatus().isIncompatible());
+        assertEquals(false, e2.getEMStatus().isIncompatible());
+        assertEquals(true, e3.getEMStatus().isIncompatible());
+        assertEquals(true, e4.getEMStatus().isIncompatible());
+        assertEquals(false, e5.getEMStatus().isIncompatible());
+        assertEquals(true, e6.getEMStatus().isIncompatible());
+    }
     
+    @Test
+    public void testParseDepencencyList() {
+        log.info("testParseDepencencyList");
+
+        Oolite instance = new Oolite();
+        try {
+            instance.parseDependencyList(null);
+            fail("expected exception");
+        } catch (IllegalArgumentException e) {
+            assertEquals("vc must not be null", e.getMessage());
+            log.debug("caught expected exception", e);
+        }
+    }
+
 }
