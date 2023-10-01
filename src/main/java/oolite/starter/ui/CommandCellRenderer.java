@@ -41,6 +41,8 @@ public class CommandCellRenderer extends JPanel implements ListCellRenderer<Comm
      * Creates a new CommandCellRenderer.
      */
     public CommandCellRenderer() {
+        log.debug("CommandCellRenderer()");
+        
         setOpaque(true);
         setLayout(new GridBagLayout());
         

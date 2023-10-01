@@ -39,8 +39,6 @@ import javax.swing.RowFilter;
 import javax.swing.RowSorter;
 import javax.swing.SortOrder;
 import javax.swing.SwingUtilities;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -136,12 +134,7 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
         jTable1.setDefaultRenderer(Object.class, new AnnotationRenderer(jTable1.getDefaultRenderer(Object.class), Configuration.COLOR_ATTENTION));
 
         DeferredDocumentChangeListener deferredListener = new DeferredDocumentChangeListener(300);
-        deferredListener.addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent ce) {
-                applyFilter();
-            }
-        });
+        deferredListener.addChangeListener(ce -> applyFilter() );
         
         lbFilterText.setCursor(new Cursor(Cursor.HAND_CURSOR));
         lbFilterText.addMouseListener(new MouseAdapter() {
@@ -373,9 +366,7 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
             expansions = oolite.getAllExpansions();
 
             model = new ExpansionsTableModel(expansions);
-            model.addTableModelListener(tme -> {
-                updateBadges();
-            });
+            model.addTableModelListener(tme -> updateBadges() );
             
             jTable1.setRowSorter(null);
             jTable1.setModel(model);
@@ -665,13 +656,8 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
                 
                 if (JOptionPane.showConfirmDialog(this, Util.createCommandListPanel(commands), "Confirm these actions...", JOptionPane.OK_CANCEL_OPTION)==JOptionPane.OK_OPTION) {
                     ExpansionManager.getInstance().addCommands(commands);
-                    //JOptionPane.showMessageDialog(this, "Consider it done!");
                     MrGimlet.showMessage(ExpansionsPanel.this, "Working on it...");
                 }
-
-                // if approved, inject it for execution
-//                update();
-//                new ActivationWorker(oolite, expansions, jfc.getSelectedFile(), this).execute();
             }
         } catch (Exception e) {
             log.error("Could not trigger activate", e);

@@ -96,9 +96,6 @@ public class ExpansionPanel extends javax.swing.JPanel implements PropertyChange
                 lm.addAll(data.getOptionalRefs());
             }
             lsOptional.setModel(lm);
-//            lsRequires.setText(String.valueOf(data.getRequiresOxps()));
-//            lsConflicts.setText(String.valueOf(data.getConflictOxps()));
-//            lsOptional.setText(String.valueOf(data.getOptionalOxps()));
             txtMinVersion.setText(String.valueOf(data.getRequiredOoliteVersion()));
             txtMaxVersion.setText(String.valueOf(data.getMaximumOoliteVersion()));
             btInstall.setEnabled(data.isOnline() && !data.isLocal());

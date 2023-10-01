@@ -28,6 +28,7 @@ public class Tag extends JPanel {
      */
     public Tag(String name) {
         super();
+        log.debug("Tag({})", name);
         setOpaque(false);
         add(new JLabel(name));
     }
@@ -39,9 +40,8 @@ public class Tag extends JPanel {
      */
     public Tag(String name, Color color) {
         super();
-        //setLayout(new GridBagLayout());
+        log.debug("Tag({}, {})", name, color);
         setOpaque(false);
-        //add(new JLabel(name), new GridBagConstraints(1, 1, 1, 1, 1, 1, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
         JLabel l = new JLabel(name);
         add(l);
         setBackground(color);

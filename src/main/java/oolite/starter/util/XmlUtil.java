@@ -46,9 +46,12 @@ public class XmlUtil {
 
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         dbf.setValidating(false);
-//        We need to allow the doctype in plist xml files
-//        // to be compliant, completely DISABLE DOCTYPE declaration:
-//        //dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+        /*
+        SonarQube suggests to deactivate doctype declarations.
+        However we need to allow the doctype in plist xml files
+            // to be compliant, completely DISABLE DOCTYPE declaration:
+            //dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+        */
         // or completely DISABLE external entities declarations:
         dbf.setFeature("http://xml.org/sax/features/external-general-entities", false);
         dbf.setFeature("http://xml.org/sax/features/external-parameter-entities", false);

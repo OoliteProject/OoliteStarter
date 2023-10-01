@@ -23,8 +23,6 @@ import javax.swing.SortOrder;
 import javax.swing.SwingUtilities;
 import javax.swing.UIDefaults;
 import javax.swing.UIManager;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableRowSorter;
 import oolite.starter.Configuration;
@@ -67,7 +65,7 @@ public class InstallationsPanel extends javax.swing.JPanel {
         
         configDirty = false;
         
-        //setButtonColors();
+        setButtonColors();
         
         jTable1.setDefaultRenderer(Boolean.class, new DefaultTableCellRenderer(){
             @Override
@@ -109,14 +107,11 @@ public class InstallationsPanel extends javax.swing.JPanel {
         this.configuration = configuration;
 
         model = new InstallationTableModel(configuration);
-        model.addTableModelListener(new TableModelListener() {
-            @Override
-            public void tableChanged(TableModelEvent tme) {
-                log.debug("tableChanged({})", tme);
-                if (tme.getSource() == model) {
-                    log.trace("it is our tablemodel!");
-                    setButtonColors();
-                }
+        model.addTableModelListener(tme -> {
+            log.debug("tableChanged({})", tme);
+            if (tme.getSource() == model) {
+                log.trace("it is our tablemodel!");
+                setButtonColors();
             }
         });
         

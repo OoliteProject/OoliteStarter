@@ -10,8 +10,6 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JEditorPane;
@@ -105,16 +103,13 @@ public class MrGimlet {
             glasspane.setVisible(true);
 
             if (fadeMillis > 0) {
-                Util.fadeOutBalloon(bt, new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent ae) {
-                        log.debug("actionPerformed(...)");
-                        SwingUtilities.invokeLater(() -> {
-                            glasspane.remove(bt);
-                            glasspane.validate();
-                            glasspane.repaint();
-                        });
-                    }
+                Util.fadeOutBalloon(bt, ae -> {
+                    log.debug("actionPerformed(...)");
+                    SwingUtilities.invokeLater(() -> {
+                        glasspane.remove(bt);
+                        glasspane.validate();
+                        glasspane.repaint();
+                    });
                 }, fadeMillis, 30);
             }
         } else {

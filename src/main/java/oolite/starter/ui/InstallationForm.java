@@ -115,7 +115,6 @@ public class InstallationForm extends javax.swing.JPanel {
     private void initComponents() {
         java.awt.GridBagConstraints gridBagConstraints;
 
-        filler1 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 0), new java.awt.Dimension(32767, 0));
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
@@ -437,9 +436,7 @@ public class InstallationForm extends javax.swing.JPanel {
 
             if (txtDeactivatedAddOnDir.getText().isBlank()) {
                 File dd = new File(d, "../DeactivatedAddOns");
-                if (dd != null) {
-                    txtDeactivatedAddOnDir.setText(dd.getCanonicalPath());
-                }
+                txtDeactivatedAddOnDir.setText(dd.getCanonicalPath());
             }
         }
     }
@@ -651,7 +648,6 @@ public class InstallationForm extends javax.swing.JPanel {
     private javax.swing.JButton btManagedAddOnDir;
     private javax.swing.JButton btManagedDeactivatedAddOnDir;
     private javax.swing.JButton btSavegameDir;
-    private javax.swing.Box.Filler filler1;
     private javax.swing.Box.Filler filler2;
     private javax.swing.Box.Filler filler3;
     private javax.swing.JLabel jLabel1;

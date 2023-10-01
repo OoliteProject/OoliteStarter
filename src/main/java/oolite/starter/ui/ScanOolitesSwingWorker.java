@@ -6,6 +6,7 @@ package oolite.starter.ui;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -257,9 +258,7 @@ public class ScanOolitesSwingWorker extends SwingWorker<List<String>, String> {
                 break;
         }
         preferredLocations.add(new File(System.getProperty("user.home")));
-        for(File f: File.listRoots()) {
-            preferredLocations.add(f);
-        }
+        preferredLocations.addAll(Arrays.asList(File.listRoots()));
 
         try {
             result = new ArrayList<>();

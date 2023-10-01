@@ -27,6 +27,7 @@ public class SaveGamePanel extends javax.swing.JPanel {
      * Creates new form SaveGamePanel.
      */
     public SaveGamePanel() {
+        log.debug("SaveGamePanel()");
         initComponents();
         lsExpansions.setCellRenderer(new ExpansionReferenceCellRenderer());
         lsExpansions.addMouseMotionListener(new MouseAdapter() {

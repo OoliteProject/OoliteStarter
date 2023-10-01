@@ -38,7 +38,7 @@ public class ExpansionManagerPanel extends javax.swing.JPanel implements Expansi
     protected void update() {
         if (data == null) {
             jTextField1.setText("");
-            jList1.setModel(new DefaultListModel<Command>());
+            jList1.setModel(new DefaultListModel<>());
         } else {
             String s = String.valueOf(data.getStatus());
             if (!data.getCommands().isEmpty()) {

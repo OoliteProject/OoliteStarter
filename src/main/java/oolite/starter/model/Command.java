@@ -93,8 +93,7 @@ public class Command extends SwingWorker<Result, Object> {
                 case ENABLE:
                     expansion.enable();
                     break;
-                case INSTALL:
-                case INSTALL_ALTERNATIVE:
+                case INSTALL, INSTALL_ALTERNATIVE:
                     expansion.install();
                     break;
                 case UNKNOWN:
