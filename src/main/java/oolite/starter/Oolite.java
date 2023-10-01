@@ -1476,6 +1476,40 @@ public class Oolite implements PropertyChangeListener {
     }
     
     /**
+     * Prepare list of enabled addons.
+     * 
+     * @return a map with identifier:version -> downloadurl
+     */
+    private TreeMap<String, String> prepareEnabledAddonsList(NodeList target) {
+        TreeMap<String, String> result = new TreeMap<>();
+        for (int i = 0; i < target.getLength(); i++) {
+            Element e = (Element)target.item(i);
+            result.put(e.getAttribute(OOLITE_IDENTIFIER) + ":" + e.getAttribute(OOLITE_VERSION), e.getAttribute(OOLITE_DOWNLOAD_URL));
+        }
+        return result;
+    }
+    
+    /**
+     * build commands to remove unwanted expansions.
+     * 
+     * @param enabledAddons
+     * @param expansions
+     * @return 
+     */
+    private List<Command> prepareDisableCommands(TreeMap<String, String> enabledAddons, List<Expansion> expansions) {
+        List<Command> result = new ArrayList<>();
+
+        for (Expansion expansion: expansions) {
+            String i = expansion.getIdentifier() + ":" + expansion.getVersion();
+            if (expansion.isLocal() && expansion.isEnabled() && !enabledAddons.containsKey(i)) {
+                result.add(new Command(Command.Action.DISABLE, expansion));
+            }
+        }
+        
+        return result;
+    }
+    
+    /**
      * Builds a list of commands that resembles the difference between the
      * current status of expansions and the target.
      * 
@@ -1486,18 +1520,9 @@ public class Oolite implements PropertyChangeListener {
     public List<Command> buildCommandList(List<Expansion> expansions, NodeList target) {
         List<Command> result = new ArrayList<>();
 
-        TreeMap<String, String> enabledAddons = new TreeMap<>();
-        for (int i = 0; i < target.getLength(); i++) {
-            Element e = (Element)target.item(i);
-            enabledAddons.put(e.getAttribute(OOLITE_IDENTIFIER) + ":" + e.getAttribute(OOLITE_VERSION), e.getAttribute(OOLITE_DOWNLOAD_URL));
-        }
+        TreeMap<String, String> enabledAddons = prepareEnabledAddonsList(target);
 
-        for (Expansion expansion: expansions) {
-            String i = expansion.getIdentifier() + ":" + expansion.getVersion();
-            if (expansion.isLocal() && expansion.isEnabled() && !enabledAddons.containsKey(i)) {
-                result.add(new Command(Command.Action.DISABLE, expansion));
-            }
-        }
+        result.addAll(prepareDisableCommands(enabledAddons, expansions));
 
         // now INSTALL what may be MISSING
         // for that we prepare a list from which to pull Expansions

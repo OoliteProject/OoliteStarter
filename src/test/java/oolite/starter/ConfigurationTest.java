@@ -117,7 +117,7 @@ public class ConfigurationTest {
         log.info("testGetUpdateCheckInterval");
         
         Configuration c = new Configuration(new File("src/test/resources/testConfig.xml"));
-        assertEquals(Duration.ofDays(1), c.getUpdateCheckInterval());
+        assertEquals(Duration.ofDays(7), c.getUpdateCheckInterval());
 
     }
 }

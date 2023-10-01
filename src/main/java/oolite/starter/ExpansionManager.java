@@ -45,7 +45,9 @@ public class ExpansionManager {
     private Timer timer;
     private int parallelThreads = 10;
             
-    private static ExpansionManager instance;
+    private static class SingletonHelper {
+        private static ExpansionManager instance = new ExpansionManager();
+    }
     
     private class EMAL implements ActionListener {
         
@@ -112,7 +114,6 @@ public class ExpansionManager {
         activity = Activity.IDLE;
         
         timer = new Timer(1000, new EMAL());
-        timer.start();
     }
     
     /**
@@ -120,6 +121,7 @@ public class ExpansionManager {
      * forgotten. This method mainly supports unit testing.
      */
     public void reset() {
+        timer.stop();
         commands = new ArrayList<>();
         activity = Activity.IDLE;
     }
@@ -129,12 +131,8 @@ public class ExpansionManager {
      * 
      * @return the instance
      */
-    public static synchronized ExpansionManager getInstance() {
-        if (instance == null) {
-            instance = new ExpansionManager();
-        }
-        
-        return instance;
+    public static ExpansionManager getInstance() {
+        return SingletonHelper.instance;
     }
     
     /**
@@ -234,5 +232,20 @@ public class ExpansionManager {
      */
     public List<Command> getCommands() {
         return new ArrayList<>(commands);
+    }
+    
+    /**
+     * Starts the background thread for ExpansionManager.
+     */
+    public void start() {
+        timer.start();
+    }
+
+    
+    /**
+     * Stops the background thread for ExpansionManager.
+     */
+    public void stop() {
+        timer.stop();
     }
 }

@@ -81,6 +81,7 @@ public class MainFrame extends javax.swing.JFrame {
         jTabbedPane1.add(sgp);
 
         ExpansionManager em = ExpansionManager.getInstance();
+        em.start();
         
         ExpansionsPanel ep = new ExpansionsPanel();
         ep.setOolite(oolite);

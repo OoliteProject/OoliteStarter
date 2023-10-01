@@ -213,6 +213,21 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
         }
     }
 
+    private void addPopupMenuActionsForLocalExpansion(JPopupMenu popupMenu, Expansion expansion) {
+        popupMenu.add(new ShowInFilesystemAction(expansion));
+        if (!expansion.isNested()) {
+            if (expansion.isEnabled()) {
+                popupMenu.add(new DisableAction(expansion));
+            } else {
+                popupMenu.add(new EnableAction(expansion));
+            }
+        }
+
+        if (popupMenu.getComponentCount()>0) {
+            popupMenu.add(new JSeparator());
+        }
+        popupMenu.add(new DeleteAction(expansion));
+    }
 
     /**
      * Sets the JTable popup menu.
@@ -231,19 +246,7 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
             if (!row.isLocal()) {
                 popupMenu.add(new InstallAction(row));
             } else {
-                popupMenu.add(new ShowInFilesystemAction(row));
-                if (!row.isNested()) {
-                    if (row.isEnabled()) {
-                        popupMenu.add(new DisableAction(row));
-                    } else {
-                        popupMenu.add(new EnableAction(row));
-                    }
-                }
-
-                if (popupMenu.getComponentCount()>0) {
-                    popupMenu.add(new JSeparator());
-                }
-                popupMenu.add(new DeleteAction(row));
+                addPopupMenuActionsForLocalExpansion(popupMenu, row);
             }
         }
         jTable1.setComponentPopupMenu(popupMenu);

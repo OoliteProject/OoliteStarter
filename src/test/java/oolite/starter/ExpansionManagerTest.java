@@ -64,6 +64,7 @@ public class ExpansionManagerTest {
         ExpansionManager.ExpansionManagerListener listener = Mockito.mock(ExpansionManager.ExpansionManagerListener.class);
         ExpansionManager instance = ExpansionManager.getInstance();
         instance.reset();
+        instance.start();
         instance.addExpansionManagerListener(listener);
 
         Expansion expansion = new Expansion();
@@ -121,6 +122,7 @@ public class ExpansionManagerTest {
         ExpansionManager.ExpansionManagerListener listener = Mockito.mock(ExpansionManager.ExpansionManagerListener.class);
         ExpansionManager instance = ExpansionManager.getInstance();
         instance.reset();
+        instance.start();
         instance.addExpansionManagerListener(listener);
 
         Expansion expansion = new Expansion();
@@ -147,6 +149,7 @@ public class ExpansionManagerTest {
 
         ExpansionManager instance = ExpansionManager.getInstance();
         instance.reset();
+        instance.start();
         ExpansionManager.Status s = instance.getStatus();
         assertEquals(ExpansionManager.Activity.IDLE, s.activity());
         assertEquals(0, s.failed());
@@ -160,6 +163,15 @@ public class ExpansionManagerTest {
     @Test
     public void testGetCommands() {
         log.info("getCommands");
+        
+        ExpansionManager instance = ExpansionManager.getInstance();
+        instance.reset();
+
+        assertEquals(0, instance.getCommands().size());
+        
+        instance.addCommand(new Command(Command.Action.UNKNOWN, new Expansion()));
+
+        assertEquals(1, instance.getCommands().size());
     }
 
     @Test

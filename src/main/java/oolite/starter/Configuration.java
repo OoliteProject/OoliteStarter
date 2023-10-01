@@ -71,7 +71,7 @@ public class Configuration {
         expansionManagerURLs.add(new URL(DEFAULT_URL));
         
         installations = new ArrayList<>();
-        updateCheckInterval = Duration.ofDays(1);
+        updateCheckInterval = Duration.ofDays(7);
     }
 
     /**
