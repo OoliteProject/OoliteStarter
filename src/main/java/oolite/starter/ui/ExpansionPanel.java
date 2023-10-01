@@ -61,90 +61,112 @@ public class ExpansionPanel extends javax.swing.JPanel implements PropertyChange
         update();
     }
     
+    /**
+     * Empties all fieds to indicate we have no data.
+     * Useful when data has been set to null.
+     */
+    private void emptyFields() {
+        txtTitle.setText("");
+        txtDescription.setText("");
+        txtLocalFile.setText("");
+
+        lsRequires.setModel(new DefaultListModel<>());
+        lsConflicts.setModel(new DefaultListModel<>());
+        lsOptional.setModel(new DefaultListModel<>());
+        txtMinVersion.setText("");
+        txtMaxVersion.setText("");
+        btInstall.setEnabled(false);
+        btEnable.setEnabled(false);
+        btDisable.setEnabled(false);
+        btRemove.setEnabled(false);
+    }
+    
+    /**
+     * Updates all fields to show the data.
+     */
+    private void showData() {
+        txtTitle.setText(data.getTitle());
+        txtDescription.setText(data.getDescription());
+        txtLocalFile.setText(String.valueOf(data.getLocalFile()));
+        DefaultListModel<ExpansionReference> lm = new DefaultListModel<>();
+        if (data.getRequiresOxps() != null) {
+            lm.addAll(data.getRequiredRefs());
+        }
+        lsRequires.setModel(lm);
+        lm = new DefaultListModel<>();
+        if (data.getConflictOxps() != null) {
+            lm.addAll(data.getConflictRefs());
+        }
+        lsConflicts.setModel(lm);
+        lm = new DefaultListModel<>();
+        if (data.getOptionalOxps() != null) {
+            lm.addAll(data.getOptionalRefs());
+        }
+        lsOptional.setModel(lm);
+        txtMinVersion.setText(String.valueOf(data.getRequiredOoliteVersion()));
+        txtMaxVersion.setText(String.valueOf(data.getMaximumOoliteVersion()));
+        btInstall.setEnabled(data.isOnline() && !data.isLocal());
+        btEnable.setEnabled(data.isLocal() && !data.isEnabled());
+        btDisable.setEnabled(data.isLocal() && data.isEnabled());
+        btRemove.setEnabled(data.isLocal());
+    }
+    
+    private void showStandardTags() {
+        if (data.isOnline()) {
+            jpDownThere.add(new Tag("Online", Color.GREEN));
+        }
+        if (data.isLocal() && data.isEnabled()) {
+            jpDownThere.add(new Tag("Enabled", Color.GREEN));
+        }
+        if (data.isLocal() && !data.isEnabled()) {
+            jpDownThere.add(new Tag("Disabled", Color.GREEN));
+        }
+        if (data.isLocal() && !data.isManaged()) {
+            jpDownThere.add(new Tag("Manual", Color.RED));
+        }
+        if (data.isLocal() && !data.isOnline()) {
+            jpDownThere.add(new Tag("No download", Color.BLUE));
+        }
+        if (data.isOnline() && !data.isEnabled()) {
+            jpDownThere.add(new Tag("Installable", Color.YELLOW));
+        }
+    }
+
+    private void showExtendedTags() {
+        if (data.isLocal() && data.getEMStatus().isLatest()) {
+            jpDownThere.add(new Tag("Current", Color.WHITE));
+        }
+        if (data.isLocal() && !data.getEMStatus().isLatest()) {
+            jpDownThere.add(new Tag("Updatable", Color.CYAN));
+        }
+        if (data.getEMStatus().isConflicting()) {
+            jpDownThere.add(new Tag("Conflict", Color.RED));
+        }
+        if (data.isOnline() && data.getEMStatus().isMissingDeps()) {
+            jpDownThere.add(new Tag("Install+", Color.ORANGE));
+        }
+        if (data.isEnabled() && data.getEMStatus().isConflicting()) {
+            jpDownThere.add(new Tag("Conflict", new Color(150, 70, 50)));
+        }
+        if (data.getEMStatus().isIncompatible()) {
+            jpDownThere.add(new Tag("Incompatible", Color.GRAY));
+            txtMinVersion.setBorder(new LineBorder(Configuration.COLOR_ATTENTION));
+            txtMaxVersion.setBorder(new LineBorder(Configuration.COLOR_ATTENTION));
+        } else {
+            txtMinVersion.setBorder(UIManager.getLookAndFeel().getDefaults().getBorder("TextField.border"));
+            txtMaxVersion.setBorder(UIManager.getLookAndFeel().getDefaults().getBorder("TextField.border"));
+        }
+
+    }
+    
     private void update() {
         jpDownThere.removeAll();
         if (data == null) {
-            txtTitle.setText("");
-            txtDescription.setText("");
-            txtLocalFile.setText("");
-            
-            lsRequires.setModel(new DefaultListModel<>());
-            lsConflicts.setModel(new DefaultListModel<>());
-            lsOptional.setModel(new DefaultListModel<>());
-            txtMinVersion.setText("");
-            txtMaxVersion.setText("");
-            btInstall.setEnabled(false);
-            btEnable.setEnabled(false);
-            btDisable.setEnabled(false);
-            btRemove.setEnabled(false);
+            emptyFields();
         } else {
-            txtTitle.setText(data.getTitle());
-            txtDescription.setText(data.getDescription());
-            txtLocalFile.setText(String.valueOf(data.getLocalFile()));
-            DefaultListModel<ExpansionReference> lm = new DefaultListModel<>();
-            if (data.getRequiresOxps() != null) {
-                lm.addAll(data.getRequiredRefs());
-            }
-            lsRequires.setModel(lm);
-            lm = new DefaultListModel<>();
-            if (data.getConflictOxps() != null) {
-                lm.addAll(data.getConflictRefs());
-            }
-            lsConflicts.setModel(lm);
-            lm = new DefaultListModel<>();
-            if (data.getOptionalOxps() != null) {
-                lm.addAll(data.getOptionalRefs());
-            }
-            lsOptional.setModel(lm);
-            txtMinVersion.setText(String.valueOf(data.getRequiredOoliteVersion()));
-            txtMaxVersion.setText(String.valueOf(data.getMaximumOoliteVersion()));
-            btInstall.setEnabled(data.isOnline() && !data.isLocal());
-            btEnable.setEnabled(data.isLocal() && !data.isEnabled());
-            btDisable.setEnabled(data.isLocal() && data.isEnabled());
-            btRemove.setEnabled(data.isLocal());
-            
-            if (data.isOnline()) {
-                jpDownThere.add(new Tag("Online", Color.GREEN));
-            }
-            if (data.isLocal() && data.isEnabled()) {
-                jpDownThere.add(new Tag("Enabled", Color.GREEN));
-            }
-            if (data.isLocal() && !data.isEnabled()) {
-                jpDownThere.add(new Tag("Disabled", Color.GREEN));
-            }
-            
-            if (data.isOnline() && !data.isEnabled()) {
-                jpDownThere.add(new Tag("Installable", Color.YELLOW));
-            }
-            if (data.isLocal() && data.getEMStatus().isLatest()) {
-                jpDownThere.add(new Tag("Current", Color.WHITE));
-            }
-            if (data.isLocal() && !data.getEMStatus().isLatest()) {
-                jpDownThere.add(new Tag("Updatable", Color.CYAN));
-            }
-            if (data.getEMStatus().isConflicting()) {
-                jpDownThere.add(new Tag("Conflict", Color.RED));
-            }
-            if (data.isOnline() && data.getEMStatus().isMissingDeps()) {
-                jpDownThere.add(new Tag("Install+", Color.ORANGE));
-            }
-            if (data.isEnabled() && data.getEMStatus().isConflicting()) {
-                jpDownThere.add(new Tag("Conflict", new Color(150, 70, 50)));
-            }
-            if (data.getEMStatus().isIncompatible()) {
-                jpDownThere.add(new Tag("Incompatible", Color.GRAY));
-                txtMinVersion.setBorder(new LineBorder(Configuration.COLOR_ATTENTION));
-                txtMaxVersion.setBorder(new LineBorder(Configuration.COLOR_ATTENTION));
-            } else {
-                txtMinVersion.setBorder(UIManager.getLookAndFeel().getDefaults().getBorder("TextField.border"));
-                txtMaxVersion.setBorder(UIManager.getLookAndFeel().getDefaults().getBorder("TextField.border"));
-            }
-            if (data.isLocal() && !data.isManaged()) {
-                jpDownThere.add(new Tag("Manual", Color.RED));
-            }
-            if (data.isLocal() && !data.isOnline()) {
-                jpDownThere.add(new Tag("No download", Color.BLUE));
-            }
+            showData();
+            showStandardTags();
+            showExtendedTags();
 
             if (data.isEnabled() && data.getEMStatus().isConflicting()) {
                 jpDownThere.add(new Tag("Conflicting", Configuration.COLOR_ATTENTION));
@@ -158,7 +180,7 @@ public class ExpansionPanel extends javax.swing.JPanel implements PropertyChange
             } else {
                 spRequires.setBorder(UIManager.getLookAndFeel().getDefaults().getBorder("ScrollPane.border"));
             }
-
+            
             // check if we have nested OXPs
             if (data.isNested()) {
                 btDisable.setEnabled(false);
