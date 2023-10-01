@@ -24,6 +24,11 @@ import oolite.starter.ui.InstallationsPanel;
 import oolite.starter.ui.MrGimlet;
 import oolite.starter.ui.SplashPanel;
 import oolite.starter.ui.StartGamePanel;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Options;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.xml.sax.SAXException;
@@ -217,19 +222,14 @@ public class MainFrame extends javax.swing.JFrame {
         //</editor-fold>
     }
     
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
+    private static void startupUI() {
         log.info("{} {}  starting up...", MainFrame.class.getPackage().getImplementationTitle(), MainFrame.class.getPackage().getImplementationVersion());
         
         customizeSplashScreen();
         installShutdownHook();
         setLookAndFeel();
 
-        // TODO: parse command line
-        // react to --version and --help
-
+        
         /* Create and display the form */
         new SwingWorker<MainFrame, Object>() {
             
@@ -315,6 +315,42 @@ public class MainFrame extends javax.swing.JFrame {
             }
 
         }.execute();
+    }
+    
+    private static void showHelp(Options options) {
+        HelpFormatter formatter = new HelpFormatter();
+        formatter.printHelp("OoliteStarter <options>", options);
+    }
+    
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) {
+        Options options = new Options();
+        options.addOption("h", "help", false, "show usage help");
+        options.addOption("v", "version", false, "print program version");
+        
+        CommandLine cmd = null;
+        try {
+            CommandLineParser parser = new DefaultParser();
+            cmd = parser.parse(options, args);
+        } catch (Exception e) {
+            log.error("Could not parse command line", e);
+            showHelp(options);
+            System.exit(2);
+        }
+        
+        if (cmd.hasOption("help")) {
+            showHelp(options);
+            System.exit(1);
+        } else if (cmd.hasOption("version")) {
+            String msg = "%s %s".formatted(MainFrame.class.getPackage().getImplementationTitle(), MainFrame.class.getPackage().getImplementationVersion());
+            System.out.println(msg);
+            System.exit(1);
+        } else {
+            // no special option - let's startup the UI
+            startupUI();
+        }
         
     }
 

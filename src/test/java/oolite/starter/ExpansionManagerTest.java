@@ -144,12 +144,14 @@ public class ExpansionManagerTest {
      * Test of getStatus method, of class ExpansionManager.
      */
     @Test
-    public void testGetStatus() {
+    public void testGetStatus() throws InterruptedException {
         log.info("getStatus");
 
         ExpansionManager instance = ExpansionManager.getInstance();
         instance.reset();
         instance.start();
+        Thread.sleep(500);
+        
         ExpansionManager.Status s = instance.getStatus();
         assertEquals(ExpansionManager.Activity.IDLE, s.activity());
         assertEquals(0, s.failed());
