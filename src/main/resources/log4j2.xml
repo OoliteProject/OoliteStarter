@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration status="INFO">
   <Appenders>
-    <Console name="Console" target="SYSTEM_OUT">
+    <Console name="Console" target="SYSTEM_ERR">
       <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+    </Console>
+    <Console name="SysOutStream" target="SYSTEM_OUT">
+      <PatternLayout pattern="%msg%n"/>
     </Console>
     <RollingFile name="RollingFile" fileName="${sys:user.home}/.Oolite/Logs/oolite-starter.log"
                  filePattern="${sys:user.home}/.Oolite/Logs/oolite-starter-%i.log.gz">
@@ -17,6 +20,9 @@
   </Appenders>
   <Loggers>
         <!-- error, warn, info, debug, trace -->
+    <Logger level="ALL"  name="SysOut" additivity="false">
+        <AppenderRef ref="SysOutStream"/>
+    </Logger>
     <Logger level="info" name="oolite.starter.Configuration"/>
     <Logger level="info" name="oolite.starter.ExpansionManager"/>
     <Logger level="warn" name="oolite.starter.Oolite"/>

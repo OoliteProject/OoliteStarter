@@ -1099,10 +1099,35 @@ public class Oolite implements PropertyChangeListener {
         Collections.sort(result);
         return result;
     }
+    
+    private List<Expansion> getLocalExpansionFromThisFile(File f) {
+        List<Expansion> tempResult = new ArrayList<>();
+
+        if (f.isDirectory() && f.getName().toLowerCase().endsWith(".oxp")) {
+            tempResult = getLocalExpansions(f);
+        }
+
+        if (tempResult.isEmpty()) {
+            // no OXPs in subdirectories - then check this one
+            try {
+                Expansion expansion = getExpansionFrom(f);
+
+                if (expansion != null) {
+                    expansion.setOolite(this);
+                    expansion.setLocalFile(f);
+                    expansion.setFileSize(f.length());
+                    tempResult.add(expansion);
+                }
+            } catch (Exception e) {
+                log.warn("Could not read expansion in {}", f, e);
+            }
+        }
+        
+        return tempResult;
+    }
 
     /**
      * Scans a directory for expansions.
-     * Todo: This needs to support recursion
      * 
      * @param dir
      * @return 
@@ -1114,33 +1139,7 @@ public class Oolite implements PropertyChangeListener {
         File[] files = dir.listFiles();
         if (files != null) {
             for (File f: files) {
-                
-                List<Expansion> tempResult = new ArrayList<>();
-                
-                if (f.isDirectory() && f.getName().toLowerCase().endsWith(".oxp")) {
-                    tempResult = getLocalExpansions(f);
-                }
-                
-                if (!tempResult.isEmpty()) {
-                    // we found OXP in subdirectories.
-                    // that means they matter, but this one does not
-                    result.addAll(tempResult);
-                } else {
-                    
-                    // no OXPs in subdirectories - then check this one
-                    try {
-                        Expansion expansion = getExpansionFrom(f);
-
-                        if (expansion != null) {
-                            expansion.setOolite(this);
-                            expansion.setLocalFile(f);
-                            expansion.setFileSize(f.length());
-                            result.add(expansion);
-                        }
-                    } catch (Exception e) {
-                        log.warn("Could not read expansion in {}", f, e);
-                    }
-                }
+                result.addAll(getLocalExpansionFromThisFile(f));
             }
         }
         return result;

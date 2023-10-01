@@ -40,6 +40,7 @@ import org.xml.sax.SAXException;
  */
 public class MainFrame extends javax.swing.JFrame {
     private static final Logger log = LogManager.getLogger();
+    private static final Logger sysout = LogManager.getLogger("SysOut");
 
     private static transient JFrame newSplash;
     
@@ -345,7 +346,7 @@ public class MainFrame extends javax.swing.JFrame {
             System.exit(1);
         } else if (cmd.hasOption("version")) {
             String msg = "%s %s".formatted(MainFrame.class.getPackage().getImplementationTitle(), MainFrame.class.getPackage().getImplementationVersion());
-            System.out.println(msg);
+            sysout.info(msg);
             System.exit(1);
         } else {
             // no special option - let's startup the UI
