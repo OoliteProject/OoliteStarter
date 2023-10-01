@@ -22,7 +22,7 @@ public class ExpansionManager {
     private static final Logger log = LogManager.getLogger();
     
     public enum Activity {
-        PROCESSING, IDLE, ERRORS;
+        PROCESSING, IDLE, ERRORS, STOPPED;
     }
     
     public static record Status (int queueSize, int processing, int failed, Activity activity) {
@@ -111,7 +111,7 @@ public class ExpansionManager {
     private ExpansionManager() {
         listeners = new ArrayList<>();
         commands = new ArrayList<>();
-        activity = Activity.IDLE;
+        activity = Activity.STOPPED;
         
         timer = new Timer(1000, new EMAL());
     }
@@ -123,7 +123,7 @@ public class ExpansionManager {
     public void reset() {
         timer.stop();
         commands = new ArrayList<>();
-        activity = Activity.IDLE;
+        activity = Activity.STOPPED;
     }
     
     /**

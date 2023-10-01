@@ -5,6 +5,8 @@ package oolite.starter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+import javax.swing.SwingWorker;
 import oolite.starter.model.Command;
 import oolite.starter.model.Expansion;
 import org.junit.jupiter.api.AfterEach;
@@ -13,6 +15,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import org.mockito.Mockito;
@@ -70,21 +73,28 @@ public class ExpansionManagerTest {
         Expansion expansion = new Expansion();
 
         Mockito.verify(listener, Mockito.times(0)).updateStatus(Mockito.any(), Mockito.any());
+        assertEquals(ExpansionManager.Activity.STOPPED, instance.getStatus().activity());
         
         // force change status
         instance.addCommand(new Command(Command.Action.UNKNOWN, expansion));
-        Thread.sleep(3000);
+        
+        Awaitility.await().atMost(3, TimeUnit.SECONDS).until(() -> instance.getStatus().activity() == ExpansionManager.Activity.ERRORS );
+        
         // count listener invocations
-        Mockito.verify(listener, Mockito.times(3)).updateStatus(Mockito.any(), Mockito.any());
+        Mockito.verify(listener, Mockito.times(2)).updateStatus(Mockito.any(), Mockito.any());
+        assertEquals(ExpansionManager.Activity.ERRORS, instance.getStatus().activity());
         
         instance.removeExpansionManagerListener(listener);
 
         // force change status
-        instance.addCommand(new Command(Command.Action.UNKNOWN, expansion));
-        Thread.sleep(3000);
+        Command cmd = new Command(Command.Action.UNKNOWN, expansion);
+        assertEquals(SwingWorker.StateValue.PENDING, cmd.getState());
+        instance.addCommand(cmd);
+
+        Awaitility.await().atMost(3, TimeUnit.SECONDS).until(() -> cmd.getState() == SwingWorker.StateValue.DONE );
         
         // count listener invocations
-        Mockito.verify(listener, Mockito.times(3)).updateStatus(Mockito.any(), Mockito.any());
+        Mockito.verify(listener, Mockito.times(2)).updateStatus(Mockito.any(), Mockito.any());
     }
 
     /**
@@ -103,13 +113,18 @@ public class ExpansionManagerTest {
         List<Command> list = new ArrayList<>();
         // the list is empty on purpose
 
+        assertEquals(ExpansionManager.Activity.STOPPED, instance.getStatus().activity());
         Mockito.verify(listener, Mockito.times(0)).updateStatus(Mockito.any(), Mockito.any());
 
         // force change status
+        instance.start();
         instance.addCommands(list);
-        Thread.sleep(2000);
+        
+        Awaitility.await().atMost(3, TimeUnit.SECONDS).until(() -> ExpansionManager.Activity.IDLE == instance.getStatus().activity());        assertEquals(ExpansionManager.Activity.IDLE, instance.getStatus().activity());
+        
+        
         // count listener invocations
-        Mockito.verify(listener, Mockito.times(1)).updateStatus(Mockito.any(), Mockito.any());
+        Mockito.verify(listener, Mockito.times(2)).updateStatus(Mockito.any(), Mockito.any());
     }
 
     /**
@@ -135,9 +150,10 @@ public class ExpansionManagerTest {
         
         // force change status
         instance.addCommands(list);
-        Thread.sleep(3000);
+        Awaitility.await().atMost(3, TimeUnit.SECONDS).until(() -> instance.getStatus().queueSize() == 2);
+        
         // count listener invocations
-        Mockito.verify(listener, Mockito.times(3)).updateStatus(Mockito.any(), Mockito.any());
+        Mockito.verify(listener, Mockito.times(1)).updateStatus(Mockito.any(), Mockito.any());
     }
 
     /**
@@ -149,8 +165,10 @@ public class ExpansionManagerTest {
 
         ExpansionManager instance = ExpansionManager.getInstance();
         instance.reset();
+        assertEquals(ExpansionManager.Activity.STOPPED, instance.getStatus().activity());
+
         instance.start();
-        Thread.sleep(500);
+        Awaitility.await().atMost(3, TimeUnit.SECONDS).until(() -> instance.getStatus().activity() == ExpansionManager.Activity.IDLE);
         
         ExpansionManager.Status s = instance.getStatus();
         assertEquals(ExpansionManager.Activity.IDLE, s.activity());
