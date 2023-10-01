@@ -80,6 +80,7 @@ public class Oolite implements PropertyChangeListener {
     private static final String OOLITE_CONFIGURATION_MUST_NOT_BE_NULL = "configuration must not be null";
     private static final String OOLITE_DOWNLOAD_URL = "downloadUrl";
     private static final String OOLITE_EXPANSION_FQN = "org.oolite.hiran.OoliteStarter.oxp";
+    private static final String OOLITE_EXPANSIONS_MUST_NOT_BE_NULL = "expansions must not be null";
     private static final String OOLITE_IDENTIFIER = "identifier";
     private static final String OOLITE_USER_HOME = "user.home";
     private static final String OOLITE_VERSION = "version";
@@ -127,7 +128,7 @@ public class Oolite implements PropertyChangeListener {
             throw new IllegalStateException(OOLITE_CONFIGURATION_MUST_NOT_BE_NULL);
         }
         if (expansions == null) {
-            throw new IllegalArgumentException("expansions must not be null");
+            throw new IllegalArgumentException(OOLITE_EXPANSIONS_MUST_NOT_BE_NULL);
         }
         ModuleDescriptor.Version oolite =  ModuleDescriptor.Version.parse(configuration.getActiveInstallation().getVersion());
         
@@ -154,7 +155,7 @@ public class Oolite implements PropertyChangeListener {
             throw new IllegalArgumentException("reference must not be null");
         }
         if (expansions == null) {
-            throw new IllegalArgumentException("expansions must not be null");
+            throw new IllegalArgumentException(OOLITE_EXPANSIONS_MUST_NOT_BE_NULL);
         }
         
         // first find the full reference
@@ -188,7 +189,7 @@ public class Oolite implements PropertyChangeListener {
     void validateConflicts(List<Expansion> expansions) {
         log.debug("validateConflicts({})", expansions);
         if (expansions == null) {
-            throw new IllegalArgumentException("expansions must not be null");
+            throw new IllegalArgumentException(OOLITE_EXPANSIONS_MUST_NOT_BE_NULL);
         }
 
         // reset conflict flag
@@ -238,7 +239,7 @@ public class Oolite implements PropertyChangeListener {
     public List<Command> checkForUpdates(List<Expansion> expansions) {
         log.debug("checkForUpdates(...)");
         if (expansions == null) {
-            throw new IllegalArgumentException("expansions must not be null");
+            throw new IllegalArgumentException(OOLITE_EXPANSIONS_MUST_NOT_BE_NULL);
         }
         
         List<Command> result = new ArrayList<>();

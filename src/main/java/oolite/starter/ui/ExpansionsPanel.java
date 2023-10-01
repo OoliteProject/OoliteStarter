@@ -8,10 +8,6 @@ import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Desktop;
 import java.awt.Dimension;
-import java.awt.Toolkit;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.StringSelection;
-import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -22,9 +18,7 @@ import java.time.format.FormatStyle;
 import java.time.temporal.TemporalAccessor;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.AbstractAction;
 import javax.swing.DefaultListModel;
-import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
@@ -51,6 +45,12 @@ import oolite.starter.model.Expansion;
 import oolite.starter.model.ExpansionReference;
 import oolite.starter.model.Installation;
 import oolite.starter.model.ProcessData;
+import oolite.starter.ui.actions.CopyDownloadUrlAction;
+import oolite.starter.ui.actions.DeleteAction;
+import oolite.starter.ui.actions.DisableAction;
+import oolite.starter.ui.actions.EnableAction;
+import oolite.starter.ui.actions.InstallAction;
+import oolite.starter.ui.actions.ShowInFilesystemAction;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.w3c.dom.NodeList;
@@ -63,12 +63,6 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
     private static final Logger log = LogManager.getLogger();
     
     private static final String EXPANSIONSPANEL_COULD_NOT_RELOAD = "Could not reload";
-    private static final ImageIcon iiInstall = new ImageIcon(ExpansionReferenceCellRenderer.class.getResource("/icons/download_FILL0_wght400_GRAD0_opsz24.png"));
-    private static final ImageIcon iiEnable = new ImageIcon(ExpansionReferenceCellRenderer.class.getResource("/icons/switches_enable_FILL0_wght400_GRAD0_opsz24.png"));
-    private static final ImageIcon iiDisable = new ImageIcon(ExpansionReferenceCellRenderer.class.getResource("/icons/switches_disable_FILL0_wght400_GRAD0_opsz24.png"));
-    private static final ImageIcon iiDelete = new ImageIcon(ExpansionReferenceCellRenderer.class.getResource("/icons/delete_forever_FILL0_wght400_GRAD0_opsz24.png"));
-    private static final ImageIcon iiCopy = new ImageIcon(ExpansionReferenceCellRenderer.class.getResource("/icons/content_copy_FILL0_wght400_GRAD0_opsz24.png"));
-    private static final ImageIcon iiBrowse = new ImageIcon(ExpansionReferenceCellRenderer.class.getResource("/icons/folder_open_FILL0_wght400_GRAD0_opsz24.png"));
     private static final String REGEX_HELP_URL = "https://www.regular-expressions.info/tutorial.html";
     
     private ExpansionManagerPanel emp;
@@ -232,80 +226,24 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
             final Expansion row = model.getRow(rowIndex);
             
             if (row.isOnline()) {
-                popupMenu.add(new AbstractAction("Copy Download URL", iiCopy) {
-                    @Override
-                    public void actionPerformed(ActionEvent ae) {
-                        String s = row.getDownloadUrl();
-
-                        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-                        if (s != null) {
-                            StringSelection stringSelection = new StringSelection(s);
-                            clipboard.setContents(stringSelection, null);
-                            log.info("Download URL '{}' copied to clipboard", s);
-                            
-                            MrGimlet.showMessage(SwingUtilities.getRootPane(jTable1), "In your pocket!");
-                        } else {
-                            clipboard.setContents(new StringSelection(""), null);
-                            MrGimlet.showMessage(jTable1, "There is no URL to copy, son.");
-                        }
-                    }
-                });
+                popupMenu.add(new CopyDownloadUrlAction(row, jTable1));
             }
             if (!row.isLocal()) {
-                popupMenu.add(new AbstractAction("Install", iiInstall) {
-                    @Override
-                    public void actionPerformed(ActionEvent ae) {
-                        Command command = new Command(Command.Action.INSTALL, row);
-                        ExpansionManager.getInstance().addCommand(command);
-                    }
-                });
+                popupMenu.add(new InstallAction(row));
             } else {
-                popupMenu.add(new AbstractAction("Show in FileSystem", iiBrowse) {
-                    @Override
-                    public void actionPerformed(ActionEvent ae) {
-                        try {
-                            Desktop.getDesktop().browseFileDirectory(row.getLocalFile());
-                            return;
-                        } catch (UnsupportedOperationException e) {
-                            log.warn("Could not open file", e);
-                        }
-                        try {
-                            Desktop.getDesktop().open(row.getLocalFile());
-                        } catch (Exception e) {
-                            log.warn("Could not open file", e);
-                        }
-                    }
-                });
+                popupMenu.add(new ShowInFilesystemAction(row));
                 if (!row.isNested()) {
                     if (row.isEnabled()) {
-                        popupMenu.add(new AbstractAction("Disable", iiDisable) {
-                            @Override
-                            public void actionPerformed(ActionEvent ae) {
-                                Command command = new Command(Command.Action.DISABLE, row);
-                                ExpansionManager.getInstance().addCommand(command);                        
-                            }
-                        });
+                        popupMenu.add(new DisableAction(row));
                     } else {
-                        popupMenu.add(new AbstractAction("Enable", iiEnable) {
-                            @Override
-                            public void actionPerformed(ActionEvent ae) {
-                                Command command = new Command(Command.Action.ENABLE, row);
-                                ExpansionManager.getInstance().addCommand(command);
-                            }
-                        });
+                        popupMenu.add(new EnableAction(row));
                     }
                 }
 
                 if (popupMenu.getComponentCount()>0) {
                     popupMenu.add(new JSeparator());
                 }
-                popupMenu.add(new AbstractAction("Delete", iiDelete) {
-                    @Override
-                    public void actionPerformed(ActionEvent ae) {
-                        Command command = new Command(Command.Action.DELETE, row);
-                        ExpansionManager.getInstance().addCommand(command);
-                    }
-                });
+                popupMenu.add(new DeleteAction(row));
             }
         }
         jTable1.setComponentPopupMenu(popupMenu);
