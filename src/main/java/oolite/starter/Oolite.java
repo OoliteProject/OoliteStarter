@@ -756,6 +756,27 @@ public class Oolite implements PropertyChangeListener {
         
         return result;
     }
+    
+    /**
+     * Parses the tags and returns a comma separated list.
+     * 
+     * @param doc the XML manifest of the expansion
+     * @return the string
+     */
+    private String parseTags(Document doc) throws XPathExpressionException {
+        log.debug("parseTags({})", doc);
+                
+        XPath xpath = XPathFactory.newInstance().newXPath();
+        NodeList nl = (NodeList)xpath.evaluate("/plist/dict/key[.='tags']/following-sibling::array[1]/string", doc, XPathConstants.NODESET);
+        
+        List<String> tags = new ArrayList<>();
+        for (int i=0; i<nl.getLength(); i++) {
+            Element s = (Element)nl.item(i);
+            tags.add(s.getTextContent());
+        }
+        
+        return String.join(", ", tags);
+    }
             
 
     /**
@@ -795,8 +816,7 @@ public class Oolite implements PropertyChangeListener {
         result.setInformationUrl(xpath.evaluate("/plist/dict/key[.='information_url']/following-sibling::string", doc));
         result.setLicense(xpath.evaluate("/plist/dict/key[.='license']/following-sibling::string", doc));
         result.setMaximumOoliteVersion(xpath.evaluate("/plist/dict/key[.='maximum_oolite_version']/following-sibling::array", doc)); 
-        // TODO: May need better array parsing
-        result.setTags(xpath.evaluate("/plist/dict/key[.='tags']/following-sibling::array", doc)); 
+        result.setTags(parseTags(doc)); 
         result.setConflictOxps(parseDependencies(doc, "conflict_oxps"));
         result.setRequiresOxps(parseDependencies(doc, "requires_oxps"));
         result.setOptionalOxps(parseDependencies(doc, "optional_oxps"));
@@ -918,7 +938,7 @@ public class Oolite implements PropertyChangeListener {
         log.debug("createExpansion({}, {})", manifest, sourceName);
         InputStream in = Util.getBufferedStream(manifest);
         
-        // TODO: What to do with XML based manifests?
+        // do we have an XML based manifests?
         in.mark(10);
 
         Scanner sc = new Scanner(in);
@@ -1204,6 +1224,17 @@ public class Oolite implements PropertyChangeListener {
         return null;
     }
     
+    /**
+     * Checks the given OXP directory for manifest.plist or requires.plist
+     * and returns the expansion found. Or null.
+     * 
+     * @param f the directory to check
+     * @return the expansion found, or null
+     * @throws IOException something went wrong
+     * @throws ParserConfigurationException something went wrong
+     * @throws SAXException something went wrong
+     * @throws XPathExpressionException something went wrong
+     */
     private Expansion getExpansionFromOxp(File f) throws IOException, ParserConfigurationException, SAXException, XPathExpressionException {
         log.debug("getExpansionsFromOxp({})", f);
         File manifestFile = new File(f, "manifest.plist");
@@ -2271,7 +2302,7 @@ public class Oolite implements PropertyChangeListener {
             result.add(er);
         }
 
-        // todo: work out transitive requirements
+        // todo: work out transitive requirements (an expansion requires something that requires...)
         // todo: work out conflicts
         
         return result;

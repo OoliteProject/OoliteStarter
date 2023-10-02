@@ -591,12 +591,14 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
             if (jfc.showDialog(this, "Activate") == JFileChooser.APPROVE_OPTION) {
                 log.info("activating {}", jfc.getSelectedFile());
 
-                // todo: create a plan and show it
+                // create a plan
                 NodeList nl = oolite.parseExpansionSet(jfc.getSelectedFile());
-                List<Command> commands = oolite.buildCommandList(expansions, nl);
+                List<Command> plan = oolite.buildCommandList(expansions, nl);
                 
-                if (JOptionPane.showConfirmDialog(this, Util.createCommandListPanel(commands), "Confirm these actions...", JOptionPane.OK_CANCEL_OPTION)==JOptionPane.OK_OPTION) {
-                    ExpansionManager.getInstance().addCommands(commands);
+                // have user approve the plan
+                if (JOptionPane.showConfirmDialog(this, Util.createCommandListPanel(plan), "Confirm these actions...", JOptionPane.OK_CANCEL_OPTION)==JOptionPane.OK_OPTION) {
+                    // execute the plan
+                    ExpansionManager.getInstance().addCommands(plan);
                     MrGimlet.showMessage(ExpansionsPanel.this, "Working on it...");
                 }
             }

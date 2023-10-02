@@ -684,6 +684,8 @@ public class OoliteTest {
         assertEquals("oolite.optionaloxp.exp2:1.0", result.getOptionalOxps().get(1));
         assertEquals("oolite.optionaloxp.exp3:1.0", result.getOptionalOxps().get(2));
         assertEquals("oolite.optionaloxp.exp4:1.0", result.getOptionalOxps().get(3));
+        
+        assertEquals("Hermits, Pirates", result.getTags());
     }
     
     @Test
