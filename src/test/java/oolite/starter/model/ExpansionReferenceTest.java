@@ -47,6 +47,24 @@ public class ExpansionReferenceTest {
 
         ExpansionReference one = new ExpansionReference();
         assertEquals(1, one.compareTo(null));
+        assertEquals(null, one.getName());
+        assertEquals(null, one.getStatus());
+        assertEquals(3392903, one.hashCode());
+        
+        ExpansionReference two = new ExpansionReference("blubb");
+        assertEquals("blubb", two.getName());
+        assertEquals(null, two.getStatus());
+        assertEquals(93838059, two.hashCode());
+        
+        ExpansionReference three = new ExpansionReference("flart", ExpansionReference.Status.MISSING);
+        assertEquals("flart", three.getName());
+        assertEquals(ExpansionReference.Status.MISSING, three.getStatus());
+        assertEquals(97513437, three.hashCode());
+        
+        ExpansionReference four = new ExpansionReference("flart", ExpansionReference.Status.MISSING);
+        assertEquals(-4, two.compareTo(four));
+        assertEquals(4, four.compareTo(two));
+        assertEquals(0, three.compareTo(four));
     }
 
     /**
@@ -117,4 +135,31 @@ public class ExpansionReferenceTest {
         assertEquals("ExpansionReference{name=null, status=null}", instance.toString());
     }
 
+
+    /**
+     * Test
+     */
+    @Test
+    public void testGetReasons() {
+        log.info("testGetReasons");
+
+        ExpansionReference one = new ExpansionReference();
+        assertEquals(0, one.getReasons().size());
+        
+        one.addReason("blah");
+        one.addReason("flart");
+        assertEquals(2, one.getReasons().size());
+        assertEquals("blah", one.getReasons().get(0));
+        assertEquals("flart", one.getReasons().get(1));
+    }
+    
+    @Test
+    public void testEquals() {
+        log.info("testEquals");
+        
+        ExpansionReference instance = new ExpansionReference();
+        assertEquals(false, instance.equals(null));
+        assertEquals(false, instance.equals("string"));
+        
+    }
 }

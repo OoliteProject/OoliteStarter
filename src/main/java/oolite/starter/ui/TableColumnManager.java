@@ -92,7 +92,7 @@ public class TableColumnManager
         //  Keep a duplicate TableColumns for managing hidden TableColumns
 
         int count = tcm.getColumnCount();
-        allColumns = new ArrayList<TableColumn>(count);
+        allColumns = new ArrayList<>(count);
 
         for (int i = 0; i < count; i++) {
             allColumns.add( tcm.getColumn( i ) );
@@ -261,13 +261,19 @@ public class TableColumnManager
     }
 
     @Override
-    public void mouseClicked(MouseEvent e) {}
+    public void mouseClicked(MouseEvent e) {
+        // no action required
+    }
     
     @Override
-    public void mouseEntered(MouseEvent e) {}
+    public void mouseEntered(MouseEvent e) {
+        // no action required
+    }
     
     @Override
-    public void mouseExited(MouseEvent e) {}
+    public void mouseExited(MouseEvent e) {
+        // no action required
+    }
 
     /**
      * Checks whether the event is the popup trigger
@@ -339,8 +345,7 @@ public class TableColumnManager
      */
     @Override
     public void actionPerformed(ActionEvent event) {
-        if (event.getSource() instanceof AbstractButton) {
-            AbstractButton button = (AbstractButton)event.getSource();
+        if (event.getSource() instanceof AbstractButton button) {
             String column = event.getActionCommand();
 
             if (button.isSelected()) {
@@ -391,22 +396,27 @@ public class TableColumnManager
 
     
     @Override
-    public void columnMarginChanged(ChangeEvent e) {}
+    public void columnMarginChanged(ChangeEvent e) {
+        // no action required
+    }
     
     @Override
-    public void columnRemoved(TableColumnModelEvent e) {}
+    public void columnRemoved(TableColumnModelEvent e) {
+        // no action required
+    }
     
     @Override
-    public void columnSelectionChanged(ListSelectionEvent e) {}
+    public void columnSelectionChanged(ListSelectionEvent e) {
+        // no action required
+    }
+    
 //
 //  Implement PropertyChangeListener
 //
     @Override
     public void propertyChange(PropertyChangeEvent e) {
-        if ("model".equals(e.getPropertyName())) {
-            if (table.getAutoCreateColumnsFromModel()) {
-                reset();
-            }
+        if ("model".equals(e.getPropertyName()) && table.getAutoCreateColumnsFromModel()) {
+            reset();
         }
     }
 
@@ -419,15 +429,11 @@ public class TableColumnManager
         public void setSelected(Component sel) {
             int index = getComponentIndex( sel );
             getSelectionModel().setSelectedIndex(index);
-            final MenuElement me[] = new MenuElement[2];
-            me[0] = (MenuElement)this;
+            final MenuElement[] me = new MenuElement[2];
+            me[0] = this;
             me[1] = getSubElements()[index];
 
-            SwingUtilities.invokeLater(new Runnable() {
-                public void run() {
-                    MenuSelectionManager.defaultManager().setSelectedPath(me);
-                }
-            });
+            SwingUtilities.invokeLater(() -> MenuSelectionManager.defaultManager().setSelectedPath(me) );
         }
-    };
+    }
 }

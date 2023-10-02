@@ -109,7 +109,7 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
     private transient TableRowSorter<ExpansionsTableModel> trw;
     private transient List<Expansion> expansions;
 
-    private TableColumnManager tcm;
+    private transient TableColumnManager tcm;
     private ExpansionPanel ep;
 
     /**

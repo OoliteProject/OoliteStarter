@@ -130,4 +130,25 @@ public class GithubVersionCheckerTest {
         assertEquals("<html><body><p>All right there. We heard rumors the new experimental version 999.999.999-test.1 has been released.</p><p>You need to check <a href=\"https://github.com/HiranChaudhuri/OoliteStarter/releases/tag/v999.999.999-test.1\">https://github.com/HiranChaudhuri/OoliteStarter/releases/tag/v999.999.999-test.1</a> and report back to me.</p><p>But don't keep me waiting too long, kid!</p></body></html>", instance.getHtmlUserMessage(new Semver("999.999.999-test.1")));
     }
 
+    /**
+     */
+    @Test
+    public void testGetUpdateCheckInterval() throws MalformedURLException {
+        log.info("testGetUpdateCheckInterval");
+
+        GithubVersionChecker instance = new GithubVersionChecker();
+        assertEquals(null, instance.getUpdateCheckInterval());
+    }
+
+    /**
+     */
+    @Test
+    public void testGetUpdateCheckInterval2() throws MalformedURLException {
+        log.info("testGetUpdateCheckInterval2");
+
+        GithubVersionChecker instance = new GithubVersionChecker();
+        instance.setUpdateCheckInterval(Duration.ofDays(12));
+        assertEquals(Duration.ofDays(12), instance.getUpdateCheckInterval());
+    }
+
 }

@@ -341,6 +341,22 @@ public class ExpansionTest {
         Mockito.when(oolite.isDisabled(Mockito.any())).thenReturn(true);
         assertEquals(false, expansion.isEnabled());
     }
+    
+    @Test
+    public void testSetIsManaged() throws IOException {
+        log.info("testSetIsManaged");
+        
+        Oolite oolite = Mockito.mock(Oolite.class);
+        Mockito.when(oolite.isDisabled(Mockito.any())).thenReturn(false);
+
+        Expansion expansion = new Expansion();
+        expansion.setOolite(oolite);
+        
+        File exp = new File("/somewhere/expansion");
+        expansion.setLocalFile(exp);
+        
+        assertEquals(false, expansion.isManaged());
+    }
 
     /**
      * Test of testSetGetUploadDate method, of class Expansion.
@@ -707,5 +723,130 @@ public class ExpansionTest {
         assertEquals(true, instance.isIncompatible());
         assertEquals(true, instance.isLatest());
         assertEquals(true, instance.isMissingDeps());
+    }
+    
+    @Test
+    public void testGetRequiredRefs() {
+        log.info("testGetRequiredRefs");
+        
+        Oolite oolite = Mockito.mock(Oolite.class);
+        Mockito.when(oolite.getExpansionReference("org.oolite.One:1.0")).thenReturn(new ExpansionReference("org.oolite.One"));
+        Mockito.when(oolite.getExpansionReference("org.oolite.One:1.1")).thenReturn(new ExpansionReference("org.oolite.One"));
+        Mockito.when(oolite.getExpansionReference("org.oolite.Two:1.0")).thenReturn(new ExpansionReference("org.oolite.Two"));
+        //Mockito.when(oolite.getExpansionReference(Mockito.any())).thenReturn(null);
+        List<String> oxpRefs = new ArrayList<>();
+        oxpRefs.add("org.oolite.One:1.0");
+        oxpRefs.add("org.oolite.One:1.1");
+        oxpRefs.add("org.oolite.Two:1.0");
+        Expansion expansion = new Expansion();
+        expansion.setOolite(oolite);
+        expansion.setRequiresOxps(oxpRefs);
+
+        List<ExpansionReference> result = expansion.getRequiredRefs();
+
+        assertEquals(3, result.size());
+        assertEquals("org.oolite.One", result.get(0).getName());
+        assertEquals("org.oolite.One", result.get(1).getName());
+        assertEquals("org.oolite.Two", result.get(2).getName());
+    }
+    
+    @Test
+    public void testGetConflictRefs() {
+        log.info("testGetConflictRefs");
+        
+        Oolite oolite = Mockito.mock(Oolite.class);
+        Mockito.when(oolite.getExpansionReference("org.oolite.One:1.0")).thenReturn(new ExpansionReference("org.oolite.One", ExpansionReference.Status.MISSING));
+        Mockito.when(oolite.getExpansionReference("org.oolite.One:1.1")).thenReturn(new ExpansionReference("org.oolite.One", ExpansionReference.Status.MISSING));
+        Mockito.when(oolite.getExpansionReference("org.oolite.Two:1.0")).thenReturn(new ExpansionReference("org.oolite.Two", ExpansionReference.Status.OK));
+        Mockito.when(oolite.getExpansionReference("org.oolite.Three:1.0")).thenReturn(new ExpansionReference("org.oolite.Three", ExpansionReference.Status.CONFLICT));
+        Mockito.when(oolite.getExpansionReference("org.oolite.Four:1.0")).thenReturn(new ExpansionReference("org.oolite.Four", ExpansionReference.Status.REQUIRED_MISSING));
+        Mockito.when(oolite.getExpansionReference("org.oolite.Five:1.0")).thenReturn(new ExpansionReference("org.oolite.Five", ExpansionReference.Status.SURPLUS));
+        //Mockito.when(oolite.getExpansionReference(Mockito.any())).thenReturn(null);
+        List<String> oxpRefs = new ArrayList<>();
+        oxpRefs.add("org.oolite.One:1.0");
+        oxpRefs.add("org.oolite.One:1.1");
+        oxpRefs.add("org.oolite.Two:1.0");
+        oxpRefs.add("org.oolite.Three:1.0");
+        oxpRefs.add("org.oolite.Four:1.0");
+        oxpRefs.add("org.oolite.Five:1.0");
+        Expansion expansion = new Expansion();
+        expansion.setOolite(oolite);
+        expansion.setConflictOxps(oxpRefs);
+
+        List<ExpansionReference> result = expansion.getConflictRefs();
+
+        assertEquals(6, result.size());
+        assertEquals("org.oolite.One", result.get(0).getName());
+        assertEquals("org.oolite.One", result.get(1).getName());
+        assertEquals("org.oolite.Two", result.get(2).getName());
+        assertEquals("org.oolite.Three", result.get(3).getName());
+        assertEquals("org.oolite.Four", result.get(4).getName());
+        assertEquals("org.oolite.Five", result.get(5).getName());
+    }
+    
+    @Test
+    public void testGetOptionalRefs() {
+        log.info("testGetOptionalRefs");
+        
+        Oolite oolite = Mockito.mock(Oolite.class);
+        Mockito.when(oolite.getExpansionReference("org.oolite.One:1.0")).thenReturn(new ExpansionReference("org.oolite.One", ExpansionReference.Status.MISSING));
+        Mockito.when(oolite.getExpansionReference("org.oolite.One:1.1")).thenReturn(new ExpansionReference("org.oolite.One", ExpansionReference.Status.MISSING));
+        Mockito.when(oolite.getExpansionReference("org.oolite.Two:1.0")).thenReturn(new ExpansionReference("org.oolite.Two", ExpansionReference.Status.OK));
+        Mockito.when(oolite.getExpansionReference("org.oolite.Three:1.0")).thenReturn(new ExpansionReference("org.oolite.Three", ExpansionReference.Status.CONFLICT));
+        Mockito.when(oolite.getExpansionReference("org.oolite.Four:1.0")).thenReturn(new ExpansionReference("org.oolite.Four", ExpansionReference.Status.REQUIRED_MISSING));
+        Mockito.when(oolite.getExpansionReference("org.oolite.Five:1.0")).thenReturn(new ExpansionReference("org.oolite.Five", ExpansionReference.Status.SURPLUS));
+        //Mockito.when(oolite.getExpansionReference(Mockito.any())).thenReturn(null);
+        List<String> oxpRefs = new ArrayList<>();
+        oxpRefs.add("org.oolite.One:1.0");
+        oxpRefs.add("org.oolite.One:1.1");
+        oxpRefs.add("org.oolite.Two:1.0");
+        oxpRefs.add("org.oolite.Three:1.0");
+        oxpRefs.add("org.oolite.Four:1.0");
+        oxpRefs.add("org.oolite.Five:1.0");
+        Expansion expansion = new Expansion();
+        expansion.setOolite(oolite);
+        expansion.setOptionalOxps(oxpRefs);
+
+        List<ExpansionReference> result = expansion.getOptionalRefs();
+
+        assertEquals(6, result.size());
+        assertEquals("org.oolite.One", result.get(0).getName());
+        assertEquals("org.oolite.One", result.get(1).getName());
+        assertEquals("org.oolite.Two", result.get(2).getName());
+        assertEquals("org.oolite.Three", result.get(3).getName());
+        assertEquals("org.oolite.Four", result.get(4).getName());
+        assertEquals("org.oolite.Five", result.get(5).getName());
+    }
+    
+    @Test
+    public void testIsNested() {
+        log.info("testIsNested");
+        
+        Expansion instance = new Expansion();
+        boolean result = instance.isNested();
+        
+        assertFalse(result);
+    }
+    
+    @Test
+    public void testIsNested2() {
+        log.info("testIsNested2");
+        
+        Expansion instance = new Expansion();
+        instance.setLocalFile(new File("manhattan.oxp"));
+        boolean result = instance.isNested();
+        
+        assertFalse(result);
+    }
+    
+    @Test
+    public void testIsNested3() {
+        log.info("testIsNested3");
+        
+        Expansion instance = new Expansion();
+        instance.setLocalFile(new File("new york.oxp/manhattan.oxp"));
+        boolean result = instance.isNested();
+        
+        assertTrue(result);
     }
 }
