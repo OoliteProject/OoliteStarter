@@ -125,6 +125,24 @@ public class MrGimlet {
      * @param message The message to show
      */
     public static int showConfirmation(Component parent, String message) {
-        return JOptionPane.showConfirmDialog(parent, message);
+        JEditorPane jep = new JEditorPane("text/html", message);
+        jep.setEditable(false);
+        jep.addHyperlinkListener(he-> {
+            if (he.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+                try {
+                    Desktop.getDesktop().browse(he.getURL().toURI());
+                } catch (Exception e) {
+                    log.info("Could not open url {}", he.getURL(), e);
+                }
+            }
+        });
+        jep.setBackground(new Color(0,0,0, 0));
+
+        JPanel payload = new JPanel();
+        payload.add(new JLabel(ii));
+        payload.add(jep);
+        payload.setBackground(new Color(0,0,0, 0));
+        
+        return JOptionPane.showConfirmDialog(parent, payload, "MrGimlet asking to confirm...", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null);
     }
 }

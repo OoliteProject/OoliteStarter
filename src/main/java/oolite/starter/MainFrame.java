@@ -107,15 +107,19 @@ public class MainFrame extends javax.swing.JFrame {
             @Override
             public void windowClosing(WindowEvent event) {
                 if (configuration.isDirty()) {
+                    jTabbedPane1.setSelectedIndex(2);
+                    
                     // show dialog
-                    int choice = MrGimlet.showConfirmation(MainFrame.this, "Would you like to save your configuration?");
+                    int choice = MrGimlet.showConfirmation(MainFrame.this, "<html>Your configuration changed since it was last saved.<p>Would you like to save now?</html>");
                     switch (choice) {
                         case JOptionPane.YES_OPTION:
                             saveConfiguration();
                             dispose();
+                            System.exit(0);
                             break;
                         case JOptionPane.NO_OPTION:
                             dispose();
+                            System.exit(0);
                             break;
                         case JOptionPane.CANCEL_OPTION:
                             // we have DefaultCloseOperation set to DO_NOTHING.
@@ -125,6 +129,11 @@ public class MainFrame extends javax.swing.JFrame {
                     // we have DefaultCloseOperation set to DO_NOTHING.
                     dispose();
                 }
+            }
+
+            @Override
+            public void windowClosed(WindowEvent e) {
+                System.exit(0);
             }
             
         });
