@@ -48,6 +48,10 @@ public class InstallationsPanel extends javax.swing.JPanel {
     private InstallationTableModel model;
     private transient Configuration configuration;
     
+    /**
+     * Flag to indicate whether the configuration was saved after modification.
+     * TODO: This flag should go into the configuration class.
+     */
     private boolean configDirty;
     private SecureRandom random;
 
@@ -188,7 +192,7 @@ public class InstallationsPanel extends javax.swing.JPanel {
             }
         }
         
-        if (configDirty) {
+        if (configuration != null && configuration.isDirty()) {
             btSave.setBackground(Configuration.COLOR_ATTENTION);
         } else {
             btSave.setBackground(defaultBackground);
@@ -197,7 +201,9 @@ public class InstallationsPanel extends javax.swing.JPanel {
     
     private void setConfigDirty(boolean configDirty) {
         this.configDirty = configDirty;
-        
+        if (configDirty) {
+            configuration.setDirty(true);
+        }
         setButtonColors();
     }
 
@@ -216,6 +222,7 @@ public class InstallationsPanel extends javax.swing.JPanel {
         jTable1.getSelectionModel().setSelectionInterval(rowIndex, rowIndex);
 
         setConfigDirty(true);
+        configuration.setDirty(true);
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -478,7 +485,7 @@ public class InstallationsPanel extends javax.swing.JPanel {
         log.debug("btSaveActionPerformed({})", evt);
         
         try {
-            File f = new File(System.getProperty("user.home") + File.separator + ".oolite-starter.conf");
+            File f = configuration.getDefaultConfigFile();
             configuration.saveConfiguration(f);
             
             StringBuilder sb = new StringBuilder("<html>");

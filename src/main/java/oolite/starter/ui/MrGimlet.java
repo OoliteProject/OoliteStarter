@@ -116,4 +116,15 @@ public class MrGimlet {
             JOptionPane.showMessageDialog(parentComponent, jep, "Message from Mr Gimlet", JOptionPane.INFORMATION_MESSAGE, ii);
         }
     }
+    
+    
+    /**
+     * Shows a confirmation (yes/no/cancel) in Mr Gimlet style.
+     * 
+     * @param parentComponent the parent window that should be blocked by this modal dialog
+     * @param message The message to show
+     */
+    public static int showConfirmation(Component parent, String message) {
+        return JOptionPane.showConfirmDialog(parent, message);
+    }
 }

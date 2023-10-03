@@ -6,6 +6,8 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.SplashScreen;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
 import java.time.Duration;
@@ -100,6 +102,32 @@ public class MainFrame extends javax.swing.JFrame {
 
         AboutPanel ap = new AboutPanel("text/html", getClass().getResource("/about.html"));
         jTabbedPane1.add("About", ap);
+        
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent event) {
+                if (configuration.isDirty()) {
+                    // show dialog
+                    int choice = MrGimlet.showConfirmation(MainFrame.this, "Would you like to save your configuration?");
+                    switch (choice) {
+                        case JOptionPane.YES_OPTION:
+                            saveConfiguration();
+                            dispose();
+                            break;
+                        case JOptionPane.NO_OPTION:
+                            dispose();
+                            break;
+                        case JOptionPane.CANCEL_OPTION:
+                            // we have DefaultCloseOperation set to DO_NOTHING.
+                            // doing nothing will keep the window
+                    }
+                } else {
+                    // we have DefaultCloseOperation set to DO_NOTHING.
+                    dispose();
+                }
+            }
+            
+        });
     }
 
     /**
@@ -109,6 +137,15 @@ public class MainFrame extends javax.swing.JFrame {
      */
     public Configuration getConfiguration() {
         return configuration;
+    }
+    
+    private void saveConfiguration() {
+        try {
+            configuration.saveConfiguration( configuration.getDefaultConfigFile() );
+        } catch (Exception e) {
+            log.error("Could not save", e);
+            JOptionPane.showMessageDialog(this, "Could not save. Check logfile.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     /**
@@ -122,7 +159,7 @@ public class MainFrame extends javax.swing.JFrame {
 
         jTabbedPane1 = new javax.swing.JTabbedPane();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setMinimumSize(new java.awt.Dimension(800, 600));
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
