@@ -24,7 +24,7 @@ public class Tag extends JPanel {
     /**
      * Creates a new tag.
      * 
-     * @param name 
+     * @param name the tag label
      */
     public Tag(String name) {
         super();
@@ -35,8 +35,10 @@ public class Tag extends JPanel {
 
     /**
      * Creates a new tag.
+     * Foreground color will be calculated based on background color.
      * 
-     * @param name 
+     * @param name the tag label
+     * @param color background color
      */
     public Tag(String name, Color color) {
         super();
@@ -47,6 +49,25 @@ public class Tag extends JPanel {
         setBackground(color);
         
         l.setForeground(new Color((color.getRed()+128)%256, (color.getGreen()+128)%256, (color.getBlue()+256)%256));
+                
+        setBorder(new EmptyBorder(2, 2*offset, 2, offset));
+    }
+
+    /**
+     * Creates a new tag.
+     * Foreground color will be calculated based on background color.
+     * 
+     * @param name the tag label
+     * @param bgcolor background color
+     */
+    public Tag(String name, Color bgcolor, Color fgcolor) {
+        super();
+        log.debug("Tag({}, {}, {})", name, bgcolor, fgcolor);
+        setOpaque(false);
+        JLabel l = new JLabel(name);
+        add(l);
+        setBackground(bgcolor);
+        l.setForeground(fgcolor);
                 
         setBorder(new EmptyBorder(2, 2*offset, 2, offset));
     }

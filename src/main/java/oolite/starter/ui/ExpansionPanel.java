@@ -124,7 +124,7 @@ public class ExpansionPanel extends javax.swing.JPanel implements PropertyChange
             jpDownThere.add(new Tag("Disabled", Color.GREEN));
         }
         if (data.isLocal() && !data.isManaged()) {
-            jpDownThere.add(new Tag("Manual", Color.RED));
+            jpDownThere.add(new Tag("Manual", Color.RED, Color.BLACK));
         }
         if (data.isLocal() && !data.isOnline()) {
             jpDownThere.add(new Tag("No download", Color.BLUE));
@@ -142,7 +142,7 @@ public class ExpansionPanel extends javax.swing.JPanel implements PropertyChange
             jpDownThere.add(new Tag("Updatable", Color.CYAN));
         }
         if (data.getEMStatus().isConflicting()) {
-            jpDownThere.add(new Tag("Conflict", Color.RED));
+            jpDownThere.add(new Tag("Conflict", Color.RED, Color.BLACK));
         }
         if (data.isOnline() && data.getEMStatus().isMissingDeps()) {
             jpDownThere.add(new Tag("Install+", Color.ORANGE));

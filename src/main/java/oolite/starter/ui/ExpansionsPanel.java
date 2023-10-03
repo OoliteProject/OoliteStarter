@@ -316,7 +316,7 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
             jTable1.setModel(model);
             jTable1.getColumnModel().getColumn(1).setCellRenderer(new DefaultTableCellRenderer() {
                 
-                private transient DateTimeFormatter dtf = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM);
+                private transient DateTimeFormatter dtf = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM);
 
                 @Override
                 public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
