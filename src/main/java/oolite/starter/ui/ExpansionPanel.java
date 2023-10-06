@@ -80,6 +80,7 @@ public class ExpansionPanel extends javax.swing.JPanel implements PropertyChange
         btEnable.setEnabled(false);
         btDisable.setEnabled(false);
         btRemove.setEnabled(false);
+        btWiki.setEnabled(false);
     }
     
     /**
@@ -111,6 +112,7 @@ public class ExpansionPanel extends javax.swing.JPanel implements PropertyChange
         btEnable.setEnabled(data.isLocal() && !data.isEnabled());
         btDisable.setEnabled(data.isLocal() && data.isEnabled());
         btRemove.setEnabled(data.isLocal());
+        btWiki.setEnabled(true);
     }
     
     private void showStandardTags() {

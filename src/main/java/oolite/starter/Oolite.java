@@ -1730,7 +1730,10 @@ public class Oolite implements PropertyChangeListener {
     void validateUpdates(List<Expansion> expansions) {
         log.debug("validateUpdates({})", expansions);
         
-        for (Expansion e: expansions) {
+        expansions.stream()
+                .filter(e -> e.getIdentifier() != null)
+                .forEach(e -> {
+
             List<Expansion> ds = getExpansionByReference(e.getIdentifier(), expansions, false);
 
             try {
@@ -1754,7 +1757,9 @@ public class Oolite implements PropertyChangeListener {
             } catch (Exception ex) {
                 log.warn("Could not check updates for {}", e.getIdentifier(), ex);
             }
-        }
+
+        });
+        
     }
     
     /**
