@@ -99,7 +99,7 @@ public class Oolite implements PropertyChangeListener {
     protected void validateCompatibility(ModuleDescriptor.Version oolite, Expansion expansion) {
         expansion.getEMStatus().setIncompatible(false);
 
-        if (expansion.getRequiredOoliteVersion() != null) {
+        if (expansion.getRequiredOoliteVersion() != null && !expansion.getRequiredOoliteVersion().isBlank()) {
             ModuleDescriptor.Version reqVersion = ModuleDescriptor.Version.parse(expansion.getRequiredOoliteVersion());
             if (oolite.compareTo(reqVersion) < 0) {
                 log.trace("we have {} but need minimum {}", oolite, reqVersion);

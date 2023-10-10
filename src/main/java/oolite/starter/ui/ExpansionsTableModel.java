@@ -112,7 +112,7 @@ public class ExpansionsTableModel extends AbstractTableModel implements Property
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
         try {
-            Expansion row = data.get(rowIndex);
+            Expansion row = getRow(rowIndex);
             switch(columnIndex) {
                 case 0: return row.getTitle();
                 case 1: return row.getUploadDate();
