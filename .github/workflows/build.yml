@@ -234,9 +234,10 @@ jobs:
       run: |
         get-childitem . -Recurse | where {!$_.PSIsContainer} | select-object FullName
 
+    # for upgrades, it seems we need a UUID - see https://stackoverflow.com/a/67442754/4222206
     - name: Finish AppImage for Windows
       run: |
-        jpackage --verbose --app-image target/appimage/OoliteStarter --app-version "${{ needs.semver.outputs.GITVERSION_ASSEMBLYSEMVER }}" --name "OoliteStarter" --dest target --win-shortcut --icon oolitestarter/src/main/resources/images/Mr_Gimlet_transparent.ico --win-shortcut --win-menu --win-menu-group Oolite --win-dir-chooser
+        jpackage --verbose --app-image target/appimage/OoliteStarter --app-version "${{ needs.semver.outputs.GITVERSION_ASSEMBLYSEMVER }}" --name "OoliteStarter" --dest target --win-shortcut --icon oolitestarter/src/main/resources/images/Mr_Gimlet_transparent.ico --win-shortcut --win-menu --win-menu-group Oolite --win-dir-chooser --win-upgrade-uuid 0a18c6bc-0418-47dc-9526-3a48030f6af6
         #--resource-dir src/jpackage/resources
 
     - name: Check status 3
