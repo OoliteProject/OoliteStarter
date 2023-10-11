@@ -488,8 +488,9 @@ public class InstallationForm extends javax.swing.JPanel {
 
             JFileChooser jfc = new JFileChooser(new File(dir));
             jfc.setDialogTitle("Select Oolite Home Directory...");
-            jfc.setAccessory(new OoliteFileChooserAccessory(jfc));
-            jfc.setFileView(new OoliteFileView());
+            // todo: check runtime
+            //jfc.setAccessory(new OoliteFileChooserAccessory(jfc));
+            //jfc.setFileView(new OoliteFileView());
             jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
             if (jfc.showDialog(this, INSTALLATIONFORM_SELECT) == JFileChooser.APPROVE_OPTION) {
                 txtHomeDir.setText(jfc.getSelectedFile().getAbsolutePath());
@@ -512,8 +513,9 @@ public class InstallationForm extends javax.swing.JPanel {
 
             JFileChooser jfc = new JFileChooser(new File(dir));
             jfc.setDialogTitle("Select Oolite Executable...");
-            jfc.setAccessory(new OoliteFileChooserAccessory(jfc));
-            jfc.setFileView(new OoliteFileView());
+            // todo: check runtime
+            //jfc.setAccessory(new OoliteFileChooserAccessory(jfc));
+//            jfc.setFileView(new OoliteFileView());
             jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
             if (jfc.showDialog(this, INSTALLATIONFORM_SELECT) == JFileChooser.APPROVE_OPTION) {
                 txtExecutable.setText(jfc.getSelectedFile().getAbsolutePath());
@@ -535,8 +537,9 @@ public class InstallationForm extends javax.swing.JPanel {
 
             JFileChooser jfc = new JFileChooser(new File(dir));
             jfc.setDialogTitle("Select Oolite Savegame Directory...");
-            jfc.setAccessory(new OoliteFileChooserAccessory(jfc));
-            jfc.setFileView(new OoliteFileView());
+            // todo: check runtime
+//            jfc.setAccessory(new OoliteFileChooserAccessory(jfc));
+//            jfc.setFileView(new OoliteFileView());
             jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
             if (jfc.showDialog(this, INSTALLATIONFORM_SELECT) == JFileChooser.APPROVE_OPTION) {
                 txtSavegameDir.setText(jfc.getSelectedFile().getAbsolutePath());
@@ -558,8 +561,9 @@ public class InstallationForm extends javax.swing.JPanel {
 
             JFileChooser jfc = new JFileChooser(new File(dir));
             jfc.setDialogTitle("Select Oolite AddOn Directory...");
-            jfc.setAccessory(new OoliteFileChooserAccessory(jfc));
-            jfc.setFileView(new OoliteFileView());
+            // todo: check runtime
+//            jfc.setAccessory(new OoliteFileChooserAccessory(jfc));
+//            jfc.setFileView(new OoliteFileView());
             jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
             if (jfc.showDialog(this, INSTALLATIONFORM_SELECT) == JFileChooser.APPROVE_OPTION) {
                 txtAddOnDir.setText(jfc.getSelectedFile().getAbsolutePath());
@@ -581,8 +585,9 @@ public class InstallationForm extends javax.swing.JPanel {
 
             JFileChooser jfc = new JFileChooser(new File(dir));
             jfc.setDialogTitle("Select Oolite Managed AddOn Directory...");
-            jfc.setAccessory(new OoliteFileChooserAccessory(jfc));
-            jfc.setFileView(new OoliteFileView());
+            // todo: check runtime
+//            jfc.setAccessory(new OoliteFileChooserAccessory(jfc));
+//            jfc.setFileView(new OoliteFileView());
             jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
             if (jfc.showDialog(this, INSTALLATIONFORM_SELECT) == JFileChooser.APPROVE_OPTION) {
                 txtManagedAddOnDir.setText(jfc.getSelectedFile().getAbsolutePath());
@@ -604,8 +609,9 @@ public class InstallationForm extends javax.swing.JPanel {
 
             JFileChooser jfc = new JFileChooser(new File(dir));
             jfc.setDialogTitle("Select Oolite Managed but Deactivated AddOn Directory...");
-            jfc.setAccessory(new OoliteFileChooserAccessory(jfc));
-            jfc.setFileView(new OoliteFileView());
+            // todo: check runtime
+//            jfc.setAccessory(new OoliteFileChooserAccessory(jfc));
+//            jfc.setFileView(new OoliteFileView());
             jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
             if (jfc.showDialog(this, INSTALLATIONFORM_SELECT) == JFileChooser.APPROVE_OPTION) {
                 txtManagedDeactivatedAddOnDir.setText(jfc.getSelectedFile().getAbsolutePath());
@@ -627,8 +633,9 @@ public class InstallationForm extends javax.swing.JPanel {
 
             JFileChooser jfc = new JFileChooser(new File(dir));
             jfc.setDialogTitle("Select Oolite deactivated AddOn Directory...");
-            jfc.setAccessory(new OoliteFileChooserAccessory(jfc));
-            jfc.setFileView(new OoliteFileView());
+            // todo: check runtime
+//            jfc.setAccessory(new OoliteFileChooserAccessory(jfc));
+//            jfc.setFileView(new OoliteFileView());
             jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
             if (jfc.showDialog(this, INSTALLATIONFORM_SELECT) == JFileChooser.APPROVE_OPTION) {
                 txtDeactivatedAddOnDir.setText(jfc.getSelectedFile().getAbsolutePath());
