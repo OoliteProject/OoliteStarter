@@ -128,7 +128,6 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
         });
         jTable1.setDefaultRenderer(Object.class, new AnnotationRenderer(jTable1.getDefaultRenderer(Object.class), Configuration.COLOR_ATTENTION));
         tcm = new TableColumnManager(jTable1);
-        tcm.hideColumn(0);
 
         DeferredDocumentChangeListener deferredListener = new DeferredDocumentChangeListener(300);
         deferredListener.addChangeListener(ce -> applyFilter() );
@@ -330,6 +329,8 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
             Util.setColumnWidths(jTable1);
             // hide identifier column per default - user can activate it when needed
             tcm.hideColumn(2); 
+            // hide author column per default - user can activate it when needed
+            tcm.hideColumn(7); 
 
             if (trw == null) {
                 trw = new TableRowSorter<>(model);
