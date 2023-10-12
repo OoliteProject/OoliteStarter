@@ -28,5 +28,8 @@ If applicable, add screenshots to help explain your problem.
  - Java version
  - OoliteStarter version
 
+Check the beginning of the logfile is unsure. That file resides in
+$HOME/.Oolite/Logs
+
 **Additional context**
 Add any other context about the problem here.

@@ -373,6 +373,10 @@ public class MainFrame extends javax.swing.JFrame {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
+        log.info("Args: {}", args);
+        log.info("JVM: {} {}", System.getProperty("java.runtime.name"), Runtime.version());
+        log.info("OS: {} {} {}", System.getProperty("os.name"), System.getProperty("os.arch"), System.getProperty("os.version"));
+        
         Options options = new Options();
         options.addOption("h", "help", false, "show usage help");
         options.addOption("v", "version", false, "print program version");

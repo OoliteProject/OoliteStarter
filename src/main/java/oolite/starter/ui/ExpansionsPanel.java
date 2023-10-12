@@ -67,6 +67,10 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
     
     private ExpansionManagerPanel emp;
     private JDialog emd;
+    /**
+     * Let's show MrGimlet 'All done Kiddo' only on getting idle.
+     */
+    private ExpansionManager.Activity lastActivity;
 
     class MyRowStatusFilter extends RowFilter<ExpansionsTableModel, Integer> {
         
@@ -751,9 +755,10 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
         String s = String.valueOf(status.activity()) + " (" + status.processing() + ")";
         txtEMStatus.setText(s);
         
-        if (status.activity() == ExpansionManager.Activity.IDLE && status.queueSize() == 0) {
+        if (status.activity() == ExpansionManager.Activity.IDLE && status.queueSize() == 0 && lastActivity == ExpansionManager.Activity.PROCESSING) {
             MrGimlet.showMessage(this, "All done, kiddo. What are you waiting for?");
         }
+        lastActivity = status.activity();
     }
     
 }
