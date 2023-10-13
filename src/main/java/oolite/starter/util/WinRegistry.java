@@ -103,7 +103,7 @@ public class WinRegistry {
     public static String readString(int hkey, String key, String valueName)
             throws IllegalArgumentException, IllegalAccessException,
             InvocationTargetException {
-        log.debug("readString(...)");
+        log.debug("readString({}, {}, {})", hkey, key, valueName);
         if (hkey == HKEY_LOCAL_MACHINE) {
             return readString(systemRoot, hkey, key, valueName);
         } else if (hkey == HKEY_CURRENT_USER) {
@@ -289,6 +289,8 @@ public class WinRegistry {
     private static String readString(Preferences root, int hkey, String key, String value)
             throws IllegalArgumentException, IllegalAccessException,
             InvocationTargetException {
+        log.debug("readString({}, {}, {}, {})", root, hkey, key, value);
+        
         int[] handles = (int[]) regOpenKey.invoke(root, new Object[]{
             new Integer(hkey), toCstr(key), new Integer(KEY_READ)});
         if (handles[1] != REG_SUCCESS) {
