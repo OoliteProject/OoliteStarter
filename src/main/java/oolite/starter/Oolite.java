@@ -13,6 +13,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -59,6 +60,10 @@ import oolite.starter.model.Installation;
 import oolite.starter.model.ProcessData;
 import oolite.starter.model.SaveGame;
 import oolite.starter.util.HttpUtil;
+import static oolite.starter.util.Util.OSType.LINUX;
+import static oolite.starter.util.Util.OSType.MACOS;
+import static oolite.starter.util.Util.OSType.OTHER;
+import static oolite.starter.util.Util.OSType.WINDOWS;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -2061,6 +2066,28 @@ public class Oolite implements PropertyChangeListener {
      * @throws XPathExpressionException something went wrong
      */
     public static String getVersionFromHomeDir(File homeDir) throws IOException {
+        switch (oolite.starter.util.Util.getOperatingSystemType()) {
+            case LINUX:
+                // check Linux
+                File releaseTxt = new File(homeDir, "../release.txt");
+                return IOUtils.toString(new FileReader(releaseTxt)).trim();
+
+            case MACOS:
+                // check MacOS
+                releaseTxt = new File(homeDir, "Contents/Info.plist");
+                try {
+                    return Oolite.getVersionFromInfoPlist(releaseTxt);
+                } catch (ParserConfigurationException | SAXException | XPathExpressionException e) {
+                    throw new IOException("Could not get version from " + releaseTxt.getAbsolutePath());
+                }
+                
+            case WINDOWS, OTHER:
+                // check Windows and generic
+                releaseTxt = new File(homeDir, "Resources/manifest.plist");
+                return Oolite.getVersionFromManifest(releaseTxt);
+        }
+
+
         File manifest = new File(homeDir, "Resources/manifest.plist");
         if (!manifest.exists()) {
             manifest = new File(homeDir, "Contents/Resources/manifest.plist");

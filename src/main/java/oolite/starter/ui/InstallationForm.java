@@ -3,13 +3,11 @@
 package oolite.starter.ui;
 
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import oolite.starter.Oolite;
 import oolite.starter.model.Installation;
-import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -376,36 +374,8 @@ public class InstallationForm extends javax.swing.JPanel {
         add(filler3, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
 
-    void maybeFillVersion(File homeDir) {
-        // check Linux
-        File releaseTxt = new File(homeDir, "../release.txt");
-        if (txtVersion.getText().isBlank() && releaseTxt.isFile()) {
-            try {
-                txtVersion.setText(IOUtils.toString(new FileReader(releaseTxt)).trim());
-            } catch (Exception e) {
-                log.info(INSTALLATIONFORM_COULD_NOT_READ_VERSION, releaseTxt, e);
-            }
-        }
-
-        // check MacOS
-        releaseTxt = new File(homeDir, "Contents/Info.plist");
-        if (txtVersion.getText().isBlank() && releaseTxt.isFile()) {
-            try {
-                txtVersion.setText(Oolite.getVersionFromInfoPlist(releaseTxt));
-            } catch (Exception e) {
-                log.info(INSTALLATIONFORM_COULD_NOT_READ_VERSION, releaseTxt, e);
-            }
-        }
-
-        // check Windows
-        releaseTxt = new File(homeDir, "Resources/manifest.plist");
-        if (txtVersion.getText().isBlank() && releaseTxt.isFile()) {
-            try {
-                txtVersion.setText(Oolite.getVersionFromManifest(releaseTxt));
-            } catch (Exception e) {
-                log.info(INSTALLATIONFORM_COULD_NOT_READ_VERSION, releaseTxt, e);
-            }
-        }
+    void maybeFillVersion(File homeDir) throws IOException {
+        txtVersion.setText(Oolite.getVersionFromHomeDir(homeDir));
     }
 
     void maybeFillExecutable(File homeDir) {
