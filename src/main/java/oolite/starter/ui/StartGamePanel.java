@@ -36,7 +36,7 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
     private static final String STARTGAMEPANEL_COULD_NOT_RUN_GAME = "Could not run game";
     private static final String STARTGAMEPANEL_COULD_NOT_RELOAD = "Could not reload";
     
-    private transient Oolite oolite;
+    private transient Oolite ooliteDriver;
     private SaveGameTableModel model;
     private SaveGamePanel sgp;
     
@@ -59,17 +59,17 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
     /**
      * Sets the Oolite instance to run the savegames from.
      * 
-     * @param oolite the oolite instance
+     * @param oolite the ooliteDriver instance
      * @throws IOException something went wrong
      * @throws SAXException something went wrong
      * @throws ParserConfigurationException something went wrong
      * @throws XPathExpressionException  something went wrong
      */
     public void setOolite(Oolite oolite) {
-        if (this.oolite != null) {
-            this.oolite.removeOoliteListener(this);
+        if (this.ooliteDriver != null) {
+            this.ooliteDriver.removeOoliteListener(this);
         }
-        this.oolite = oolite;
+        this.ooliteDriver = oolite;
         update();
         oolite.addOoliteListener(this);
         
@@ -97,7 +97,7 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
     
     private void update() {
         try {
-            model = new SaveGameTableModel(oolite.getSaveGames());
+            model = new SaveGameTableModel(ooliteDriver.getSaveGames());
             jTable1.clearSelection();
             jTable1.setAutoCreateColumnsFromModel(true);
             jTable1.setModel(model);
@@ -116,7 +116,11 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
             jpStatus.removeAll();
             jpStatus.add(new Badge("Save Games", String.valueOf(model.getRowCount()), Color.BLACK));
             
-            btResume.setEnabled(jTable1.getSelectedRow() != -1);
+            if (oolite.starter.util.Util.isMac()) {
+                btResume.setToolTipText("Not available on MacOS");
+            } else {
+                btResume.setEnabled(jTable1.getSelectedRow() != -1);
+            }
             btDelete.setEnabled(jTable1.getSelectedRow() != -1);
         } catch (Exception e) {
             log.warn("Could not update", e);
@@ -266,7 +270,7 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
                 @Override
                 public void run() {
                     try {
-                        oolite.run();
+                        ooliteDriver.run();
                     } catch (InterruptedException e) {
                         log.error("Interrupted", e);
                         Thread.currentThread().interrupt();
@@ -302,7 +306,7 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
                 @Override
                 public void run() {
                     try {
-                        oolite.run(row);
+                        ooliteDriver.run(row);
                     } catch (InterruptedException e) {
                         log.error("Interrupted", e);
                         Thread.currentThread().interrupt();
@@ -383,7 +387,7 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
                 }
             };
             glassPane.setLayout(new GridBagLayout());
-            waitPanel = new WaitPanel(oolite);
+            waitPanel = new WaitPanel(ooliteDriver);
             glassPane.add(waitPanel, new GridBagConstraints(1, 1, 1, 1, 1.0d, 1.0d, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(50, 50, 50, 50), 0, 0));
             glassPane.addMouseListener(new MouseAdapter() {
             });
