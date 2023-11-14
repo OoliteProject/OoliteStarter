@@ -12,6 +12,7 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.ListCellRenderer;
+import javax.swing.SwingWorker;
 import oolite.starter.model.Command;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -40,6 +41,8 @@ public class CommandCellRenderer extends JPanel implements ListCellRenderer<Comm
      * Creates a new CommandCellRenderer.
      */
     public CommandCellRenderer() {
+        log.debug("CommandCellRenderer()");
+        
         setOpaque(true);
         setLayout(new GridBagLayout());
         
@@ -59,40 +62,55 @@ public class CommandCellRenderer extends JPanel implements ListCellRenderer<Comm
 
     @Override
     public Component getListCellRendererComponent(JList<? extends Command> list, Command command, int index, boolean isSelected, boolean isFocused) {
+        String a = String.valueOf(command.getAction());
+        String b = command.getExpansion().getTitle() + " @ " + command.getExpansion().getVersion();
         switch (command.getAction()) {
-            case install:
+            case INSTALL:
                 lbIcon.setIcon(iiInstall);
                 break;
-            case enable:
+            case INSTALL_ALTERNATIVE:
+                lbIcon.setIcon(iiWarn);
+                break;
+            case ENABLE:
                 lbIcon.setIcon(iiEnable);
                 break;
-            case keep:
+            case KEEP:
                 lbIcon.setIcon(iiKeep);
                 break;
-            case unknown:
+            case UNKNOWN:
                 lbIcon.setIcon(iiError);
+                b += " - Have no download URL";
                 break;
-            case disable:
+            case DISABLE:
                 lbIcon.setIcon(iiDisable);
                 break;
-            case delete:
+            case DELETE:
                 lbIcon.setIcon(iiDelete);
                 break;
             default:
                 lbIcon.setIcon(null);
         }
-        String a = String.valueOf(command.getAction());
-        if (command.getState() == Command.StateValue.DONE) {
+        if (command.getState() == SwingWorker.StateValue.DONE) {
             try {
-                a = a + " " + String.valueOf(command.get());
+                a = a + " " + command.get();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                a = a + " Exception";
+                b = b + "\n" + e.getMessage();
             } catch (Exception e) {
                 a = a + " Exception";
+                b = b + "\n" + e.getMessage();
             }
         } else {
-            a = a + " " + String.valueOf(command.getState());
+            a = a + " " + command.getState();
         }
+        
+        if (command.getException() != null) {
+            b += " - " + command.getException().getMessage();
+        }
+        
         lbAction.setText(a);
-        lbTitle.setText(command.getExpansion().getTitle() + " @ " + command.getExpansion().getVersion());
+        lbTitle.setText(b);
 
         if (isSelected) {
             setBackground(list.getSelectionBackground());

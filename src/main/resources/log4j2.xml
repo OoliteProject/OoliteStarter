@@ -1,13 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration status="INFO">
   <Appenders>
-    <Console name="Console" target="SYSTEM_OUT">
+    <Console name="Console" target="SYSTEM_ERR">
       <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+    </Console>
+    <Console name="SysOutStream" target="SYSTEM_OUT">
+      <PatternLayout pattern="%msg%n"/>
     </Console>
     <RollingFile name="RollingFile" fileName="${sys:user.home}/.Oolite/Logs/oolite-starter.log"
                  filePattern="${sys:user.home}/.Oolite/Logs/oolite-starter-%i.log.gz">
       <PatternLayout>
-        <Pattern>%d %p %c{1.} [%t] %m%n</Pattern>
+        <Pattern>%d %p %c{2.} [%t] %m%n</Pattern>
       </PatternLayout>
       <Policies>
         <OnStartupTriggeringPolicy />
@@ -17,6 +20,9 @@
   </Appenders>
   <Loggers>
         <!-- error, warn, info, debug, trace -->
+    <Logger level="ALL"  name="SysOut" additivity="false">
+        <AppenderRef ref="SysOutStream"/>
+    </Logger>
     <Logger level="info" name="oolite.starter.Configuration"/>
     <Logger level="info" name="oolite.starter.ExpansionManager"/>
     <Logger level="warn" name="oolite.starter.Oolite"/>
@@ -32,12 +38,14 @@
     <Logger level="warn" name="oolite.starter.ui.InstallationForm"/>
     <Logger level="info" name="oolite.starter.ui.InstallationsPanel"/>
     <Logger level="info" name="oolite.starter.ui.MrGimlet"/>
+    <Logger level="info" name="oolite.starter.ui.OoliteFileChooserAccessory"/>
     <Logger level="warn" name="oolite.starter.ui.ScanOolitesSwingWorker"/>
     <Logger level="info" name="oolite.starter.ui.SplashPanel"/>
     <Logger level="info" name="oolite.starter.ui.StartGamePanel"/>
-    <Logger level="info" name="oolite.starter.ui.OoliteFileChooserAccessory"/>
-    <Logger level="warn" name="oolite.starter.util.PlistUtil"/>
+    <Logger level="info" name="oolite.starter.ui.Tag"/>
     <Logger level="info" name="oolite.starter.ui.Util"/>
+    <Logger level="warn" name="oolite.starter.util.PlistUtil"/>
+    <Logger level="info" name="oolite.starter.util.Util"/>
     <Logger level="warn" name="oolite.starter.util.XmlUtil"/>
     <Logger level="warn" name="oolite.starter.XmlUtil"/>
     

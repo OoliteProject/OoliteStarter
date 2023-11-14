@@ -26,6 +26,11 @@ You likely want to create a shortcut to run.sh or run.cmd.
 
 To remove the software, just delete the directory you have created.
 
+If, directly at startup, you see error messages like
+java.lang.UnsupportedClassVersionError: oolite/starter/MainFrame has been compiled by a more recent version of the Java Runtime (class file version 61.0), this version of the Java Runtime only recognizes class file versions up to...
+you are running a too old JVM. Not only check whether Java 17+ is installed, also
+make sure it is used (there may be multiple Java installations on your system).
+
 ### Linux (.deb)
 
 Download the .deb file. Run

@@ -13,7 +13,7 @@ import oolite.starter.model.Command;
  */
 public class ExpansionManagerPanel extends javax.swing.JPanel implements ExpansionManager.ExpansionManagerListener {
     
-    private ExpansionManager data;
+    private transient ExpansionManager data;
 
     /**
      * Creates new form ExpansionManagerPanel.
@@ -38,14 +38,14 @@ public class ExpansionManagerPanel extends javax.swing.JPanel implements Expansi
     protected void update() {
         if (data == null) {
             jTextField1.setText("");
-            jList1.setModel(new DefaultListModel<Command>());
+            jList1.setModel(new DefaultListModel<>());
         } else {
             String s = String.valueOf(data.getStatus());
             if (!data.getCommands().isEmpty()) {
                 s = s + " (" + data.getCommands().size() + ")";
             }
             jTextField1.setText(s);
-            DefaultListModel dlm = new DefaultListModel<Command>();
+            DefaultListModel<Command> dlm = new DefaultListModel<>();
             dlm.addAll(data.getCommands());
             jList1.setModel(dlm);
         }

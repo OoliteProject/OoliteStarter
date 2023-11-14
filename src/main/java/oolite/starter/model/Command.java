@@ -16,26 +16,29 @@ public class Command extends SwingWorker<Result, Object> {
     private static final Logger log = LogManager.getLogger();
 
     public enum Action {
-        // install the expansion
-        install, 
-        // delete the expansion
-        delete, 
-        // enable the expansion
-        enable, 
-        // disable the expansion
-        disable, 
+        // INSTALL the expansion
+        INSTALL, 
+        // INSTALL the alternative expansion
+        INSTALL_ALTERNATIVE, 
+        // DELETE the expansion
+        DELETE, 
+        // ENABLE the expansion
+        ENABLE, 
+        // DISABLE the expansion
+        DISABLE, 
         // we cannot resolve the expansion
-        unknown,
-        // we alreadz have the expansion
-        keep;
+        UNKNOWN,
+        // we already have the expansion
+        KEEP;
     }
     
     public enum Result {
-        success, failure;
+        SUCCESS, FAILURE;
     }
     
     private Action action;
     private Expansion expansion;
+    private Exception exception;
 
     /**
      * Creates a new command.
@@ -66,38 +69,48 @@ public class Command extends SwingWorker<Result, Object> {
         return expansion;
     }
     
+    /**
+     * Returns this command's exception (in case it failed).
+     * 
+     * @return the exception
+     */
+    public Exception getException() {
+        return exception;
+    }
+    
     @Override
     protected Result doInBackground() throws Exception {
         log.debug("doInBackground()");
         
         try {
             switch (action) {
-                case delete:
+                case DELETE:
                     expansion.remove();
                     break;
-                case disable:
+                case DISABLE:
                     expansion.disable();
                     break;
-                case enable:
+                case ENABLE:
                     expansion.enable();
                     break;
-                case install:
+                case INSTALL, INSTALL_ALTERNATIVE:
                     expansion.install();
                     break;
-                case unknown:
-                    throw new UnsupportedOperationException("Cannot handle unknown action");
-                case keep:
+                case UNKNOWN:
+                    throw new UnsupportedOperationException("Ran out of options");
+                case KEEP:
                     // nothing to do
                     break;
                 default:
                     throw new IllegalStateException(String.format("Unknown action %s", action));
             }
             
-            return Result.success;
+            return Result.SUCCESS;
             
         } catch (Exception e) {
-            log.error("Could not {}", action, e);
-            return Result.failure;
+            log.warn("Could not {} {}", action, expansion.getIdentifier(), e);
+            this.exception = e;
+            return Result.FAILURE;
         } finally {
             log.debug("doInBackground terminated");
         }

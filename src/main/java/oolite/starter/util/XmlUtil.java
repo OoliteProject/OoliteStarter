@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -42,9 +43,25 @@ public class XmlUtil {
         if (in == null) {
             throw new IllegalArgumentException("in must not be null");
         }
-        
+
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         dbf.setValidating(false);
+        /*
+        SonarQube suggests to deactivate doctype declarations.
+        However we need to allow the doctype in plist xml files
+            // to be compliant, completely DISABLE DOCTYPE declaration:
+            //dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+        */
+        // or completely DISABLE external entities declarations:
+        dbf.setFeature("http://xml.org/sax/features/external-general-entities", false);
+        dbf.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+        // or prohibit the use of all protocols by external entities:
+        dbf.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+        dbf.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
+        // or DISABLE entity expansion but KEEP in mind that this doesn't prevent fetching external entities
+        // and this solution is not correct for OpenJDK < 13 due to a bug: https://bugs.openjdk.java.net/browse/JDK-8206132
+        dbf.setExpandEntityReferences(false);
+
         dbf.setFeature("http://xml.org/sax/features/namespaces", false);
         dbf.setFeature("http://xml.org/sax/features/validation", false);
         dbf.setFeature("http://apache.org/xml/features/nonvalidating/load-dtd-grammar", false);
@@ -72,5 +89,5 @@ public class XmlUtil {
 
         InputStream in = new FileInputStream(f);
         return parseXmlStream(in);
-    }
+    }    
 }

@@ -696,6 +696,9 @@ public class Expansion implements Comparable<Expansion> {
      * @return the list
      */
     public List<ExpansionReference> getRequiredRefs() {
+        if (oolite == null) {
+            throw new IllegalStateException("oolite must not be null");
+        }
         List<ExpansionReference> result = new ArrayList<>();
         if (getRequiresOxps() != null) {
             for (String name: getRequiresOxps()) {

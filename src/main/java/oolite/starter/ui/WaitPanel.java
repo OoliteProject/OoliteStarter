@@ -16,7 +16,7 @@ import org.apache.logging.log4j.Logger;
 public class WaitPanel extends javax.swing.JPanel {
     private static Logger log = LogManager.getLogger();
     
-    private Oolite oolite;
+    private transient Oolite oolite;
 
     /**
      * Creates new form WaitPanel.

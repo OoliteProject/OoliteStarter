@@ -3,8 +3,6 @@
 
 package oolite.starter.ui;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.Timer;
@@ -44,12 +42,7 @@ public class DeferredDocumentChangeListener implements DocumentListener {
         log.debug("DeferredDocumentChangeListener({})", delay);
         
         listeners = new ArrayList<>();
-        timer = new Timer(delay, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent ae) {
-                fireStateChanged();
-            }
-        });
+        timer = new Timer(delay, ae -> fireStateChanged());
         timer.setRepeats(false);
     }
     

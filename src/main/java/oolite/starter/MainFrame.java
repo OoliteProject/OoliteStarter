@@ -6,6 +6,8 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.SplashScreen;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
 import java.time.Duration;
@@ -24,6 +26,11 @@ import oolite.starter.ui.InstallationsPanel;
 import oolite.starter.ui.MrGimlet;
 import oolite.starter.ui.SplashPanel;
 import oolite.starter.ui.StartGamePanel;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Options;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.xml.sax.SAXException;
@@ -35,6 +42,7 @@ import org.xml.sax.SAXException;
  */
 public class MainFrame extends javax.swing.JFrame {
     private static final Logger log = LogManager.getLogger();
+    private static final Logger sysout = LogManager.getLogger("SysOut");
 
     private static transient JFrame newSplash;
     
@@ -81,6 +89,7 @@ public class MainFrame extends javax.swing.JFrame {
         jTabbedPane1.add(sgp);
 
         ExpansionManager em = ExpansionManager.getInstance();
+        em.start();
         
         ExpansionsPanel ep = new ExpansionsPanel();
         ep.setOolite(oolite);
@@ -93,6 +102,41 @@ public class MainFrame extends javax.swing.JFrame {
 
         AboutPanel ap = new AboutPanel("text/html", getClass().getResource("/about.html"));
         jTabbedPane1.add("About", ap);
+        
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent event) {
+                if (configuration.isDirty()) {
+                    jTabbedPane1.setSelectedIndex(2);
+                    
+                    // show dialog
+                    int choice = MrGimlet.showConfirmation(MainFrame.this, "<html>Your configuration changed since it was last saved.<p>Would you like to save now?</html>");
+                    switch (choice) {
+                        case JOptionPane.YES_OPTION:
+                            saveConfiguration();
+                            dispose();
+                            System.exit(0);
+                            break;
+                        case JOptionPane.NO_OPTION:
+                            dispose();
+                            System.exit(0);
+                            break;
+                        case JOptionPane.CANCEL_OPTION:
+                            // we have DefaultCloseOperation set to DO_NOTHING.
+                            // doing nothing will keep the window
+                    }
+                } else {
+                    // we have DefaultCloseOperation set to DO_NOTHING.
+                    dispose();
+                }
+            }
+
+            @Override
+            public void windowClosed(WindowEvent e) {
+                System.exit(0);
+            }
+            
+        });
     }
 
     /**
@@ -102,6 +146,15 @@ public class MainFrame extends javax.swing.JFrame {
      */
     public Configuration getConfiguration() {
         return configuration;
+    }
+    
+    private void saveConfiguration() {
+        try {
+            configuration.saveConfiguration( configuration.getDefaultConfigFile() );
+        } catch (Exception e) {
+            log.error("Could not save", e);
+            JOptionPane.showMessageDialog(this, "Could not save. Check logfile.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     /**
@@ -115,7 +168,7 @@ public class MainFrame extends javax.swing.JFrame {
 
         jTabbedPane1 = new javax.swing.JTabbedPane();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setMinimumSize(new java.awt.Dimension(800, 600));
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
@@ -135,6 +188,7 @@ public class MainFrame extends javax.swing.JFrame {
             try {
                 Thread.sleep(3000);
             } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
                 log.debug("thread interrupted while waiting for Oolite to shutdown", e);
             }
         }
@@ -179,14 +233,7 @@ public class MainFrame extends javax.swing.JFrame {
         setTitle(iversion + product);
     }
     
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
-        log.info("{} {}  starting up...", MainFrame.class.getPackage().getImplementationTitle(), MainFrame.class.getPackage().getImplementationVersion());
-        
-        customizeSplashScreen();
-
+    private static void installShutdownHook() {
         Runtime.getRuntime().addShutdownHook(new Thread("Shutdownhook") {
             @Override
             public void run() {
@@ -194,7 +241,9 @@ public class MainFrame extends javax.swing.JFrame {
             }
             
         });
-        
+    }
+    
+    private static void setLookAndFeel() {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
@@ -218,10 +267,16 @@ public class MainFrame extends javax.swing.JFrame {
             log.info("Could not set look and feel", ex);
         }
         //</editor-fold>
+    }
+    
+    private static void startupUI() {
+        log.info("{} {}  starting up...", MainFrame.class.getPackage().getImplementationTitle(), MainFrame.class.getPackage().getImplementationVersion());
+        
+        customizeSplashScreen();
+        installShutdownHook();
+        setLookAndFeel();
 
-        // TODO: parse command line
-        // react to --version and --help
-
+        
         /* Create and display the form */
         new SwingWorker<MainFrame, Object>() {
             
@@ -307,6 +362,46 @@ public class MainFrame extends javax.swing.JFrame {
             }
 
         }.execute();
+    }
+    
+    private static void showHelp(Options options) {
+        HelpFormatter formatter = new HelpFormatter();
+        formatter.printHelp("OoliteStarter <options>", options);
+    }
+    
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) {
+        log.info("Args: {}", args);
+        log.info("JVM: {} {}", System.getProperty("java.runtime.name"), Runtime.version());
+        log.info("OS: {} {} {}", System.getProperty("os.name"), System.getProperty("os.arch"), System.getProperty("os.version"));
+        
+        Options options = new Options();
+        options.addOption("h", "help", false, "show usage help");
+        options.addOption("v", "version", false, "print program version");
+        
+        CommandLine cmd = null;
+        try {
+            CommandLineParser parser = new DefaultParser();
+            cmd = parser.parse(options, args);
+        } catch (Exception e) {
+            log.error("Could not parse command line", e);
+            showHelp(options);
+            System.exit(2);
+        }
+        
+        if (cmd.hasOption("help")) {
+            showHelp(options);
+            System.exit(1);
+        } else if (cmd.hasOption("version")) {
+            String msg = "%s %s".formatted(MainFrame.class.getPackage().getImplementationTitle(), MainFrame.class.getPackage().getImplementationVersion());
+            sysout.info(msg);
+            System.exit(1);
+        } else {
+            // no special option - let's startup the UI
+            startupUI();
+        }
         
     }
 

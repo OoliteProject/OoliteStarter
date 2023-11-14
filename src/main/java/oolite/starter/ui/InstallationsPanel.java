@@ -9,9 +9,9 @@ import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -23,8 +23,6 @@ import javax.swing.SortOrder;
 import javax.swing.SwingUtilities;
 import javax.swing.UIDefaults;
 import javax.swing.UIManager;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableRowSorter;
 import oolite.starter.Configuration;
@@ -50,12 +48,19 @@ public class InstallationsPanel extends javax.swing.JPanel {
     private InstallationTableModel model;
     private transient Configuration configuration;
     
+    /**
+     * Flag to indicate whether the configuration was saved after modification.
+     * TODO: This flag should go into the configuration class.
+     */
     private boolean configDirty;
+    private SecureRandom random;
 
     /**
      * Creates new form InstallationsPanel.
      */
     public InstallationsPanel() {
+        random = new SecureRandom();
+        
         initComponents();
         
         installationDetails = new InstallationForm();
@@ -64,7 +69,7 @@ public class InstallationsPanel extends javax.swing.JPanel {
         
         configDirty = false;
         
-        //setButtonColors();
+        setButtonColors();
         
         jTable1.setDefaultRenderer(Boolean.class, new DefaultTableCellRenderer(){
             @Override
@@ -106,14 +111,11 @@ public class InstallationsPanel extends javax.swing.JPanel {
         this.configuration = configuration;
 
         model = new InstallationTableModel(configuration);
-        model.addTableModelListener(new TableModelListener() {
-            @Override
-            public void tableChanged(TableModelEvent tme) {
-                log.debug("tableChanged({})", tme);
-                if (tme.getSource() == model) {
-                    log.trace("it is our tablemodel!");
-                    setButtonColors();
-                }
+        model.addTableModelListener(tme -> {
+            log.debug("tableChanged({})", tme);
+            if (tme.getSource() == model) {
+                log.trace("it is our tablemodel!");
+                setButtonColors();
             }
         });
         
@@ -190,7 +192,7 @@ public class InstallationsPanel extends javax.swing.JPanel {
             }
         }
         
-        if (configDirty) {
+        if (configuration != null && configuration.isDirty()) {
             btSave.setBackground(Configuration.COLOR_ATTENTION);
         } else {
             btSave.setBackground(defaultBackground);
@@ -199,7 +201,9 @@ public class InstallationsPanel extends javax.swing.JPanel {
     
     private void setConfigDirty(boolean configDirty) {
         this.configDirty = configDirty;
-        
+        if (configDirty) {
+            configuration.setDirty(true);
+        }
         setButtonColors();
     }
 
@@ -218,6 +222,7 @@ public class InstallationsPanel extends javax.swing.JPanel {
         jTable1.getSelectionModel().setSelectionInterval(rowIndex, rowIndex);
 
         setConfigDirty(true);
+        configuration.setDirty(true);
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -480,7 +485,7 @@ public class InstallationsPanel extends javax.swing.JPanel {
         log.debug("btSaveActionPerformed({})", evt);
         
         try {
-            File f = new File(System.getProperty("user.home") + File.separator + ".oolite-starter.conf");
+            File f = configuration.getDefaultConfigFile();
             configuration.saveConfiguration(f);
             
             StringBuilder sb = new StringBuilder("<html>");
@@ -488,7 +493,7 @@ public class InstallationsPanel extends javax.swing.JPanel {
                 sb.append("<p>Nice try, kiddo!</p><p>Your configuration was stored in ").append(f.getAbsolutePath()).append(".</p>");
                 sb.append("<p>But... you still ain't got any Oolite version selected. Work on that, or I can't let you go.</p>");
             } else {
-                switch(new Random().nextInt(3)) {
+                switch(random.nextInt(3)) {
                     case 0:
                         sb.append("<p>Smart move, kiddo!</p><p>Your configuration was stored in ").append(f.getAbsolutePath()).append(".</p>");
                         sb.append("<p>Next time we won't have to fasten these screws again.</p>");

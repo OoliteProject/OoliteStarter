@@ -44,6 +44,7 @@ public class Configuration {
     
     private static final String CONF_NO_ACTIVE_INSTALLATION = "No active installation";
     public static final Color COLOR_ATTENTION = new Color(160, 80, 0);
+    private static final String DEFAULT_URL = "https://addons.oolite.space/api/1.0/overview";
 
     private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
     
@@ -60,6 +61,11 @@ public class Configuration {
     private List<URL> expansionManagerURLs;
     
     private Duration updateCheckInterval;
+    
+    /**
+     * Flag to indicate if after load/save the configuration was changed.
+     */
+    private boolean dirty;
 
     /**
      * Creates a new Configuration instance.
@@ -67,10 +73,10 @@ public class Configuration {
      */
     public Configuration() throws MalformedURLException {
         expansionManagerURLs = new ArrayList<>();
-        expansionManagerURLs.add(new URL("https://addons.oolite.space/api/1.0/overview/"));
+        expansionManagerURLs.add(new URL(DEFAULT_URL));
         
         installations = new ArrayList<>();
-        updateCheckInterval = Duration.ofDays(1);
+        updateCheckInterval = Duration.ofDays(7);
     }
 
     /**
@@ -103,6 +109,8 @@ public class Configuration {
         Document doc = db.parse(f);
         XPath xpath = XPathFactory.newDefaultInstance().newXPath();
         
+        dirty = false;
+        
         // load expansion manager URLs
         NodeList nl = (NodeList)xpath.evaluate("/OoliteStarter/ExpansionManager/manifestUrl", doc, XPathConstants.NODESET);
         ArrayList<URL> urls = new ArrayList<>();
@@ -116,7 +124,11 @@ public class Configuration {
             String i = xpath.evaluate("/OoliteStarter/ExpansionManager/updateCheckInterval", doc);
             this.updateCheckInterval = Duration.parse(i);
         } catch (Exception e) {
-            log.info("Still using default udpate interval.", e);
+            if (log.isDebugEnabled()) {
+                log.debug("Still using default udpate interval.", e);
+            } else {
+                log.info("Still using default udpate interval: {}", e.getMessage());
+            }
         }
         
         // load installations
@@ -166,9 +178,9 @@ public class Configuration {
             eUrl.setTextContent(url.toString());
             expansionManager.appendChild(eUrl);
             
-            Element updateCheckInterval = doc.createElement("updateCheckInterval");
-            updateCheckInterval.setTextContent(String.valueOf(this.updateCheckInterval));
-            expansionManager.appendChild(updateCheckInterval);
+            Element eUpdateCheckInterval = doc.createElement("updateCheckInterval");
+            eUpdateCheckInterval.setTextContent(String.valueOf(this.updateCheckInterval));
+            expansionManager.appendChild(eUpdateCheckInterval);
         }
         root.appendChild(expansionManager);
 
@@ -221,6 +233,8 @@ public class Configuration {
         t.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
         t.setOutputProperty(OutputKeys.INDENT, "yes");
         t.transform(new DOMSource(doc), new StreamResult(f));
+        
+        dirty = false;
     }
     
     /**
@@ -251,6 +265,8 @@ public class Configuration {
             Installation oldInstallation = activeInstallation;
             activeInstallation = null;
             
+            dirty = true;
+            
             PropertyChangeEvent pce = new PropertyChangeEvent(this, "activeInstallation", oldInstallation, installation);
             for (PropertyChangeListener pcl: pcs.getPropertyChangeListeners()) {
                 pcl.propertyChange(pce);
@@ -264,6 +280,9 @@ public class Configuration {
             if (activeInstallation != installation) {
                 Installation oldInstallation = installation;
                 activeInstallation = installation;
+                
+                dirty = true;
+                
                 log.debug("firing propertyChange activeInstallation to {} listeners: {}", pcs.getPropertyChangeListeners().length, pcs.getPropertyChangeListeners());
                 PropertyChangeEvent pce = new PropertyChangeEvent(this, "activeInstallation", oldInstallation, installation);
                 for (PropertyChangeListener pcl: pcs.getPropertyChangeListeners()) {
@@ -412,5 +431,34 @@ public class Configuration {
     public void removePropertyChangeListener(PropertyChangeListener l) {
         log.debug("removePropertyChangeListener({})", l);
         pcs.removePropertyChangeListener(l);
+    }
+    
+    /**
+     * Indicates if after load/save the configuration was changed.
+     *
+     * @return true if the configuration was changed
+     */
+    public boolean isDirty() {
+        return dirty;
+    }
+    
+    /**
+     * Sets the dirty flag. The flag can only be raised. To lower it,
+     * run the save method.
+     *
+     * @param dirty the intended state of the flag
+     */
+    public void setDirty(boolean dirty) {
+        this.dirty |= dirty;
+    }
+
+    /**
+     * Returns the file where to expect the configuration. Usually points to the
+     * user's home directory.
+     * 
+     * @return the file
+     */
+    public File getDefaultConfigFile() {
+        return new File(System.getProperty("user.home") + File.separator + ".oolite-starter.conf");
     }
 }

@@ -37,6 +37,25 @@ public class Util {
     private Util() {
     }
     
+    private static TableCellRenderer guessHeaderRenderer(JTable jtable, TableColumn column) {
+        log.debug("guessHeaderRenderer({}, {})", jtable, column);
+        
+        TableCellRenderer result = null;
+        
+        // try to get the right header renderer
+        Object value = column.getHeaderValue();
+        result = column.getHeaderRenderer();
+        if (result == null) {
+            jtable.getTableHeader().getDefaultRenderer();
+        }
+        if (result == null) {
+            result = jtable.getDefaultRenderer(value.getClass());
+        }
+        
+        return result;
+    }
+
+    
     /**
      * Configures columnWidth so columns can render data nicely.
      * Preferred width is the average width, maximum width is also set to limit
@@ -53,26 +72,17 @@ public class Util {
             int avgWidth = 0;
             int rows = jTable1.getRowCount();
             
-            TableCellRenderer renderer = null;
-            {
-                // try to get the right header renderer
-                Object value = col.getHeaderValue();
-                renderer = col.getHeaderRenderer();
-                if (renderer == null) {
-                    jTable1.getTableHeader().getDefaultRenderer();
-                }
-                if (renderer == null) {
-                    renderer = jTable1.getDefaultRenderer(value.getClass());
-                }
-                
-                if (renderer != null) {
-                    rows ++;
-                    Component comp = renderer.getTableCellRendererComponent(jTable1, value, false, false, 0, i);
-                    maxWidth = Math.max(maxWidth, comp.getPreferredSize().width);
-                    avgWidth += comp.getPreferredSize().width;
-                }
+            TableCellRenderer renderer = guessHeaderRenderer(jTable1, col);
+        
+            // calculate preferred/max column width
+            if (renderer != null) {
+                rows ++;
+                Component comp = renderer.getTableCellRendererComponent(jTable1, col.getHeaderValue(), false, false, 0, i);
+                maxWidth = Math.max(maxWidth, comp.getPreferredSize().width);
+                avgWidth += comp.getPreferredSize().width;
             }
             
+            // if we have data, adapt preferred/max column width
             for (int r = 0; r < jTable1.getRowCount(); r++) {
                 renderer = jTable1.getCellRenderer(r, i);
                 Component comp = renderer.getTableCellRendererComponent(
@@ -196,7 +206,7 @@ public class Util {
     public static JComponent createCommandListPanel(List<Command> commands) {
         DefaultListModel<Command> dlm = new DefaultListModel<>();
         dlm.addAll(commands);
-        JList list = new JList(dlm);
+        JList<Command> list = new JList<>(dlm);
         JScrollPane jsp = new JScrollPane(list);
         list.setCellRenderer(new CommandCellRenderer());
         return jsp;

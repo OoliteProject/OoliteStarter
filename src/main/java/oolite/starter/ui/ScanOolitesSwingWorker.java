@@ -6,11 +6,13 @@ package oolite.starter.ui;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.SwingWorker;
+import oolite.starter.util.WinRegistry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -249,6 +251,16 @@ public class ScanOolitesSwingWorker extends SwingWorker<List<String>, String> {
                 goodPatterns.add(Pattern.compile("(.*\\.app)/Contents/MacOS/Oolite"));
                 break;
             case WINDOWS: // Windows version
+                // find the likely Oolite installation from Registry
+                try {
+                    log.warn("Reading registry...");
+                    String path = WinRegistry.readString(WinRegistry.HKEY_LOCAL_MACHINE, "HKLM\\SOFTWARE\\WOW6432Node\\Oolite", "Install_Dir");
+                    log.warn("Seems we found {}", path);
+                    goodPatterns.add(Pattern.compile(path));
+                } catch (Exception e) {
+                    log.warn("Could not read from registry", e);
+                }
+                
                 goodPatterns.add(Pattern.compile("(.*\\\\oolite.app)\\\\oolite.exe"));
                 skipPatterns.add(Pattern.compile("C:\\\\Windows.*", Pattern.CASE_INSENSITIVE));
                 preferredLocations.add(new File("C:\\Oolite"));
@@ -257,9 +269,7 @@ public class ScanOolitesSwingWorker extends SwingWorker<List<String>, String> {
                 break;
         }
         preferredLocations.add(new File(System.getProperty("user.home")));
-        for(File f: File.listRoots()) {
-            preferredLocations.add(f);
-        }
+        preferredLocations.addAll(Arrays.asList(File.listRoots()));
 
         try {
             result = new ArrayList<>();

@@ -4,10 +4,7 @@
 package oolite.starter;
 
 import com.vdurmont.semver4j.Semver;
-import java.awt.Component;
-import java.io.IOException;
 import java.net.MalformedURLException;
-import java.net.URL;
 import java.time.Duration;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.AfterAll;
@@ -49,7 +46,7 @@ public class GithubVersionCheckerTest {
      */
     @Test
     public void testInit() throws Exception {
-        System.out.println("init");
+        log.info("init");
 
         GithubVersionChecker instance = new GithubVersionChecker();
         try {
@@ -65,7 +62,7 @@ public class GithubVersionCheckerTest {
      */
     @Test
     public void testInit2() throws Exception {
-        System.out.println("testInit2");
+        log.info("testInit2");
 
         GithubVersionChecker instance = new GithubVersionChecker();
         instance.setUpdateCheckInterval(Duration.ofSeconds(0));
@@ -101,7 +98,7 @@ public class GithubVersionCheckerTest {
      */
     @Test
     public void testGetLatestVersion() throws Exception {
-        System.out.println("getLatestVersion");
+        log.info("getLatestVersion");
 
         GithubVersionChecker instance = new GithubVersionChecker();
         instance.setUpdateCheckInterval(Duration.ofSeconds(0));
@@ -116,7 +113,7 @@ public class GithubVersionCheckerTest {
      */
     @Test
     public void testGetHtmlUserMessage() throws MalformedURLException {
-        System.out.println("getHtmlUserMessage");
+        log.info("getHtmlUserMessage");
 
         GithubVersionChecker instance = new GithubVersionChecker();
         assertEquals("<html><body><p>All right there. We heard rumors the new version 999.999.999 has been released.</p><p>You need to check <a href=\"https://github.com/HiranChaudhuri/OoliteStarter/releases/tag/v999.999.999\">https://github.com/HiranChaudhuri/OoliteStarter/releases/tag/v999.999.999</a> and report back to me.</p><p>But don't keep me waiting too long, kid!</p></body></html>", instance.getHtmlUserMessage(new Semver("999.999.999")));
@@ -127,10 +124,31 @@ public class GithubVersionCheckerTest {
      */
     @Test
     public void testGetHtmlUserMessage2() throws MalformedURLException {
-        System.out.println("getHtmlUserMessage2");
+        log.info("getHtmlUserMessage2");
 
         GithubVersionChecker instance = new GithubVersionChecker();
         assertEquals("<html><body><p>All right there. We heard rumors the new experimental version 999.999.999-test.1 has been released.</p><p>You need to check <a href=\"https://github.com/HiranChaudhuri/OoliteStarter/releases/tag/v999.999.999-test.1\">https://github.com/HiranChaudhuri/OoliteStarter/releases/tag/v999.999.999-test.1</a> and report back to me.</p><p>But don't keep me waiting too long, kid!</p></body></html>", instance.getHtmlUserMessage(new Semver("999.999.999-test.1")));
+    }
+
+    /**
+     */
+    @Test
+    public void testGetUpdateCheckInterval() throws MalformedURLException {
+        log.info("testGetUpdateCheckInterval");
+
+        GithubVersionChecker instance = new GithubVersionChecker();
+        assertEquals(null, instance.getUpdateCheckInterval());
+    }
+
+    /**
+     */
+    @Test
+    public void testGetUpdateCheckInterval2() throws MalformedURLException {
+        log.info("testGetUpdateCheckInterval2");
+
+        GithubVersionChecker instance = new GithubVersionChecker();
+        instance.setUpdateCheckInterval(Duration.ofDays(12));
+        assertEquals(Duration.ofDays(12), instance.getUpdateCheckInterval());
     }
 
 }

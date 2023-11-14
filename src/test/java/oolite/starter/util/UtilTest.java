@@ -45,7 +45,7 @@ public class UtilTest {
      */
     @Test
     public void testGetHostname() {
-        System.out.println("getHostname");
+        log.info("getHostname");
         String result = Util.getHostname();
         assertNotNull(result);
         log.info("running on host {}", result);
@@ -56,7 +56,7 @@ public class UtilTest {
      */
     @Test
     public void testExecReadToString() throws Exception {
-        System.out.println("execReadToString");
+        log.info("execReadToString");
         String execCommand = "";
         String expResult = "";
         try {
@@ -84,7 +84,7 @@ public class UtilTest {
      */
     @Test
     public void testIsMac() {
-        System.out.println("isMac");
+        log.info("isMac");
         boolean result = Util.isMac();
         assertEquals(true, result || true);
     }

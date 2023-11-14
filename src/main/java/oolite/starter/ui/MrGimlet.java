@@ -10,8 +10,6 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JEditorPane;
@@ -105,20 +103,46 @@ public class MrGimlet {
             glasspane.setVisible(true);
 
             if (fadeMillis > 0) {
-                Util.fadeOutBalloon(bt, new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent ae) {
-                        log.debug("actionPerformed(...)");
-                        SwingUtilities.invokeLater(() -> {
-                            glasspane.remove(bt);
-                            glasspane.validate();
-                            glasspane.repaint();
-                        });
-                    }
+                Util.fadeOutBalloon(bt, ae -> {
+                    log.debug("actionPerformed(...)");
+                    SwingUtilities.invokeLater(() -> {
+                        glasspane.remove(bt);
+                        glasspane.validate();
+                        glasspane.repaint();
+                    });
                 }, fadeMillis, 30);
             }
         } else {
             JOptionPane.showMessageDialog(parentComponent, jep, "Message from Mr Gimlet", JOptionPane.INFORMATION_MESSAGE, ii);
         }
+    }
+    
+    
+    /**
+     * Shows a confirmation (yes/no/cancel) in Mr Gimlet style.
+     * 
+     * @param parentComponent the parent window that should be blocked by this modal dialog
+     * @param message The message to show
+     */
+    public static int showConfirmation(Component parent, String message) {
+        JEditorPane jep = new JEditorPane("text/html", message);
+        jep.setEditable(false);
+        jep.addHyperlinkListener(he-> {
+            if (he.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+                try {
+                    Desktop.getDesktop().browse(he.getURL().toURI());
+                } catch (Exception e) {
+                    log.info("Could not open url {}", he.getURL(), e);
+                }
+            }
+        });
+        jep.setBackground(new Color(0,0,0, 0));
+
+        JPanel payload = new JPanel();
+        payload.add(new JLabel(ii));
+        payload.add(jep);
+        payload.setBackground(new Color(0,0,0, 0));
+        
+        return JOptionPane.showConfirmDialog(parent, payload, "MrGimlet asking to confirm...", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null);
     }
 }

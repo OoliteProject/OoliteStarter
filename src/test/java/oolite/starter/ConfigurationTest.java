@@ -6,6 +6,7 @@ package oolite.starter;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.time.Duration;
 import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
@@ -79,7 +80,7 @@ public class ConfigurationTest {
         List<File> addonDirs = c.getAddonDirs();
         assertEquals(4, addonDirs.size());
         assertEquals("/home/user/GNUstep/Applications/Oolite/DeactivatedAddOns", String.valueOf(c.getDeactivatedAddonsDir()));
-        assertEquals("[https://addons.oolite.space/api/1.0/overview/, http://addons.oolite.org/api/1.0/overview/]", String.valueOf(c.getExpansionManagerURLs()));
+        assertEquals("[https://addons.oolite.space/api/1.0/overview, http://addons.oolite.org/api/1.0/overview]", String.valueOf(c.getExpansionManagerURLs()));
         assertEquals("/home/user/GNUstep/Library/ApplicationSupport/Oolite/ManagedAddOns", String.valueOf(c.getManagedAddonsDir()));
         assertEquals("/home/user/GNUstep/Applications/Oolite/oolite.app/oolite-wrapper", c.getOoliteCommand());
         assertEquals("/home/user/oolite-saves", String.valueOf(c.getSaveGameDir()));
@@ -109,5 +110,14 @@ public class ConfigurationTest {
         assertEquals(i, c.getActiveInstallation());
         c.activateInstallation((Installation)null);
         assertNull(c.getActiveInstallation());
+    }
+    
+    @Test
+    public void testGetUpdateCheckInterval() throws IOException, ParserConfigurationException, SAXException, XPathExpressionException {
+        log.info("testGetUpdateCheckInterval");
+        
+        Configuration c = new Configuration(new File("src/test/resources/testConfig.xml"));
+        assertEquals(Duration.ofDays(7), c.getUpdateCheckInterval());
+
     }
 }

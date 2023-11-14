@@ -15,8 +15,8 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       GITVERSION_SEMVER: ${{ steps.output1.outputs.GITVERSION_SEMVER }}
-      GITVERSION_ASSEMBLYSEMVER: ${{ steps.output1.outputs.GITVERSION_ASSEMBLYSEMVER }}
-      GITVERSION_MAJORMINORPATCH: ${{ steps.output1.outputs.GITVERSION_MAJORMINORPATCH }}
+      GITVERSION_ASSEMBLYSEMVER: "${{ steps.output1.outputs.GITVERSION_ASSEMBLYSEMVER }}"
+      GITVERSION_MAJORMINORPATCH: "${{ steps.output1.outputs.GITVERSION_MAJORMINORPATCH }}"
       GITVERSION_MAJOR: ${{ steps.output1.outputs.GITVERSION_MAJOR }}
       GITVERSION_MINOR: ${{ steps.output1.outputs.GITVERSION_MINOR }}
       GITVERSION_PATCH: ${{ steps.output1.outputs.GITVERSION_PATCH }}
@@ -226,17 +226,16 @@ jobs:
     - name: Prepare AppImage for Windows
       run: |
         jpackage --type app-image --app-version "${{ needs.semver.outputs.GITVERSION_ASSEMBLYSEMVER }}" --copyright Copyright --description "OoliteStarter ${{ needs.semver.outputs.GITVERSION_SEMVER }}" --name "OoliteStarter" --dest target/appimage --temp target/oolite-starter-tmp --vendor "hiran" --verbose --icon oolitestarter/src/main/resources/images/Mr_Gimlet_transparent.ico --input OoliteStarter-${{ needs.semver.outputs.GITVERSION_SEMVER }}/dist --main-jar OoliteStarter-${{ needs.semver.outputs.GITVERSION_SEMVER }}.jar --main-class oolite.starter.MainFrame
-        # --java-options '-splash:$APPDIR/splash.png'
         # --resource-dir src/jpackage/resources
-        #copy oolitestarter\src\main\resources\images\OoliteStarter_Splashscreen_640x360.png target\appimage\OoliteStarter\app\splash.png
 
     - name: Check status 2
       run: |
         get-childitem . -Recurse | where {!$_.PSIsContainer} | select-object FullName
 
+    # for upgrades, it seems we need a UUID - see https://stackoverflow.com/a/67442754/4222206
     - name: Finish AppImage for Windows
       run: |
-        jpackage --verbose --app-image target/appimage/OoliteStarter --app-version "${{ needs.semver.outputs.GITVERSION_ASSEMBLYSEMVER }}" --name "OoliteStarter" --dest target --win-shortcut --icon oolitestarter/src/main/resources/images/Mr_Gimlet_transparent.ico --win-shortcut --win-menu --win-menu-group Oolite
+        jpackage --verbose --app-image target/appimage/OoliteStarter --app-version "${{ needs.semver.outputs.GITVERSION_ASSEMBLYSEMVER }}" --name "OoliteStarter" --dest target --win-shortcut --icon oolitestarter/src/main/resources/images/Mr_Gimlet_transparent.ico --win-shortcut --win-menu --win-menu-group Oolite --win-dir-chooser --win-upgrade-uuid 0a18c6bc-0418-47dc-9526-3a48030f6af6
         #--resource-dir src/jpackage/resources
 
     - name: Check status 3
@@ -370,63 +369,63 @@ jobs:
         name: OoliteStarter-MacOS
         path: target/OoliteStarter*
 
-  snap:
-    needs: [semver,package-linux]
-    runs-on: ubuntu-latest
-    
-    steps:
-    - name: Checkout project
-      uses: actions/checkout@v3
-      with:
-        fetch-depth: 0
-        path: oolitestarter
-
-    - name: Download artifacts
-      uses: actions/download-artifact@v3
-      with:
-        name: OoliteStarter-Ubuntu
-        path: oolitestarter
-
-    - name: Check status 1
-      run: |
-        printenv | sort
-        echo -n "Current directory: "
-        pwd
-        find . -not -path "./oolitestarter/.git/*"
-      env:
-        DEBIAN_PKGVERSION: ${{ needs.semver.outputs.DEBIAN_PKGVERSION }}
-        GITVERSION_SEMVER: ${{ needs.semver.outputs.GITVERSION_SEMVER }}
-        
-    - name: version bump snapcraft.yaml
-      run: |
-        sed -i "s/^version:.*/version: ${{ needs.semver.outputs.GITVERSION_SEMVER }}/g" oolitestarter/snapcraft.yaml
-        sed -i "s/^    source:.*/    source: oolitestarter_${{ needs.semver.outputs.DEBIAN_PKGVERSION }}-1_amd64.deb/g" oolitestarter/snapcraft.yaml
-        cat oolitestarter/snapcraft.yaml
-        
-    - name: Build the snap
-      id: buildsnap
-      uses: snapcore/action-build@v1
-      with:
-        path: oolitestarter
-
-    - name: Check status 2
-      run: |
-        printenv | sort
-        echo -n "Current directory: "
-        echo "Snap build output is ${{ steps.buildsnap.outputs.snap }}"
-        pwd
-        find . -not -path "./oolitestarter/.git/*"
-      env:
-        DEBIAN_PKGVERSION: ${{ needs.semver.outputs.DEBIAN_PKGVERSION }}
-        GITVERSION_SEMVER: ${{ needs.semver.outputs.GITVERSION_SEMVER }}
-    
-    - name: Publish the snap
-      uses: snapcore/action-publish@v1
-      env:
-        SNAPCRAFT_STORE_CREDENTIALS: ${{ secrets.SNAPSTORE_LOGIN }}
-      with:
-        snap: ${{ steps.buildsnap.outputs.snap }}
-        release: edge
+#  snap:
+#    needs: [semver,package-linux]
+#    runs-on: ubuntu-latest
+#    
+#    steps:
+#    - name: Checkout project
+#      uses: actions/checkout@v3
+#      with:
+#        fetch-depth: 0
+#        path: oolitestarter
+#
+#    - name: Download artifacts
+#      uses: actions/download-artifact@v3
+#      with:
+#        name: OoliteStarter-Ubuntu
+#        path: oolitestarter
+#
+#    - name: Check status 1
+#      run: |
+#        printenv | sort
+#        echo -n "Current directory: "
+#        pwd
+#        find . -not -path "./oolitestarter/.git/*"
+#      env:
+#        DEBIAN_PKGVERSION: ${{ needs.semver.outputs.DEBIAN_PKGVERSION }}
+#        GITVERSION_SEMVER: ${{ needs.semver.outputs.GITVERSION_SEMVER }}
+#        
+#    - name: version bump snapcraft.yaml
+#      run: |
+#        sed -i "s/^version:.*/version: ${{ needs.semver.outputs.GITVERSION_SEMVER }}/g" oolitestarter/snapcraft.yaml
+#        sed -i "s/^    source:.*/    source: oolitestarter_${{ needs.semver.outputs.DEBIAN_PKGVERSION }}-1_amd64.deb/g" oolitestarter/snapcraft.yaml
+#        cat oolitestarter/snapcraft.yaml
+#        
+#    - name: Build the snap
+#      id: buildsnap
+#      uses: snapcore/action-build@v1
+#      with:
+#        path: oolitestarter
+#
+#    - name: Check status 2
+#      run: |
+#        printenv | sort
+#        echo -n "Current directory: "
+#        echo "Snap build output is ${{ steps.buildsnap.outputs.snap }}"
+#        pwd
+#        find . -not -path "./oolitestarter/.git/*"
+#      env:
+#        DEBIAN_PKGVERSION: ${{ needs.semver.outputs.DEBIAN_PKGVERSION }}
+#        GITVERSION_SEMVER: ${{ needs.semver.outputs.GITVERSION_SEMVER }}
+#    
+#    - name: Publish the snap
+#      uses: snapcore/action-publish@v1
+#      env:
+#        SNAPCRAFT_STORE_CREDENTIALS: ${{ secrets.SNAPSTORE_LOGIN }}
+#      with:
+#        snap: ${{ steps.buildsnap.outputs.snap }}
+#        release: edge
 
   release:
     needs: [semver,package-linux,package-windows,package-macos]

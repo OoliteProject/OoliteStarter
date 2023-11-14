@@ -61,93 +61,116 @@ public class ExpansionPanel extends javax.swing.JPanel implements PropertyChange
         update();
     }
     
+    /**
+     * Empties all fieds to indicate we have no data.
+     * Useful when data has been set to null.
+     */
+    private void emptyFields() {
+        txtTitle.setText("");
+        txtDescription.setText("");
+        txtLocalFile.setText("");
+        txtIdentifier.setText("");
+
+        lsRequires.setModel(new DefaultListModel<>());
+        lsConflicts.setModel(new DefaultListModel<>());
+        lsOptional.setModel(new DefaultListModel<>());
+        txtMinVersion.setText("");
+        txtMaxVersion.setText("");
+        btInstall.setEnabled(false);
+        btEnable.setEnabled(false);
+        btDisable.setEnabled(false);
+        btRemove.setEnabled(false);
+        btWiki.setEnabled(false);
+    }
+    
+    /**
+     * Updates all fields to show the data.
+     */
+    private void showData() {
+        txtTitle.setText(data.getTitle());
+        txtDescription.setText(data.getDescription());
+        txtLocalFile.setText(String.valueOf(data.getLocalFile()));
+        txtIdentifier.setText(data.getIdentifier());
+        DefaultListModel<ExpansionReference> lm = new DefaultListModel<>();
+        if (data.getRequiresOxps() != null) {
+            lm.addAll(data.getRequiredRefs());
+        }
+        lsRequires.setModel(lm);
+        lm = new DefaultListModel<>();
+        if (data.getConflictOxps() != null) {
+            lm.addAll(data.getConflictRefs());
+        }
+        lsConflicts.setModel(lm);
+        lm = new DefaultListModel<>();
+        if (data.getOptionalOxps() != null) {
+            lm.addAll(data.getOptionalRefs());
+        }
+        lsOptional.setModel(lm);
+        txtMinVersion.setText(String.valueOf(data.getRequiredOoliteVersion()));
+        txtMaxVersion.setText(String.valueOf(data.getMaximumOoliteVersion()));
+        btInstall.setEnabled(data.isOnline() && !data.isLocal());
+        btEnable.setEnabled(data.isLocal() && !data.isEnabled());
+        btDisable.setEnabled(data.isLocal() && data.isEnabled());
+        btRemove.setEnabled(data.isLocal());
+        btWiki.setEnabled(true);
+    }
+    
+    private void showStandardTags() {
+        if (data.isOnline()) {
+            jpDownThere.add(new Tag("Online", Color.GREEN));
+        }
+        if (data.isLocal() && data.isEnabled()) {
+            jpDownThere.add(new Tag("Enabled", Color.GREEN));
+        }
+        if (data.isLocal() && !data.isEnabled()) {
+            jpDownThere.add(new Tag("Disabled", Color.GREEN));
+        }
+        if (data.isLocal() && !data.isManaged()) {
+            jpDownThere.add(new Tag("Manual", Color.RED, Color.BLACK));
+        }
+        if (data.isLocal() && !data.isOnline()) {
+            jpDownThere.add(new Tag("No download", Color.BLUE));
+        }
+        if (data.isOnline() && !data.isEnabled()) {
+            jpDownThere.add(new Tag("Installable", Color.YELLOW));
+        }
+    }
+
+    private void showExtendedTags() {
+        if (data.isLocal() && data.getEMStatus().isLatest()) {
+            jpDownThere.add(new Tag("Current", Color.WHITE));
+        }
+        if (data.isLocal() && !data.getEMStatus().isLatest()) {
+            jpDownThere.add(new Tag("Updatable", Color.CYAN));
+        }
+        if (data.getEMStatus().isConflicting()) {
+            jpDownThere.add(new Tag("Conflict", Color.RED, Color.BLACK));
+        }
+        if (data.isOnline() && data.getEMStatus().isMissingDeps()) {
+            jpDownThere.add(new Tag("Install+", Color.ORANGE));
+        }
+        if (data.isEnabled() && data.getEMStatus().isConflicting()) {
+            jpDownThere.add(new Tag("Conflict", new Color(150, 70, 50)));
+        }
+        if (data.getEMStatus().isIncompatible()) {
+            jpDownThere.add(new Tag("Incompatible", Color.GRAY));
+            txtMinVersion.setBorder(new LineBorder(Configuration.COLOR_ATTENTION));
+            txtMaxVersion.setBorder(new LineBorder(Configuration.COLOR_ATTENTION));
+        } else {
+            txtMinVersion.setBorder(UIManager.getLookAndFeel().getDefaults().getBorder("TextField.border"));
+            txtMaxVersion.setBorder(UIManager.getLookAndFeel().getDefaults().getBorder("TextField.border"));
+        }
+
+    }
+    
     private void update() {
         jpDownThere.removeAll();
         if (data == null) {
-            txtTitle.setText("");
-            txtDescription.setText("");
-            txtLocalFile.setText("");
-            
-            lsRequires.setModel(new DefaultListModel<>());
-            lsConflicts.setModel(new DefaultListModel<>());
-            lsOptional.setModel(new DefaultListModel<>());
-            txtMinVersion.setText("");
-            txtMaxVersion.setText("");
-            btInstall.setEnabled(false);
-            btEnable.setEnabled(false);
-            btDisable.setEnabled(false);
-            btRemove.setEnabled(false);
+            emptyFields();
         } else {
-            txtTitle.setText(data.getTitle());
-            txtDescription.setText(data.getDescription());
-            txtLocalFile.setText(String.valueOf(data.getLocalFile()));
-            DefaultListModel<ExpansionReference> lm = new DefaultListModel<>();
-            if (data.getRequiresOxps() != null) {
-                lm.addAll(data.getRequiredRefs());
-            }
-            lsRequires.setModel(lm);
-            lm = new DefaultListModel<>();
-            if (data.getConflictOxps() != null) {
-                lm.addAll(data.getConflictRefs());
-            }
-            lsConflicts.setModel(lm);
-            lm = new DefaultListModel<>();
-            if (data.getOptionalOxps() != null) {
-                lm.addAll(data.getOptionalRefs());
-            }
-            lsOptional.setModel(lm);
-//            lsRequires.setText(String.valueOf(data.getRequiresOxps()));
-//            lsConflicts.setText(String.valueOf(data.getConflictOxps()));
-//            lsOptional.setText(String.valueOf(data.getOptionalOxps()));
-            txtMinVersion.setText(String.valueOf(data.getRequiredOoliteVersion()));
-            txtMaxVersion.setText(String.valueOf(data.getMaximumOoliteVersion()));
-            btInstall.setEnabled(data.isOnline() && !data.isLocal());
-            btEnable.setEnabled(data.isLocal() && !data.isEnabled());
-            btDisable.setEnabled(data.isLocal() && data.isEnabled());
-            btRemove.setEnabled(data.isLocal());
-            
-            if (data.isOnline()) {
-                jpDownThere.add(new Tag("Online", Color.GREEN));
-            }
-            if (data.isLocal() && data.isEnabled()) {
-                jpDownThere.add(new Tag("Enabled", Color.GREEN));
-            }
-            if (data.isLocal() && !data.isEnabled()) {
-                jpDownThere.add(new Tag("Disabled", Color.GREEN));
-            }
-            
-            if (data.isOnline() && !data.isEnabled()) {
-                jpDownThere.add(new Tag("Installable", Color.YELLOW));
-            }
-            if (data.isLocal() && data.getEMStatus().isLatest()) {
-                jpDownThere.add(new Tag("Current", Color.WHITE));
-            }
-            if (data.isLocal() && !data.getEMStatus().isLatest()) {
-                jpDownThere.add(new Tag("Updatable", Color.CYAN));
-            }
-            if (data.getEMStatus().isConflicting()) {
-                jpDownThere.add(new Tag("Conflict", Color.RED));
-            }
-            if (data.isOnline() && data.getEMStatus().isMissingDeps()) {
-                jpDownThere.add(new Tag("Install+", Color.ORANGE));
-            }
-            if (data.isEnabled() && data.getEMStatus().isConflicting()) {
-                jpDownThere.add(new Tag("Conflict", new Color(150, 70, 50)));
-            }
-            if (data.getEMStatus().isIncompatible()) {
-                jpDownThere.add(new Tag("Incompatible", Color.GRAY));
-                txtMinVersion.setBorder(new LineBorder(Configuration.COLOR_ATTENTION));
-                txtMaxVersion.setBorder(new LineBorder(Configuration.COLOR_ATTENTION));
-            } else {
-                txtMinVersion.setBorder(UIManager.getLookAndFeel().getDefaults().getBorder("TextField.border"));
-                txtMaxVersion.setBorder(UIManager.getLookAndFeel().getDefaults().getBorder("TextField.border"));
-            }
-            if (data.isLocal() && !data.isManaged()) {
-                jpDownThere.add(new Tag("Manual", Color.RED));
-            }
-            if (data.isLocal() && !data.isOnline()) {
-                jpDownThere.add(new Tag("No download", Color.BLUE));
-            }
+            showData();
+            showStandardTags();
+            showExtendedTags();
 
             if (data.isEnabled() && data.getEMStatus().isConflicting()) {
                 jpDownThere.add(new Tag("Conflicting", Configuration.COLOR_ATTENTION));
@@ -161,7 +184,7 @@ public class ExpansionPanel extends javax.swing.JPanel implements PropertyChange
             } else {
                 spRequires.setBorder(UIManager.getLookAndFeel().getDefaults().getBorder("ScrollPane.border"));
             }
-
+            
             // check if we have nested OXPs
             if (data.isNested()) {
                 btDisable.setEnabled(false);
@@ -208,6 +231,8 @@ public class ExpansionPanel extends javax.swing.JPanel implements PropertyChange
         jScrollPane4 = new javax.swing.JScrollPane();
         lsOptional = new javax.swing.JList<>();
         btWiki = new javax.swing.JButton();
+        txtIdentifier = new javax.swing.JTextField();
+        jLabel10 = new javax.swing.JLabel();
 
         jLabel1.setText("Description");
 
@@ -296,6 +321,10 @@ public class ExpansionPanel extends javax.swing.JPanel implements PropertyChange
             }
         });
 
+        txtIdentifier.setEditable(false);
+
+        jLabel10.setText("Identifier");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -304,44 +333,44 @@ public class ExpansionPanel extends javax.swing.JPanel implements PropertyChange
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jpDownThere, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel9)
+                            .addComponent(jLabel1)
+                            .addComponent(jLabel10)
+                            .addComponent(jLabel2)
+                            .addComponent(jLabel6)
+                            .addComponent(jLabel3)
+                            .addComponent(jLabel4)
+                            .addComponent(jLabel5))
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel9)
-                                    .addComponent(jLabel2)
-                                    .addComponent(jLabel1))
-                                .addGap(35, 35, 35)
+                                .addComponent(jScrollPane4)
+                                .addGap(125, 125, 125))
+                            .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING)
                                     .addComponent(txtTitle)
-                                    .addComponent(txtLocalFile)))
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel6)
-                                    .addComponent(jLabel3)
-                                    .addComponent(jLabel4)
-                                    .addComponent(jLabel5))
-                                .addGap(18, 18, 18)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(txtIdentifier)
                                     .addGroup(layout.createSequentialGroup()
                                         .addComponent(jLabel7)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                         .addComponent(txtMinVersion, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                         .addComponent(jLabel8)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                         .addComponent(txtMaxVersion))
                                     .addComponent(spRequires)
                                     .addComponent(spConflict)
-                                    .addComponent(jScrollPane4))))
-                        .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(btWiki, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btInstall, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btEnable, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btDisable, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(btRemove, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                    .addComponent(txtLocalFile))
+                                .addGap(18, 18, 18)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(btWiki, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(btInstall, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(btEnable, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(btDisable, javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(btRemove, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE))))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -350,55 +379,54 @@ public class ExpansionPanel extends javax.swing.JPanel implements PropertyChange
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(30, 30, 30)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 110, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel2)
-                            .addComponent(txtLocalFile, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel6)
-                            .addComponent(jLabel7)
-                            .addComponent(txtMinVersion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel8)
-                            .addComponent(txtMaxVersion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel3)
-                            .addComponent(spRequires, javax.swing.GroupLayout.DEFAULT_SIZE, 52, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(spConflict, javax.swing.GroupLayout.DEFAULT_SIZE, 52, Short.MAX_VALUE)
-                            .addComponent(jLabel4))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))
-                    .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel9)
-                            .addComponent(txtTitle, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(btWiki))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel1)
                             .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(btInstall)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(btEnable)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(btDisable)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(btRemove))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                            .addComponent(txtIdentifier, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(jLabel10))
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                            .addComponent(txtTitle, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(jLabel2))))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jLabel1))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(6, 6, 6)
-                                .addComponent(btInstall)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btEnable)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btDisable)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btRemove)
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(jLabel7)
+                                    .addComponent(txtMinVersion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel8)
+                                    .addComponent(txtMaxVersion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel6)))))
+                    .addComponent(txtLocalFile, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel5)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 41, Short.MAX_VALUE)
-                        .addComponent(jpDownThere, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                        .addGap(81, 81, 81)))
+                    .addComponent(jLabel3)
+                    .addComponent(spRequires, javax.swing.GroupLayout.DEFAULT_SIZE, 72, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel4)
+                    .addComponent(spConflict, javax.swing.GroupLayout.DEFAULT_SIZE, 72, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel5)
+                    .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 72, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jpDownThere, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -406,7 +434,7 @@ public class ExpansionPanel extends javax.swing.JPanel implements PropertyChange
     private void btInstallActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btInstallActionPerformed
         log.debug("btInstallActionPerformed({})", evt);
         try {
-            ExpansionManager.getInstance().addCommand(new Command(Command.Action.install, data));
+            ExpansionManager.getInstance().addCommand(new Command(Command.Action.INSTALL, data));
         } catch (Exception e) {
             log.error("Could not trigger install", e);
         }
@@ -415,7 +443,7 @@ public class ExpansionPanel extends javax.swing.JPanel implements PropertyChange
     private void btEnableActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btEnableActionPerformed
         log.debug("btEnableActionPerformed({})", evt);
         try {
-            ExpansionManager.getInstance().addCommand(new Command(Command.Action.enable, data));
+            ExpansionManager.getInstance().addCommand(new Command(Command.Action.ENABLE, data));
         } catch (Exception e) {
             log.error("Could not trigger enable", e);
         }
@@ -424,7 +452,7 @@ public class ExpansionPanel extends javax.swing.JPanel implements PropertyChange
     private void btDisableActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btDisableActionPerformed
         log.debug("btDisableActionPerformed({})", evt);
         try {
-            ExpansionManager.getInstance().addCommand(new Command(Command.Action.disable, data));
+            ExpansionManager.getInstance().addCommand(new Command(Command.Action.DISABLE, data));
         } catch (Exception e) {
             log.error("Could not trigger disable", e);
         }
@@ -438,7 +466,7 @@ public class ExpansionPanel extends javax.swing.JPanel implements PropertyChange
         }
         
         try {
-            ExpansionManager.getInstance().addCommand(new Command(Command.Action.delete, data));
+            ExpansionManager.getInstance().addCommand(new Command(Command.Action.DELETE, data));
         } catch (Exception e) {
             log.error("Could not trigger remove", e);
         }
@@ -463,6 +491,7 @@ public class ExpansionPanel extends javax.swing.JPanel implements PropertyChange
     private javax.swing.JButton btRemove;
     private javax.swing.JButton btWiki;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -480,6 +509,7 @@ public class ExpansionPanel extends javax.swing.JPanel implements PropertyChange
     private javax.swing.JScrollPane spConflict;
     private javax.swing.JScrollPane spRequires;
     private javax.swing.JTextArea txtDescription;
+    private javax.swing.JTextField txtIdentifier;
     private javax.swing.JTextField txtLocalFile;
     private javax.swing.JTextField txtMaxVersion;
     private javax.swing.JTextField txtMinVersion;

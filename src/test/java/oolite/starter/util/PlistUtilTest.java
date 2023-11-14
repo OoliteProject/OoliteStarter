@@ -47,7 +47,7 @@ public class PlistUtilTest {
      */
     @Test
     public void testParsePListList() throws Exception {
-        System.out.println("parsePListList");
+        log.info("parsePListList");
         InputStream in = null;
         String sourceName = "";
         PlistParser.ListContext expResult = null;
@@ -65,7 +65,7 @@ public class PlistUtilTest {
      */
     @Test
     public void testParsePListDict() throws Exception {
-        System.out.println("parsePListDict");
+        log.info("parsePListDict");
         InputStream in = null;
         String sourceName = "";
         PlistParser.DictionaryContext expResult = null;

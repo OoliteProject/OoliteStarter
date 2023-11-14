@@ -52,7 +52,7 @@ public class ExpansionsTableModel extends AbstractTableModel implements Property
 
     @Override
     public int getColumnCount() {
-        return 7;
+        return 8;
     }
 
     @Override
@@ -74,6 +74,7 @@ public class ExpansionsTableModel extends AbstractTableModel implements Property
             case 4: return "Category";
             case 5: return "Tags";
             case 6: return "Status";
+            case 7: return "Author";
             default:
                 return super.getColumnName(columnIndex);
         }
@@ -112,7 +113,7 @@ public class ExpansionsTableModel extends AbstractTableModel implements Property
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
         try {
-            Expansion row = data.get(rowIndex);
+            Expansion row = getRow(rowIndex);
             switch(columnIndex) {
                 case 0: return row.getTitle();
                 case 1: return row.getUploadDate();
@@ -121,6 +122,7 @@ public class ExpansionsTableModel extends AbstractTableModel implements Property
                 case 4: return row.getCategory();
                 case 5: return row.getTags();
                 case 6: return getStatusString(row);
+                case 7: return row.getAuthor();
                 default: return "n/a";
             }
         } catch (IndexOutOfBoundsException e) {
@@ -136,6 +138,9 @@ public class ExpansionsTableModel extends AbstractTableModel implements Property
      * @return the Expansion
      */
     public Expansion getRow(int rowIndex) {
+        if (rowIndex > data.size()) {
+            rowIndex = data.size() - 1;
+        }
         return data.get(rowIndex);
     }
     
