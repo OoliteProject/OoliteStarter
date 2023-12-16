@@ -1202,7 +1202,7 @@ public class Oolite implements PropertyChangeListener {
      * @return the expansion found, or null
      */
     private Expansion getExpansionFrom(File f) throws ParserConfigurationException, SAXException, XPathExpressionException {
-        log.debug("getExpansionsFrom({})", f);
+        log.debug("getExpansionFrom({})", f);
         try {
             if (f.isDirectory()) {
                 // if it is a directory, is it an OXP?
@@ -1870,10 +1870,12 @@ public class Oolite implements PropertyChangeListener {
             }
         }
         files = configuration.getManagedAddonsDir().listFiles();
-        for (File f: files) {
-            if (f.getName().startsWith(id)) {
-                result.setStatus(ExpansionReference.Status.OK);
-                return result;
+        if (files != null) {
+            for (File f: files) {
+                if (f.getName().startsWith(id)) {
+                    result.setStatus(ExpansionReference.Status.OK);
+                    return result;
+                }
             }
         }
 

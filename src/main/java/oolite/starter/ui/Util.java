@@ -98,6 +98,7 @@ public class Util {
     }
     
     private static class BalloonHandler extends MouseAdapter implements ActionListener {
+        private static final Logger log = LogManager.getLogger();
 
         private BalloonTip balloon;
         private int refreshRate = 10;
