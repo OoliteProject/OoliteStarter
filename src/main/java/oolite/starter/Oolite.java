@@ -2148,7 +2148,7 @@ public class Oolite implements PropertyChangeListener {
 
         switch (Util.getOperatingSystemType()) {
             case MACOS:
-                return new File(new File(System.getProperty(OOLITE_USER_HOME)), "Library/Application Support/Oolite/ManagedAddons");
+                return new File(new File(System.getProperty(OOLITE_USER_HOME)), "Library/Application Support/Oolite/Managed Addons");
             case LINUX:
                 return new File(new File(System.getProperty(OOLITE_USER_HOME)), "GNUstep/Library/ApplicationSupport/Oolite/ManagedAddOns");
             case WINDOWS:
