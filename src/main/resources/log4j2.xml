@@ -44,7 +44,7 @@
     <Logger level="info"  name="oolite.starter.ui.StartGamePanel"/>
     <Logger level="info"  name="oolite.starter.ui.Tag"/>
     <Logger level="warn"  name="oolite.starter.ui.Util"/>
-    <Logger level="debug" name="oolite.starter.ui.Util.BalloonHandler"/>
+    <Logger level="info" name="oolite.starter.ui.Util.BalloonHandler"/>
     <Logger level="warn"  name="oolite.starter.util.PlistUtil"/>
     <Logger level="info"  name="oolite.starter.util.Util"/>
     <Logger level="info"  name="oolite.starter.util.XmlUtil"/>

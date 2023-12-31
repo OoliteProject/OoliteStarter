@@ -1374,8 +1374,13 @@ public class Oolite implements PropertyChangeListener {
         if (test == null)
             return false;
         
-        return FileUtils.directoryContains(configuration.getManagedDeactivatedAddonsDir(), test)
-                || FileUtils.directoryContains(configuration.getManagedAddonsDir(), test);
+        return (configuration.getManagedDeactivatedAddonsDir() != null
+                && configuration.getManagedDeactivatedAddonsDir().isDirectory()
+                && FileUtils.directoryContains(configuration.getManagedDeactivatedAddonsDir(), test))
+                || 
+                (configuration.getManagedAddonsDir() != null
+                && configuration.getManagedAddonsDir().isDirectory()
+                && FileUtils.directoryContains(configuration.getManagedAddonsDir(), test));
     }
     
     /**
@@ -1389,8 +1394,13 @@ public class Oolite implements PropertyChangeListener {
         if (test == null)
             return false;
         
-        return FileUtils.directoryContains(configuration.getAddonsDir(), test)
-                || FileUtils.directoryContains(configuration.getManagedAddonsDir(), test);
+        return (configuration.getAddonsDir() != null 
+                && configuration.getAddonsDir().isDirectory()
+                && FileUtils.directoryContains(configuration.getAddonsDir(), test))
+                || 
+                (configuration.getManagedAddonsDir()!= null 
+                && configuration.getManagedAddonsDir().isDirectory()
+                && FileUtils.directoryContains(configuration.getManagedAddonsDir(), test));
     }
     
     /**
