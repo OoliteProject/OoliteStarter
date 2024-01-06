@@ -2162,7 +2162,7 @@ public class Oolite implements PropertyChangeListener {
             case LINUX:
                 return new File(new File(System.getProperty(OOLITE_USER_HOME)), "GNUstep/Library/ApplicationSupport/Oolite/ManagedAddOns");
             case WINDOWS:
-                return new File(homeDir, "GNUstep/Library/ApplicationSupport/Oolite/ManagedAddons");
+                return new File(homeDir, "GNUstep/Library/ApplicationSupport/Oolite/ManagedAddOns");
             default:
                 log.warn("Could not find managed addon dir");
                 return null;
