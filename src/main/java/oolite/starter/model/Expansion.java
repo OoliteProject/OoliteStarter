@@ -126,9 +126,113 @@ public class Expansion implements Comparable<Expansion> {
         
     }
     
+    public static class Dependency {
+        private String identifier;
+        private String version;
+        private String description;
+        private String maximumVersion;
+
+        /**
+         * Creates a new Dependency.
+         */
+        public Dependency() {
+        }
+        
+        /**
+         * Creates a new Dependency with given identifier.
+         */
+        public Dependency(String identifier) {
+            this.identifier = identifier;
+        }
+        
+        /**
+         * Creates a new Dependency with given identifier and version.
+         */
+        public Dependency(String identifier, String version) {
+            this.identifier = identifier;
+            this.version = version;
+        }
+
+        /**
+         * Returns the referenced expansion's identifier.
+         * @return the identifier
+         */
+        public String getIdentifier() {
+            return identifier;
+        }
+
+        /**
+         * Sets the referenced expansion's identifier.
+         * @param identifier the identifier
+         */
+        public void setIdentifier(String identifier) {
+            this.identifier = identifier;
+        }
+
+        /**
+         * Returns the referenced expansion's version.
+         * 
+         * @return the version
+         */
+        public String getVersion() {
+            return version;
+        }
+
+        /**
+         * Sets the referenced expansion's version.
+         * 
+         * @param version the version
+         */
+        public void setVersion(String version) {
+            this.version = version;
+        }
+
+        /**
+         * Returns the dependency description.
+         * 
+         * @return the description
+         */
+        public String getDescription() {
+            return description;
+        }
+
+        /**
+         * Sets the dependency description.
+         * 
+         * @param description the description
+         */
+        public void setDescription(String description) {
+            this.description = description;
+        }
+
+        /**
+         * Returns the maximum version to match this dependency.
+         * 
+         * @return the version
+         */
+        public String getMaximumVersion() {
+            return maximumVersion;
+        }
+
+        /**
+         * Sets the maximum version to match this dependency.
+         * 
+         * @param maximumVersion the version
+         */
+        public void setMaximumVersion(String maximumVersion) {
+            this.maximumVersion = maximumVersion;
+        }
+
+        @Override
+        public String toString() {
+            return "Dependency{" + "identifier=" + identifier + ", version=" + version + ", description=" + description + ", maximumVersion=" + maximumVersion + '}';
+        }
+        
+    }
+    
     private String author;
     private String category;
-    private List<String> conflictOxps;
+    private List<Dependency> conflictOxps;
     private String description;
     private String downloadUrl;
     private long fileSize;
@@ -136,9 +240,9 @@ public class Expansion implements Comparable<Expansion> {
     private String informationUrl;
     private String license;
     private String maximumOoliteVersion;
-    private List<String> optionalOxps;
+    private List<Dependency> optionalOxps;
     private String requiredOoliteVersion;
-    private List<String> requiresOxps;
+    private List<Dependency> requiresOxps;
     private String tags;
     private String title;
     private LocalDateTime uploadDate;
@@ -218,7 +322,7 @@ public class Expansion implements Comparable<Expansion> {
      * 
      * @return the list of OXPs.
      */
-    public List<String> getConflictOxps() {
+    public List<Dependency> getConflictOxps() {
         return conflictOxps;
     }
 
@@ -227,7 +331,7 @@ public class Expansion implements Comparable<Expansion> {
      * 
      * @param conflictOxps the list of OXPs.
      */
-    public void setConflictOxps(List<String> conflictOxps) {
+    public void setConflictOxps(List<Dependency> conflictOxps) {
         this.conflictOxps = conflictOxps;
     }
 
@@ -362,7 +466,7 @@ public class Expansion implements Comparable<Expansion> {
      * 
      * @return the list of OXPs
      */
-    public List<String> getOptionalOxps() {
+    public List<Dependency> getOptionalOxps() {
         return optionalOxps;
     }
 
@@ -371,7 +475,7 @@ public class Expansion implements Comparable<Expansion> {
      * 
      * @param optionalOxps the list of OXPs
      */
-    public void setOptionalOxps(List<String> optionalOxps) {
+    public void setOptionalOxps(List<Dependency> optionalOxps) {
         this.optionalOxps = optionalOxps;
     }
 
@@ -398,7 +502,7 @@ public class Expansion implements Comparable<Expansion> {
      * 
      * @return the OXP list
      */
-    public List<String> getRequiresOxps() {
+    public List<Dependency> getRequiresOxps() {
         return requiresOxps;
     }
 
@@ -407,7 +511,7 @@ public class Expansion implements Comparable<Expansion> {
      * 
      * @param requiresOxps the OXP list
      */
-    public void setRequiresOxps(List<String> requiresOxps) {
+    public void setRequiresOxps(List<Dependency> requiresOxps) {
         this.requiresOxps = requiresOxps;
     }
 
@@ -696,13 +800,16 @@ public class Expansion implements Comparable<Expansion> {
      * @return the list
      */
     public List<ExpansionReference> getRequiredRefs() {
+        log.warn("getRequiredRefs()");
+        
         if (oolite == null) {
             throw new IllegalStateException("oolite must not be null");
         }
         List<ExpansionReference> result = new ArrayList<>();
         if (getRequiresOxps() != null) {
-            for (String name: getRequiresOxps()) {
-                ExpansionReference er = oolite.getExpansionReference(name);
+            for (Dependency dep: getRequiresOxps()) {
+                log.warn("getting expansionn reference for '{}'", dep);
+                ExpansionReference er = oolite.getExpansionReference(dep);
                 result.add(er);
             }
         }
@@ -716,8 +823,8 @@ public class Expansion implements Comparable<Expansion> {
      */
     public List<ExpansionReference> getConflictRefs() {
         List<ExpansionReference> result = new ArrayList<>();
-        for (String name: getConflictOxps()) {
-            ExpansionReference er = oolite.getExpansionReference(name);
+        for (Dependency dep: getConflictOxps()) {
+            ExpansionReference er = oolite.getExpansionReference(dep);
             switch (er.getStatus()) {
                 case CONFLICT:
                     break;
@@ -745,8 +852,8 @@ public class Expansion implements Comparable<Expansion> {
      */
     public List<ExpansionReference> getOptionalRefs() {
         List<ExpansionReference> result = new ArrayList<>();
-        for (String name: getOptionalOxps()) {
-            ExpansionReference er = oolite.getExpansionReference(name);
+        for (Dependency dep: getOptionalOxps()) {
+            ExpansionReference er = oolite.getExpansionReference(dep);
             switch (er.getStatus()) {
                 case CONFLICT:
                     break;
