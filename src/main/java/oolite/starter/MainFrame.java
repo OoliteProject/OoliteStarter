@@ -122,6 +122,7 @@ public class MainFrame extends javax.swing.JFrame {
                             System.exit(0);
                             break;
                         case JOptionPane.CANCEL_OPTION:
+                        default:
                             // we have DefaultCloseOperation set to DO_NOTHING.
                             // doing nothing will keep the window
                     }
@@ -373,9 +374,11 @@ public class MainFrame extends javax.swing.JFrame {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        log.info("Args: {}", args);
-        log.info("JVM: {} {}", System.getProperty("java.runtime.name"), Runtime.version());
-        log.info("OS: {} {} {}", System.getProperty("os.name"), System.getProperty("os.arch"), System.getProperty("os.version"));
+        if (log.isInfoEnabled()) {
+            log.info("Args: {}", args);
+            log.info("JVM: {} {}", System.getProperty("java.runtime.name"), Runtime.version());
+            log.info("OS: {} {} {}", System.getProperty("os.name"), System.getProperty("os.arch"), System.getProperty("os.version"));
+        }
         
         Options options = new Options();
         options.addOption("h", "help", false, "show usage help");

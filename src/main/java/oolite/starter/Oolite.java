@@ -60,10 +60,6 @@ import oolite.starter.model.Installation;
 import oolite.starter.model.ProcessData;
 import oolite.starter.model.SaveGame;
 import oolite.starter.util.HttpUtil;
-import static oolite.starter.util.Util.OSType.LINUX;
-import static oolite.starter.util.Util.OSType.MACOS;
-import static oolite.starter.util.Util.OSType.OTHER;
-import static oolite.starter.util.Util.OSType.WINDOWS;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -86,6 +82,7 @@ public class Oolite implements PropertyChangeListener {
     private static final String OOLITE_DOWNLOAD_URL = "downloadUrl";
     private static final String OOLITE_EXPANSION_FQN = "org.oolite.hiran.OoliteStarter.oxp";
     private static final String OOLITE_EXPANSIONS_MUST_NOT_BE_NULL = "expansions must not be null";
+    private static final String OOLITE_EXPANSION_MUST_NOT_BE_NULL = "expansion must not be null";
     private static final String OOLITE_IDENTIFIER = "identifier";
     private static final String OOLITE_USER_HOME = "user.home";
     private static final String OOLITE_VERSION = "version";
@@ -515,7 +512,7 @@ public class Oolite implements PropertyChangeListener {
             throw new IllegalArgumentException("list must not be null");
         }
         if (expansion == null) {
-            throw new IllegalArgumentException("expansion must not be null");
+            throw new IllegalArgumentException(OOLITE_EXPANSION_MUST_NOT_BE_NULL);
         }
         for (ExpansionReference ref: list) {
             if (expansion.getLocalFile().getName().endsWith(ref.getName())) {
@@ -1477,7 +1474,7 @@ public class Oolite implements PropertyChangeListener {
         log.debug("isEnabled({})", expansion);
         
         if (expansion == null) {
-            throw new IllegalArgumentException("expansion must not be null");
+            throw new IllegalArgumentException(OOLITE_EXPANSION_MUST_NOT_BE_NULL);
         }
         
         File test = expansion.getLocalFile();
@@ -1503,7 +1500,7 @@ public class Oolite implements PropertyChangeListener {
         log.debug("isDisabled({})", expansion);
         
         if (expansion == null) {
-            throw new IllegalArgumentException("expansion must not be null");
+            throw new IllegalArgumentException(OOLITE_EXPANSION_MUST_NOT_BE_NULL);
         }
         return !isEnabled(expansion);
     }
