@@ -154,6 +154,15 @@ public class Expansion implements Comparable<Expansion> {
         }
 
         /**
+         * Creates a new Dependency with given identifier, version and maximumVersion.
+         */
+        public Dependency(String identifier, String version, String maximumVersion) {
+            this.identifier = identifier;
+            this.version = version;
+            this.maximumVersion = maximumVersion;
+        }
+
+        /**
          * Returns the referenced expansion's identifier.
          * @return the identifier
          */
@@ -631,7 +640,7 @@ public class Expansion implements Comparable<Expansion> {
         try {
             return !oolite.isDisabled(this);
         } catch (IOException e) {
-            log.info("Could not check if expansion is disabled", e);
+            log.info("Could not check whether expansion is disabled", e);
             return false;
         }
     }

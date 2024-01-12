@@ -147,12 +147,66 @@ public class Oolite implements PropertyChangeListener {
     }
     
     /**
-     * Finds an expansion by given reference.
+     * Finds an expansion by given reference. Mainly used during requires and collision checks.
+     * That's why the version and the maximum_version need to be taken into account.
      * 
      * @param reference the reference
      * @param expansions the list to find it in
      * @param checkEnabled set to true if only enabled expansions shall be considered
      * @return the Expansions found
+     */
+    List<Expansion> getExpansionByReference(Expansion.Dependency reference, List<Expansion> expansions, boolean checkEnabled) {
+        log.debug("getExpansionByReference({}, {}, {})", reference, expansions, checkEnabled);
+        
+        List<Expansion> result = new ArrayList<>();
+        
+        ModuleDescriptor.Version minVersion = null;
+        if (reference.getVersion() != null) {
+            minVersion = ModuleDescriptor.Version.parse(reference.getVersion());
+        }
+        
+        ModuleDescriptor.Version maxVersion = null;
+        if (reference.getMaximumVersion() != null) {
+            maxVersion = ModuleDescriptor.Version.parse(reference.getMaximumVersion());
+        }
+        
+        log.trace("minVersion {}", minVersion);
+        log.warn("maxVersion {}", maxVersion);
+        
+        for (Expansion expansion: expansions) {
+            log.trace("checking expansion {}", expansion);
+            if (reference.getIdentifier().equals(expansion.getIdentifier())) {
+                log.trace("identifier matched");
+                ModuleDescriptor.Version expVersion = ModuleDescriptor.Version.parse(expansion.getVersion());
+                
+                log.warn("expVersion {}", expVersion);
+                if (minVersion == null) {
+                    // we have not even a minimum version? Then all versions match
+                    result.add(expansion);
+                } else if (minVersion.compareTo(expVersion) <= 0) {
+                    log.trace("minVersion matched");
+                    // we have a minVersion that matches. What about the maxversion?
+                    if (maxVersion == null) {
+                        result.add(expansion);
+                    } else if (expVersion.compareTo(maxVersion) <= 0) {
+                        log.trace("maxVersion matched");
+                        result.add(expansion);
+                    }
+                }
+            }
+        }
+        
+        return result;
+    }
+    
+    /**
+     * Finds an expansion by given reference. Mainly used during update checks.
+     * 
+     * @param reference the reference
+     * @param expansions the list to find it in
+     * @param checkEnabled set to true if only enabled expansions shall be considered
+     * @return the Expansions found
+     * 
      */
     List<Expansion> getExpansionByReference(String reference, List<Expansion> expansions, boolean checkEnabled) {
         log.debug("getExpansionByReference({}, {})", reference, expansions);
@@ -162,20 +216,24 @@ public class Oolite implements PropertyChangeListener {
         if (expansions == null) {
             throw new IllegalArgumentException(OOLITE_EXPANSIONS_MUST_NOT_BE_NULL);
         }
-        
+
+        List<Expansion> result = new ArrayList<>();
+       
         // first find the full reference
         for (Expansion e: expansions) {
             if (reference.equals(e.getIdentifier())
                     && (!checkEnabled || e.isEnabled())) {
-                List<Expansion> result = new ArrayList<>();
                 result.add(e);
-                return result;
             }
         }
         
-        // then strip off version and try again
-        List<Expansion> result = new ArrayList<>();
+        if (!result.isEmpty()) {
+            // we found something? Let's return it.
+            return result;
+        }
         
+        // then strip off version and try again
+
         int pos = reference.lastIndexOf(":");
         if (pos >= 0) {
             reference = reference.substring(0, pos);
@@ -191,6 +249,12 @@ public class Oolite implements PropertyChangeListener {
         return result;
     }
 
+    /**
+     * Checks for conflicts between OXPs.
+     * 
+     * @param expansions list of OXPs that need to be checked with each other.
+     *      Pass in the enabled ones.
+     */
     void validateConflicts(List<Expansion> expansions) {
         log.debug("validateConflicts({})", expansions);
         if (expansions == null) {
@@ -198,17 +262,23 @@ public class Oolite implements PropertyChangeListener {
         }
 
         // reset conflict flag
+        log.trace("Reset conflict flags for {} expansions", expansions.size());
         expansions.stream()
                 .forEach(t -> t.getEMStatus().setConflicting(false) );
-        
+
+        log.trace("Fetching conflicts...");
         expansions.stream()
             .filter(t -> t.isEnabled())
             .forEach(e -> {
+                log.trace("Fetching conflicts for {}:{}...", e.getIdentifier(), e.getVersion());
                 try {
                     List<Expansion.Dependency> conflicts = e.getConflictOxps();
                     if (conflicts != null) {
+                        log.trace("potential conflicts {}", conflicts);
                         for (Expansion.Dependency dep: conflicts) {
-                            List<Expansion> cs = getExpansionByReference(dep.getIdentifier(), expansions, true);
+                            log.trace("processing potential conflicts on {}", dep);
+                            List<Expansion> cs = getExpansionByReference(dep, expansions, true);
+                            log.trace("found conflicts {}", cs);
                             if (!cs.isEmpty()) {
                                 log.info("Expansion {} conflicts with {}", e.getIdentifier(), cs);
                                 e.getEMStatus().setConflicting(true);
@@ -631,14 +701,14 @@ public class Oolite implements PropertyChangeListener {
      * Runs Oolite using the specified command in the specified directory.
      */
     public void run(List<String> command, File dir) throws IOException, InterruptedException, ProcessRunException {
-        log.warn("run({}, {})", command, dir);
+        log.debug("run({}, {})", command, dir);
 
         if (configuration != null) {
             injectExpansion();
         }
         
         try {
-            log.warn("executing {} in {}", command, dir);
+            log.info("executing {} in {}", command, dir);
 
             ProcessBuilder pb = new ProcessBuilder(command);
             pb.directory(dir);
@@ -962,7 +1032,7 @@ public class Oolite implements PropertyChangeListener {
 
         Scanner sc = new Scanner(in);
         if (OOLITE_XML_HEADER.equals(sc.next())) {
-            log.warn("XML content found in {}", sourceName);
+            log.info("XML content found in {}", sourceName);
             in.reset();
             
             Document doc = XmlUtil.parseXmlStream(in);
@@ -1111,7 +1181,7 @@ public class Oolite implements PropertyChangeListener {
                 while ((status == HttpURLConnection.HTTP_MOVED_PERM || status == HttpURLConnection.HTTP_MOVED_TEMP) && redirectCount > 0) {
                     redirectCount--;
                     String newUrl = conn.getHeaderField("Location");
-                    log.warn("Follow redirect to '{}'", newUrl);
+                    log.info("Follow redirect to '{}'", newUrl);
                     conn = (HttpURLConnection)new URL(newUrl).openConnection();
                     conn.setReadTimeout(5000);
                     status = conn.getResponseCode();
@@ -1404,6 +1474,12 @@ public class Oolite implements PropertyChangeListener {
      * @return true if and only if it is activated
      */
     public boolean isEnabled(Expansion expansion) throws IOException {
+        log.debug("isEnabled({})", expansion);
+        
+        if (expansion == null) {
+            throw new IllegalArgumentException("expansion must not be null");
+        }
+        
         File test = expansion.getLocalFile();
         if (test == null)
             return false;
@@ -1424,6 +1500,11 @@ public class Oolite implements PropertyChangeListener {
      * @return true if and only if it is deactivated
      */
     public boolean isDisabled(Expansion expansion) throws IOException {
+        log.debug("isDisabled({})", expansion);
+        
+        if (expansion == null) {
+            throw new IllegalArgumentException("expansion must not be null");
+        }
         return !isEnabled(expansion);
     }
     
@@ -1604,7 +1685,7 @@ public class Oolite implements PropertyChangeListener {
                 e.setTitle(i);
                 e.setDownloadUrl(enabledAddons.get(i));
                 result.add(new Command(Command.Action.UNKNOWN, e));
-                log.warn("Trying expansionset download {}", e);
+                log.info("Trying expansionset download {}", e);
             } else if (expansion.isLocal() && expansion.isEnabled()) {
                 // already here - do nothing
                 log.info("{} is already installed & enabled - doing nothing", i);
@@ -1733,7 +1814,8 @@ public class Oolite implements PropertyChangeListener {
                 List<Expansion.Dependency> deps = e.getRequiresOxps();
                 if (deps != null) {
                     for (Expansion.Dependency dep: deps) {
-                        List<Expansion> ds = getExpansionByReference(dep.getIdentifier(), expansions, true);
+                        // List<Expansion> ds = getExpansionByReference(dep.getIdentifier(), expansions, true);
+                        List<Expansion> ds = getExpansionByReference(dep, expansions, true);
                         if (ds.isEmpty()) {
                             log.info("Expansion {} is missing {}", e.getIdentifier(), dep);
                             e.getEMStatus().setMissingDeps(true);
@@ -1746,6 +1828,11 @@ public class Oolite implements PropertyChangeListener {
         }
     }
     
+    /**
+     * Find updates that are updatable from non-active ones in the list.
+     * 
+     * @param expansions the list of expansions
+     */
     void validateUpdates(List<Expansion> expansions) {
         log.debug("validateUpdates({})", expansions);
         
@@ -1754,7 +1841,7 @@ public class Oolite implements PropertyChangeListener {
                 .forEach(e -> {
 
             List<Expansion> ds = getExpansionByReference(e.getIdentifier(), expansions, false);
-
+            //List<Expansion> ds = getExpansionByReference(e.getIdentifier(), expansions, false);
             try {
                 if (ds.size() > 1) {
                     // sort backwards (latest is first)
@@ -1842,7 +1929,7 @@ public class Oolite implements PropertyChangeListener {
      * @return the reference
      */
     public ExpansionReference getExpansionReference(Expansion.Dependency dep) {
-        log.warn("getExpansionReference({})", dep);
+        log.debug("getExpansionReference({})", dep);
         if (configuration == null) {
             throw new IllegalStateException(OOLITE_CONFIGURATION_MUST_NOT_BE_NULL);
         }
@@ -1860,7 +1947,7 @@ public class Oolite implements PropertyChangeListener {
      * @return the reference
      */
     public ExpansionReference getExpansionReference(String dep) {
-        log.warn("getExpansionReference({})", dep);
+        log.debug("getExpansionReference({})", dep);
         if (configuration == null) {
             throw new IllegalStateException(OOLITE_CONFIGURATION_MUST_NOT_BE_NULL);
         }

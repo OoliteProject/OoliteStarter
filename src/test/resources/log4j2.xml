@@ -27,7 +27,7 @@
     <Logger level="warn"  name="oolite.starter.model.ProcessData"/>
     <Logger level="warn"  name="oolite.starter.model.SaveGameTest"/>
     <Logger level="warn"  name="oolite.starter.GithubVersionCheckerTest"/>
-    <Logger level="debug"  name="oolite.starter.Oolite"/>
+    <Logger level="info"  name="oolite.starter.Oolite"/>
     <Logger level="info"  name="oolite.starter.OoliteTest"/>
     <Logger level="warn"  name="oolite.starter.ProcessRunExceptionTest"/>
     <Logger level="info"  name="oolite.starter.util.PlistUtil"/>
