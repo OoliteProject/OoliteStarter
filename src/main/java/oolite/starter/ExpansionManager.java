@@ -22,9 +22,30 @@ public class ExpansionManager {
     private static final Logger log = LogManager.getLogger();
     
     public enum Activity {
-        PROCESSING, IDLE, ERRORS, STOPPED;
+        /**
+         * The expansion manager is processing the queue.
+         */
+        PROCESSING, 
+        
+        /**
+         * The expansion manager is idle - the queue is empty.
+         */
+        IDLE, 
+        
+        /**
+         * The expansion manager encountered errors.
+         */
+        ERRORS, 
+        
+        /**
+         * The expansion manager is stopped.
+         */
+        STOPPED;
     }
     
+    /**
+     * A type holding the expansion manager's status.
+     */
     public static record Status (int queueSize, int processing, int failed, Activity activity) {
     }
     
@@ -39,13 +60,36 @@ public class ExpansionManager {
         public void updateStatus(Status status, List<Command> queue);
     }
 
+    /**
+     * The queue of commands to process.
+     */
     private List<Command> commands;
+    
+    /**
+     * List of listeners that have subscribed to expansion manager events.
+     */
     private List<ExpansionManagerListener> listeners;
+    
+    /**
+     * The activity status of this expansion manager.
+     */
     private Activity activity;
+    
+    /**
+     * The timer that makes the expansion manager regularly check it's threadpool vs the command queue.
+     */
     private Timer timer;
+    
+    /**
+     * Amount of threads to use for processing the command queue.
+     */
     private int parallelThreads = 10;
             
     private static class SingletonHelper {
+        
+        /**
+         * The one single instance.
+         */
         private static ExpansionManager instance = new ExpansionManager();
     }
     

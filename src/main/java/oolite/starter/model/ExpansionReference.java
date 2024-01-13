@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
+ * TODO: Need to check if this is still required. Can it be replaced by Expansion.Dependency?
  * @author hiran
  */
 public class ExpansionReference implements Comparable<ExpansionReference> {

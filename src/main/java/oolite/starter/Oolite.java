@@ -38,7 +38,6 @@ import java.util.function.Consumer;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
-import javax.swing.ProgressMonitor;
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -60,10 +59,6 @@ import oolite.starter.model.Installation;
 import oolite.starter.model.ProcessData;
 import oolite.starter.model.SaveGame;
 import oolite.starter.util.HttpUtil;
-import static oolite.starter.util.Util.OSType.LINUX;
-import static oolite.starter.util.Util.OSType.MACOS;
-import static oolite.starter.util.Util.OSType.OTHER;
-import static oolite.starter.util.Util.OSType.WINDOWS;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -86,6 +81,7 @@ public class Oolite implements PropertyChangeListener {
     private static final String OOLITE_DOWNLOAD_URL = "downloadUrl";
     private static final String OOLITE_EXPANSION_FQN = "org.oolite.hiran.OoliteStarter.oxp";
     private static final String OOLITE_EXPANSIONS_MUST_NOT_BE_NULL = "expansions must not be null";
+    private static final String OOLITE_EXPANSION_MUST_NOT_BE_NULL = "expansion must not be null";
     private static final String OOLITE_IDENTIFIER = "identifier";
     private static final String OOLITE_USER_HOME = "user.home";
     private static final String OOLITE_VERSION = "version";
@@ -93,7 +89,7 @@ public class Oolite implements PropertyChangeListener {
 
     private boolean terminate = false;
     private int running = 0;
-
+    
     /**
      * Compares the given expansion with the given oolite version.
      * The result is updated in the expansion's EMStatus.
@@ -105,14 +101,14 @@ public class Oolite implements PropertyChangeListener {
         expansion.getEMStatus().setIncompatible(false);
 
         if (expansion.getRequiredOoliteVersion() != null && !expansion.getRequiredOoliteVersion().isBlank()) {
-            ModuleDescriptor.Version reqVersion = ModuleDescriptor.Version.parse(expansion.getRequiredOoliteVersion());
+            ModuleDescriptor.Version reqVersion = parseVersion(expansion.getRequiredOoliteVersion());
             if (oolite.compareTo(reqVersion) < 0) {
                 log.trace("we have {} but need minimum {}", oolite, reqVersion);
                 expansion.getEMStatus().setIncompatible(true);
             }
         }
         if (expansion.getMaximumOoliteVersion() != null && !expansion.getMaximumOoliteVersion().isBlank()) {
-            ModuleDescriptor.Version maxVersion = ModuleDescriptor.Version.parse(expansion.getMaximumOoliteVersion());
+            ModuleDescriptor.Version maxVersion = parseVersion(expansion.getMaximumOoliteVersion());
             if (oolite.compareTo(maxVersion) > 0) {
                 log.trace("we have {} but need maximum {}", oolite, maxVersion);
                 expansion.getEMStatus().setIncompatible(true);
@@ -135,7 +131,7 @@ public class Oolite implements PropertyChangeListener {
         if (expansions == null) {
             throw new IllegalArgumentException(OOLITE_EXPANSIONS_MUST_NOT_BE_NULL);
         }
-        ModuleDescriptor.Version oolite =  ModuleDescriptor.Version.parse(configuration.getActiveInstallation().getVersion());
+        ModuleDescriptor.Version oolite =  parseVersion(configuration.getActiveInstallation().getVersion());
         
         for (Expansion expansion: expansions) {
             try {
@@ -147,12 +143,67 @@ public class Oolite implements PropertyChangeListener {
     }
     
     /**
-     * Finds an expansion by given reference.
+     * Finds an expansion by given reference. Mainly used during requires and collision checks.
+     * That's why the version and the maximum_version need to be taken into account.
      * 
      * @param reference the reference
      * @param expansions the list to find it in
      * @param checkEnabled set to true if only enabled expansions shall be considered
      * @return the Expansions found
+     */
+    List<Expansion> getExpansionByReference(Expansion.Dependency reference, List<Expansion> expansions, boolean checkEnabled) {
+        log.debug("getExpansionByReference({}, {}, {})", reference, expansions, checkEnabled);
+        
+        List<Expansion> result = new ArrayList<>();
+        
+        ModuleDescriptor.Version minVersion = parseVersion(reference.getVersion());
+        ModuleDescriptor.Version maxVersion = parseVersion(reference.getMaximumVersion());
+        
+        log.trace("minVersion {}", minVersion);
+        log.warn("maxVersion {}", maxVersion);
+        
+        for (Expansion expansion: expansions) {
+            log.trace("checking expansion {}", expansion);
+            
+            if (checkEnabled && !expansion.isEnabled()) {
+                // we need to check that the expansion is enabled.
+                // this one is not - so continue
+                continue;
+            }
+            
+            if (reference.getIdentifier().equals(expansion.getIdentifier())) {
+                log.trace("identifier matched");
+                
+                ModuleDescriptor.Version expVersion = parseVersion(expansion.getVersion());
+                
+                log.warn("expVersion {}", expVersion);
+                if (minVersion == null) {
+                    // we have not even a minimum version? Then all versions match
+                    result.add(expansion);
+                } else if (minVersion.compareTo(expVersion) <= 0) {
+                    log.trace("minVersion matched");
+                    // we have a minVersion that matches. What about the maxversion?
+                    if (maxVersion == null) {
+                        result.add(expansion);
+                    } else if (expVersion.compareTo(maxVersion) <= 0) {
+                        log.trace("maxVersion matched");
+                        result.add(expansion);
+                    }
+                }
+            }
+        }
+        
+        return result;
+    }
+    
+    /**
+     * Finds an expansion by given reference. Mainly used during update checks.
+     * 
+     * @param reference the reference
+     * @param expansions the list to find it in
+     * @param checkEnabled set to true if only enabled expansions shall be considered
+     * @return the Expansions found
+     * 
      */
     List<Expansion> getExpansionByReference(String reference, List<Expansion> expansions, boolean checkEnabled) {
         log.debug("getExpansionByReference({}, {})", reference, expansions);
@@ -162,20 +213,24 @@ public class Oolite implements PropertyChangeListener {
         if (expansions == null) {
             throw new IllegalArgumentException(OOLITE_EXPANSIONS_MUST_NOT_BE_NULL);
         }
-        
+
+        List<Expansion> result = new ArrayList<>();
+       
         // first find the full reference
         for (Expansion e: expansions) {
             if (reference.equals(e.getIdentifier())
                     && (!checkEnabled || e.isEnabled())) {
-                List<Expansion> result = new ArrayList<>();
                 result.add(e);
-                return result;
             }
         }
         
-        // then strip off version and try again
-        List<Expansion> result = new ArrayList<>();
+        if (!result.isEmpty()) {
+            // we found something? Let's return it.
+            return result;
+        }
         
+        // then strip off version and try again
+
         int pos = reference.lastIndexOf(":");
         if (pos >= 0) {
             reference = reference.substring(0, pos);
@@ -191,6 +246,12 @@ public class Oolite implements PropertyChangeListener {
         return result;
     }
 
+    /**
+     * Checks for conflicts between OXPs.
+     * 
+     * @param expansions list of OXPs that need to be checked with each other.
+     *      Pass in the enabled ones.
+     */
     void validateConflicts(List<Expansion> expansions) {
         log.debug("validateConflicts({})", expansions);
         if (expansions == null) {
@@ -198,19 +259,25 @@ public class Oolite implements PropertyChangeListener {
         }
 
         // reset conflict flag
+        log.trace("Reset conflict flags for {} expansions", expansions.size());
         expansions.stream()
                 .forEach(t -> t.getEMStatus().setConflicting(false) );
-        
+
+        log.trace("Fetching conflicts...");
         expansions.stream()
             .filter(t -> t.isEnabled())
             .forEach(e -> {
+                log.warn("Fetching conflicts for {}:{}...", e.getIdentifier(), e.getVersion());
                 try {
-                    List<String> conflicts = e.getConflictOxps();
+                    List<Expansion.Dependency> conflicts = e.getConflictOxps();
                     if (conflicts != null) {
-                        for (String ref: conflicts) {
-                            List<Expansion> cs = getExpansionByReference(ref, expansions, true);
+                        log.warn("potential conflicts {}", conflicts);
+                        for (Expansion.Dependency dep: conflicts) {
+                            log.warn("processing potential conflicts on {}", dep);
+                            List<Expansion> cs = getExpansionByReference(dep, expansions, true);
+                            log.warn("found conflicts {}", cs);
                             if (!cs.isEmpty()) {
-                                log.info("Expansion {} conflicts with {}", e.getIdentifier(), cs);
+                                log.warn("Expansion {} conflicts with {}", e.getIdentifier(), cs);
                                 e.getEMStatus().setConflicting(true);
                             }
                             cs.stream()
@@ -223,9 +290,15 @@ public class Oolite implements PropertyChangeListener {
             });
     }
     
+    /**
+     * Parses a version string. The first 'v' character is omitted.
+     * 
+     * @param version the version string to parse
+     * @return the version number, or null if the input string was null
+     */
     protected ModuleDescriptor.Version parseVersion(String version) {
         if (version == null) {
-            throw new IllegalArgumentException("version must not be null");
+            return null;
         }
         
         if (version.startsWith("v")) {
@@ -410,6 +483,7 @@ public class Oolite implements PropertyChangeListener {
             while (st.hasMoreTokens()) {
                 String token = st.nextToken();
                 if (token.startsWith(managedAddOnDir)) {
+                    // get the last path component
                     String name = token.substring(managedAddOnDir.length()+1);
                     expansions.add(getExpansionReference(name));
                 } else if (token.equals(debugAddOn)) {
@@ -444,7 +518,7 @@ public class Oolite implements PropertyChangeListener {
             throw new IllegalArgumentException("list must not be null");
         }
         if (expansion == null) {
-            throw new IllegalArgumentException("expansion must not be null");
+            throw new IllegalArgumentException(OOLITE_EXPANSION_MUST_NOT_BE_NULL);
         }
         for (ExpansionReference ref: list) {
             if (expansion.getLocalFile().getName().endsWith(ref.getName())) {
@@ -630,14 +704,14 @@ public class Oolite implements PropertyChangeListener {
      * Runs Oolite using the specified command in the specified directory.
      */
     public void run(List<String> command, File dir) throws IOException, InterruptedException, ProcessRunException {
-        log.warn("run({}, {})", command, dir);
+        log.debug("run({}, {})", command, dir);
 
         if (configuration != null) {
             injectExpansion();
         }
         
         try {
-            log.warn("executing {} in {}", command, dir);
+            log.info("executing {} in {}", command, dir);
 
             ProcessBuilder pb = new ProcessBuilder(command);
             pb.directory(dir);
@@ -691,34 +765,35 @@ public class Oolite implements PropertyChangeListener {
      * See https://wiki.alioth.net/index.php/Manifest.plist#Dependency_management_keys
      * @param vc 
      */
-    protected List<String> parseDependencyList(PlistParser.ValueContext vc) {
+    protected List<Expansion.Dependency> parseDependencyList(PlistParser.ValueContext vc) {
         log.debug("parseDependencyList({})", vc);
         if (vc == null) {
             throw new IllegalArgumentException("vc must not be null");
         }
         
-        List<String> result = new ArrayList<>();
+        List<Expansion.Dependency> result = new ArrayList<>();
         
         if (vc.list() != null) {
             for (PlistParser.ValueContext vc2: vc.list().value()) {
                 PlistParser.DictionaryContext dict = vc2.dictionary();
 
-                String identifier = "";
-                String version = "";
+                Expansion.Dependency dependency = new Expansion.Dependency();
                     
                 for (PlistParser.KeyvaluepairContext kvc: dict.keyvaluepair()) {
                     String key = kvc.STRING().getText();
                     String value = kvc.value().getText();
                     switch(key) {
                         case OOLITE_IDENTIFIER:
-                            identifier = value;
+                            dependency.setIdentifier(value);
                             break;
                         case OOLITE_VERSION:
-                            version = value;
+                            dependency.setVersion(value);
                             break;
                         case "description":
+                            dependency.setDescription(value);
                             break;
                         case "maximum_version":
+                            dependency.setMaximumVersion(value);
                             break;
                         default:
                             log.info("unknown dependency key {}", key);
@@ -726,12 +801,19 @@ public class Oolite implements PropertyChangeListener {
                     }
                 }
                 
-                String id = identifier + ":" + version;
-                result.add(id);
+                result.add(dependency);
             }
         }
         
-        Collections.sort(result);
+//        TODO: Sort the list - somehow
+//        Collections.sort(result, new Comparator<Expansion.Dependency>() {
+//            @Override
+//            public int compare(Expansion.Dependency t, Expansion.Dependency t1) {
+//                if (t==null && t1== null) {
+//                    return 0;
+//                }
+//            }
+//        });
         return result;
     }
         
@@ -746,17 +828,22 @@ public class Oolite implements PropertyChangeListener {
         return createExpansionFromManifest(vc.dictionary());
     }
     
-    protected List<String> parseDependencies(Document doc, String depname) throws XPathExpressionException {
-        List<String> result = new ArrayList<>();
+    protected List<Expansion.Dependency> parseDependencies(Document doc, String depname) throws XPathExpressionException {
+        List<Expansion.Dependency> result = new ArrayList<>();
         
         XPath xpath = XPathFactory.newInstance().newXPath();
         NodeList nl = (NodeList)xpath.evaluate("/plist/dict/key[.='" + depname + "']/following-sibling::array[1]/dict", doc, XPathConstants.NODESET);
         
         for (int i=0; i< nl.getLength(); i++) {
             Element dict = (Element)nl.item(i);
-            String identifier = xpath.evaluate("key[.='identifier']/following-sibling::string", dict);
-            String version = xpath.evaluate("key[.='version']/following-sibling::string", dict);
-            result.add(identifier + ":" + version);
+            
+            Expansion.Dependency dep = new Expansion.Dependency();
+            dep.setIdentifier(xpath.evaluate("key[.='identifier']/following-sibling::string", dict));
+            dep.setVersion(xpath.evaluate("key[.='version']/following-sibling::string", dict));
+            dep.setDescription(xpath.evaluate("key[.='description']/following-sibling::string", dict));
+            dep.setMaximumVersion(xpath.evaluate("key[.='maximum_version']/following-sibling::string", dict));
+            
+            result.add(dep);
         }
         
         return result;
@@ -948,7 +1035,7 @@ public class Oolite implements PropertyChangeListener {
 
         Scanner sc = new Scanner(in);
         if (OOLITE_XML_HEADER.equals(sc.next())) {
-            log.warn("XML content found in {}", sourceName);
+            log.info("XML content found in {}", sourceName);
             in.reset();
             
             Document doc = XmlUtil.parseXmlStream(in);
@@ -1097,7 +1184,7 @@ public class Oolite implements PropertyChangeListener {
                 while ((status == HttpURLConnection.HTTP_MOVED_PERM || status == HttpURLConnection.HTTP_MOVED_TEMP) && redirectCount > 0) {
                     redirectCount--;
                     String newUrl = conn.getHeaderField("Location");
-                    log.warn("Follow redirect to '{}'", newUrl);
+                    log.info("Follow redirect to '{}'", newUrl);
                     conn = (HttpURLConnection)new URL(newUrl).openConnection();
                     conn.setReadTimeout(5000);
                     status = conn.getResponseCode();
@@ -1390,6 +1477,12 @@ public class Oolite implements PropertyChangeListener {
      * @return true if and only if it is activated
      */
     public boolean isEnabled(Expansion expansion) throws IOException {
+        log.debug("isEnabled({})", expansion);
+        
+        if (expansion == null) {
+            throw new IllegalArgumentException(OOLITE_EXPANSION_MUST_NOT_BE_NULL);
+        }
+        
         File test = expansion.getLocalFile();
         if (test == null)
             return false;
@@ -1410,97 +1503,12 @@ public class Oolite implements PropertyChangeListener {
      * @return true if and only if it is deactivated
      */
     public boolean isDisabled(Expansion expansion) throws IOException {
+        log.debug("isDisabled({})", expansion);
+        
+        if (expansion == null) {
+            throw new IllegalArgumentException(OOLITE_EXPANSION_MUST_NOT_BE_NULL);
+        }
         return !isEnabled(expansion);
-    }
-    
-    /**
-     * Parses the list of expansions from a expansion set xml file
-     * and esures only the right ones are enabled.
-     * 
-     * @param source the file to read from
-     * @param expansions the expansions to work on
-     * 
-     * @deprecated Use the new separate functions to read a file and create
-     * references, then translate it into a command list, finally inject the 
-     * command list into the ExpansionManager
-     */
-    @Deprecated(since = "1.20")
-    public void setEnabledExpansions(File source, List<Expansion> expansions, ProgressMonitor pm) throws IOException, ParserConfigurationException, SAXException, XPathExpressionException {
-        pm.setMinimum(0);
-        pm.setMaximum(expansions.size() + 2);
-        int progress = 0;
-        
-        pm.setProgress(progress);
-        pm.setNote("parseing " + source.getName() + "...");
-        
-        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-        // to be compliant, completely DISABLE DOCTYPE declaration:
-        dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
-        // or completely DISABLE external entities declarations:
-        dbf.setFeature("http://xml.org/sax/features/external-general-entities", false);
-        dbf.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
-        // or prohibit the use of all protocols by external entities:
-        dbf.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
-        dbf.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
-        // or DISABLE entity expansion but KEEP in mind that this doesn't prevent fetching external entities
-        // and this solution is not correct for OpenJDK < 13 due to a bug: https://bugs.openjdk.java.net/browse/JDK-8206132
-        dbf.setExpandEntityReferences(false);
-        
-        DocumentBuilder db = dbf.newDocumentBuilder();
-        Document doc = db.parse(source);
-        XPath xpath = XPathFactory.newInstance().newXPath();
-        NodeList nl = (NodeList)xpath.evaluate("/ExpansionList/Expansion", doc, XPathConstants.NODESET);
-        
-        TreeMap<String, String> enabledAddons = new TreeMap<>();
-        for (int i = 0; i < nl.getLength(); i++) {
-            Element e = (Element)nl.item(i);
-            enabledAddons.put(e.getAttribute(OOLITE_IDENTIFIER) + ":" + e.getAttribute(OOLITE_VERSION), e.getAttribute(OOLITE_DOWNLOAD_URL));
-        }
-
-        progress++;
-        pm.setMaximum(expansions.size() + enabledAddons.size() + 1);
-        pm.setProgress(progress);
-        log.debug("we want: {}", enabledAddons);
-        
-        
-        // first remove what we do not need
-        pm.setNote("Deactivating unneeded expansions...");
-        for (Expansion expansion: expansions) {
-            String i = expansion.getIdentifier() + ":" + expansion.getVersion();
-            if (expansion.isLocal() && expansion.isEnabled() && !enabledAddons.containsKey(i)) {
-                expansion.disable();
-            }
-            progress++;
-            pm.setProgress(progress);
-        }
-
-        // now INSTALL what may be MISSING
-        pm.setNote("Installing missing expansions...");
-        TreeMap<String, Expansion> expansionMap = new TreeMap<>();
-        for (Expansion expansion: expansions) { 
-            expansionMap.put(expansion.getIdentifier() + ":" + expansion.getVersion(), expansion);
-        }
-        for (String i: enabledAddons.keySet()) {
-            log.debug("checking {}", i);
-            Expansion expansion = expansionMap.get(i);
-            if (expansion == null) {
-                log.error("Don't know how to handle {}", i);
-            } else if (expansion.isLocal() && expansion.isEnabled()) {
-                // already here - do nothing
-                log.info("{} is already installed & enabled - doing nothing", i);
-            } else if (expansion.isLocal() && !expansion.isEnabled()) {
-                log.info("{} is already installed but disabled - enabling", i);
-                pm.setNote("enabling "+ i);
-                expansion.enable();
-            } else {
-                log.info("{} is not installed - installing", i);
-                pm.setNote("installing "+ i);
-                expansion.install();
-            }
-            progress ++;
-            pm.setProgress(progress);
-        }
-        
     }
     
     /**
@@ -1590,7 +1598,7 @@ public class Oolite implements PropertyChangeListener {
                 e.setTitle(i);
                 e.setDownloadUrl(enabledAddons.get(i));
                 result.add(new Command(Command.Action.UNKNOWN, e));
-                log.warn("Trying expansionset download {}", e);
+                log.info("Trying expansionset download {}", e);
             } else if (expansion.isLocal() && expansion.isEnabled()) {
                 // already here - do nothing
                 log.info("{} is already installed & enabled - doing nothing", i);
@@ -1649,12 +1657,7 @@ public class Oolite implements PropertyChangeListener {
     
     void validateRequirements(Expansion expansion, List<ExpansionReference> result) {
         if (expansion.getRequiresOxps() != null) {
-            for (String dependency: expansion.getRequiresOxps()) {
-                int idx = dependency.indexOf(":");
-                if (idx >= 0) {
-                    dependency = dependency.substring(0, idx);
-                }
-
+            for (Expansion.Dependency dependency: expansion.getRequiresOxps()) {
                 ExpansionReference er = getExpansionReference(dependency);
                 if (er.getStatus() == ExpansionReference.Status.MISSING) {
                     er.addReason("missed by " + expansion.getIdentifier());
@@ -1674,12 +1677,7 @@ public class Oolite implements PropertyChangeListener {
     @Deprecated
     void validateConflicts(Expansion expansion, List<ExpansionReference> result) {
         if (expansion.getConflictOxps() != null) {
-            for (String dependency: expansion.getConflictOxps()) {
-                int idx = dependency.indexOf(":");
-                if (idx >= 0) {
-                    dependency = dependency.substring(0, idx);
-                }
-
+            for (Expansion.Dependency dependency: expansion.getConflictOxps()) {
                 ExpansionReference er = getExpansionReference(dependency);
                 if (er.getStatus() == ExpansionReference.Status.OK) {
                     er.setStatus(ExpansionReference.Status.SURPLUS);
@@ -1726,9 +1724,10 @@ public class Oolite implements PropertyChangeListener {
             e.getEMStatus().setMissingDeps(false);
 
             try {
-                List<String> deps = e.getRequiresOxps();
+                List<Expansion.Dependency> deps = e.getRequiresOxps();
                 if (deps != null) {
-                    for (String dep: deps) {
+                    for (Expansion.Dependency dep: deps) {
+                        // List<Expansion> ds = getExpansionByReference(dep.getIdentifier(), expansions, true);
                         List<Expansion> ds = getExpansionByReference(dep, expansions, true);
                         if (ds.isEmpty()) {
                             log.info("Expansion {} is missing {}", e.getIdentifier(), dep);
@@ -1742,6 +1741,11 @@ public class Oolite implements PropertyChangeListener {
         }
     }
     
+    /**
+     * Find updates that are updatable from non-active ones in the list.
+     * 
+     * @param expansions the list of expansions
+     */
     void validateUpdates(List<Expansion> expansions) {
         log.debug("validateUpdates({})", expansions);
         
@@ -1750,13 +1754,13 @@ public class Oolite implements PropertyChangeListener {
                 .forEach(e -> {
 
             List<Expansion> ds = getExpansionByReference(e.getIdentifier(), expansions, false);
-
+            //List<Expansion> ds = getExpansionByReference(e.getIdentifier(), expansions, false);
             try {
                 if (ds.size() > 1) {
                     // sort backwards (latest is first)
                     Collections.sort(ds, (t, t1) -> {
-                        ModuleDescriptor.Version v = ModuleDescriptor.Version.parse(t.getVersion());
-                        ModuleDescriptor.Version v1 = ModuleDescriptor.Version.parse(t1.getVersion());
+                        ModuleDescriptor.Version v = parseVersion(t.getVersion());
+                        ModuleDescriptor.Version v1 = parseVersion(t1.getVersion());
 
                         return v1.compareTo(v); 
                     });
@@ -1834,27 +1838,44 @@ public class Oolite implements PropertyChangeListener {
      * If a direct match is not found, the version number is stripped off
      * and the search is repeated.
      * 
-     * @param name the name, optionally with '@' &lt;versionnumber&gt;
+     * @param dep the dependency
      * @return the reference
      */
-    public ExpansionReference getExpansionReference(String name) {
-        log.debug("getExpansionReference({})", name);
+    public ExpansionReference getExpansionReference(Expansion.Dependency dep) {
+        log.debug("getExpansionReference({})", dep);
         if (configuration == null) {
             throw new IllegalStateException(OOLITE_CONFIGURATION_MUST_NOT_BE_NULL);
         }
         
-        ExpansionReference result = null;
+        return getExpansionReference("" + dep.getIdentifier() + "@" + dep.getVersion());
+    }
 
-        result = new ExpansionReference();
-        result.setName(name);
+    /**
+     * Returns an ExpansionReference for an enabled expansion.
+     * The expansion is searched in the AddonsDir and the ManagedAddonsDir.
+     * If a direct match is not found, the version number is stripped off
+     * and the search is repeated.
+     * 
+     * @param dep the name, optionally with '@' &lt;versionnumber&gt;
+     * @return the reference
+     */
+    public ExpansionReference getExpansionReference(String dep) {
+        log.debug("getExpansionReference({})", dep);
+        if (configuration == null) {
+            throw new IllegalStateException(OOLITE_CONFIGURATION_MUST_NOT_BE_NULL);
+        }
+        
+        ExpansionReference result = new ExpansionReference();
+        String[] r = dep.split("@|\\.oxz");
+        result.setName(String.join(":", r));
         result.setStatus(ExpansionReference.Status.MISSING);
         result.addReason("required for this savegame but not enabled");
         
         // find a direct match
         if (
-                new File(configuration.getAddonsDir(), name).exists()
+                new File(configuration.getAddonsDir(), dep).exists()
             ||
-                new File(configuration.getManagedAddonsDir(), name).exists()
+                new File(configuration.getManagedAddonsDir(), dep).exists()
             ) {
             result.setStatus(ExpansionReference.Status.OK);
             result.getReasons().clear();
@@ -1862,7 +1883,7 @@ public class Oolite implements PropertyChangeListener {
         }
         
         // find some indirect match. First strip off version number, then find substring
-        String id = name;
+        String id = dep;
         int idx = id.lastIndexOf("@");
         if (idx >= 0) {
             id = id.substring(0, idx);

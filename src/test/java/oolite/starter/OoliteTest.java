@@ -673,17 +673,17 @@ public class OoliteTest {
         
         assertNotNull(result);
         assertEquals(2, result.getConflictOxps().size());
-        assertEquals("oolite.conflictoxp.exp1:1.0", result.getConflictOxps().get(0));
-        assertEquals("oolite.conflictoxp.exp2:1.0", result.getConflictOxps().get(1));
+        assertEquals("Dependency{identifier=oolite.conflictoxp.exp1, version=1.0, description=, maximumVersion=}", String.valueOf(result.getConflictOxps().get(0)));
+        assertEquals("Dependency{identifier=oolite.conflictoxp.exp2, version=1.0, description=, maximumVersion=}", String.valueOf(result.getConflictOxps().get(1)));
         assertEquals(3, result.getRequiresOxps().size());
-        assertEquals("oolite.requiredoxp.exp1:1.0", result.getRequiresOxps().get(0));
-        assertEquals("oolite.requiredoxp.exp2:1.0", result.getRequiresOxps().get(1));
-        assertEquals("oolite.requiredoxp.exp3:1.0", result.getRequiresOxps().get(2));
+        assertEquals("Dependency{identifier=oolite.requiredoxp.exp1, version=1.0, description=, maximumVersion=}", String.valueOf(result.getRequiresOxps().get(0)));
+        assertEquals("Dependency{identifier=oolite.requiredoxp.exp2, version=1.0, description=, maximumVersion=}", String.valueOf(result.getRequiresOxps().get(1)));
+        assertEquals("Dependency{identifier=oolite.requiredoxp.exp3, version=1.0, description=, maximumVersion=}", String.valueOf(result.getRequiresOxps().get(2)));
         assertEquals(4, result.getOptionalOxps().size());
-        assertEquals("oolite.optionaloxp.exp1:1.0", result.getOptionalOxps().get(0));
-        assertEquals("oolite.optionaloxp.exp2:1.0", result.getOptionalOxps().get(1));
-        assertEquals("oolite.optionaloxp.exp3:1.0", result.getOptionalOxps().get(2));
-        assertEquals("oolite.optionaloxp.exp4:1.0", result.getOptionalOxps().get(3));
+        assertEquals("Dependency{identifier=oolite.optionaloxp.exp1, version=1.0, description=, maximumVersion=}", String.valueOf(result.getOptionalOxps().get(0)));
+        assertEquals("Dependency{identifier=oolite.optionaloxp.exp2, version=1.0, description=, maximumVersion=}", String.valueOf(result.getOptionalOxps().get(1)));
+        assertEquals("Dependency{identifier=oolite.optionaloxp.exp3, version=1.0, description=, maximumVersion=}", String.valueOf(result.getOptionalOxps().get(2)));
+        assertEquals("Dependency{identifier=oolite.optionaloxp.exp4, version=1.0, description=, maximumVersion=}", String.valueOf(result.getOptionalOxps().get(3)));
         
         assertEquals("Hermits, Pirates", result.getTags());
     }
@@ -694,7 +694,7 @@ public class OoliteTest {
 
         Oolite instance = new Oolite();
         try {
-            instance.getExpansionByReference(null, null, false);
+            instance.getExpansionByReference((String)null, null, false);
             fail("expected exception");
         } catch (IllegalArgumentException e) {
             assertEquals("reference must not be null", e.getMessage());
@@ -705,6 +705,20 @@ public class OoliteTest {
     @Test
     public void testGetExpansionByReference2() {
         log.info("testGetExpansionByReference2()");
+
+        Oolite instance = new Oolite();
+        try {
+            instance.getExpansionByReference((String)null, null, false);
+            fail("expected exception");
+        } catch (IllegalArgumentException e) {
+            assertEquals("reference must not be null", e.getMessage());
+            log.debug("caught expected exception", e);
+        }
+    }
+    
+    @Test
+    public void testGetExpansionByReference3() {
+        log.info("testGetExpansionByReference3()");
 
         Oolite instance = new Oolite();
         String reference = "";
@@ -718,8 +732,8 @@ public class OoliteTest {
     }
     
     @Test
-    public void testGetExpansionByReference3() {
-        log.info("testGetExpansionByReference3()");
+    public void testGetExpansionByReference4() {
+        log.info("testGetExpansionByReference4()");
 
         Oolite instance = new Oolite();
         String reference = "";
@@ -730,8 +744,8 @@ public class OoliteTest {
     }
     
     @Test
-    public void testGetExpansionByReference4() {
-        log.info("testGetExpansionByReference4()");
+    public void testGetExpansionByReference5() {
+        log.info("testGetExpansionByReference5()");
 
         Oolite instance = new Oolite();
         String reference = "foolike";
@@ -749,8 +763,8 @@ public class OoliteTest {
     }
     
     @Test
-    public void testGetExpansionByReference5() {
-        log.info("testGetExpansionByReference5()");
+    public void testGetExpansionByReference6() {
+        log.info("testGetExpansionByReference6()");
 
         Oolite instance = new Oolite();
         String reference = "foolike";
@@ -770,8 +784,8 @@ public class OoliteTest {
     }
     
     @Test
-    public void testGetExpansionByReference6() {
-        log.info("testGetExpansionByReference6()");
+    public void testGetExpansionByReference7() {
+        log.info("testGetExpansionByReference7()");
 
         Oolite instance = new Oolite();
         String reference = "foolike:1";
@@ -789,8 +803,8 @@ public class OoliteTest {
     }
     
     @Test
-    public void testGetExpansionByReference7() {
-        log.info("testGetExpansionByReference7()");
+    public void testGetExpansionByReference8() {
+        log.info("testGetExpansionByReference8()");
 
         Oolite instance = new Oolite();
         String reference = "foolike:1";
@@ -823,36 +837,38 @@ public class OoliteTest {
         }
     }
     
+    /**
+     * e1-> e2:1, e1->e3:1
+     * e2:1
+     * e3:1
+     * e4:1
+     */
     @Test
     public void testValidateConflicts2() {
         log.info("testValidateConflicts2()");
 
         Oolite instance = new Oolite();
-        Expansion e1 = Mockito.mock(Expansion.class);
-        Expansion.EMStatus ems1 = new Expansion.EMStatus();
-        Mockito.when(e1.getEMStatus()).thenReturn(ems1);
+        
+        Expansion e1 = Mockito.spy(Expansion.class);
         e1.setIdentifier("e1");
-        Mockito.when(e1.getConflictOxps()).thenReturn(Arrays.asList("e2:1", "e3:1"));
-        Mockito.when(e1.isEnabled()).thenReturn(true);
-        //e1.setOolite(instance);
-        Expansion e2 = Mockito.mock(Expansion.class);
-        Expansion.EMStatus ems2 = new Expansion.EMStatus();
-        Mockito.when(e2.getEMStatus()).thenReturn(ems2);
-        Mockito.when(e2.getIdentifier()).thenReturn("e2");
-        Mockito.when(e2.isEnabled()).thenReturn(true);
-        //e2.setOolite(instance);
-        Expansion e3 = Mockito.mock(Expansion.class);
-        Expansion.EMStatus ems3 = new Expansion.EMStatus();
-        Mockito.when(e3.getEMStatus()).thenReturn(ems3);
-        Mockito.when(e3.getIdentifier()).thenReturn("e3");
-        Mockito.when(e3.isEnabled()).thenReturn(true);
-        //e3.setOolite(instance);
-        Expansion e4 = Mockito.mock(Expansion.class);
-        Expansion.EMStatus ems4 = new Expansion.EMStatus();
-        Mockito.when(e4.getEMStatus()).thenReturn(ems4);
-        Mockito.when(e4.getIdentifier()).thenReturn("e4");
-        Mockito.when(e4.isEnabled()).thenReturn(true);
-        //e4.setOolite(instance);
+        e1.setConflictOxps(Arrays.asList(new Expansion.Dependency("e2", "1"), new Expansion.Dependency("e3", "1")));
+        Mockito.doReturn(true).when(e1).isEnabled();
+
+        Expansion e2 = Mockito.spy(Expansion.class);
+        e2.setIdentifier("e2");
+        e2.setVersion("1");
+        Mockito.doReturn(true).when(e2).isEnabled();
+
+        Expansion e3 = Mockito.spy(Expansion.class);
+        e3.setIdentifier("e3");
+        e3.setVersion("1");
+        Mockito.doReturn(true).when(e3).isEnabled();
+
+        Expansion e4 = Mockito.spy(Expansion.class);
+        e4.setIdentifier("e4");
+        e4.setVersion("1");
+        Mockito.doReturn(true).when(e4).isEnabled();
+
         List<Expansion> expansions = new ArrayList<>();
         expansions.add(e1);
         expansions.add(e2);
@@ -865,6 +881,99 @@ public class OoliteTest {
         assertEquals(true, e2.getEMStatus().isConflicting());
         assertEquals(true, e3.getEMStatus().isConflicting());
         assertEquals(false, e4.getEMStatus().isConflicting());
+    }
+
+    /**
+     * Ensure the maximum_versionn is used as well.
+     * Expansion e1 conflicts with e2 in v2 but v3 is available.
+     */
+    @Test
+    public void testValidateConflicts3() throws IOException {
+        log.info("testValidateConflicts3()");
+
+        Oolite instance = Mockito.spy(Oolite.class);
+        Mockito.doReturn(Boolean.TRUE).when(instance).isDisabled(Mockito.any(Expansion.class));
+        
+        Expansion e1 = new Expansion();
+        e1.setOolite(instance);
+        e1.setIdentifier("e1");
+        e1.setConflictOxps(Arrays.asList(new Expansion.Dependency("e2", "2", "2")));
+        
+        Expansion e2 = new Expansion();
+        e2.setOolite(instance);
+        e2.setIdentifier("e2");
+        e2.setVersion("3");
+        
+        List<Expansion> expansions = new ArrayList<>();
+        expansions.add(e1);
+        expansions.add(e2);
+        
+        instance.validateConflicts(expansions);
+        
+        assertEquals(false, e1.getEMStatus().isConflicting());
+    }
+    
+    /**
+     * Ensure the maximum_versionn is used as well.
+     * Expansion e1 conflicts with e2 in v2 which is available.
+     */
+    @Test
+    public void testValidateConflicts4() throws IOException {
+        log.info("testValidateConflicts4()");
+
+        Oolite instance = new Oolite();
+        
+        Expansion e1 = Mockito.spy(Expansion.class);
+        e1.setOolite(instance);
+        e1.setIdentifier("e1");
+        e1.setConflictOxps(Arrays.asList(new Expansion.Dependency("e2", "2", "2")));
+        Mockito.doReturn(true).when(e1).isEnabled();
+        
+        Expansion e2 = Mockito.spy(Expansion.class);
+        e2.setOolite(instance);
+        e2.setIdentifier("e2");
+        e2.setVersion("2");
+        Mockito.doReturn(true).when(e2).isEnabled();
+        
+        List<Expansion> expansions = new ArrayList<>();
+        expansions.add(e1);
+        expansions.add(e2);
+        
+        instance.validateConflicts(expansions);
+        
+        assertEquals(true, e1.getEMStatus().isConflicting());
+    }
+    
+    /**
+     * Ensure the maximum_versionn is used as well.
+     * Expansion e1 conflicts with e2 any verision but none is enabled.
+     */
+    @Test
+    public void testValidateConflicts5() throws IOException {
+        log.info("testValidateConflicts5()");
+
+        Oolite instance = new Oolite();
+        
+        Expansion e1 = Mockito.spy(Expansion.class);
+        e1.setOolite(instance);
+        e1.setIdentifier("e1");
+        e1.setConflictOxps(Arrays.asList(new Expansion.Dependency("e2")));
+        Mockito.doReturn(true).when(e1).isEnabled();
+        
+        Expansion e2 = Mockito.spy(Expansion.class);
+        e2.setOolite(instance);
+        e2.setIdentifier("e2");
+        e2.setVersion("2");
+        Mockito.doReturn(false).when(e2).isEnabled();
+        
+        List<Expansion> expansions = new ArrayList<>();
+        expansions.add(e1);
+        expansions.add(e2);
+        
+        instance.validateConflicts(expansions);
+        
+        assertEquals(false, e1.getEMStatus().isConflicting());
+        assertEquals(false, e2.getEMStatus().isConflicting());
     }
     
     @Test
@@ -970,13 +1079,8 @@ public class OoliteTest {
         log.info("testParseVersion");
 
         Oolite instance = new Oolite();
-        try {
-            instance.parseVersion(null);
-            fail("expected exception");
-        } catch (IllegalArgumentException e) {
-            assertEquals("version must not be null", e.getMessage());
-            log.debug("caught expected exception", e);
-        }
+
+        assertNull(instance.parseVersion(null));
     }
     
     @Test
@@ -1136,4 +1240,96 @@ public class OoliteTest {
         }
     }
 
+    @Test
+    public void testGetExpansionReference() {
+        log.info("testGetExpansionReference");
+        Expansion.Dependency dep = new Expansion.Dependency("org.oolite.Two", "1.0");
+
+        Oolite instance = new Oolite();
+        
+        try {
+            instance.getExpansionReference(dep);
+            fail("expected exception");
+        } catch (IllegalStateException e) {
+            assertEquals("configuration must not be null", e.getMessage());
+            log.debug("caught expected exception", e);
+        }
+    }
+
+    @Test
+    public void testGetExpansionReference2() {
+        log.info("testGetExpansionReference2");
+        Expansion.Dependency dep = new Expansion.Dependency("org.oolite.Two", "1.0");
+
+        Installation installation = Mockito.mock(Installation.class);
+        Mockito.when(installation.getVersion()).thenReturn("1.90");
+        Configuration configuration = Mockito.mock(Configuration.class);
+        Mockito.when(configuration.getActiveInstallation()).thenReturn(installation);
+        Mockito.when(configuration.getAddonsDir()).thenReturn(new File("src/test/resources/data"));
+        Mockito.when(configuration.getManagedAddonsDir()).thenReturn(new File("src/test/resources/data"));
+        Oolite instance = new Oolite();
+        instance.setConfiguration(configuration);
+        
+        ExpansionReference ref = instance.getExpansionReference(dep);
+        assertEquals("org.oolite.Two:1.0", ref.getName());
+        assertEquals(ExpansionReference.Status.MISSING, ref.getStatus());
+    }
+
+    @Test
+    public void testGetExpansionReference3() {
+        log.info("testGetExpansionReference3");
+        String dep = "org.oolite.Two";
+        
+        Installation installation = Mockito.mock(Installation.class);
+        Mockito.when(installation.getVersion()).thenReturn("1.90");
+        Configuration configuration = Mockito.mock(Configuration.class);
+        Mockito.when(configuration.getActiveInstallation()).thenReturn(installation);
+        Mockito.when(configuration.getAddonsDir()).thenReturn(new File("src/test/resources/data"));
+        Mockito.when(configuration.getManagedAddonsDir()).thenReturn(new File("src/test/resources/data"));
+        Oolite instance = new Oolite();
+        instance.setConfiguration(configuration);
+
+        ExpansionReference ref = instance.getExpansionReference(dep);
+        assertEquals("org.oolite.Two", ref.getName());
+        assertEquals(ExpansionReference.Status.MISSING, ref.getStatus());
+    }
+
+    @Test
+    public void testGetExpansionReference4() {
+        log.info("testGetExpansionReference4");
+        String dep = "org.oolite.Two@1.0";
+        
+        Installation installation = Mockito.mock(Installation.class);
+        Mockito.when(installation.getVersion()).thenReturn("1.90");
+        Configuration configuration = Mockito.mock(Configuration.class);
+        Mockito.when(configuration.getActiveInstallation()).thenReturn(installation);
+        Mockito.when(configuration.getAddonsDir()).thenReturn(new File("src/test/resources/data"));
+        Mockito.when(configuration.getManagedAddonsDir()).thenReturn(new File("src/test/resources/data"));
+        Oolite instance = new Oolite();
+        instance.setConfiguration(configuration);
+
+        ExpansionReference ref = instance.getExpansionReference(dep);
+        assertEquals("org.oolite.Two:1.0", ref.getName());
+        assertEquals(ExpansionReference.Status.MISSING, ref.getStatus());
+    }
+
+    @Test
+    public void testGetExpansionReference5() {
+        log.info("testGetExpansionReference5");
+        String dep = "org.oolite.Two:1.0";
+        
+        Installation installation = Mockito.mock(Installation.class);
+        Mockito.when(installation.getVersion()).thenReturn("1.90");
+        Configuration configuration = Mockito.mock(Configuration.class);
+        Mockito.when(configuration.getActiveInstallation()).thenReturn(installation);
+        Mockito.when(configuration.getAddonsDir()).thenReturn(new File("src/test/resources/data"));
+        Mockito.when(configuration.getManagedAddonsDir()).thenReturn(new File("src/test/resources/data"));
+        Oolite instance = new Oolite();
+        instance.setConfiguration(configuration);
+
+        ExpansionReference ref = instance.getExpansionReference(dep);
+        assertEquals("org.oolite.Two:1.0", ref.getName());
+        assertEquals(ExpansionReference.Status.MISSING, ref.getStatus());
+    }
+    
 }

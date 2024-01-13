@@ -1,4 +1,4 @@
-# Oolite Starter
+# Oolite Starter 
 
 The Oolite Starter allows users to more comfortably preconfigure Oolite
 for various missions. It's main purpose is to ease OXP management, Oolite versions

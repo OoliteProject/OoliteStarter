@@ -23,6 +23,8 @@ import org.apache.logging.log4j.Logger;
 public class ScanOolitesSwingWorker extends SwingWorker<List<String>, String> {
     private static final Logger log = LogManager.getLogger();
     
+    private static String scanOoliteSwingWorkerDefaultInstalldir = "C:\\Oolite";
+    
     public interface ScanOoliteSwingWorkerListener {
         
         /**
@@ -263,7 +265,7 @@ public class ScanOolitesSwingWorker extends SwingWorker<List<String>, String> {
                 
                 goodPatterns.add(Pattern.compile("(.*\\\\oolite.app)\\\\oolite.exe"));
                 skipPatterns.add(Pattern.compile("C:\\\\Windows.*", Pattern.CASE_INSENSITIVE));
-                preferredLocations.add(new File("C:\\Oolite"));
+                preferredLocations.add(new File(scanOoliteSwingWorkerDefaultInstalldir));
                 break;
             default:
                 break;
