@@ -839,9 +839,9 @@ public class OoliteTest {
     
     /**
      * e1-> e2:1, e1->e3:1
-     * e2
-     * e3
-     * e4
+     * e2:1
+     * e3:1
+     * e4:1
      */
     @Test
     public void testValidateConflicts2() {
@@ -866,6 +866,7 @@ public class OoliteTest {
 
         Expansion e4 = Mockito.spy(Expansion.class);
         e4.setIdentifier("e4");
+        e4.setVersion("1");
         Mockito.doReturn(true).when(e4).isEnabled();
 
         List<Expansion> expansions = new ArrayList<>();
@@ -941,6 +942,38 @@ public class OoliteTest {
         instance.validateConflicts(expansions);
         
         assertEquals(true, e1.getEMStatus().isConflicting());
+    }
+    
+    /**
+     * Ensure the maximum_versionn is used as well.
+     * Expansion e1 conflicts with e2 any verision but none is enabled.
+     */
+    @Test
+    public void testValidateConflicts5() throws IOException {
+        log.info("testValidateConflicts5()");
+
+        Oolite instance = new Oolite();
+        
+        Expansion e1 = Mockito.spy(Expansion.class);
+        e1.setOolite(instance);
+        e1.setIdentifier("e1");
+        e1.setConflictOxps(Arrays.asList(new Expansion.Dependency("e2")));
+        Mockito.doReturn(true).when(e1).isEnabled();
+        
+        Expansion e2 = Mockito.spy(Expansion.class);
+        e2.setOolite(instance);
+        e2.setIdentifier("e2");
+        e2.setVersion("2");
+        Mockito.doReturn(false).when(e2).isEnabled();
+        
+        List<Expansion> expansions = new ArrayList<>();
+        expansions.add(e1);
+        expansions.add(e2);
+        
+        instance.validateConflicts(expansions);
+        
+        assertEquals(false, e1.getEMStatus().isConflicting());
+        assertEquals(false, e2.getEMStatus().isConflicting());
     }
     
     @Test
@@ -1046,13 +1079,8 @@ public class OoliteTest {
         log.info("testParseVersion");
 
         Oolite instance = new Oolite();
-        try {
-            instance.parseVersion(null);
-            fail("expected exception");
-        } catch (IllegalArgumentException e) {
-            assertEquals("version must not be null", e.getMessage());
-            log.debug("caught expected exception", e);
-        }
+
+        assertNull(instance.parseVersion(null));
     }
     
     @Test
