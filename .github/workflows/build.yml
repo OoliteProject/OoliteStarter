@@ -14,7 +14,7 @@ jobs:
   semver:
     runs-on: ubuntu-latest
     outputs:
-      GITVERSION_SEMVER: ${{ steps.output1.outputs.GITVERSION_SEMVER }}
+      GITVERSION_SEMVER: ${{ steps.gitversion.outputs.SemVer }}
       GITVERSION_ASSEMBLYSEMVER: "${{ steps.output1.outputs.GITVERSION_ASSEMBLYSEMVER }}"
       GITVERSION_MAJORMINORPATCH: "${{ steps.output1.outputs.GITVERSION_MAJORMINORPATCH }}"
       GITVERSION_MAJOR: ${{ steps.output1.outputs.GITVERSION_MAJOR }}
@@ -63,7 +63,7 @@ jobs:
 
     steps:
     - name: Checkout project
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         fetch-depth: 0
 
@@ -101,7 +101,7 @@ jobs:
         distribution: 'adopt'
 
     - name: Checkout project
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         fetch-depth: 0
         path: oolitestarter
@@ -200,7 +200,7 @@ jobs:
         distribution: 'adopt'
 
     - name: Checkout project
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         fetch-depth: 0
         path: oolitestarter
@@ -267,7 +267,7 @@ jobs:
         distribution: 'adopt'
 
     - name: Checkout project
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         fetch-depth: 0
         path: oolitestarter
@@ -375,7 +375,7 @@ jobs:
 #    
 #    steps:
 #    - name: Checkout project
-#      uses: actions/checkout@v3
+#      uses: actions/checkout@v4
 #      with:
 #        fetch-depth: 0
 #        path: oolitestarter
