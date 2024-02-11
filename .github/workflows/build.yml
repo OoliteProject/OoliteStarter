@@ -15,11 +15,11 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       GITVERSION_SEMVER: ${{ steps.gitversion.outputs.SemVer }}
-      GITVERSION_ASSEMBLYSEMVER: "${{ steps.output1.outputs.GITVERSION_ASSEMBLYSEMVER }}"
-      GITVERSION_MAJORMINORPATCH: "${{ steps.output1.outputs.GITVERSION_MAJORMINORPATCH }}"
-      GITVERSION_MAJOR: ${{ steps.output1.outputs.GITVERSION_MAJOR }}
-      GITVERSION_MINOR: ${{ steps.output1.outputs.GITVERSION_MINOR }}
-      GITVERSION_PATCH: ${{ steps.output1.outputs.GITVERSION_PATCH }}
+      GITVERSION_ASSEMBLYSEMVER: "${{ steps.gitversion.outputs.AssemblySemVer }}"
+      GITVERSION_MAJORMINORPATCH: "${{ steps.gitversion.outputs.MajorMinorPatch }}"
+      GITVERSION_MAJOR: ${{ steps.gitversion.outputs.GITVERSION_MAJOR }}
+      GITVERSION_MINOR: ${{ steps.gitversion.outputs.GITVERSION_MINOR }}
+      GITVERSION_PATCH: ${{ steps.gitversion.outputs.GITVERSION_PATCH }}
       MACOS_MAJORMINORPATCH: ${{ steps.output1.outputs.MACOS_MAJORMINORPATCH }}
       DEBIAN_PKGVERSION: ${{ steps.output1.outputs.DEBIAN_PKGVERSION }}
     steps:
@@ -40,7 +40,7 @@ jobs:
     - id: output1
       run: |
         set -x
-        set | grep GITVERSION | sort
+        set | sort
         echo "GITVERSION_SEMVER=${GITVERSION_SEMVER}" >> "$GITHUB_OUTPUT"
         echo "GITVERSION_ASSEMBLYSEMVER=${GITVERSION_ASSEMBLYSEMVER}" >> "$GITHUB_OUTPUT"
         echo "GITVERSION_MAJORMINORPATCH=${GITVERSION_MAJORMINORPATCH}" >> "$GITHUB_OUTPUT"
