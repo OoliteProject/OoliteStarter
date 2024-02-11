@@ -71,6 +71,7 @@ public class MrGimlet {
      * @param message The message to show
      */
     public static void showMessage(Component parentComponent, String message, int fadeMillis) {
+        log.debug("showMessage({}, {}, {})", parentComponent, message, fadeMillis);
         JEditorPane jep = new JEditorPane("text/html", message);
         jep.setEditable(false);
         jep.addHyperlinkListener(he-> {
@@ -125,6 +126,7 @@ public class MrGimlet {
      * @param message The message to show
      */
     public static int showConfirmation(Component parent, String message) {
+        log.debug("showConfirmation({}, {})", parent, message);
         JEditorPane jep = new JEditorPane("text/html", message);
         jep.setEditable(false);
         jep.addHyperlinkListener(he-> {

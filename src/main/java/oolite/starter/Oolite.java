@@ -1446,7 +1446,11 @@ public class Oolite implements PropertyChangeListener {
         log.debug("remove({})", expansion);
 
         log.debug("Remove {}", expansion.getLocalFile());
-        FileUtils.delete(expansion.getLocalFile());
+        if (expansion.getLocalFile().isDirectory()) {
+            FileUtils.deleteDirectory(expansion.getLocalFile());
+        } else {
+            FileUtils.delete(expansion.getLocalFile());
+        }
         expansion.setLocalFile(null);
     }
     
@@ -2399,4 +2403,12 @@ public class Oolite implements PropertyChangeListener {
                         .replace("]", "%5D");
     }
     
+    /**
+     * Returns the currently active Installation.
+     * 
+     * @return the installation
+     */
+    public Installation getActiveInstallation() {
+        return configuration.getActiveInstallation();
+    }
 }

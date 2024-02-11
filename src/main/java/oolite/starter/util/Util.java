@@ -124,4 +124,23 @@ public class Util {
         
         return new ByteArrayInputStream(bos.toByteArray());
     }
+    
+    /**
+     * Takes a size in Bytes and transforms it into a human-readable String.
+     * That means if the number is too high it will be converted to kilobytes,
+     * or Megabytes respectively.
+     * 
+     * @param size the amount of bytes
+     * @return the human readable String
+     */
+    public static String humanreadableSize(long size) {
+        if (size >= 1024*1024) {
+            return String.format("%.2f MB", ((float)size)/(1024f*1024f));
+        }
+        if (size >= 1024) {
+            return String.format("%.2f kB", ((float)size)/1024f);
+        }
+        return String.valueOf(size);
+    }
+    
 }

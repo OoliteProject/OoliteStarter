@@ -195,8 +195,8 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
         jPanel2.add(btNew, gridBagConstraints);
 
         btResume.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/resume_FILL0_wght400_GRAD0_opsz48.png"))); // NOI18N
+        btResume.setText("Resume");
         btResume.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        btResume.setLabel("Resume");
         btResume.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btResumeActionPerformed(evt);

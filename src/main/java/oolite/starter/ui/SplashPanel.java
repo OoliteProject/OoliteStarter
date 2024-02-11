@@ -33,12 +33,26 @@ public class SplashPanel extends JPanel implements MouseListener, MouseMotionLis
     private Point dragOriginMouse;
     private Point dragOriginScreen;
     
+    private String motd;
+
     /**
      * Creates a new instance.
      * 
      * @param background the background image
      */
     public SplashPanel(ImageIcon background) {
+        this(background, null);
+    }
+    
+    /**
+     * Creates a new instance.
+     * 
+     * @param background the background image
+     * @param motd Mesage Of The Day
+     */
+    public SplashPanel(ImageIcon background, String motd) {
+        log.debug("SplashPanel(..., {})", motd);
+        
         setLayout(new BorderLayout());
         add(new JLabel(background));
 
@@ -48,8 +62,10 @@ public class SplashPanel extends JPanel implements MouseListener, MouseMotionLis
         addMouseListener(this);
         addMouseMotionListener(this);
         setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
+        
+        this.motd = motd;
     }
-
+    
     @Override
     public void paint(Graphics g) {
         super.paint(g); 
@@ -61,6 +77,14 @@ public class SplashPanel extends JPanel implements MouseListener, MouseMotionLis
         g2d.drawString(text, 31, 51);
         g2d.setColor(new Color(46, 64, 82));
         g2d.drawString(text, 30, 50);
+        
+        if (motd != null) {
+            g2d.setFont(g.getFont().deriveFont(Font.BOLD, 14.0f));
+            g2d.setColor(Color.white);
+            g2d.drawString(motd, 31, 101);
+            g2d.setColor(new Color(86, 84, 82));
+            g2d.drawString(motd, 30, 100);
+        }
     }
 
     @Override

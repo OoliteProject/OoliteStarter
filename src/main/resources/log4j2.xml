@@ -25,11 +25,18 @@
     </Logger>
     <Logger level="info"  name="oolite.starter.Configuration"/>
     <Logger level="debug" name="oolite.starter.ExpansionManager"/>
+    <Logger level="info" name="oolite.starter.generic.SortedListModel"/>
     <Logger level="info"  name="oolite.starter.GithubVersionChecker"/>
+    <Logger level="info"  name="oolite.starter.Oolite"/>
+    <Logger level="info"  name="oolite.starter.ui.MrGimlet"/>
+    <Logger level="info"  name="oolite.starter.ui2.ExpansionCellRenderer"/>
+    <Logger level="info"  name="oolite.starter.ui2.SaveGameCellRenderer"/>
+    <Logger level="info"  name="oolite.starter.util.HttpUtil"/>
+    <Logger level="warn"  name="oolite.starter.Oolite"/>
+    <!--
     <Logger level="info"  name="oolite.starter.MainFrame"/>
     <Logger level="info"  name="oolite.starter.model.Command"/>
     <Logger level="warn"  name="oolite.starter.model.ProcessData"/>
-    <Logger level="info"  name="oolite.starter.Oolite"/>
     <Logger level="info"  name="oolite.starter.ui.AnnotationRenderer"/>
     <Logger level="info"  name="oolite.starter.ui.DeferredDocumentChangeListener"/>
     <Logger level="warn"  name="oolite.starter.ui.ExpansionReferenceCellRenderer"/>
@@ -37,13 +44,15 @@
     <Logger level="warn"  name="oolite.starter.ui.InstallationForm"/>
     <Logger level="info"  name="oolite.starter.ui.InstallationsPanel"/>
     <Logger level="warn"  name="oolite.starter.ui.InstallationTableModel"/>
-    <Logger level="info"  name="oolite.starter.ui.MrGimlet"/>
     <Logger level="info"  name="oolite.starter.ui.OoliteFileChooserAccessory"/>
     <Logger level="warn"  name="oolite.starter.ui.ScanOolitesSwingWorker"/>
-    <Logger level="info"  name="oolite.starter.ui.SplashPanel"/>
+    -->
+    <Logger level="trace"  name="oolite.starter.ui.SplashPanel"/>
+    <!--
     <Logger level="info"  name="oolite.starter.ui.StartGamePanel"/>
     <Logger level="info"  name="oolite.starter.ui.Tag"/>
     <Logger level="warn"  name="oolite.starter.ui.Util"/>
+    -->
     <Logger level="info" name="oolite.starter.ui.Util.BalloonHandler"/>
     <Logger level="warn"  name="oolite.starter.util.PlistUtil"/>
     <Logger level="info"  name="oolite.starter.util.Util"/>

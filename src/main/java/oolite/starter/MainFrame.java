@@ -3,6 +3,7 @@
 package oolite.starter;
 
 import java.awt.Color;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.SplashScreen;
@@ -17,15 +18,18 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
 import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.border.LineBorder;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
 import oolite.starter.model.Installation;
-import oolite.starter.ui.AboutPanel;
 import oolite.starter.ui.ExpansionsPanel;
 import oolite.starter.ui.InstallationsPanel;
 import oolite.starter.ui.MrGimlet;
 import oolite.starter.ui.SplashPanel;
 import oolite.starter.ui.StartGamePanel;
+import oolite.starter.ui2.ExpansionPanel;
+import oolite.starter.ui2.ExpansionsPanel2;
+import oolite.starter.ui2.StartGamePanel2;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -48,6 +52,14 @@ public class MainFrame extends javax.swing.JFrame {
     
     private transient Oolite oolite;
     private transient Configuration configuration;
+
+    private StartGamePanel sgp;
+    private StartGamePanel2 sgp2;
+    private ExpansionsPanel esp;
+    private ExpansionsPanel2 esp2;
+    private oolite.starter.ui.ExpansionPanel ep;
+    private ExpansionPanel ep2;
+    private InstallationsPanel ip;
 
     /**
      * Creates new form MainFrame.
@@ -84,31 +96,66 @@ public class MainFrame extends javax.swing.JFrame {
         });
         setInstallationTitle(configuration.getActiveInstallation());
         
-        StartGamePanel sgp = new StartGamePanel();
+        sgp = new StartGamePanel();
         sgp.setOolite(oolite);
-        jTabbedPane1.add(sgp);
-
+        sgp.setBorder(new LineBorder(Color.red));
+        
+        sgp2 = new StartGamePanel2();
+        sgp2.setOolite(oolite);
+        sgp2.setBorder(new LineBorder(Color.red));
+//        jTabbedPane1.add(sgp);
+//
         ExpansionManager em = ExpansionManager.getInstance();
         em.start();
-        
-        ExpansionsPanel ep = new ExpansionsPanel();
-        ep.setOolite(oolite);
-        jTabbedPane1.add(ep);
-        em.addExpansionManagerListener(ep);
 
-        InstallationsPanel ip = new InstallationsPanel();
+        esp = new ExpansionsPanel();
+        esp.setOolite(oolite);
+        esp.setBorder(new LineBorder(Color.orange));
+        em.addExpansionManagerListener(esp);
+
+        esp2 = new ExpansionsPanel2();
+        esp2.setOolite(oolite);
+        esp2.setBorder(new LineBorder(Color.orange));
+//        jTabbedPane1.add(ep);
+
+        ep = new oolite.starter.ui.ExpansionPanel();
+        ep.setBorder(new LineBorder(Color.green));
+
+        ep2 = new ExpansionPanel();
+        esp2.addSelectionListener(ep2);
+        ep2.setBorder(new LineBorder(Color.green));
+
+        ip = new InstallationsPanel();
         ip.setConfiguration(configuration);
-        jTabbedPane1.add(ip);
+        ip.setBorder(new LineBorder(Color.blue));
+//        jTabbedPane1.add(ip);
 
-        AboutPanel ap = new AboutPanel("text/html", getClass().getResource("/about.html"));
-        jTabbedPane1.add("About", ap);
-        
+//        AboutPanel ap = new AboutPanel("text/html", getClass().getResource("/about.html"));
+//        jTabbedPane1.add("About", ap);
+
+        getContentPane().removeAll();
+        getContentPane().setLayout(new FlowLayout());
+        getContentPane().add(sgp);
+        getContentPane().add(sgp2);
+        getContentPane().add(esp);
+        getContentPane().add(esp2);
+        getContentPane().add(ep);
+        getContentPane().add(ep2);
+        getContentPane().add(ip);
+        sgp.setVisible(false);
+        sgp2.setVisible(false);
+        esp.setVisible(false);
+        esp2.setVisible(false);
+        ep.setVisible(false);
+        ep2.setVisible(false);
+        ip.setVisible(false);
+
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent event) {
                 if (configuration.isDirty()) {
-                    jTabbedPane1.setSelectedIndex(2);
-                    
+//                    jTabbedPane1.setSelectedIndex(2);
+//                    
                     // show dialog
                     int choice = MrGimlet.showConfirmation(MainFrame.this, "<html>Your configuration changed since it was last saved.<p>Would you like to save now?</html>");
                     switch (choice) {
@@ -123,8 +170,8 @@ public class MainFrame extends javax.swing.JFrame {
                             break;
                         case JOptionPane.CANCEL_OPTION:
                         default:
-                            // we have DefaultCloseOperation set to DO_NOTHING.
-                            // doing nothing will keep the window
+//                            // we have DefaultCloseOperation set to DO_NOTHING.
+//                            // doing nothing will keep the window
                     }
                 } else {
                     // we have DefaultCloseOperation set to DO_NOTHING.
@@ -168,6 +215,15 @@ public class MainFrame extends javax.swing.JFrame {
     private void initComponents() {
 
         jTabbedPane1 = new javax.swing.JTabbedPane();
+        jMenuBar1 = new javax.swing.JMenuBar();
+        jMenu1 = new javax.swing.JMenu();
+        miLaunchGamePanel = new javax.swing.JCheckBoxMenuItem();
+        miLaunchGamePanel2 = new javax.swing.JCheckBoxMenuItem();
+        miExpansionsPanel = new javax.swing.JCheckBoxMenuItem();
+        miExpansionsPanel2 = new javax.swing.JCheckBoxMenuItem();
+        miExpansionDetails = new javax.swing.JCheckBoxMenuItem();
+        miExpansionDetails2 = new javax.swing.JCheckBoxMenuItem();
+        miInstallationsPanel = new javax.swing.JCheckBoxMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setMinimumSize(new java.awt.Dimension(800, 600));
@@ -177,6 +233,70 @@ public class MainFrame extends javax.swing.JFrame {
             }
         });
         getContentPane().add(jTabbedPane1, java.awt.BorderLayout.CENTER);
+
+        jMenu1.setText("Menu");
+
+        miLaunchGamePanel.setText("Launch Game Panel");
+        miLaunchGamePanel.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miLaunchGamePanelActionPerformed(evt);
+            }
+        });
+        jMenu1.add(miLaunchGamePanel);
+
+        miLaunchGamePanel2.setText("Launch Game Panel 2");
+        miLaunchGamePanel2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miLaunchGamePanel2ActionPerformed(evt);
+            }
+        });
+        jMenu1.add(miLaunchGamePanel2);
+
+        miExpansionsPanel.setText("Expansions Panel");
+        miExpansionsPanel.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miExpansionsPanelActionPerformed(evt);
+            }
+        });
+        jMenu1.add(miExpansionsPanel);
+
+        miExpansionsPanel2.setText("Expansions Panel 2");
+        miExpansionsPanel2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miExpansionsPanel2ActionPerformed(evt);
+            }
+        });
+        jMenu1.add(miExpansionsPanel2);
+
+        miExpansionDetails.setSelected(true);
+        miExpansionDetails.setText("Expansion Details");
+        miExpansionDetails.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miExpansionDetailsActionPerformed(evt);
+            }
+        });
+        jMenu1.add(miExpansionDetails);
+
+        miExpansionDetails2.setText("Expansion Details 2");
+        miExpansionDetails2.setActionCommand("Expansion Details 2");
+        miExpansionDetails2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miExpansionDetails2ActionPerformed(evt);
+            }
+        });
+        jMenu1.add(miExpansionDetails2);
+
+        miInstallationsPanel.setText("Installations Panel");
+        miInstallationsPanel.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miInstallationsPanelActionPerformed(evt);
+            }
+        });
+        jMenu1.add(miInstallationsPanel);
+
+        jMenuBar1.add(jMenu1);
+
+        setJMenuBar(jMenuBar1);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -194,6 +314,41 @@ public class MainFrame extends javax.swing.JFrame {
             }
         }
     }//GEN-LAST:event_formWindowClosing
+
+    private void miLaunchGamePanel2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miLaunchGamePanel2ActionPerformed
+        log.debug("miLaunchGamePanel2ActionPerformed({})", evt);
+        sgp2.setVisible(miLaunchGamePanel2.isSelected());
+    }//GEN-LAST:event_miLaunchGamePanel2ActionPerformed
+
+    private void miExpansionsPanel2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miExpansionsPanel2ActionPerformed
+        log.debug("miExpansionsPanel2ActionPerformed({})", evt);
+        esp2.setVisible(miExpansionsPanel2.isSelected());
+    }//GEN-LAST:event_miExpansionsPanel2ActionPerformed
+
+    private void miExpansionDetails2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miExpansionDetails2ActionPerformed
+        log.debug("miExpansionDetails2ActionPerformed({})", evt);
+        ep2.setVisible(miExpansionDetails2.isSelected());
+    }//GEN-LAST:event_miExpansionDetails2ActionPerformed
+
+    private void miInstallationsPanelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miInstallationsPanelActionPerformed
+        log.debug("miExpansionDetailsActionPerformed({})", evt);
+        ip.setVisible(miInstallationsPanel.isSelected());
+    }//GEN-LAST:event_miInstallationsPanelActionPerformed
+
+    private void miLaunchGamePanelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miLaunchGamePanelActionPerformed
+        log.debug("miLaunchGamePanelActionPerformed({})", evt);
+        sgp.setVisible(miLaunchGamePanel.isSelected());
+    }//GEN-LAST:event_miLaunchGamePanelActionPerformed
+
+    private void miExpansionsPanelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miExpansionsPanelActionPerformed
+        log.debug("miExpansionsPanelActionPerformed({})", evt);
+        esp.setVisible(miExpansionsPanel.isSelected());
+    }//GEN-LAST:event_miExpansionsPanelActionPerformed
+
+    private void miExpansionDetailsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miExpansionDetailsActionPerformed
+        log.debug("miExpansionDetailsActionPerformed({})", evt);
+        ep.setVisible(miExpansionDetails.isSelected());
+    }//GEN-LAST:event_miExpansionDetailsActionPerformed
 
     private static void customizeSplashScreen() {
         SplashScreen ss = SplashScreen.getSplashScreen();
@@ -214,7 +369,11 @@ public class MainFrame extends javax.swing.JFrame {
         newSplash = new JFrame();
         newSplash.setUndecorated(true);
         newSplash.setIconImage(new ImageIcon(MainFrame.class.getResource("/images/Mr_Gimlet_transparent.png")).getImage());
-        newSplash.add(new SplashPanel(new ImageIcon(MainFrame.class.getResource("/images/OoliteStarter_Splashscreen_640x360.png"))));
+        //newSplash.add(new SplashPanel(new ImageIcon(MainFrame.class.getResource("/images/OoliteStarter_Splashscreen_640x360.png"))));
+        ImageIcon screen = new ImageIcon(MainFrame.class.getResource("/images/Digebiti.png"));
+        String motd = "This is an experimental prerelease. Use the menu to turn on UI elements.";
+        SplashPanel sp = new SplashPanel(screen, motd);
+        newSplash.add(sp);
         newSplash.pack();
         newSplash.setLocationRelativeTo(null);
         newSplash.setVisible(true);
@@ -375,7 +534,7 @@ public class MainFrame extends javax.swing.JFrame {
      */
     public static void main(String[] args) {
         if (log.isInfoEnabled()) {
-            log.info("Args: {}", args);
+            log.info("Args: {}", ((Object)args));
             log.info("JVM: {} {}", System.getProperty("java.runtime.name"), Runtime.version());
             log.info("OS: {} {} {}", System.getProperty("os.name"), System.getProperty("os.arch"), System.getProperty("os.version"));
         }
@@ -409,6 +568,15 @@ public class MainFrame extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JMenu jMenu1;
+    private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JTabbedPane jTabbedPane1;
+    private javax.swing.JCheckBoxMenuItem miExpansionDetails;
+    private javax.swing.JCheckBoxMenuItem miExpansionDetails2;
+    private javax.swing.JCheckBoxMenuItem miExpansionsPanel;
+    private javax.swing.JCheckBoxMenuItem miExpansionsPanel2;
+    private javax.swing.JCheckBoxMenuItem miInstallationsPanel;
+    private javax.swing.JCheckBoxMenuItem miLaunchGamePanel;
+    private javax.swing.JCheckBoxMenuItem miLaunchGamePanel2;
     // End of variables declaration//GEN-END:variables
 }
