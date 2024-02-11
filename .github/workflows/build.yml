@@ -444,7 +444,7 @@ jobs:
 
     - name: Remove old prereleases
       if: github.ref != 'refs/heads/master'
-      uses: s00d/delete-older-releases@0.2.1
+      uses: dev-drprasad/delete-older-releases@latest
       with:
         #repo: <owner>/<repoName> # defaults to current repo
         keep_latest: 4
@@ -472,7 +472,7 @@ jobs:
       
     - name: Remove old releases
       if: github.ref == 'refs/heads/master'
-      uses: s00d/delete-older-releases@0.2.1
+      uses: dev-drprasad/delete-older-releases@latest
       with:
         #repo: <owner>/<repoName> # defaults to current repo
         keep_latest: 2
