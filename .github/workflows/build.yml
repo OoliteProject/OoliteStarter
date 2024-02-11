@@ -48,7 +48,7 @@ jobs:
         echo "GITVERSION_MINOR=${GitVersion_Minor}" >> "$GITHUB_OUTPUT"
         echo "GITVERSION_PATCH=${GitVersion_Patch}" >> "$GITHUB_OUTPUT"
         echo "DEBIAN_PKGVERSION=${GitVersion_Major}.${GitVersion_Minor}-${GitVersion_Patch}" >> "$GITHUB_OUTPUT"
-        if [ "${GitVersion_MAJOR}" == "0" ]
+        if [ "${GitVersion_Major}" == "0" ]
         then
           echo "MACOS_MAJORMINORPATCH=1.${GitVersion_Minor}.${GitVersion_Patch}" >> "$GITHUB_OUTPUT"
         else
@@ -83,7 +83,7 @@ jobs:
 #        pwd
 #        find
 
-    - uses: actions/upload-artifact@v3
+    - uses: actions/upload-artifact@v4
       with:
         name: OoliteStarter-generic
         path: target/OoliteStarter-${{ needs.semver.outputs.GITVERSION_SEMVER }}-generic.*
@@ -93,7 +93,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Set up JDK 17
-      uses: actions/setup-java@v3
+      uses: actions/setup-java@v4
       with:
         java-version: '17'
         distribution: 'adopt'
@@ -105,7 +105,7 @@ jobs:
         path: oolitestarter
 
     - name: Download artifacts
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         name: OoliteStarter-generic
         path: artifacts
@@ -182,7 +182,7 @@ jobs:
         pwd
         find . -not -path "./oolitestarter/.git/*"
 
-    - uses: actions/upload-artifact@v3
+    - uses: actions/upload-artifact@v4
       with:
         name: OoliteStarter-Ubuntu
         path: ./target/oolitestarter*.deb
@@ -192,7 +192,7 @@ jobs:
     runs-on: windows-latest
     steps:
     - name: Set up JDK 17
-      uses: actions/setup-java@v3
+      uses: actions/setup-java@v4
       with:
         java-version: '17'
         distribution: 'adopt'
@@ -204,7 +204,7 @@ jobs:
         path: oolitestarter
 
     - name: Download artifacts
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         name: OoliteStarter-generic
         path: artifacts
@@ -248,7 +248,7 @@ jobs:
       run: |
         get-childitem . -Recurse | where {!$_.PSIsContainer} | select-object FullName
 
-    - uses: actions/upload-artifact@v3
+    - uses: actions/upload-artifact@v4
       with:
         name: OoliteStarter-Windows
         path: ./target/*.exe
@@ -259,7 +259,7 @@ jobs:
 
     steps:
     - name: Set up JDK 17
-      uses: actions/setup-java@v3
+      uses: actions/setup-java@v4
       with:
         java-version: '17'
         distribution: 'adopt'
@@ -271,7 +271,7 @@ jobs:
         path: oolitestarter
 
     - name: Download artifacts
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         name: OoliteStarter-generic
         path: artifacts
@@ -362,7 +362,7 @@ jobs:
         pwd
         find . -not -path "./oolitestarter/.git/*"
 
-    - uses: actions/upload-artifact@v3
+    - uses: actions/upload-artifact@v4
       with:
         name: OoliteStarter-MacOS
         path: target/OoliteStarter*
@@ -379,7 +379,7 @@ jobs:
 #        path: oolitestarter
 #
 #    - name: Download artifacts
-#      uses: actions/download-artifact@v3
+#      uses: actions/download-artifact@v4
 #      with:
 #        name: OoliteStarter-Ubuntu
 #        path: oolitestarter
@@ -431,7 +431,7 @@ jobs:
 
     steps:
     - name: Download artifacts
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         path: artifacts
 
@@ -506,7 +506,7 @@ jobs:
 #
 #    steps:
 #    - name: Download artifacts
-#      uses: actions/download-artifact@v3
+#      uses: actions/download-artifact@v4
 #      with:
 #        name: OoliteStarter-MacOS
 #        path: artifacts
