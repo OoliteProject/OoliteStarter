@@ -40,22 +40,20 @@ jobs:
     - id: output1
       run: |
         set -x
-        set | sort
-        echo "GITVERSION_SEMVER=${GITVERSION_SEMVER}" >> "$GITHUB_OUTPUT"
-        echo "GITVERSION_ASSEMBLYSEMVER=${GITVERSION_ASSEMBLYSEMVER}" >> "$GITHUB_OUTPUT"
-        echo "GITVERSION_MAJORMINORPATCH=${GITVERSION_MAJORMINORPATCH}" >> "$GITHUB_OUTPUT"
-        echo "GITVERSION_MAJOR=${GITVERSION_MAJOR}" >> "$GITHUB_OUTPUT"
-        echo "GITVERSION_MINOR=${GITVERSION_MINOR}" >> "$GITHUB_OUTPUT"
-        echo "GITVERSION_PATCH=${GITVERSION_PATCH}" >> "$GITHUB_OUTPUT"
-        echo "DEBIAN_PKGVERSION=${GITVERSION_MAJOR}.${GITVERSION_MINOR}-${GITVERSION_PATCH}" >> "$GITHUB_OUTPUT"
-        if [ "${GITVERSION_MAJOR}" == "0" ]
+        set | grep GitVersion_ | sort
+        echo "GITVERSION_SEMVER=${GitVersion_SEMVER}" >> "$GITHUB_OUTPUT"
+        echo "GITVERSION_ASSEMBLYSEMVER=${GitVersion_ASSEMBLYSEMVER}" >> "$GITHUB_OUTPUT"
+        echo "GITVERSION_MAJORMINORPATCH=${GitVersion_MAJORMINORPATCH}" >> "$GITHUB_OUTPUT"
+        echo "GITVERSION_MAJOR=${GitVersion_MAJOR}" >> "$GITHUB_OUTPUT"
+        echo "GITVERSION_MINOR=${GitVersion_MINOR}" >> "$GITHUB_OUTPUT"
+        echo "GITVERSION_PATCH=${GitVersion_PATCH}" >> "$GITHUB_OUTPUT"
+        echo "DEBIAN_PKGVERSION=${GitVersion_MAJOR}.${GitVersion_MINOR}-${GitVersion_PATCH}" >> "$GITHUB_OUTPUT"
+        if [ "${GitVersion_MAJOR}" == "0" ]
         then
-          echo "MACOS_MAJORMINORPATCH=1.${GITVERSION_MINOR}.${GITVERSION_PATCH}" >> "$GITHUB_OUTPUT"
+          echo "MACOS_MAJORMINORPATCH=1.${GitVersion_MINOR}.${GitVersion_PATCH}" >> "$GITHUB_OUTPUT"
         else
-          echo "MACOS_MAJORMINORPATCH=${GITVERSION_MAJORMINORPATCH}" >> "$GITHUB_OUTPUT"
+          echo "MACOS_MAJORMINORPATCH=${GitVersion_MAJORMINORPATCH}" >> "$GITHUB_OUTPUT"
         fi
-        echo "DEBIAN_PKGVERSION=${GITVERSION_MAJOR}.${GITVERSION_MINOR}-${GITVERSION_PATCH}" >> "$GITHUB_OUTPUT"
-        
 
   build:
     needs: [semver]
