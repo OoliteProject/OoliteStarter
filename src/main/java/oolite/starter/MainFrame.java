@@ -26,6 +26,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
 import oolite.starter.generic.ScrollablePanel;
 import oolite.starter.model.Installation;
+import oolite.starter.model.ProcessData;
 import oolite.starter.ui.AboutPanel;
 import oolite.starter.ui.ExpansionsPanel;
 import oolite.starter.ui.InstallationsPanel;
@@ -56,6 +57,7 @@ public class MainFrame extends javax.swing.JFrame {
     private static transient JFrame newSplash;
     
     private transient Oolite oolite;
+    private transient Oolite2 oolite2;
     private transient Configuration configuration;
 
     private StartGamePanel sgp;
@@ -65,7 +67,7 @@ public class MainFrame extends javax.swing.JFrame {
     private oolite.starter.ui.ExpansionPanel ep;
     private ExpansionPanel ep2;
     private InstallationsPanel ip;
-
+    
     /**
      * Creates new form MainFrame.
      */
@@ -88,6 +90,35 @@ public class MainFrame extends javax.swing.JFrame {
 
         oolite = new Oolite();
         oolite.setConfiguration(configuration);
+        
+        oolite2 = new Oolite2();
+        oolite2.setConfiguration(configuration);
+        oolite2.addOoliteListener(new Oolite2.OoliteListener() {
+            private static Logger log = LogManager.getLogger();
+            
+            @Override
+            public void statusChanged(Oolite2.Status status) {
+                log.warn("statusChanged({})", status);
+            }
+
+            @Override
+            public void launched(ProcessData pd) {
+                throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+            }
+
+            @Override
+            public void terminated() {
+                throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+            }
+
+            @Override
+            public void activatedInstallation(Installation installation) {
+                throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+            }
+        });
+        
+        oolite2.initialize();
+        oolite2.installWatchers();
 
         configuration.addPropertyChangeListener(pce -> {
             if (pce.getSource() instanceof Configuration) {
@@ -103,7 +134,6 @@ public class MainFrame extends javax.swing.JFrame {
         
         sgp = new StartGamePanel();
         sgp.setOolite(oolite);
-        sgp.setBorder(new LineBorder(Color.red));
         
         sgp2 = new StartGamePanel2();
         sgp2.setOolite(oolite);
@@ -125,15 +155,12 @@ public class MainFrame extends javax.swing.JFrame {
 
         esp2 = new ExpansionsPanel2();
         esp2.setOolite(oolite);
-        esp2.setBorder(new LineBorder(Color.orange));
         expansions.add(esp2, BorderLayout.CENTER);
 
         ep = new oolite.starter.ui.ExpansionPanel();
-        ep.setBorder(new LineBorder(Color.green));
 
         ep2 = new ExpansionPanel();
         esp2.addSelectionListener(ep2);
-        ep2.setBorder(new LineBorder(Color.green));
         expansions.add(ep2, BorderLayout.SOUTH);
 
         ip = new InstallationsPanel();

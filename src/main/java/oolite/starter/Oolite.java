@@ -160,7 +160,7 @@ public class Oolite implements PropertyChangeListener {
         ModuleDescriptor.Version maxVersion = parseVersion(reference.getMaximumVersion());
         
         log.trace("minVersion {}", minVersion);
-        log.warn("maxVersion {}", maxVersion);
+        log.trace("maxVersion {}", maxVersion);
         
         for (Expansion expansion: expansions) {
             log.trace("checking expansion {}", expansion);

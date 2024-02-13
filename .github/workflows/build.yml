@@ -447,9 +447,9 @@ jobs:
       uses: dev-drprasad/delete-older-releases@v0.3.2
       with:
         #repo: <owner>/<repoName> # defaults to current repo
-        keep_latest: 4
-        #delete_tag_pattern: v\d+\.\d+\.\d+-.*
-        delete_type: 'prerelease'
+        keep_latest: 6
+        delete_tag_pattern: v\d+\.\d+\.\d+-.*
+        delete_prerelease_only: 'true'
         #delete_branch: '${{ github.ref_name }}'
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -475,9 +475,9 @@ jobs:
       uses: dev-drprasad/delete-older-releases@v0.3.2
       with:
         #repo: <owner>/<repoName> # defaults to current repo
-        keep_latest: 2
-        #delete_tag_pattern: v\d+\.\d+\.\d+
-        delete_type: 'release'
+        keep_latest: 4
+        delete_tag_pattern: v\d+\.\d+\.\d+
+        delete_prerelease_only: 'false'
         #delete_branch: 'main'
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

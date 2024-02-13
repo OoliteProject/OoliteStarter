@@ -10,10 +10,12 @@ import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardWatchEventKinds;
+import java.nio.file.WatchEvent;
 import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.SwingUtilities;
 import oolite.starter.model.Installation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -36,11 +38,88 @@ public class Oolite2 {
         initializing,
         initialized
     }
+    
+    public static interface OoliteListener extends Oolite.OoliteListener {
+        
+        /**
+         * Invoked whenever the Oolite2 status changes.
+         * 
+         * @param status the new status
+         */
+        public void statusChanged(Status status);
+    }
+    
+    private class Watcher implements Runnable {
+        private static final Logger log = LogManager.getLogger();
+        
+        private boolean done = false;
+        private List<Path> paths;
+        
+        public Watcher(List<Path> paths) {
+            log.debug("Watcher({})", paths);
+            
+            this.paths = paths;
+        }
 
-    private List<Oolite.OoliteListener> listeners;
+        @Override
+        public void run() {
+            log.debug("run()");
+            try {
+                WatchService watchService = FileSystems.getDefault().newWatchService();
+                for (Path path: paths) {
+                    if (path.toFile().exists()) {
+                        WatchKey key = path.register(watchService, StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_DELETE, StandardWatchEventKinds.ENTRY_MODIFY);
+                        log.debug("key {}", key);
+                    } else {
+                        log.info("skip path {}", path);
+                    }
+                }
+
+
+                log.debug("start watching");
+                while (!done) {
+                    WatchKey key = null;
+                    try {
+                        key = watchService.take();
+                    } catch (InterruptedException ex) {
+                        log.warn("interrupted", ex);
+                        done = true;
+                        return;
+                    }
+
+                    for (WatchEvent<?> event: key.pollEvents()) {
+                        WatchEvent.Kind<?> kind = event.kind();
+
+                        // This key is registered only
+                        // for ENTRY_CREATE events,
+                        // but an OVERFLOW event can
+                        // occur regardless if events
+                        // are lost or discarded.
+                        if (kind == StandardWatchEventKinds.OVERFLOW) {
+                            continue;
+                        }
+                        
+                        log.info(kind.name());
+                    }
+                    key.reset();
+                }
+            } catch (IOException e) {
+                log.error("Error watching", e);
+            }
+            log.debug("done watching.");
+        }
+        
+        public void stop() {
+            log.debug("stop()");
+            done = true;
+        }
+    }
+
+    private List<OoliteListener> listeners = new ArrayList<>();
     private Configuration configuration;
     private Status status = Status.uninitialized;
     private PropertyChangeListener configurationListener;
+    private Watcher watcher;
     
     /**
      * Creates a new Oolite2 driver.
@@ -76,46 +155,50 @@ public class Oolite2 {
                         Installation i = (Installation)pce.getNewValue();
                         status = Status.uninitialized;
                         fireActivatedInstallation(i);
+                        fireStatusChanged();
                     }
                 }
             };
             this.configuration.addPropertyChangeListener(this.configurationListener);
         }
         status = Status.uninitialized;
+        fireStatusChanged();
     }
 
-    void fireActivatedInstallation(Installation installation) {
+    protected void fireActivatedInstallation(Installation installation) {
         for (Oolite.OoliteListener l: listeners) {
             l.activatedInstallation(installation);
+        }
+    }
+    
+    protected void fireStatusChanged() {
+        for (OoliteListener l: listeners) {
+            l.statusChanged(status);
         }
     }
     
     /**
      * Installs filesystem watchers for the currently active installation.
      */
-    void installWatchers() throws IOException {
+    public void installWatchers() throws IOException {
+        log.debug("installWatchers()");
+        
         Installation i = configuration.getActiveInstallation();
         
-        List<String> directories = new ArrayList<String>();
-        directories.add(i.getAddonDir());
-        directories.add(i.getDeactivatedAddonDir());
-        directories.add(i.getManagedAddonDir());
-        directories.add(i.getManagedDeactivatedAddonDir());
-        directories.add(i.getSavegameDir());
-        
-        WatchService watchService = FileSystems.getDefault().newWatchService();
-        for (String directory: directories) {
-            Path path = Paths.get(directory);
+        List<Path> directories = new ArrayList<>();
+        directories.add(Paths.get(i.getAddonDir()));
+        directories.add(Paths.get(i.getDeactivatedAddonDir()));
+        directories.add(Paths.get(i.getManagedAddonDir()));
+        directories.add(Paths.get(i.getManagedDeactivatedAddonDir()));
+        directories.add(Paths.get(i.getSavegameDir()));
 
-            try {
-                WatchKey key = path.register(watchService, StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_DELETE, StandardWatchEventKinds.ENTRY_MODIFY);
-                log.debug("key {}", key);
-            } catch (IOException e) {
-                log.error("Cannot watch {}", directory);
-            }
-            
-            // start a thread to query the watchservice and fire events
+        if (watcher != null) {
+            watcher.stop();
         }
+        
+        watcher = new Watcher(directories);
+        new Thread(watcher).start();
+        
     }
     
     /**
@@ -133,6 +216,9 @@ public class Oolite2 {
             @Override
             public void run() {
                 status = Status.initializing;
+                SwingUtilities.invokeLater(() -> {
+                    fireStatusChanged();
+                });
                 
                 // remove filesyste watchers
                 // scan directories
@@ -147,7 +233,33 @@ public class Oolite2 {
                 // fire update events to clients
                 
                 status = Status.initialized;
+                SwingUtilities.invokeLater(() -> {
+                    fireStatusChanged();
+                });
             }
         }).start();
+    }
+
+    @Override
+    public String toString() {
+        return "Oolite2{" + "status=" + status + '}';
+    }
+    
+    /**
+     * Registers a listener.
+     * 
+     * @param listener the listener to register
+     */
+    public void addOoliteListener(OoliteListener listener) {
+        listeners.add(listener);
+    }
+    
+    /**
+     * Unregisters a listener.
+     * 
+     * @param listener the listener to unregister
+     */
+    public void removeOoliteListener(OoliteListener listener) {
+        listeners.remove(listener);
     }
 }
