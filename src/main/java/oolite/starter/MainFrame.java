@@ -2,6 +2,7 @@
  */
 package oolite.starter;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -16,12 +17,16 @@ import java.time.Instant;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.SwingWorker;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.LineBorder;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
+import oolite.starter.generic.ScrollablePanel;
 import oolite.starter.model.Installation;
+import oolite.starter.ui.AboutPanel;
 import oolite.starter.ui.ExpansionsPanel;
 import oolite.starter.ui.InstallationsPanel;
 import oolite.starter.ui.MrGimlet;
@@ -103,8 +108,8 @@ public class MainFrame extends javax.swing.JFrame {
         sgp2 = new StartGamePanel2();
         sgp2.setOolite(oolite);
         sgp2.setBorder(new LineBorder(Color.red));
-//        jTabbedPane1.add(sgp);
-//
+        jTabbedPane1.add(sgp);
+
         ExpansionManager em = ExpansionManager.getInstance();
         em.start();
 
@@ -112,11 +117,16 @@ public class MainFrame extends javax.swing.JFrame {
         esp.setOolite(oolite);
         esp.setBorder(new LineBorder(Color.orange));
         em.addExpansionManagerListener(esp);
+//        jTabbedPane1.add(esp);
+
+        JPanel expansions = new JPanel();
+        expansions.setLayout(new BorderLayout());
+        jTabbedPane1.add(expansions, "Expansions");
 
         esp2 = new ExpansionsPanel2();
         esp2.setOolite(oolite);
         esp2.setBorder(new LineBorder(Color.orange));
-//        jTabbedPane1.add(ep);
+        expansions.add(esp2, BorderLayout.CENTER);
 
         ep = new oolite.starter.ui.ExpansionPanel();
         ep.setBorder(new LineBorder(Color.green));
@@ -124,31 +134,38 @@ public class MainFrame extends javax.swing.JFrame {
         ep2 = new ExpansionPanel();
         esp2.addSelectionListener(ep2);
         ep2.setBorder(new LineBorder(Color.green));
+        expansions.add(ep2, BorderLayout.SOUTH);
 
         ip = new InstallationsPanel();
         ip.setConfiguration(configuration);
         ip.setBorder(new LineBorder(Color.blue));
-//        jTabbedPane1.add(ip);
+        jTabbedPane1.add(ip);
 
-//        AboutPanel ap = new AboutPanel("text/html", getClass().getResource("/about.html"));
-//        jTabbedPane1.add("About", ap);
+        AboutPanel ap = new AboutPanel("text/html", getClass().getResource("/about.html"));
+        jTabbedPane1.add("About", ap);
 
-        getContentPane().removeAll();
-        getContentPane().setLayout(new FlowLayout());
-        getContentPane().add(sgp);
-        getContentPane().add(sgp2);
-        getContentPane().add(esp);
-        getContentPane().add(esp2);
-        getContentPane().add(ep);
-        getContentPane().add(ep2);
-        getContentPane().add(ip);
-        sgp.setVisible(false);
+        //getContentPane().removeAll();
+        //getContentPane().setLayout(new BorderLayout());
+        ScrollablePanel content = new ScrollablePanel();
+        content.setLayout(new FlowLayout(FlowLayout.CENTER, 20, 20));
+        content.setScrollableWidth(ScrollablePanel.ScrollableSizeHint.FIT);
+        //content.add(sgp);
+        content.add(sgp2);
+        content.add(esp);
+        //content.add(esp2);
+        content.add(ep);
+        //content.add(ep2);
+        //content.add(ip);
+        JScrollPane jsp = new JScrollPane(content, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        jsp.setName("Experimental");
+        jTabbedPane1.add(jsp);
+        //sgp.setVisible(false);
         sgp2.setVisible(false);
         esp.setVisible(false);
-        esp2.setVisible(false);
+        //esp2.setVisible(false);
         ep.setVisible(false);
-        ep2.setVisible(false);
-        ip.setVisible(false);
+        //ep2.setVisible(false);
+        //ip.setVisible(false);
 
         addWindowListener(new WindowAdapter() {
             @Override
@@ -237,6 +254,7 @@ public class MainFrame extends javax.swing.JFrame {
         jMenu1.setText("Menu");
 
         miLaunchGamePanel.setText("Launch Game Panel");
+        miLaunchGamePanel.setEnabled(false);
         miLaunchGamePanel.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 miLaunchGamePanelActionPerformed(evt);
@@ -261,6 +279,7 @@ public class MainFrame extends javax.swing.JFrame {
         jMenu1.add(miExpansionsPanel);
 
         miExpansionsPanel2.setText("Expansions Panel 2");
+        miExpansionsPanel2.setEnabled(false);
         miExpansionsPanel2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 miExpansionsPanel2ActionPerformed(evt);
@@ -268,7 +287,6 @@ public class MainFrame extends javax.swing.JFrame {
         });
         jMenu1.add(miExpansionsPanel2);
 
-        miExpansionDetails.setSelected(true);
         miExpansionDetails.setText("Expansion Details");
         miExpansionDetails.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -278,7 +296,7 @@ public class MainFrame extends javax.swing.JFrame {
         jMenu1.add(miExpansionDetails);
 
         miExpansionDetails2.setText("Expansion Details 2");
-        miExpansionDetails2.setActionCommand("Expansion Details 2");
+        miExpansionDetails2.setEnabled(false);
         miExpansionDetails2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 miExpansionDetails2ActionPerformed(evt);
@@ -287,6 +305,7 @@ public class MainFrame extends javax.swing.JFrame {
         jMenu1.add(miExpansionDetails2);
 
         miInstallationsPanel.setText("Installations Panel");
+        miInstallationsPanel.setEnabled(false);
         miInstallationsPanel.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 miInstallationsPanelActionPerformed(evt);

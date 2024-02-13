@@ -12,6 +12,7 @@
             <MenuItem class="javax.swing.JCheckBoxMenuItem" name="miLaunchGamePanel">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Launch Game Panel"/>
+                <Property name="enabled" type="boolean" value="false"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="miLaunchGamePanelActionPerformed"/>
@@ -36,6 +37,7 @@
             <MenuItem class="javax.swing.JCheckBoxMenuItem" name="miExpansionsPanel2">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Expansions Panel 2"/>
+                <Property name="enabled" type="boolean" value="false"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="miExpansionsPanel2ActionPerformed"/>
@@ -43,7 +45,6 @@
             </MenuItem>
             <MenuItem class="javax.swing.JCheckBoxMenuItem" name="miExpansionDetails">
               <Properties>
-                <Property name="selected" type="boolean" value="true"/>
                 <Property name="text" type="java.lang.String" value="Expansion Details"/>
               </Properties>
               <Events>
@@ -53,7 +54,7 @@
             <MenuItem class="javax.swing.JCheckBoxMenuItem" name="miExpansionDetails2">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Expansion Details 2"/>
-                <Property name="actionCommand" type="java.lang.String" value="Expansion Details 2"/>
+                <Property name="enabled" type="boolean" value="false"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="miExpansionDetails2ActionPerformed"/>
@@ -62,6 +63,7 @@
             <MenuItem class="javax.swing.JCheckBoxMenuItem" name="miInstallationsPanel">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Installations Panel"/>
+                <Property name="enabled" type="boolean" value="false"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="miInstallationsPanelActionPerformed"/>

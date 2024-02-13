@@ -292,6 +292,8 @@ public class ExpansionsPanel2 extends javax.swing.JPanel implements Oolite.Oolit
         btDelete = new javax.swing.JButton();
         jProgressBar1 = new javax.swing.JProgressBar();
 
+        setName("OXPs/OXZs"); // NOI18N
+
         jList1.setName("AvailableJList"); // NOI18N
         jScrollPane1.setViewportView(jList1);
 
