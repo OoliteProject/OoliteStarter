@@ -30,6 +30,7 @@
     <Logger level="info"  name="oolite.starter.Oolite"/>
     <Logger level="info"  name="oolite.starter.ui.AnnotationRenderer"/>
     <Logger level="info"  name="oolite.starter.ui.DeferredDocumentChangeListener"/>
+    <Logger level="warn"  name="oolite.starter.ui.ExpansionReferenceCellRenderer"/>
     <Logger level="info"  name="oolite.starter.ui.ExpansionsPanel"/>
     <Logger level="info"  name="oolite.starter.ui.InstallationsPanel"/>
     <Logger level="warn"  name="oolite.starter.ui.InstallationTableModel"/>
@@ -49,7 +50,6 @@
     <Logger level="info"  name="oolite.starter.MainFrame"/>
     <Logger level="info"  name="oolite.starter.model.Command"/>
     <Logger level="warn"  name="oolite.starter.model.ProcessData"/>
-    <Logger level="warn"  name="oolite.starter.ui.ExpansionReferenceCellRenderer"/>
     <Logger level="warn"  name="oolite.starter.ui.InstallationForm"/>
     <Logger level="info"  name="oolite.starter.ui.OoliteFileChooserAccessory"/>
     <Logger level="warn"  name="oolite.starter.ui.ScanOolitesSwingWorker"/>

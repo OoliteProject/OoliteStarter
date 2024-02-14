@@ -5,6 +5,8 @@ package oolite.starter.ui2;
 import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -130,11 +132,40 @@ public class ExpansionsPanel2 extends javax.swing.JPanel implements Oolite.Oolit
             @Override
             public void actionPerformed(ActionEvent ae) {
                 log.debug("downloadAction actionPerformed()");
-                JOptionPane.showMessageDialog(
+//                JOptionPane.showMessageDialog(
+//                        ExpansionsPanel2.this, 
+//                        "Use your browser to download some OXP, then drop it into " + ooliteDriver.getActiveInstallation().getAddonDir(), 
+//                        "Direct Download", 
+//                        JOptionPane.INFORMATION_MESSAGE);
+                String input = JOptionPane.showInputDialog(
                         ExpansionsPanel2.this, 
-                        "Use your browser to download some OXP, then drop it into " + ooliteDriver.getActiveInstallation().getAddonDir(), 
-                        "Direct Download", 
-                        JOptionPane.INFORMATION_MESSAGE);
+                        "Please enter download URL",
+                        "Download OXP...",
+                        JOptionPane.QUESTION_MESSAGE
+                );
+                log.info("Download URL: {}", input);
+                Path addonDir = Paths.get(ooliteDriver.getActiveInstallation().getAddonDir());
+                
+                if (input != null) {
+                    SwingWorker sw = new DownloadSwingWorker(ExpansionsPanel2.this, input, addonDir);
+                    sw.addPropertyChangeListener(new PropertyChangeListener() {
+                        @Override
+                        public void propertyChange(PropertyChangeEvent pce) {
+                            log.debug("propertyChange({})", pce);
+
+                            boolean started = pce.getNewValue() == SwingWorker.StateValue.STARTED;
+                            log.trace("pending: {}", started);
+
+                            installAction.setEnabled(!started);
+                            removeAction.setEnabled(!started);
+                            downloadAction.setEnabled(!started);
+                            deleteAction.setEnabled(!started);
+                            jProgressBar1.setVisible(started);
+                        }
+                    });
+                    sw.execute();
+                }
+                
             }
         };
         

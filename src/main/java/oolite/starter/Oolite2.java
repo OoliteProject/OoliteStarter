@@ -53,20 +53,36 @@ public class Oolite2 {
         private static final Logger log = LogManager.getLogger();
         
         private boolean done = false;
-        private List<Path> paths;
+        private Path addonDir;
+        private Path deactivatedAddonDir;
+        private Path managedAddonDir;
+        private Path managedDeactivatedAddonDir;
+        private Path savegameDir;
         
-        public Watcher(List<Path> paths) {
-            log.debug("Watcher({})", paths);
-            
-            this.paths = paths;
+        public Watcher(Installation installation) {
+            log.debug("Watcher({})", installation);
+        
+            this.addonDir = Paths.get(installation.getAddonDir()).toAbsolutePath();
+            this.deactivatedAddonDir = Paths.get(installation.getDeactivatedAddonDir()).toAbsolutePath();
+            this.managedAddonDir = Paths.get(installation.getManagedAddonDir()).toAbsolutePath();
+            this.managedDeactivatedAddonDir = Paths.get(installation.getManagedDeactivatedAddonDir()).toAbsolutePath();
+            this.savegameDir = Paths.get(installation.getSavegameDir()).toAbsolutePath();
         }
 
         @Override
         public void run() {
             log.debug("run()");
+
+            List<Path> directories = new ArrayList<>();
+            directories.add(addonDir);
+            directories.add(deactivatedAddonDir);
+            directories.add(managedAddonDir);
+            directories.add(managedDeactivatedAddonDir);
+            directories.add(savegameDir);
+            
             try {
                 WatchService watchService = FileSystems.getDefault().newWatchService();
-                for (Path path: paths) {
+                for (Path path: directories) {
                     if (path.toFile().exists()) {
                         WatchKey key = path.register(watchService, StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_DELETE, StandardWatchEventKinds.ENTRY_MODIFY);
                         log.debug("key {}", key);
@@ -99,7 +115,7 @@ public class Oolite2 {
                             continue;
                         }
                         
-                        log.info(kind.name());
+                        processEvent(kind, ((Path)event.context()));
                     }
                     key.reset();
                 }
@@ -112,6 +128,21 @@ public class Oolite2 {
         public void stop() {
             log.debug("stop()");
             done = true;
+        }
+        
+        protected void processEvent(WatchEvent.Kind<?> kind, Path path) {
+            log.info("processEvent({} {})", kind.name(), path);
+            
+            if (path.startsWith(savegameDir)) {
+                log.info("savegame {} {}", kind.name(), path);
+            } else if (
+                    path.startsWith(addonDir) ||
+                    path.startsWith(managedAddonDir)
+                    ) {
+                log.info("expansion {} {}", kind.name(), path);
+            } else {
+                log.info("unknown {} {}", kind.name(), path);
+            }
         }
     }
 
@@ -185,18 +216,11 @@ public class Oolite2 {
         
         Installation i = configuration.getActiveInstallation();
         
-        List<Path> directories = new ArrayList<>();
-        directories.add(Paths.get(i.getAddonDir()));
-        directories.add(Paths.get(i.getDeactivatedAddonDir()));
-        directories.add(Paths.get(i.getManagedAddonDir()));
-        directories.add(Paths.get(i.getManagedDeactivatedAddonDir()));
-        directories.add(Paths.get(i.getSavegameDir()));
-
         if (watcher != null) {
             watcher.stop();
         }
         
-        watcher = new Watcher(directories);
+        watcher = new Watcher(i);
         new Thread(watcher).start();
         
     }
