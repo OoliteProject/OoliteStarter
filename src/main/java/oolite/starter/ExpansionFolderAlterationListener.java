@@ -7,6 +7,9 @@ import java.io.File;
 import java.nio.file.Path;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.Timer;
 import org.apache.commons.io.monitor.FileAlterationListener;
 import org.apache.commons.io.monitor.FileAlterationObserver;
 import org.apache.logging.log4j.LogManager;
@@ -26,6 +29,8 @@ public class ExpansionFolderAlterationListener implements FileAlterationListener
     private Path directoryPath;
     
     private Instant scanStart;
+    private Timer timer;
+    private List<File> changedExpansions;
     
     /**
      * Creates a new instance.
@@ -36,6 +41,22 @@ public class ExpansionFolderAlterationListener implements FileAlterationListener
         log.debug("ExpansionFolderAlterationListener({})", directory);
         this.directoryFile = directory;
         this.directoryPath = directory.toPath();
+        this.changedExpansions = new ArrayList<>();
+        
+        timer = new Timer(5000, (ae) -> {
+            log.debug("timer fired");
+            
+            synchronized (changedExpansions) {
+                // fire off all the changed expansions
+                List<File> changes = changedExpansions;
+                changedExpansions = new ArrayList<>();
+
+                if (changes != null && !changes.isEmpty()) {
+                    log.warn("need to fire {}", changes);
+                }
+            }
+        });
+        timer.setRepeats(false);
     }
     
     /**
@@ -62,15 +83,25 @@ public class ExpansionFolderAlterationListener implements FileAlterationListener
             log.debug("element {}: {}", i, element);
             
             if (elementStr.endsWith(".oxz")) {
-                result = element.toFile();
-                break;
+                return directoryPath.resolve(element).toFile();
             } else if (elementStr.endsWith(".oxp")) {
-                result = element.toFile();
-                break;
+                return directoryPath.resolve(element).toFile();
             }
         }
         
-        return result;
+        return null;
+    }
+    
+    protected void collectExpansion(File file) {
+        File f = detectExpansion(file);
+        if (f != null) {
+            synchronized (changedExpansions) {
+                if (!changedExpansions.contains(f)) {
+                    changedExpansions.add(f);
+                }
+            }
+        }
+        timer.restart();
     }
     
     /**
@@ -85,37 +116,37 @@ public class ExpansionFolderAlterationListener implements FileAlterationListener
     @Override
     public void onDirectoryChange(File file) {
         log.debug("onDirectoryChange({})", file);
-        detectExpansion(file);
+        collectExpansion(file);
     }
 
     @Override
     public void onDirectoryCreate(File file) {
         log.debug("onDirectoryCreate({})", file);
-        detectExpansion(file);
+        collectExpansion(file);
     }
 
     @Override
     public void onDirectoryDelete(File file) {
         log.debug("onDirectoryDelete({})", file);
-        detectExpansion(file);
+        collectExpansion(file);
     }
 
     @Override
     public void onFileChange(File file) {
         log.debug("onFileChange({})", file);
-        detectExpansion(file);
+        collectExpansion(file);
     }
 
     @Override
     public void onFileCreate(File file) {
         log.debug("onFileCreate({})", file);
-        detectExpansion(file);
+        collectExpansion(file);
     }
 
     @Override
     public void onFileDelete(File file) {
         log.debug("onFileDelete({})", file);
-        detectExpansion(file);
+        collectExpansion(file);
     }
 
     @Override
