@@ -58,6 +58,8 @@ public class ExpansionsPanel2 extends javax.swing.JPanel implements Oolite.Oolit
     private SortedListModel<Expansion> elmSortedAvailable;
     private SortedListModel<Expansion> elmSortedInstalled;
     
+    private SwingWorker sw;
+    
     private List<SelectionListener> listeners = new ArrayList<>();
     
     /**
@@ -71,12 +73,16 @@ public class ExpansionsPanel2 extends javax.swing.JPanel implements Oolite.Oolit
             public void actionPerformed(ActionEvent ae) {
                 log.debug("installAction actionPerformed()");
                 
+                if (sw != null && sw.getState() != SwingWorker.StateValue.DONE) {
+                    return;
+                }
+                
                 int rowIndex = jList1.getSelectedIndex();
                 
                 if (rowIndex >= 0) {
                     Expansion e = jList1.getModel().getElementAt(rowIndex);
 
-                    SwingWorker sw = new InstallSwingWorker(ExpansionsPanel2.this, e, elmAvailable, elmInstalled);
+                    sw = new InstallSwingWorker(ExpansionsPanel2.this, e, elmAvailable, elmInstalled);
                     sw.addPropertyChangeListener(new PropertyChangeListener() {
                         @Override
                         public void propertyChange(PropertyChangeEvent pce) {
@@ -101,13 +107,17 @@ public class ExpansionsPanel2 extends javax.swing.JPanel implements Oolite.Oolit
             @Override
             public void actionPerformed(ActionEvent ae) {
                 log.debug("removeAction actionPerformed()");
+
+                if (sw != null && sw.getState() != SwingWorker.StateValue.DONE) {
+                    return;
+                }
                 
                 int rowIndex = jList2.getSelectedIndex();
                 
                 if (rowIndex >= 0) {
                     Expansion e = jList2.getModel().getElementAt(rowIndex);
 
-                    SwingWorker sw = new RemoveSwingWorker(ExpansionsPanel2.this, e, elmInstalled, elmAvailable);
+                    sw = new RemoveSwingWorker(ExpansionsPanel2.this, e, elmInstalled, elmAvailable);
                     sw.addPropertyChangeListener(new PropertyChangeListener() {
                         @Override
                         public void propertyChange(PropertyChangeEvent pce) {
@@ -132,6 +142,11 @@ public class ExpansionsPanel2 extends javax.swing.JPanel implements Oolite.Oolit
             @Override
             public void actionPerformed(ActionEvent ae) {
                 log.debug("downloadAction actionPerformed()");
+
+                if (sw != null && sw.getState() != SwingWorker.StateValue.DONE) {
+                    return;
+                }
+
 //                JOptionPane.showMessageDialog(
 //                        ExpansionsPanel2.this, 
 //                        "Use your browser to download some OXP, then drop it into " + ooliteDriver.getActiveInstallation().getAddonDir(), 
@@ -147,7 +162,7 @@ public class ExpansionsPanel2 extends javax.swing.JPanel implements Oolite.Oolit
                 Path addonDir = Paths.get(ooliteDriver.getActiveInstallation().getAddonDir());
                 
                 if (input != null) {
-                    SwingWorker sw = new DownloadSwingWorker(ExpansionsPanel2.this, input, addonDir);
+                    sw = new DownloadSwingWorker(ExpansionsPanel2.this, input, addonDir);
                     sw.addPropertyChangeListener(new PropertyChangeListener() {
                         @Override
                         public void propertyChange(PropertyChangeEvent pce) {
@@ -174,12 +189,16 @@ public class ExpansionsPanel2 extends javax.swing.JPanel implements Oolite.Oolit
             public void actionPerformed(ActionEvent ae) {
                 log.debug("deleteAction actionPerformed()");
 
+                if (sw != null && sw.getState() != SwingWorker.StateValue.DONE) {
+                    return;
+                }
+                
                 int rowIndex = jList2.getSelectedIndex();
                 
                 if (rowIndex >= 0) {
                     Expansion e = jList2.getModel().getElementAt(rowIndex);
 
-                    SwingWorker sw = new DeleteSwingWorker(ExpansionsPanel2.this, e, elmInstalled);
+                    sw = new DeleteSwingWorker(ExpansionsPanel2.this, e, elmInstalled);
                     sw.addPropertyChangeListener(new PropertyChangeListener() {
                         @Override
                         public void propertyChange(PropertyChangeEvent pce) {
@@ -241,10 +260,12 @@ public class ExpansionsPanel2 extends javax.swing.JPanel implements Oolite.Oolit
                     if (rowIndex >= 0) {
                         Expansion e = list.getModel().getElementAt(rowIndex);
 
-                        installAction.setEnabled(!e.isLocal());
-                        removeAction.setEnabled(e.isLocal() && e.isManaged());
+                        boolean working = sw != null && sw.getState() != SwingWorker.StateValue.DONE;
+                        log.debug("working: {}", working);
+                        installAction.setEnabled(!e.isLocal() && !working);
+                        removeAction.setEnabled(e.isLocal() && e.isManaged() && !working);
                         deleteAction.setEnabled(
-                                e.isLocal() && !e.isManaged() && !"Oolite Debug OXP".equals(e.getTitle())
+                                e.isLocal() && !e.isManaged() && !"Oolite Debug OXP".equals(e.getTitle()) && !working
                                 );
 
                         fireSelectionEvent(e);

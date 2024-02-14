@@ -176,7 +176,7 @@ public class Oolite implements PropertyChangeListener {
                 
                 ModuleDescriptor.Version expVersion = parseVersion(expansion.getVersion());
                 
-                log.warn("expVersion {}", expVersion);
+                log.info("expVersion {}", expVersion);
                 if (minVersion == null) {
                     // we have not even a minimum version? Then all versions match
                     result.add(expansion);

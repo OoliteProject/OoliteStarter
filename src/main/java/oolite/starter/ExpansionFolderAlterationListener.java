@@ -1,0 +1,133 @@
+/*
+ */
+
+package oolite.starter;
+
+import java.io.File;
+import java.nio.file.Path;
+import java.time.Duration;
+import java.time.Instant;
+import org.apache.commons.io.monitor.FileAlterationListener;
+import org.apache.commons.io.monitor.FileAlterationObserver;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+/**
+ * This FileAlterationListener can check for changes
+ * in Oolite addons folders (AddOns or ManagedAddOns)
+ * and send events to rescan or remove an expansion.
+ * 
+ * @author hiran
+ */
+public class ExpansionFolderAlterationListener implements FileAlterationListener {
+    private static final Logger log = LogManager.getLogger();
+    
+    private File directoryFile;
+    private Path directoryPath;
+    
+    private Instant scanStart;
+    
+    /**
+     * Creates a new instance.
+     * 
+     * @param directory the directoryFile to watch
+     */
+    public ExpansionFolderAlterationListener(File directory) {
+        log.debug("ExpansionFolderAlterationListener({})", directory);
+        this.directoryFile = directory;
+        this.directoryPath = directory.toPath();
+    }
+    
+    /**
+     * From a file that is created/changed/deleted, detect the expansion location.
+     * Expansions may be sitting in subdirectories, but not nested.
+     * For OXPs file changes within the OXP can be detected.
+     * 
+     * @param file the file that was changed
+     * @return the expansion that it belongs to
+     */
+    protected File detectExpansion(File file) {
+        log.trace("detectExpansion({})", file);
+        Path p = file.toPath();
+        Path rel = directoryPath.relativize(p);
+
+        File result = file;
+        
+        for (int i= 0; i< rel.getNameCount(); i++) {
+            Path element = rel;
+            if (i>0) {
+                element = rel.subpath(0, i);
+            }
+            String elementStr = element.toString();
+            log.debug("element {}: {}", i, element);
+            
+            if (elementStr.endsWith(".oxz")) {
+                result = element.toFile();
+                break;
+            } else if (elementStr.endsWith(".oxp")) {
+                result = element.toFile();
+                break;
+            }
+        }
+        
+        return result;
+    }
+    
+    /**
+     * Returns the directoryFile to watch.
+     * 
+     * @return the directoryFile
+     */
+    public File getDirectory() {
+        return directoryFile;
+    }
+
+    @Override
+    public void onDirectoryChange(File file) {
+        log.debug("onDirectoryChange({})", file);
+        detectExpansion(file);
+    }
+
+    @Override
+    public void onDirectoryCreate(File file) {
+        log.debug("onDirectoryCreate({})", file);
+        detectExpansion(file);
+    }
+
+    @Override
+    public void onDirectoryDelete(File file) {
+        log.debug("onDirectoryDelete({})", file);
+        detectExpansion(file);
+    }
+
+    @Override
+    public void onFileChange(File file) {
+        log.debug("onFileChange({})", file);
+        detectExpansion(file);
+    }
+
+    @Override
+    public void onFileCreate(File file) {
+        log.debug("onFileCreate({})", file);
+        detectExpansion(file);
+    }
+
+    @Override
+    public void onFileDelete(File file) {
+        log.debug("onFileDelete({})", file);
+        detectExpansion(file);
+    }
+
+    @Override
+    public void onStart(FileAlterationObserver fao) {
+        //log.trace("onStart({})", fao);
+        scanStart = Instant.now();
+    }
+
+    @Override
+    public void onStop(FileAlterationObserver fao) {
+        //log.trace("onStop({})", fao);
+        log.trace("Scanned in {}", Duration.between(scanStart, Instant.now()));
+    }
+
+}

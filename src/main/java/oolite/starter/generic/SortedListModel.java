@@ -81,21 +81,33 @@ public class SortedListModel<T> extends AbstractListModel<T> {
             public void intervalAdded(ListDataEvent lde) {
                 log.debug("intervalAdded(...)");
                 resort();
-                fireIntervalAdded(this, 0, sortedList.size()-1);
+                try {
+                    fireIntervalAdded(this, 0, sortedList.size()-1);
+                } catch (Exception e) {
+                    log.warn("listener threw exception", e);
+                }
             }
 
             @Override
             public void intervalRemoved(ListDataEvent lde) {
                 log.debug("intervalRemoved(...)");
                 resort();
-                fireIntervalRemoved(this, 0, sortedList.size()-1);
+                try {
+                    fireIntervalRemoved(this, 0, sortedList.size()-1);
+                } catch (Exception e) {
+                    log.warn("listener threw exception", e);
+                }
             }
 
             @Override
             public void contentsChanged(ListDataEvent lde) {
                 log.debug("contensChanged(...)");
                 resort();
-                fireContentsChanged(this, 0, sortedList.size()-1);
+                try {
+                    fireContentsChanged(this, 0, sortedList.size()-1);
+                } catch (Exception e) {
+                    log.warn("listener threw exception", e);
+                }
             }
         });
         
