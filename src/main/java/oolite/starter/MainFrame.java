@@ -35,7 +35,6 @@ import oolite.starter.ui.SplashPanel;
 import oolite.starter.ui.StartGamePanel;
 import oolite.starter.ui2.ExpansionPanel;
 import oolite.starter.ui2.ExpansionsPanel2;
-import oolite.starter.ui2.StartGamePanel2;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -61,7 +60,7 @@ public class MainFrame extends javax.swing.JFrame {
     private transient Configuration configuration;
 
     private StartGamePanel sgp;
-    private StartGamePanel2 sgp2;
+    //private StartGamePanel2 sgp2;
     private ExpansionsPanel esp;
     private ExpansionsPanel2 esp2;
     private oolite.starter.ui.ExpansionPanel ep;
@@ -118,7 +117,6 @@ public class MainFrame extends javax.swing.JFrame {
         });
         
         oolite2.initialize();
-        oolite2.installWatchers();
 
         configuration.addPropertyChangeListener(pce -> {
             if (pce.getSource() instanceof Configuration) {
@@ -135,9 +133,9 @@ public class MainFrame extends javax.swing.JFrame {
         sgp = new StartGamePanel();
         sgp.setOolite(oolite);
         
-        sgp2 = new StartGamePanel2();
-        sgp2.setOolite(oolite);
-        sgp2.setBorder(new LineBorder(Color.red));
+//        sgp2 = new StartGamePanel2();
+//        sgp2.setOolite(oolite);
+//        sgp2.setBorder(new LineBorder(Color.red));
         jTabbedPane1.add(sgp);
 
         ExpansionManager em = ExpansionManager.getInstance();
@@ -153,8 +151,7 @@ public class MainFrame extends javax.swing.JFrame {
         expansions.setLayout(new BorderLayout());
         jTabbedPane1.add(expansions, "Expansions");
 
-        esp2 = new ExpansionsPanel2();
-        esp2.setOolite(oolite);
+        esp2 = new ExpansionsPanel2(oolite2);
         expansions.add(esp2, BorderLayout.CENTER);
 
         ep = new oolite.starter.ui.ExpansionPanel();
@@ -177,7 +174,7 @@ public class MainFrame extends javax.swing.JFrame {
         content.setLayout(new FlowLayout(FlowLayout.CENTER, 20, 20));
         content.setScrollableWidth(ScrollablePanel.ScrollableSizeHint.FIT);
         //content.add(sgp);
-        content.add(sgp2);
+        //content.add(sgp2);
         content.add(esp);
         //content.add(esp2);
         content.add(ep);
@@ -187,7 +184,7 @@ public class MainFrame extends javax.swing.JFrame {
         jsp.setName("Experimental");
         jTabbedPane1.add(jsp);
         //sgp.setVisible(false);
-        sgp2.setVisible(false);
+        //sgp2.setVisible(false);
         esp.setVisible(false);
         //esp2.setVisible(false);
         ep.setVisible(false);
@@ -290,6 +287,7 @@ public class MainFrame extends javax.swing.JFrame {
         jMenu1.add(miLaunchGamePanel);
 
         miLaunchGamePanel2.setText("Launch Game Panel 2");
+        miLaunchGamePanel2.setEnabled(false);
         miLaunchGamePanel2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 miLaunchGamePanel2ActionPerformed(evt);
@@ -363,7 +361,7 @@ public class MainFrame extends javax.swing.JFrame {
 
     private void miLaunchGamePanel2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miLaunchGamePanel2ActionPerformed
         log.debug("miLaunchGamePanel2ActionPerformed({})", evt);
-        sgp2.setVisible(miLaunchGamePanel2.isSelected());
+        //sgp2.setVisible(miLaunchGamePanel2.isSelected());
     }//GEN-LAST:event_miLaunchGamePanel2ActionPerformed
 
     private void miExpansionsPanel2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miExpansionsPanel2ActionPerformed

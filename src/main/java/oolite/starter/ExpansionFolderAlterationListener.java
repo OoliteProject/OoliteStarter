@@ -19,11 +19,24 @@ import org.apache.logging.log4j.Logger;
  * This FileAlterationListener can check for changes
  * in Oolite addons folders (AddOns or ManagedAddOns)
  * and send events to rescan or remove an expansion.
+ * Changes in expansion folders (OXZ or OXP) are sent to
+ * registered listeners once the filesystem has stabilized
+ * (change events have ebbed off).
  * 
  * @author hiran
  */
 public class ExpansionFolderAlterationListener implements FileAlterationListener {
     private static final Logger log = LogManager.getLogger();
+
+    public interface ExpansionFolderChangedListener {
+        
+        /**
+         * Invoked when there were changes for an expansion folder.
+         * 
+         * @param files the list of expansion folders that were detected
+         */
+        public void foldersChanged(List<File> files);
+    }
     
     private File directoryFile;
     private Path directoryPath;
@@ -31,6 +44,7 @@ public class ExpansionFolderAlterationListener implements FileAlterationListener
     private Instant scanStart;
     private Timer timer;
     private List<File> changedExpansions;
+    private List<ExpansionFolderChangedListener> listeners = new ArrayList<>();
     
     /**
      * Creates a new instance.
@@ -52,7 +66,8 @@ public class ExpansionFolderAlterationListener implements FileAlterationListener
                 changedExpansions = new ArrayList<>();
 
                 if (changes != null && !changes.isEmpty()) {
-                    log.warn("need to fire {}", changes);
+                    log.trace("need to fire {}", changes);
+                    fireFoldersChanged(changes);
                 }
             }
         });
@@ -80,7 +95,7 @@ public class ExpansionFolderAlterationListener implements FileAlterationListener
                 element = rel.subpath(0, i);
             }
             String elementStr = element.toString();
-            log.debug("element {}: {}", i, element);
+            log.trace("element {}: {}", i, element);
             
             if (elementStr.endsWith(".oxz")) {
                 return directoryPath.resolve(element).toFile();
@@ -161,4 +176,27 @@ public class ExpansionFolderAlterationListener implements FileAlterationListener
         log.trace("Scanned in {}", Duration.between(scanStart, Instant.now()));
     }
 
+    /**
+     * Registers a listener to receive folder changed events.
+     * 
+     * @param listener the listener to register
+     */
+    public void addExpansionFolderChangedListener(ExpansionFolderChangedListener listener) {
+        listeners.add(listener);
+    }
+    
+    /**
+     * Unregisters a listener from receiving folder changed events.
+     * 
+     * @param listener the listener to unregister
+     */
+    public void removeExpansionFolderChangedListener(ExpansionFolderChangedListener listener) {
+        listeners.remove(listener);
+    }
+    
+    protected void fireFoldersChanged(List<File> files) {
+        for (ExpansionFolderChangedListener listener: listeners) {
+            listener.foldersChanged(files);
+        }
+    }
 }

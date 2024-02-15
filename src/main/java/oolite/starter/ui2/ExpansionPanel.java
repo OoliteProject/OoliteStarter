@@ -46,7 +46,9 @@ public class ExpansionPanel extends javax.swing.JPanel implements ExpansionsPane
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 60, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -61,10 +63,16 @@ public class ExpansionPanel extends javax.swing.JPanel implements ExpansionsPane
         log.debug("selectionChanged({})", expansion);
         
         String text = ("<html>"
-                + "Title: %s<br>"
-                + "Version: %s<br>"
-                + "Size: %s"
-                + "</html>").formatted(expansion.getTitle(), expansion.getVersion(), Util.humanreadableSize(expansion.getFileSize()));
+                + "<table><tr>"
+                + "<td>Title</td><td>%s</td>"
+                + "</tr><tr>"
+                + "<td>Version</td><td>%s<</td>"
+                + "</tr><tr>"
+                + "<td>Size</td><td>%s</td>"
+                + "</tr><tr>"
+                + "<td>Local File</td><td>%s</td>"
+                + "</tr></table>"
+                + "</html>").formatted(expansion.getTitle(), expansion.getVersion(), Util.humanreadableSize(expansion.getFileSize()), expansion.getLocalFile());
         
         jEditorPane1.setText(text);
     }

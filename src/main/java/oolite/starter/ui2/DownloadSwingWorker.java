@@ -11,6 +11,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import javax.swing.SwingWorker;
+import oolite.starter.Oolite2;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -24,18 +25,19 @@ public class DownloadSwingWorker extends SwingWorker<Void, Void> {
     private Component parent;
     private String downloadUrl;
     private Path destinationDir;
-    private ExpansionListModel a;
+    private Oolite2 oolite;
     
     /**
      * Creates a new RemoveSwingWorker.
      * 
      * @param expansion the expansion to remove
      */
-    public DownloadSwingWorker(Component parent, String downloadUrl, Path destinationDir) {
+    public DownloadSwingWorker(Component parent, String downloadUrl, Path destinationDir, Oolite2 oolite) {
         log.debug("DownloadSwingWorker(...)");
         this.parent = parent;
         this.downloadUrl = downloadUrl;
         this.destinationDir = destinationDir;
+        this.oolite = oolite;
     }
 
     @Override
@@ -55,6 +57,9 @@ public class DownloadSwingWorker extends SwingWorker<Void, Void> {
     @Override
     protected void done() {
         log.debug("done()");
+        
+        // todo: ask Oolite to scan the path in question
+        oolite.fire();
     }
 
 }

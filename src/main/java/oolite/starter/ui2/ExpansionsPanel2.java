@@ -18,7 +18,8 @@ import javax.swing.SortOrder;
 import javax.swing.SwingWorker;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import oolite.starter.Oolite;
+import oolite.starter.Oolite2;
+import oolite.starter.generic.FilteredListModel;
 import oolite.starter.generic.ListAction;
 import oolite.starter.generic.SortedListModel;
 import oolite.starter.model.Expansion;
@@ -32,9 +33,9 @@ import org.apache.logging.log4j.Logger;
  * 
  * @author hiran
  */
-public class ExpansionsPanel2 extends javax.swing.JPanel implements Oolite.OoliteListener {
+public class ExpansionsPanel2 extends javax.swing.JPanel implements Oolite2.OoliteListener {
     private static final Logger log = LogManager.getLogger();
-    
+
     public static interface SelectionListener {
         
         /**
@@ -46,15 +47,15 @@ public class ExpansionsPanel2 extends javax.swing.JPanel implements Oolite.Oolit
         
     }
 
-    private transient Oolite ooliteDriver;
+    private transient Oolite2 ooliteDriver;
     private Action installAction;
     private Action removeAction;
     private Action downloadAction;
     private Action deleteAction;
     private ListAction installListAction;
     private ListAction removeListAction;
-    private ExpansionListModel elmAvailable;
-    private ExpansionListModel elmInstalled;
+    private Oolite2.OoliteExpansionListModel elmAvailable;
+    private Oolite2.OoliteExpansionListModel elmInstalled;
     private SortedListModel<Expansion> elmSortedAvailable;
     private SortedListModel<Expansion> elmSortedInstalled;
     
@@ -65,7 +66,7 @@ public class ExpansionsPanel2 extends javax.swing.JPanel implements Oolite.Oolit
     /**
      * Creates new form ExpansionsPanel2.
      */
-    public ExpansionsPanel2() {
+    public ExpansionsPanel2(Oolite2 oolite) {
         log.debug("ExpansionsPanel2()");
         
         installAction = new AbstractAction() {
@@ -82,7 +83,7 @@ public class ExpansionsPanel2 extends javax.swing.JPanel implements Oolite.Oolit
                 if (rowIndex >= 0) {
                     Expansion e = jList1.getModel().getElementAt(rowIndex);
 
-                    sw = new InstallSwingWorker(ExpansionsPanel2.this, e, elmAvailable, elmInstalled);
+                    sw = new InstallSwingWorker(ExpansionsPanel2.this, e, oolite);
                     sw.addPropertyChangeListener(new PropertyChangeListener() {
                         @Override
                         public void propertyChange(PropertyChangeEvent pce) {
@@ -117,7 +118,7 @@ public class ExpansionsPanel2 extends javax.swing.JPanel implements Oolite.Oolit
                 if (rowIndex >= 0) {
                     Expansion e = jList2.getModel().getElementAt(rowIndex);
 
-                    sw = new RemoveSwingWorker(ExpansionsPanel2.this, e, elmInstalled, elmAvailable);
+                    sw = new RemoveSwingWorker(ExpansionsPanel2.this, e, oolite);
                     sw.addPropertyChangeListener(new PropertyChangeListener() {
                         @Override
                         public void propertyChange(PropertyChangeEvent pce) {
@@ -162,7 +163,7 @@ public class ExpansionsPanel2 extends javax.swing.JPanel implements Oolite.Oolit
                 Path addonDir = Paths.get(ooliteDriver.getActiveInstallation().getAddonDir());
                 
                 if (input != null) {
-                    sw = new DownloadSwingWorker(ExpansionsPanel2.this, input, addonDir);
+                    sw = new DownloadSwingWorker(ExpansionsPanel2.this, input, addonDir, oolite);
                     sw.addPropertyChangeListener(new PropertyChangeListener() {
                         @Override
                         public void propertyChange(PropertyChangeEvent pce) {
@@ -198,7 +199,7 @@ public class ExpansionsPanel2 extends javax.swing.JPanel implements Oolite.Oolit
                 if (rowIndex >= 0) {
                     Expansion e = jList2.getModel().getElementAt(rowIndex);
 
-                    sw = new DeleteSwingWorker(ExpansionsPanel2.this, e, elmInstalled);
+                    sw = new DeleteSwingWorker(ExpansionsPanel2.this, e, oolite);
                     sw.addPropertyChangeListener(new PropertyChangeListener() {
                         @Override
                         public void propertyChange(PropertyChangeEvent pce) {
@@ -277,6 +278,8 @@ public class ExpansionsPanel2 extends javax.swing.JPanel implements Oolite.Oolit
                 
         jList1.addListSelectionListener(lsl);
         jList2.addListSelectionListener(lsl);
+        
+        setOolite(oolite);
     }
 
     /**
@@ -288,7 +291,7 @@ public class ExpansionsPanel2 extends javax.swing.JPanel implements Oolite.Oolit
      * @throws ParserConfigurationException something went wrong
      * @throws XPathExpressionException  something went wrong
      */
-    public void setOolite(Oolite oolite) {
+    public void setOolite(Oolite2 oolite) {
         if (this.ooliteDriver != null) {
             this.ooliteDriver.removeOoliteListener(this);
         }
@@ -298,10 +301,19 @@ public class ExpansionsPanel2 extends javax.swing.JPanel implements Oolite.Oolit
     }
     
     private void update() {
+        log.warn("update()");
+        // todo: align this with the new situation
         try {
-            List<Expansion> expansions = ooliteDriver.getAllExpansions();
-            elmAvailable = new ExpansionListModel(expansions, e -> !e.isEnabled() );
-            elmSortedAvailable = new SortedListModel<>(elmAvailable, SortOrder.ASCENDING, new Comparator<Expansion>() {
+//            List<Expansion> expansions = ooliteDriver.getAllExpansions();
+            //elmAvailable = new ExpansionListModel(expansions, e -> !e.isEnabled() );
+            elmAvailable = ooliteDriver.getExpansionListModel();
+            FilteredListModel<Expansion> lm = new FilteredListModel<Expansion>(elmAvailable, new FilteredListModel.Filter<Expansion>() {
+                @Override
+                public boolean willShow(Expansion t) {
+                    return !t.isEnabled();
+                }
+            });
+            elmSortedAvailable = new SortedListModel<>(lm, SortOrder.ASCENDING, new Comparator<Expansion>() {
                 @Override
                 public int compare(Expansion t1, Expansion t2) {
                     return t1.getTitle().compareTo(t2.getTitle());
@@ -309,8 +321,15 @@ public class ExpansionsPanel2 extends javax.swing.JPanel implements Oolite.Oolit
             });
             jList1.setModel(elmSortedAvailable);
 
-            elmInstalled = new ExpansionListModel(expansions, e -> e.isEnabled());
-            elmSortedInstalled = new SortedListModel<>(elmInstalled, SortOrder.ASCENDING, new Comparator<Expansion>() {
+            //elmInstalled = new ExpansionListModel(expansions, e -> e.isEnabled());
+            elmInstalled = ooliteDriver.getExpansionListModel();
+            lm = new FilteredListModel<Expansion>(elmInstalled, new FilteredListModel.Filter<Expansion>() {
+                @Override
+                public boolean willShow(Expansion t) {
+                    return t.isEnabled();
+                }
+            });
+            elmSortedInstalled = new SortedListModel<>(lm, SortOrder.ASCENDING, new Comparator<Expansion>() {
                 @Override
                 public int compare(Expansion t1, Expansion t2) {
                     return t1.getTitle().compareTo(t2.getTitle());
@@ -435,21 +454,6 @@ public class ExpansionsPanel2 extends javax.swing.JPanel implements Oolite.Oolit
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
-
-    @Override
-    public void launched(ProcessData pd) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    @Override
-    public void terminated() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    @Override
-    public void activatedInstallation(Installation installation) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
     
     /**
      * Registers a new SelectionListener to this component.
@@ -475,6 +479,41 @@ public class ExpansionsPanel2 extends javax.swing.JPanel implements Oolite.Oolit
         }
     }
 
+    /**
+     * From Oolite2.OoliteListener.
+     * @param status 
+     */
+    @Override
+    public void statusChanged(Oolite2.Status status) {
+        log.warn("statusChanged({})", status);
+    }
+
+    /**
+     * From Oolite2.OoliteListener.
+     * @param status 
+     */
+    @Override
+    public void launched(ProcessData pd) {
+        log.debug("launcher({})", pd);
+    }
+
+    /**
+     * From Oolite2.OoliteListener.
+     * @param status 
+     */
+    @Override
+    public void terminated() {
+        log.debug("terminated()");
+    }
+
+    /**
+     * From Oolite2.OoliteListener.
+     * @param status 
+     */
+    @Override
+    public void activatedInstallation(Installation installation) {
+        log.debug("activatedInstallation({})", installation);
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btDelete;

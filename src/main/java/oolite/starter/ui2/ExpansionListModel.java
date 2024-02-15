@@ -13,7 +13,9 @@ import org.apache.logging.log4j.Logger;
 /**
  *
  * @author hiran
+ * @deprecated Make use of the Oolite2-integrated list
  */
+@Deprecated
 public class ExpansionListModel extends AbstractListModel<Expansion> {
     private static final Logger log = LogManager.getLogger();
     

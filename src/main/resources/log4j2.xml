@@ -24,11 +24,13 @@
         <AppenderRef ref="SysOutStream"/>
     </Logger>
     <Logger level="info"  name="oolite.starter.Configuration"/>
-    <Logger level="debug" name="oolite.starter.ExpansionFolderAlterationListener"/>
+    <Logger level="info" name="oolite.starter.ExpansionFolderAlterationListener"/>
     <Logger level="debug" name="oolite.starter.ExpansionManager"/>
+    <Logger level="info"  name="oolite.starter.generic.FilteredListModel"/>
     <Logger level="info"  name="oolite.starter.generic.SortedListModel"/>
     <Logger level="info"  name="oolite.starter.GithubVersionChecker"/>
     <Logger level="info"  name="oolite.starter.Oolite"/>
+    <Logger level="info"  name="oolite.starter.Oolite2.OoliteExpansionListModel"/>
     <Logger level="info"  name="oolite.starter.ui.AnnotationRenderer"/>
     <Logger level="info"  name="oolite.starter.ui.DeferredDocumentChangeListener"/>
     <Logger level="warn"  name="oolite.starter.ui.ExpansionReferenceCellRenderer"/>
@@ -43,6 +45,8 @@
     <Logger level="info"  name="oolite.starter.ui2.ExpansionCellRenderer"/>
     <Logger level="info"  name="oolite.starter.ui2.ExpansionPanel"/>
     <Logger level="info"  name="oolite.starter.ui2.ExpansionsPanel2"/>
+    <Logger level="info"  name="oolite.starter.ui2.InstallSwingWorker"/>
+    <Logger level="info"  name="oolite.starter.ui2.RemoveSwingWorker"/>
     <Logger level="info"  name="oolite.starter.ui2.SaveGameCellRenderer"/>
     <Logger level="info"  name="oolite.starter.ui2.StartGamePanel2"/>
     <Logger level="info"  name="oolite.starter.util.HttpUtil"/>

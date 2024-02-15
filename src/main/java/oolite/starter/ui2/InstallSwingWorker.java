@@ -5,6 +5,7 @@ package oolite.starter.ui2;
 
 import java.awt.Component;
 import javax.swing.SwingWorker;
+import oolite.starter.Oolite2;
 import oolite.starter.model.Expansion;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -17,19 +18,17 @@ public class InstallSwingWorker extends SwingWorker<Void, Void> {
     private static final Logger log = LogManager.getLogger();
     
     private Expansion expansion;
-    private ExpansionListModel a;
-    private ExpansionListModel b;
+    private Oolite2 oolite;
     
     /**
      * Creates a new InstallSwingWorker.
      * 
      * @param expansion the expansion to install
      */
-    public InstallSwingWorker(Component parent, Expansion expansion, ExpansionListModel a, ExpansionListModel b) {
+    public InstallSwingWorker(Component parent, Expansion expansion, Oolite2 oolite) {
         log.debug("InstallSwingWorker(...)");
         this.expansion = expansion;
-        this.a = a;
-        this.b = b;
+        this.oolite = oolite;
     }
 
     @Override
@@ -43,8 +42,8 @@ public class InstallSwingWorker extends SwingWorker<Void, Void> {
     @Override
     protected void done() {
         log.debug("done()");
-        a.remove(expansion);
-        b.add(expansion);
+
+        oolite.fire();
     }
 
 }

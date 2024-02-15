@@ -5,6 +5,7 @@ package oolite.starter.ui2;
 
 import java.awt.Component;
 import javax.swing.SwingWorker;
+import oolite.starter.Oolite2;
 import oolite.starter.model.Expansion;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -17,17 +18,18 @@ public class DeleteSwingWorker extends SwingWorker<Void, Void> {
     private static final Logger log = LogManager.getLogger();
     
     private Expansion expansion;
-    private ExpansionListModel a;
+    //private Oolite2.OoliteExpansionListModel a;
+    private Oolite2 oolite;
     
     /**
      * Creates a new DeleteSwingWorker.
      * 
      * @param expansion the expansion to delete
      */
-    public DeleteSwingWorker(Component parent, Expansion expansion, ExpansionListModel a) {
+    public DeleteSwingWorker(Component parent, Expansion expansion, Oolite2 oolite) {
         log.debug("DeleteSwingWorker(...)");
         this.expansion = expansion;
-        this.a = a;
+        this.oolite = oolite;
     }
 
     @Override
@@ -41,7 +43,8 @@ public class DeleteSwingWorker extends SwingWorker<Void, Void> {
     @Override
     protected void done() {
         log.debug("done()");
-        a.remove(expansion);
+        
+        oolite.fire();
     }
 
 }
