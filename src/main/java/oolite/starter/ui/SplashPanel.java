@@ -17,6 +17,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 import javax.swing.SwingUtilities;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -64,6 +65,14 @@ public class SplashPanel extends JPanel implements MouseListener, MouseMotionLis
         setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
         
         this.motd = motd;
+        
+        JProgressBar jpb = new JProgressBar();
+        jpb.setIndeterminate(true);
+        jpb.setBackground(Color.black);
+        jpb.setBorderPainted(false);
+        jpb.setString("Scanning expansions...");
+        jpb.setStringPainted(true);
+        add(jpb, BorderLayout.SOUTH);
     }
     
     @Override
