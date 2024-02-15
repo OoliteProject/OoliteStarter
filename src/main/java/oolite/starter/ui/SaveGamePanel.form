@@ -16,9 +16,15 @@
   <Layout>
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Component id="jPanel4" max="32767" attributes="0"/>
-          <Component id="jPanel5" max="32767" attributes="0"/>
-          <Component id="jPanel6" max="32767" attributes="0"/>
+          <Group type="102" alignment="0" attributes="0">
+              <EmptySpace max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Component id="jPanel6" linkSize="1" min="-2" max="-2" attributes="0"/>
+                  <Component id="jPanel5" linkSize="1" alignment="1" min="-2" max="-2" attributes="0"/>
+                  <Component id="jPanel4" linkSize="1" min="-2" max="-2" attributes="0"/>
+              </Group>
+              <EmptySpace max="-2" attributes="0"/>
+          </Group>
       </Group>
     </DimensionLayout>
     <DimensionLayout dim="1">
@@ -56,10 +62,10 @@
                   </Group>
                   <EmptySpace min="12" pref="12" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="txtCredits" alignment="0" max="32767" attributes="0"/>
-                      <Component id="txtStarSystem" alignment="0" max="32767" attributes="0"/>
-                      <Component id="txtShipKills" alignment="0" max="32767" attributes="0"/>
-                      <Component id="txtPilotName" alignment="0" max="32767" attributes="0"/>
+                      <Component id="txtCredits" linkSize="4" alignment="0" min="-2" pref="493" max="-2" attributes="0"/>
+                      <Component id="txtStarSystem" linkSize="4" alignment="0" min="-2" pref="493" max="-2" attributes="0"/>
+                      <Component id="txtShipKills" linkSize="4" alignment="0" min="-2" pref="493" max="-2" attributes="0"/>
+                      <Component id="txtPilotName" linkSize="4" alignment="0" min="-2" pref="493" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace min="-2" max="-2" attributes="0"/>
               </Group>
@@ -156,8 +162,8 @@
                   </Group>
                   <EmptySpace min="-2" pref="54" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="txtShipName" alignment="0" max="32767" attributes="0"/>
-                      <Component id="txtShipClass" alignment="0" max="32767" attributes="0"/>
+                      <Component id="txtShipName" linkSize="3" alignment="0" min="-2" pref="493" max="-2" attributes="0"/>
+                      <Component id="txtShipClass" linkSize="3" alignment="0" min="-2" pref="493" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace min="-2" max="-2" attributes="0"/>
               </Group>
@@ -217,19 +223,19 @@
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" attributes="0">
-                  <EmptySpace max="-2" attributes="0"/>
+                  <EmptySpace min="-2" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Component id="jLabel7" alignment="0" min="-2" max="-2" attributes="0"/>
                       <Component id="jLabel8" alignment="0" min="-2" max="-2" attributes="0"/>
                       <Component id="jLabel9" alignment="0" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                  <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="txtOoliteVersion" alignment="0" max="32767" attributes="0"/>
-                      <Component id="txtFilename" alignment="0" max="32767" attributes="0"/>
-                      <Component id="jScrollPane1" alignment="0" pref="495" max="32767" attributes="0"/>
+                      <Component id="jScrollPane1" alignment="0" max="32767" attributes="0"/>
+                      <Component id="txtOoliteVersion" linkSize="2" alignment="0" min="-2" pref="483" max="-2" attributes="0"/>
+                      <Component id="txtFilename" linkSize="2" alignment="0" min="-2" pref="483" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace max="-2" attributes="0"/>
+                  <EmptySpace min="-2" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -248,10 +254,13 @@
                   </Group>
                   <EmptySpace min="-2" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="jLabel9" min="-2" max="-2" attributes="0"/>
                       <Component id="jScrollPane1" pref="118" max="32767" attributes="0"/>
+                      <Group type="102" attributes="0">
+                          <Component id="jLabel9" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                      </Group>
                   </Group>
-                  <EmptySpace min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>

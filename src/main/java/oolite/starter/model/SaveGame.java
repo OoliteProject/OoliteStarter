@@ -214,6 +214,41 @@ public class SaveGame {
     public void setExpansions(List<ExpansionReference> expansions) {
         this.expansions = expansions;
     }
+    
+    /**
+     * Returns true if one of the expansions used in the savegame is missing.
+     * @return true if at least one is missing, false otherwise
+     */
+    public boolean hasMissingExpansions() {
+        if (expansions == null) {
+            return false;
+        }
+        
+        for (ExpansionReference er: expansions) {
+            if (er.getStatus() == ExpansionReference.Status.MISSING) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    /**
+     * Returns true if some expansion is installed that is not used in the 
+     * savegame.
+     * @return true if at least one unneeded expansion is installed, false otherwise
+     */
+    public boolean hasTooManyExpansions() {
+        if (expansions == null) {
+            return false;
+        }
+        
+        for (ExpansionReference er: expansions) {
+            if (er.getStatus() == ExpansionReference.Status.SURPLUS) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     @Override
     public String toString() {

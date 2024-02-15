@@ -66,14 +66,24 @@ public class ExpansionPanel extends javax.swing.JPanel implements ExpansionsPane
                 + "<table><tr>"
                 + "<td>Title</td><td>%s</td>"
                 + "</tr><tr>"
+                + "<td valign=\"top\">Description</td><td valign=\"top\">%s</td>"
+                + "</tr><tr>"
                 + "<td>Version</td><td>%s<</td>"
                 + "</tr><tr>"
                 + "<td>Size</td><td>%s</td>"
                 + "</tr><tr>"
                 + "<td>Local File</td><td>%s</td>"
                 + "</tr></table>"
-                + "</html>").formatted(expansion.getTitle(), expansion.getVersion(), Util.humanreadableSize(expansion.getFileSize()), expansion.getLocalFile());
+                + "</html>")
+                .formatted(
+                        expansion.getTitle(), 
+                        expansion.getDescription(),
+                        expansion.getVersion(), 
+                        Util.humanreadableSize(expansion.getFileSize()), 
+                        expansion.getLocalFile()
+                );
         
         jEditorPane1.setText(text);
+        jEditorPane1.setCaretPosition(0);
     }
 }

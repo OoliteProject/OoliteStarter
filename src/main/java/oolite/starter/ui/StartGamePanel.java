@@ -291,8 +291,6 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
     private void btResumeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btResumeActionPerformed
         log.debug("btResumeActionPerformed({})", evt);
 
-        showWaitPanel();
-        
         try {
             int rowIndex = jTable1.getSelectedRow();
             if (rowIndex == -1) {
@@ -301,7 +299,15 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
             
             rowIndex = jTable1.convertRowIndexToModel(rowIndex);
             SaveGame row = model.getRow(rowIndex);
+            
+            if (row.hasMissingExpansions() || row.hasTooManyExpansions()) {
+                if (JOptionPane.showConfirmDialog(this, "The installed expansions do not match the savegame. Do you want to continue?", "Discrepancy detected...", JOptionPane.OK_CANCEL_OPTION) != JOptionPane.OK_OPTION) {
+                    return;
+                }
+            }
 
+            showWaitPanel();
+        
             new Thread() {
                 @Override
                 public void run() {

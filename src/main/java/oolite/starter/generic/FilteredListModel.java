@@ -31,6 +31,71 @@ public class FilteredListModel<T> extends AbstractListModel<T> {
         public boolean willShow(T t);
     }
     
+    public class AndFilter<T> implements Filter<T> {
+        
+        private Filter<T> f1;
+        private Filter<T> f2;
+        
+        /**
+         * Creates a new AndFilter. It shows a value
+         * if both underlying filters would show it.
+         * 
+         * @param f1 the one filter
+         * @param f2 the other filter
+         */
+        public AndFilter(Filter<T> f1, Filter<T> f2) {
+            this.f1 = f1;
+            this.f2 = f2;
+        }
+
+        @Override
+        public boolean willShow(T t) {
+            return f1.willShow(t) && f2.willShow(t);
+        }
+    }
+    
+    public class OrFilter<T> implements Filter<T> {
+        
+        private Filter<T> f1;
+        private Filter<T> f2;
+        
+        /**
+         * Creates a new OrFilter. It shows a value
+         * if either one of the underlying filters would show it.
+         * 
+         * @param f1 the one filter
+         * @param f2 the other filter
+         */
+        public OrFilter(Filter<T> f1, Filter<T> f2) {
+            this.f1 = f1;
+            this.f2 = f2;
+        }
+
+        @Override
+        public boolean willShow(T t) {
+            return f1.willShow(t) || f2.willShow(t);
+        }
+    }
+    
+    public class NotFilter<T> implements Filter<T> {
+        
+        private Filter<T> f1;
+        
+        /**
+         * Creates a new NotFilter.
+         * 
+         * @param f1 the filter to negate
+         */
+        public NotFilter(Filter<T> f1) {
+            this.f1 = f1;
+        }
+
+        @Override
+        public boolean willShow(T t) {
+            return !f1.willShow(t);
+        }
+    }
+    
     private ListModel<T> model;
     private Filter filter;
     private ArrayList<Integer> entries;

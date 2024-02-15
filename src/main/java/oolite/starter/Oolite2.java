@@ -107,7 +107,7 @@ public class Oolite2 {
      * @return the model
      */
     public OoliteExpansionListModel getExpansionListModel() {
-        log.debug("OoliteExpansionListModel");
+        log.debug("getExpansionListModel()");
         
         OoliteExpansionListModel result = new OoliteExpansionListModel();
         ooliteExpansionListModels.add(new WeakReference<>(result));
