@@ -47,8 +47,8 @@ public class ExpansionPanel extends javax.swing.JPanel implements ExpansionsPane
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 94, Short.MAX_VALUE)
+                .addGap(0, 0, 0))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -64,23 +64,28 @@ public class ExpansionPanel extends javax.swing.JPanel implements ExpansionsPane
         
         String text = ("<html>"
                 + "<table><tr>"
-                + "<td>Title</td><td>%s</td>"
+                + "<td>Title</td><td colspan=\"3\">%s</td>"
                 + "</tr><tr>"
-                + "<td valign=\"top\">Description</td><td valign=\"top\">%s</td>"
+                + "<td valign=\"top\">Description</td><td colspan=\"3\" valign=\"top\">%s</td>"
                 + "</tr><tr>"
-                + "<td>Version</td><td>%s<</td>"
+                + "<td>Version</td><td>%s<</td><td>Category</td><td>%s</td>"
                 + "</tr><tr>"
-                + "<td>Size</td><td>%s</td>"
+                + "<td>Size</td><td>%s</td><td>Author</td><td>%s</td>"
                 + "</tr><tr>"
-                + "<td>Local File</td><td>%s</td>"
+                + "<td>Local File</td><td colspan=\"3\">%s</td>"
+                + "</tr><tr>"
+                + "<td>Download&nbsp;URL</td><td colspan=\"3\">%s</td>"
                 + "</tr></table>"
                 + "</html>")
                 .formatted(
                         expansion.getTitle(), 
                         expansion.getDescription(),
                         expansion.getVersion(), 
+                        expansion.getCategory(),
                         Util.humanreadableSize(expansion.getFileSize()), 
-                        expansion.getLocalFile()
+                        expansion.getAuthor(),
+                        expansion.getLocalFile(),
+                        expansion.getDownloadUrl()
                 );
         
         jEditorPane1.setText(text);

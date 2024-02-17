@@ -267,15 +267,15 @@ public class Oolite implements PropertyChangeListener {
         expansions.stream()
             .filter(t -> t.isEnabled())
             .forEach(e -> {
-                log.warn("Fetching conflicts for {}:{}...", e.getIdentifier(), e.getVersion());
+                log.info("Fetching conflicts for {}:{}...", e.getIdentifier(), e.getVersion());
                 try {
                     List<Expansion.Dependency> conflicts = e.getConflictOxps();
                     if (conflicts != null) {
-                        log.warn("potential conflicts {}", conflicts);
+                        log.trace("potential conflicts {}", conflicts);
                         for (Expansion.Dependency dep: conflicts) {
-                            log.warn("processing potential conflicts on {}", dep);
+                            log.trace("processing potential conflicts on {}", dep);
                             List<Expansion> cs = getExpansionByReference(dep, expansions, true);
-                            log.warn("found conflicts {}", cs);
+                            log.trace("found conflicts {}", cs);
                             if (!cs.isEmpty()) {
                                 log.warn("Expansion {} conflicts with {}", e.getIdentifier(), cs);
                                 e.getEMStatus().setConflicting(true);

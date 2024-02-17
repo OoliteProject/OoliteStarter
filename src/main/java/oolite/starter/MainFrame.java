@@ -2,7 +2,6 @@
  */
 package oolite.starter;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -17,8 +16,8 @@ import java.time.Instant;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
 import javax.swing.SwingWorker;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.LineBorder;
@@ -63,7 +62,7 @@ public class MainFrame extends javax.swing.JFrame {
     //private StartGamePanel2 sgp2;
     private ExpansionsPanel esp;
     private ExpansionsPanel2 esp2;
-    private oolite.starter.ui.ExpansionPanel ep;
+    //private oolite.starter.ui.ExpansionPanel ep;
     private ExpansionPanel ep2;
     private InstallationsPanel ip;
     
@@ -147,18 +146,18 @@ public class MainFrame extends javax.swing.JFrame {
         em.addExpansionManagerListener(esp);
 //        jTabbedPane1.add(esp);
 
-        JPanel expansions = new JPanel();
-        expansions.setLayout(new BorderLayout());
+        JSplitPane expansions = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
+        //expansions.setCursor(Cursor.getPredefinedCursor(Cursor.S_RESIZE_CURSOR));
         jTabbedPane1.add(expansions, "Expansions");
 
         esp2 = new ExpansionsPanel2(oolite2);
-        expansions.add(esp2, BorderLayout.CENTER);
+        expansions.setTopComponent(esp2);
 
-        ep = new oolite.starter.ui.ExpansionPanel();
+//        ep = new oolite.starter.ui.ExpansionPanel();
 
         ep2 = new ExpansionPanel();
         esp2.addSelectionListener(ep2);
-        expansions.add(ep2, BorderLayout.SOUTH);
+        expansions.setBottomComponent(ep2);
 
         ip = new InstallationsPanel();
         ip.setConfiguration(configuration);
@@ -177,7 +176,7 @@ public class MainFrame extends javax.swing.JFrame {
         //content.add(sgp2);
         content.add(esp);
         //content.add(esp2);
-        content.add(ep);
+        //content.add(ep);
         //content.add(ep2);
         //content.add(ip);
         JScrollPane jsp = new JScrollPane(content, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
@@ -187,7 +186,7 @@ public class MainFrame extends javax.swing.JFrame {
         //sgp2.setVisible(false);
         esp.setVisible(false);
         //esp2.setVisible(false);
-        ep.setVisible(false);
+        //ep.setVisible(false);
         //ep2.setVisible(false);
         //ip.setVisible(false);
 
@@ -313,6 +312,7 @@ public class MainFrame extends javax.swing.JFrame {
         jMenu1.add(miExpansionsPanel2);
 
         miExpansionDetails.setText("Expansion Details");
+        miExpansionDetails.setEnabled(false);
         miExpansionDetails.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 miExpansionDetailsActionPerformed(evt);
@@ -391,7 +391,7 @@ public class MainFrame extends javax.swing.JFrame {
 
     private void miExpansionDetailsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miExpansionDetailsActionPerformed
         log.debug("miExpansionDetailsActionPerformed({})", evt);
-        ep.setVisible(miExpansionDetails.isSelected());
+        //ep.setVisible(miExpansionDetails.isSelected());
     }//GEN-LAST:event_miExpansionDetailsActionPerformed
 
     private static void customizeSplashScreen() {

@@ -25,6 +25,7 @@ import oolite.starter.generic.SortedListModel;
 import oolite.starter.model.Expansion;
 import oolite.starter.model.Installation;
 import oolite.starter.model.ProcessData;
+import oolite.starter.util.FilterAndSearchUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -56,12 +57,53 @@ public class ExpansionsPanel2 extends javax.swing.JPanel implements Oolite2.Ooli
     private ListAction removeListAction;
     private Oolite2.OoliteExpansionListModel elmAvailable;
     private Oolite2.OoliteExpansionListModel elmInstalled;
-    private SortedListModel<Expansion> elmSortedAvailable;
-    private SortedListModel<Expansion> elmSortedInstalled;
+    //private SortedListModel<Expansion> elmSortedAvailable;
+    //private SortedListModel<Expansion> elmSortedInstalled;
     
     private SwingWorker sw;
     
     private List<SelectionListener> listeners = new ArrayList<>();
+    
+    private String availableSearchString = "";
+    private FilterAndSearchUtil.FilterMode availableFilterMode = FilterAndSearchUtil.FilterMode.NONE;
+    private FilterAndSearchUtil.SortMode availableSortMode = FilterAndSearchUtil.SortMode.BY_TITLE;
+    private String installedSearchString = "";
+    private FilterAndSearchUtil.FilterMode installedFilterMode = FilterAndSearchUtil.FilterMode.NONE;
+    private FilterAndSearchUtil.SortMode installedSortMode = FilterAndSearchUtil.SortMode.BY_TITLE;
+    
+    private FilteredListModel.Filter<Expansion> enabledFilter =  new FilteredListModel.Filter<Expansion>() {
+        private static final Logger log = LogManager.getLogger();
+        
+        @Override
+        public boolean willShow(Expansion t) {
+            log.debug("willShow({})", t);
+            
+            return t.isEnabled();
+        }
+
+        @Override
+        public String toString() {
+            return "Filter(enabled)";
+        }
+
+    };
+    
+    private FilteredListModel.Filter<Expansion> notEnabledFilter =  new FilteredListModel.Filter<Expansion>() {
+        private static final Logger log = LogManager.getLogger();
+        
+        @Override
+        public boolean willShow(Expansion t) {
+            log.debug("willShow({})", t);
+
+            return !t.isEnabled();
+        }
+
+        @Override
+        public String toString() {
+            return "Filter(!enabled)";
+        }
+
+    };
     
     /**
      * Creates new form ExpansionsPanel2.
@@ -78,10 +120,10 @@ public class ExpansionsPanel2 extends javax.swing.JPanel implements Oolite2.Ooli
                     return;
                 }
                 
-                int rowIndex = jList1.getSelectedIndex();
+                int rowIndex = jlAvailable.getSelectedIndex();
                 
                 if (rowIndex >= 0) {
-                    Expansion e = jList1.getModel().getElementAt(rowIndex);
+                    Expansion e = jlAvailable.getModel().getElementAt(rowIndex);
 
                     sw = new InstallSwingWorker(ExpansionsPanel2.this, e, oolite);
                     sw.addPropertyChangeListener(new PropertyChangeListener() {
@@ -113,10 +155,10 @@ public class ExpansionsPanel2 extends javax.swing.JPanel implements Oolite2.Ooli
                     return;
                 }
                 
-                int rowIndex = jList2.getSelectedIndex();
+                int rowIndex = jlInstalled.getSelectedIndex();
                 
                 if (rowIndex >= 0) {
-                    Expansion e = jList2.getModel().getElementAt(rowIndex);
+                    Expansion e = jlInstalled.getModel().getElementAt(rowIndex);
 
                     sw = new RemoveSwingWorker(ExpansionsPanel2.this, e, oolite);
                     sw.addPropertyChangeListener(new PropertyChangeListener() {
@@ -194,10 +236,10 @@ public class ExpansionsPanel2 extends javax.swing.JPanel implements Oolite2.Ooli
                     return;
                 }
                 
-                int rowIndex = jList2.getSelectedIndex();
+                int rowIndex = jlInstalled.getSelectedIndex();
                 
                 if (rowIndex >= 0) {
-                    Expansion e = jList2.getModel().getElementAt(rowIndex);
+                    Expansion e = jlInstalled.getModel().getElementAt(rowIndex);
 
                     sw = new DeleteSwingWorker(ExpansionsPanel2.this, e, oolite);
                     sw.addPropertyChangeListener(new PropertyChangeListener() {
@@ -224,20 +266,20 @@ public class ExpansionsPanel2 extends javax.swing.JPanel implements Oolite2.Ooli
         jProgressBar1.setVisible(false);
         
         ExpansionCellRenderer ecr = new ExpansionCellRenderer();
-        jList1.setCellRenderer(ecr);
-        jList2.setCellRenderer(ecr);
+        jlAvailable.setCellRenderer(ecr);
+        jlInstalled.setCellRenderer(ecr);
                 
 //        btDownload.addActionListener((ae) -> downloadAction.actionPerformed(ae));
 //        btInstall.addActionListener((ae) -> installAction.actionPerformed(ae));
 //        btRemove.addActionListener((ae) -> removeAction.actionPerformed(ae));
 //        btDelete.addActionListener((ae) -> deleteAction.actionPerformed(ae));
         
-        installListAction = new ListAction(jList1, installAction);
-        removeListAction = new ListAction(jList2, new AbstractAction() {
+        installListAction = new ListAction(jlAvailable, installAction);
+        removeListAction = new ListAction(jlInstalled, new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent ae) {
-                int rowIndex = jList2.getSelectedIndex();
-                Expansion e = jList2.getModel().getElementAt(rowIndex);
+                int rowIndex = jlInstalled.getSelectedIndex();
+                Expansion e = jlInstalled.getModel().getElementAt(rowIndex);
                 
                 if (e.isManaged()) {
                     removeAction.actionPerformed(ae);
@@ -276,8 +318,8 @@ public class ExpansionsPanel2 extends javax.swing.JPanel implements Oolite2.Ooli
             }
         };
                 
-        jList1.addListSelectionListener(lsl);
-        jList2.addListSelectionListener(lsl);
+        jlAvailable.addListSelectionListener(lsl);
+        jlInstalled.addListSelectionListener(lsl);
         
         setOolite(oolite);
     }
@@ -307,35 +349,35 @@ public class ExpansionsPanel2 extends javax.swing.JPanel implements Oolite2.Ooli
 //            List<Expansion> expansions = ooliteDriver.getAllExpansions();
             //elmAvailable = new ExpansionListModel(expansions, e -> !e.isEnabled() );
             elmAvailable = ooliteDriver.getExpansionListModel();
-            FilteredListModel<Expansion> lm = new FilteredListModel<Expansion>(elmAvailable, new FilteredListModel.Filter<Expansion>() {
+            setModel(jlAvailable, elmAvailable, availableFilterMode, availableSearchString, availableSortMode, new FilteredListModel.Filter<Expansion>() {
                 @Override
                 public boolean willShow(Expansion t) {
                     return !t.isEnabled();
                 }
             });
-            elmSortedAvailable = new SortedListModel<>(lm, SortOrder.ASCENDING, new Comparator<Expansion>() {
-                @Override
-                public int compare(Expansion t1, Expansion t2) {
-                    return t1.getTitle().compareTo(t2.getTitle());
-                }
-            });
-            jList1.setModel(elmSortedAvailable);
 
             //elmInstalled = new ExpansionListModel(expansions, e -> e.isEnabled());
             elmInstalled = ooliteDriver.getExpansionListModel();
-            lm = new FilteredListModel<Expansion>(elmInstalled, new FilteredListModel.Filter<Expansion>() {
+            setModel(jlInstalled, elmInstalled, installedFilterMode, installedSearchString, installedSortMode, new FilteredListModel.Filter<Expansion>() {
                 @Override
                 public boolean willShow(Expansion t) {
                     return t.isEnabled();
                 }
             });
-            elmSortedInstalled = new SortedListModel<>(lm, SortOrder.ASCENDING, new Comparator<Expansion>() {
-                @Override
-                public int compare(Expansion t1, Expansion t2) {
-                    return t1.getTitle().compareTo(t2.getTitle());
-                }
-            });
-            jList2.setModel(elmSortedInstalled);
+            
+//            FilteredListModel<Expansion> lm = new FilteredListModel<Expansion>(elmInstalled, new FilteredListModel.Filter<Expansion>() {
+//                @Override
+//                public boolean willShow(Expansion t) {
+//                    return t.isEnabled();
+//                }
+//            });
+//            elmSortedInstalled = new SortedListModel<>(lm, SortOrder.ASCENDING, new Comparator<Expansion>() {
+//                @Override
+//                public int compare(Expansion t1, Expansion t2) {
+//                    return t1.getTitle().compareTo(t2.getTitle());
+//                }
+//            });
+//            jlInstalled.setModel(elmSortedInstalled);
             
         } catch (Exception e) {
             log.error("Could not update", e);
@@ -351,10 +393,10 @@ public class ExpansionsPanel2 extends javax.swing.JPanel implements Oolite2.Ooli
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jList1 = new javax.swing.JList<>();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        jList2 = new javax.swing.JList<>();
+        spAvailable = new javax.swing.JScrollPane();
+        jlAvailable = new javax.swing.JList<>();
+        spInstalled = new javax.swing.JScrollPane();
+        jlInstalled = new javax.swing.JList<>();
         btInstall = new javax.swing.JButton();
         btRemove = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
@@ -362,14 +404,20 @@ public class ExpansionsPanel2 extends javax.swing.JPanel implements Oolite2.Ooli
         btDownload = new javax.swing.JButton();
         btDelete = new javax.swing.JButton();
         jProgressBar1 = new javax.swing.JProgressBar();
+        btFlterAvailable = new javax.swing.JButton();
+        btFilterInstalled = new javax.swing.JButton();
 
         setName("OXPs/OXZs"); // NOI18N
 
-        jList1.setName("AvailableJList"); // NOI18N
-        jScrollPane1.setViewportView(jList1);
+        spAvailable.setPreferredSize(new java.awt.Dimension(250, 130));
 
-        jList2.setName("InstalledJList"); // NOI18N
-        jScrollPane2.setViewportView(jList2);
+        jlAvailable.setName("AvailableJList"); // NOI18N
+        spAvailable.setViewportView(jlAvailable);
+
+        spInstalled.setPreferredSize(new java.awt.Dimension(250, 130));
+
+        jlInstalled.setName("InstalledJList"); // NOI18N
+        spInstalled.setViewportView(jlInstalled);
 
         btInstall.setAction(installAction);
         btInstall.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/line_end_arrow_FILL0_wght400_GRAD0_opsz48.png"))); // NOI18N
@@ -393,6 +441,22 @@ public class ExpansionsPanel2 extends javax.swing.JPanel implements Oolite2.Ooli
 
         jProgressBar1.setIndeterminate(true);
 
+        btFlterAvailable.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/filter_list_FILL0_wght400_GRAD0_opsz24.png"))); // NOI18N
+        btFlterAvailable.setToolTipText("Sort & Filter...");
+        btFlterAvailable.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btFlterAvailableActionPerformed(evt);
+            }
+        });
+
+        btFilterInstalled.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/filter_list_FILL0_wght400_GRAD0_opsz24.png"))); // NOI18N
+        btFilterInstalled.setToolTipText("Sort & Filter...");
+        btFilterInstalled.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btFilterInstalledActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -400,38 +464,40 @@ public class ExpansionsPanel2 extends javax.swing.JPanel implements Oolite2.Ooli
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jProgressBar1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addContainerGap())
+                    .addComponent(jProgressBar1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel1)
-                                .addGap(0, 0, Short.MAX_VALUE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 153, Short.MAX_VALUE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(btInstall)
-                                    .addComponent(btRemove)
-                                    .addComponent(btDownload)
-                                    .addComponent(btDelete))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(btFlterAvailable))
+                            .addComponent(spAvailable, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(btInstall)
+                            .addComponent(btRemove)
+                            .addComponent(btDownload)
+                            .addComponent(btDelete))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel2)
-                                .addGap(0, 104, Short.MAX_VALUE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                                .addContainerGap())))))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(btFilterInstalled))
+                            .addComponent(spInstalled, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(jLabel2))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(btFlterAvailable)
+                            .addComponent(btFilterInstalled))
+                        .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING))
+                    .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.TRAILING))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(39, 39, 39)
@@ -442,18 +508,62 @@ public class ExpansionsPanel2 extends javax.swing.JPanel implements Oolite2.Ooli
                         .addComponent(btInstall)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btRemove)
-                        .addGap(0, 68, Short.MAX_VALUE))
+                        .addGap(0, 56, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jScrollPane2))
+                        .addComponent(spInstalled, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jScrollPane1)))
+                        .addComponent(spAvailable, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jProgressBar1, javax.swing.GroupLayout.PREFERRED_SIZE, 13, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
+
+    private void setModel(JList list, Oolite2.OoliteExpansionListModel elm, FilterAndSearchUtil.FilterMode fm, String searchString, FilterAndSearchUtil.SortMode sortMode, FilteredListModel.Filter<Expansion> baseFilter) {
+        FilteredListModel.Filter<Expansion> user = FilterAndSearchUtil.getExpansionFilter(fm, searchString);
+        FilteredListModel.Filter<Expansion> filter = new FilteredListModel.AndFilter<Expansion>(baseFilter, user);
+        FilteredListModel<Expansion> lm = new FilteredListModel<Expansion>(elm, filter);
+        
+        Comparator<Expansion> comparator = FilterAndSearchUtil.getExpansionComparator(sortMode);
+        SortedListModel<Expansion> elmSorted = new SortedListModel<>(lm, SortOrder.ASCENDING, comparator);
+        
+        log.warn("setting filter {}", filter);
+        log.warn("setting comparator {}", comparator);
+        
+        list.setModel(elmSorted);
+    }
+    
+    private void btFlterAvailableActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btFlterAvailableActionPerformed
+        FilterAndSearch fas = new FilterAndSearch();
+        fas.setFilterMode(availableFilterMode);
+        fas.setSearchString(availableSearchString);
+        fas.setSortMode(availableSortMode);
+        if (JOptionPane.showConfirmDialog(spAvailable, fas, "Available Filter and Sort", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE) == JOptionPane.OK_OPTION) {
+            log.debug("set new filter for available");
+            availableFilterMode = fas.getFilterMode();
+            availableSortMode = fas.getSortMode();
+            availableSearchString = fas.getSearchString();
+            
+            setModel(jlAvailable, elmAvailable, availableFilterMode, availableSearchString, availableSortMode, notEnabledFilter);
+        }
+    }//GEN-LAST:event_btFlterAvailableActionPerformed
+
+    private void btFilterInstalledActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btFilterInstalledActionPerformed
+        FilterAndSearch fas = new FilterAndSearch();
+        fas.setFilterMode(installedFilterMode);
+        fas.setSearchString(installedSearchString);
+        fas.setSortMode(installedSortMode);
+        if (JOptionPane.showConfirmDialog(spInstalled, fas, "Installed Filter and Sort", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE) == JOptionPane.OK_OPTION) {
+            log.debug("set new filter for installed");
+            installedFilterMode = fas.getFilterMode();
+            installedSortMode = fas.getSortMode();
+            installedSearchString = fas.getSearchString();
+            
+            setModel(jlInstalled, elmInstalled, installedFilterMode, installedSearchString, installedSortMode, enabledFilter);
+        }
+    }//GEN-LAST:event_btFilterInstalledActionPerformed
     
     /**
      * Registers a new SelectionListener to this component.
@@ -518,14 +628,16 @@ public class ExpansionsPanel2 extends javax.swing.JPanel implements Oolite2.Ooli
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btDelete;
     private javax.swing.JButton btDownload;
+    private javax.swing.JButton btFilterInstalled;
+    private javax.swing.JButton btFlterAvailable;
     private javax.swing.JButton btInstall;
     private javax.swing.JButton btRemove;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JList<Expansion> jList1;
-    private javax.swing.JList<Expansion> jList2;
     private javax.swing.JProgressBar jProgressBar1;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JList<Expansion> jlAvailable;
+    private javax.swing.JList<Expansion> jlInstalled;
+    private javax.swing.JScrollPane spAvailable;
+    private javax.swing.JScrollPane spInstalled;
     // End of variables declaration//GEN-END:variables
 }

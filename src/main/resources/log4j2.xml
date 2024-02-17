@@ -27,7 +27,7 @@
     <Logger level="info" name="oolite.starter.ExpansionFolderAlterationListener"/>
     <Logger level="debug" name="oolite.starter.ExpansionManager"/>
     <Logger level="info"  name="oolite.starter.generic.FilteredListModel"/>
-    <Logger level="info"  name="oolite.starter.generic.SortedListModel"/>
+    <Logger level="trace"  name="oolite.starter.generic.SortedListModel"/>
     <Logger level="info"  name="oolite.starter.GithubVersionChecker"/>
     <Logger level="info"  name="oolite.starter.Oolite"/>
     <Logger level="info"  name="oolite.starter.Oolite2.OoliteExpansionListModel"/>

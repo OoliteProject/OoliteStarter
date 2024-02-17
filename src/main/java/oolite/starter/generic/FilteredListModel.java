@@ -31,7 +31,8 @@ public class FilteredListModel<T> extends AbstractListModel<T> {
         public boolean willShow(T t);
     }
     
-    public class AndFilter<T> implements Filter<T> {
+    public static class AndFilter<T> implements Filter<T> {
+        private static final Logger log = LogManager.getLogger();        
         
         private Filter<T> f1;
         private Filter<T> f2;
@@ -44,17 +45,31 @@ public class FilteredListModel<T> extends AbstractListModel<T> {
          * @param f2 the other filter
          */
         public AndFilter(Filter<T> f1, Filter<T> f2) {
+            log.debug("AndFilter({}, {})", f1, f2);
+            
             this.f1 = f1;
             this.f2 = f2;
         }
 
         @Override
         public boolean willShow(T t) {
+            log.debug("willShow({})", t);
+
             return f1.willShow(t) && f2.willShow(t);
+        }
+        
+        /**
+         * Returns a string representation of this filter. 
+         * 
+         * @return the string
+         */
+        public String toString() {
+            return "AndFilter(" + f1 + ", " + f2 + ")";
         }
     }
     
-    public class OrFilter<T> implements Filter<T> {
+    public static class OrFilter<T> implements Filter<T> {
+        private static final Logger log = LogManager.getLogger();        
         
         private Filter<T> f1;
         private Filter<T> f2;
@@ -67,17 +82,31 @@ public class FilteredListModel<T> extends AbstractListModel<T> {
          * @param f2 the other filter
          */
         public OrFilter(Filter<T> f1, Filter<T> f2) {
+            log.debug("OrFilter({}, {})", f1, f2);
+            
             this.f1 = f1;
             this.f2 = f2;
         }
 
         @Override
         public boolean willShow(T t) {
+            log.debug("willShow({})", t);
+
             return f1.willShow(t) || f2.willShow(t);
+        }
+        
+        /**
+         * Returns a string representation of this filter. 
+         * 
+         * @return the string
+         */
+        public String toString() {
+            return "OrFilter(" + f1 + ", " + f2 + ")";
         }
     }
     
-    public class NotFilter<T> implements Filter<T> {
+    public static class NotFilter<T> implements Filter<T> {
+        private static final Logger log = LogManager.getLogger();        
         
         private Filter<T> f1;
         
@@ -87,12 +116,25 @@ public class FilteredListModel<T> extends AbstractListModel<T> {
          * @param f1 the filter to negate
          */
         public NotFilter(Filter<T> f1) {
+            log.debug("NotFilter({})", f1);
+            
             this.f1 = f1;
         }
 
         @Override
         public boolean willShow(T t) {
+            log.debug("willShow({})", t);
+
             return !f1.willShow(t);
+        }
+        
+        /**
+         * Returns a string representation of this filter. 
+         * 
+         * @return the string
+         */
+        public String toString() {
+            return "NotFilter(" + f1 + ")";
         }
     }
     
