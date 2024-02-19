@@ -3,12 +3,16 @@
 
 package oolite.starter.ui2;
 
+import java.awt.Color;
 import java.awt.Component;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.ListCellRenderer;
+import javax.swing.border.Border;
+import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
+import javax.swing.border.MatteBorder;
 import oolite.starter.model.Expansion;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -21,13 +25,16 @@ public class ExpansionCellRenderer extends JLabel implements ListCellRenderer<Ex
     private static final Logger log = LogManager.getLogger();
 
     private ImageIcon expansionIcon = new ImageIcon(getClass().getResource("/icons/32px-Oolite-oxp-icon.png"));
+    private Border emtpyBorder = new EmptyBorder(4, 2, 4, 4);
+    private Border normalBorder = new CompoundBorder(new MatteBorder(0, 4, 0, 0, getBackground()), emtpyBorder);
+    private Border warningBorder = new CompoundBorder(new MatteBorder(0, 4, 0, 0, Color.ORANGE), emtpyBorder);
+    private Border problemBorder = new CompoundBorder(new MatteBorder(0, 4, 0, 0, Color.RED), emtpyBorder);
     
     /**
      * Creates a new ExpansionCellRenderer.
      */
     public ExpansionCellRenderer() {
         setOpaque(true);
-        setBorder(new EmptyBorder(4, 4, 4, 4));
     }
 
     @Override
@@ -47,7 +54,15 @@ public class ExpansionCellRenderer extends JLabel implements ListCellRenderer<Ex
             setForeground(list.getForeground());
         }
         setEnabled(list.isEnabled());
-
+        
+        if (expansion.getEMStatus().isConflicting()) {
+            setBorder(problemBorder);
+        } else if (expansion.getEMStatus().isMissingDeps()) {
+            setBorder(warningBorder);
+        } else  {
+            setBorder(normalBorder);
+        }
+            
         return this;
     }
 

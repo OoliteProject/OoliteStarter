@@ -44,7 +44,7 @@ public class Configuration {
     
     private static final String CONF_NO_ACTIVE_INSTALLATION = "No active installation";
     public static final Color COLOR_ATTENTION = new Color(160, 80, 0);
-    private static final String DEFAULT_URL = "https://addons.oolite.space/api/1.0/overview";
+    private static final String DEFAULT_URL = "https://addons.oolite.space/api/1.0/overview/";
 
     private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
     

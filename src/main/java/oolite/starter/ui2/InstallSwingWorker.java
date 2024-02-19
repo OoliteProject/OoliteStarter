@@ -34,8 +34,12 @@ public class InstallSwingWorker extends SwingWorker<Void, Void> {
     @Override
     protected Void doInBackground() throws Exception {
         log.debug("doInBackground()");
-        
-        expansion.install();
+
+        if (expansion.isLocal()) {
+            expansion.enable();
+        } else {
+            expansion.install();
+        }
         return null;
     }
 

@@ -57,8 +57,6 @@ public class ExpansionsPanel2 extends javax.swing.JPanel implements Oolite2.Ooli
     private ListAction removeListAction;
     private Oolite2.OoliteExpansionListModel elmAvailable;
     private Oolite2.OoliteExpansionListModel elmInstalled;
-    //private SortedListModel<Expansion> elmSortedAvailable;
-    //private SortedListModel<Expansion> elmSortedInstalled;
     
     private SwingWorker sw;
     
@@ -130,15 +128,7 @@ public class ExpansionsPanel2 extends javax.swing.JPanel implements Oolite2.Ooli
                         @Override
                         public void propertyChange(PropertyChangeEvent pce) {
                             log.debug("propertyChange({})", pce);
-
-                            boolean started = pce.getNewValue() == SwingWorker.StateValue.STARTED;
-                            log.trace("pending: {}", started);
-
-                            installAction.setEnabled(!started);
-                            removeAction.setEnabled(!started);
-                            downloadAction.setEnabled(!started);
-                            deleteAction.setEnabled(!started);
-                            jProgressBar1.setVisible(started);
+                            updateActions(e);
                         }
                     });
                     sw.execute();
@@ -165,15 +155,7 @@ public class ExpansionsPanel2 extends javax.swing.JPanel implements Oolite2.Ooli
                         @Override
                         public void propertyChange(PropertyChangeEvent pce) {
                             log.debug("propertyChange({})", pce);
-
-                            boolean started = pce.getNewValue() == SwingWorker.StateValue.STARTED;
-                            log.trace("pending: {}", started);
-
-                            installAction.setEnabled(!started);
-                            removeAction.setEnabled(!started);
-                            downloadAction.setEnabled(!started);
-                            deleteAction.setEnabled(!started);
-                            jProgressBar1.setVisible(started);
+                            updateActions(e);
                         }
                     });
                     sw.execute();
@@ -210,15 +192,7 @@ public class ExpansionsPanel2 extends javax.swing.JPanel implements Oolite2.Ooli
                         @Override
                         public void propertyChange(PropertyChangeEvent pce) {
                             log.debug("propertyChange({})", pce);
-
-                            boolean started = pce.getNewValue() == SwingWorker.StateValue.STARTED;
-                            log.trace("pending: {}", started);
-
-                            installAction.setEnabled(!started);
-                            removeAction.setEnabled(!started);
-                            downloadAction.setEnabled(!started);
-                            deleteAction.setEnabled(!started);
-                            jProgressBar1.setVisible(started);
+                            updateActions(null);
                         }
                     });
                     sw.execute();
@@ -246,15 +220,7 @@ public class ExpansionsPanel2 extends javax.swing.JPanel implements Oolite2.Ooli
                         @Override
                         public void propertyChange(PropertyChangeEvent pce) {
                             log.debug("propertyChange({})", pce);
-
-                            boolean started = pce.getNewValue() == SwingWorker.StateValue.STARTED;
-                            log.trace("pending: {}", started);
-
-                            installAction.setEnabled(!started);
-                            removeAction.setEnabled(!started);
-                            downloadAction.setEnabled(!started);
-                            deleteAction.setEnabled(!started);
-                            jProgressBar1.setVisible(started);
+                            updateActions(e);
                         }
                     });
                     sw.execute();
@@ -302,15 +268,8 @@ public class ExpansionsPanel2 extends javax.swing.JPanel implements Oolite2.Ooli
                     
                     if (rowIndex >= 0) {
                         Expansion e = list.getModel().getElementAt(rowIndex);
-
-                        boolean working = sw != null && sw.getState() != SwingWorker.StateValue.DONE;
-                        log.debug("working: {}", working);
-                        installAction.setEnabled(!e.isLocal() && !working);
-                        removeAction.setEnabled(e.isLocal() && e.isManaged() && !working);
-                        deleteAction.setEnabled(
-                                e.isLocal() && !e.isManaged() && !"Oolite Debug OXP".equals(e.getTitle()) && !working
-                                );
-
+                        
+                        updateActions(e);
                         fireSelectionEvent(e);
                     }
                 }
@@ -322,6 +281,23 @@ public class ExpansionsPanel2 extends javax.swing.JPanel implements Oolite2.Ooli
         jlInstalled.addListSelectionListener(lsl);
         
         setOolite(oolite);
+    }
+    
+    private void updateActions(Expansion e) {
+        boolean working = sw != null && sw.getState() != SwingWorker.StateValue.DONE;
+        jProgressBar1.setVisible(working);
+        log.debug("working: {}", working);
+        if (working) {
+            jProgressBar1.setString(sw.getClass().getName() + e.getTitle());
+        }
+
+        if (e != null) {
+            installAction.setEnabled(!e.isEnabled() && !working);
+            removeAction.setEnabled(e.isEnabled() && e.isManaged() && !working);
+            deleteAction.setEnabled(
+                e.isEnabled() && !e.isManaged() && !"Oolite Debug OXP".equals(e.getTitle()) && !working
+                );
+        }
     }
 
     /**
@@ -349,21 +325,11 @@ public class ExpansionsPanel2 extends javax.swing.JPanel implements Oolite2.Ooli
 //            List<Expansion> expansions = ooliteDriver.getAllExpansions();
             //elmAvailable = new ExpansionListModel(expansions, e -> !e.isEnabled() );
             elmAvailable = ooliteDriver.getExpansionListModel();
-            setModel(jlAvailable, elmAvailable, availableFilterMode, availableSearchString, availableSortMode, new FilteredListModel.Filter<Expansion>() {
-                @Override
-                public boolean willShow(Expansion t) {
-                    return !t.isEnabled();
-                }
-            });
+            setModel(jlAvailable, elmAvailable, availableFilterMode, availableSearchString, availableSortMode, notEnabledFilter);
 
             //elmInstalled = new ExpansionListModel(expansions, e -> e.isEnabled());
             elmInstalled = ooliteDriver.getExpansionListModel();
-            setModel(jlInstalled, elmInstalled, installedFilterMode, installedSearchString, installedSortMode, new FilteredListModel.Filter<Expansion>() {
-                @Override
-                public boolean willShow(Expansion t) {
-                    return t.isEnabled();
-                }
-            });
+            setModel(jlInstalled, elmInstalled, installedFilterMode, installedSearchString, installedSortMode, enabledFilter);
             
 //            FilteredListModel<Expansion> lm = new FilteredListModel<Expansion>(elmInstalled, new FilteredListModel.Filter<Expansion>() {
 //                @Override

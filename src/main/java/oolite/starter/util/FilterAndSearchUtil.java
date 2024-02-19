@@ -64,7 +64,9 @@ public class FilterAndSearchUtil {
         public SearchFilter(String searchString) {
             log.debug("SearchFilter({})", searchString);
             
-            this.searchString = searchString;
+            if (searchString != null) {
+                this.searchString = searchString.toLowerCase();
+            }
         }
         
         @Override
@@ -73,8 +75,16 @@ public class FilterAndSearchUtil {
             if (searchString == null) {
                 return true;
             } else {
-                return t.getTitle().toLowerCase().contains(searchString.toLowerCase())
-                    || t.getDescription().toLowerCase().contains(searchString.toLowerCase());
+                if (t.getTitle() != null && t.getTitle().toLowerCase().contains(searchString)) {
+                    return true;
+                }
+                if (t.getDescription() != null && t.getDescription().toLowerCase().contains(searchString)) {
+                    return true;
+                };
+                if (t.getAuthor() != null && t.getAuthor().toLowerCase().contains(searchString)) {
+                    return true;
+                };
+                return false;
             }
         }
 
@@ -111,13 +121,29 @@ public class FilterAndSearchUtil {
                     public boolean willShow(Expansion t) {
                         return t.isEnabled() && (t.getEMStatus().isConflicting() || t.getEMStatus().isMissingDeps());
                     }
+
+                    @Override
+                    public String toString() {
+                        return "Filter<Expansion>(PROBLEMATIC)";
+                    }
+                    
                 };
                 break;
             case UPDATEABLE:
                 chosenFilter =  new FilteredListModel.Filter<Expansion>() {
+                    /**
+                     * Return the previous versions if already installed,
+                     * or the latest versions that are not installed.
+                     */
                     @Override
                     public boolean willShow(Expansion t) {
-                        return !t.getEMStatus().isLatest();
+                        return t.isEnabled() && !t.getEMStatus().isLatest()
+                                || !t.isEnabled() && t.getEMStatus().isLatest();
+                    }
+
+                    @Override
+                    public String toString() {
+                        return "Filter<Expansion>(UPDATEABLE)";
                     }
                 };
                 break;
