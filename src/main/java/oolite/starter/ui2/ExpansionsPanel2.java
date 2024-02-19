@@ -93,7 +93,7 @@ public class ExpansionsPanel2 extends javax.swing.JPanel implements Oolite2.Ooli
         public boolean willShow(Expansion t) {
             log.debug("willShow({})", t);
 
-            return !t.isEnabled();
+            return !t.isEnabled() && !t.getEMStatus().isIncompatible();
         }
 
         @Override
