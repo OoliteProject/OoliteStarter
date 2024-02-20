@@ -92,7 +92,7 @@ public class OoliteVersionCheckerTest {
         log.info("testGetHtmlReleaseURL");
 
         OoliteVersionChecker instance = new OoliteVersionChecker();
-        assertEquals("https://github.com/OoliteProject/oolite/releases/tag/vcoco", instance.getHtmlReleaseURL("coco").toExternalForm());
+        assertEquals("https://github.com/OoliteProject/oolite/releases/tag/coco", instance.getHtmlReleaseURL("coco").toExternalForm());
     }
 
     /**
@@ -118,7 +118,7 @@ public class OoliteVersionCheckerTest {
         log.info("getHtmlUserMessage");
 
         OoliteVersionChecker instance = new OoliteVersionChecker();
-        assertEquals("<html><body><p>All right there. We heard rumors the new oolite version 999.999.999 has been released.</p><p>You need to check <a href=\"https://github.com/OoliteProject/oolite/releases/tag/v999.999.999\">https://github.com/OoliteProject/oolite/releases/tag/v999.999.999</a> and report back to me.</p><p>But don't keep me waiting too long, kid!</p></body></html>", instance.getHtmlUserMessage(ModuleDescriptor.Version.parse("999.999.999")));
+        assertEquals("<html><body><p>All right there. We heard rumors the new oolite version 999.999.999 has been released.</p><p>You need to check <a href=\"https://github.com/OoliteProject/oolite/releases/tag/999.999.999\">https://github.com/OoliteProject/oolite/releases/tag/999.999.999</a> and report back to me.</p><p>But don't keep me waiting too long, kid!</p></body></html>", instance.getHtmlUserMessage(ModuleDescriptor.Version.parse("999.999.999")));
     }
 
     /**

@@ -19,8 +19,9 @@
     <Logger level="warn"  name="oolite.starter.ConfigurationTest"/>
     <Logger level="warn"  name="oolite.starter.ExpansionManager"/>
     <Logger level="warn"  name="oolite.starter.ExpansionManagerTest"/>
-    <Logger level="debug"  name="oolite.starter.GithubVersionChecker"/>
-    <Logger level="error"  name="oolite.starter.model.Command"/>
+    <Logger level="debug" name="oolite.starter.GithubVersionChecker"/>
+    <Logger level="error" name="oolite.starter.model.Command"/>
+    <Logger level="error" name="oolite.starter.model.CommandTest"/>
     <Logger level="warn"  name="oolite.starter.model.ExpansionTest"/>
     <Logger level="warn"  name="oolite.starter.model.ExpansionReferenceTest"/>
     <Logger level="warn"  name="oolite.starter.model.InstallationTest"/>
@@ -29,7 +30,11 @@
     <Logger level="warn"  name="oolite.starter.GithubVersionCheckerTest"/>
     <Logger level="info"  name="oolite.starter.Oolite"/>
     <Logger level="info"  name="oolite.starter.OoliteTest"/>
+    <Logger level="warn"  name="oolite.starter.OoliteVersionChecker"/>
+    <Logger level="warn"  name="oolite.starter.OoliteVersionCheckerTest"/>
     <Logger level="warn"  name="oolite.starter.ProcessRunExceptionTest"/>
+    <Logger level="info"  name="oolite.starter.util.FilterAndSearchUtil"/>
+    <Logger level="warn"  name="oolite.starter.util.FilterAndSearchUtilTest"/>
     <Logger level="info"  name="oolite.starter.util.PlistUtil"/>
     <Logger level="info"  name="oolite.starter.util.PlistUtilTest"/>
     <Logger level="info"  name="oolite.starter.util.Util"/>

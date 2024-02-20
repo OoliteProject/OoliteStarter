@@ -703,20 +703,6 @@ public class OoliteTest {
     }
     
     @Test
-    public void testGetExpansionByReference2() {
-        log.info("testGetExpansionByReference2()");
-
-        Oolite instance = new Oolite();
-        try {
-            instance.getExpansionByReference((String)null, null, false);
-            fail("expected exception");
-        } catch (IllegalArgumentException e) {
-            assertEquals("reference must not be null", e.getMessage());
-            log.debug("caught expected exception", e);
-        }
-    }
-    
-    @Test
     public void testGetExpansionByReference3() {
         log.info("testGetExpansionByReference3()");
 
@@ -1332,4 +1318,182 @@ public class OoliteTest {
         assertEquals(ExpansionReference.Status.MISSING, ref.getStatus());
     }
     
+    @Test
+    public void testGetExpansionByDependency() {
+        log.info("testGetExpansionByDependency()");
+        
+        Oolite instance = new Oolite();
+        
+        try {
+            instance.getExpansionByReference((Expansion.Dependency)null, null, true);
+            fail("expected exception");
+        } catch (IllegalArgumentException e) {
+            assertEquals("reference must not be null", e.getMessage());
+            log.debug("caught expected exception", e);
+        }
+    }
+    
+    @Test
+    public void testGetExpansionByDependency2() {
+        log.info("testGetExpansionByDependency2()");
+        
+        Oolite instance = new Oolite();
+        Expansion.Dependency reference = new Expansion.Dependency();
+        
+        try {
+            instance.getExpansionByReference(reference, null, true);
+            fail("expected exception");
+        } catch (IllegalArgumentException e) {
+            assertEquals("expansions must not be null", e.getMessage());
+            log.debug("caught expected exception", e);
+        }
+    }
+    
+    @Test
+    public void testGetExpansionByDependency3() {
+        log.info("testGetExpansionByDependency3()");
+        
+        Oolite instance = new Oolite();
+        Expansion.Dependency reference = new Expansion.Dependency();
+        List<Expansion> expansions = new ArrayList<>();
+        
+        try {
+            instance.getExpansionByReference(reference, expansions, true);
+            fail("expected exception");
+        } catch (IllegalArgumentException e) {
+            assertEquals("reference must have a non-null identifier", e.getMessage());
+            log.debug("caught expected exception", e);
+        }
+    }
+    
+    @Test
+    public void testGetExpansionByDependency4() {
+        log.info("testGetExpansionByDependency4()");
+        
+        Oolite instance = new Oolite();
+        Expansion.Dependency reference = new Expansion.Dependency("identifier");
+        List<Expansion> expansions = new ArrayList<>();
+        Expansion expansion = new Expansion();
+        expansions.add(expansion);
+        
+        List<Expansion> result = instance.getExpansionByReference(reference, expansions, false);
+        assertNotNull(result);
+        assertEquals(0, result.size());
+    }
+    
+    @Test
+    public void testGetExpansionByDependency5() {
+        log.info("testGetExpansionByDependency5()");
+        
+        Oolite instance = new Oolite();
+        Expansion.Dependency reference = new Expansion.Dependency("identifier");
+        List<Expansion> expansions = new ArrayList<>();
+        Expansion expansion = new Expansion();
+        expansion.setIdentifier("identifier");
+        expansions.add(expansion);
+        
+        List<Expansion> result = instance.getExpansionByReference(reference, expansions, false);
+        assertEquals(1, result.size());
+    }
+    
+    @Test
+    public void testGetExpansionByDependency6() {
+        log.info("testGetExpansionByDependency6()");
+        
+        Oolite instance = new Oolite();
+        Expansion.Dependency reference = new Expansion.Dependency("identifier");
+        List<Expansion> expansions = new ArrayList<>();
+        Expansion expansion = new Expansion();
+        expansion.setIdentifier("identifier");
+        expansion.setOolite(instance);
+        expansions.add(expansion);
+        
+        List<Expansion> result = instance.getExpansionByReference(reference, expansions, true);
+        assertEquals(0, result.size());
+    }
+    
+    @Test
+    public void testGetExpansionByDependency7() {
+        log.info("testGetExpansionByDependency7()");
+        
+        Oolite instance = new Oolite();
+        Expansion.Dependency reference = new Expansion.Dependency("identifier");
+        List<Expansion> expansions = new ArrayList<>();
+        Expansion expansion = new Expansion();
+        expansion.setIdentifier("identifier");
+        expansion.setVersion("1.1");
+        expansion.setOolite(instance);
+        expansions.add(expansion);
+        
+        List<Expansion> result = instance.getExpansionByReference(reference, expansions, false);
+        assertEquals(1, result.size());
+    }
+    
+    @Test
+    public void testGetExpansionByDependency8() {
+        log.info("testGetExpansionByDependency8()");
+        
+        Oolite instance = new Oolite();
+        Expansion.Dependency reference = new Expansion.Dependency("identifier", "0");
+        List<Expansion> expansions = new ArrayList<>();
+        Expansion expansion = new Expansion();
+        expansion.setIdentifier("identifier");
+        expansion.setVersion("1.1");
+        expansion.setOolite(instance);
+        expansions.add(expansion);
+        
+        List<Expansion> result = instance.getExpansionByReference(reference, expansions, false);
+        assertEquals(1, result.size());
+    }
+    
+    @Test
+    public void testGetExpansionByDependency9() {
+        log.info("testGetExpansionByDependency9()");
+        
+        Oolite instance = new Oolite();
+        Expansion.Dependency reference = new Expansion.Dependency("identifier", "1.0");
+        List<Expansion> expansions = new ArrayList<>();
+        Expansion expansion = new Expansion();
+        expansion.setIdentifier("identifier");
+        expansion.setVersion("1.1");
+        expansion.setOolite(instance);
+        expansions.add(expansion);
+        
+        List<Expansion> result = instance.getExpansionByReference(reference, expansions, false);
+        assertEquals(1, result.size());
+    }
+    
+    @Test
+    public void testGetExpansionByDependency10() {
+        log.info("testGetExpansionByDependency10()");
+        
+        Oolite instance = new Oolite();
+        Expansion.Dependency reference = new Expansion.Dependency("identifier", "1.2");
+        List<Expansion> expansions = new ArrayList<>();
+        Expansion expansion = new Expansion();
+        expansion.setIdentifier("identifier");
+        expansion.setVersion("1.1");
+        expansion.setOolite(instance);
+        expansions.add(expansion);
+        
+        List<Expansion> result = instance.getExpansionByReference(reference, expansions, false);
+        assertEquals(0, result.size());
+    }
+
+    @Test
+    public void testGetExpansionByDependency11() {
+        log.info("testGetExpansionByDependency11()");
+        
+        Oolite instance = new Oolite();
+        Expansion.Dependency reference = new Expansion.Dependency("identifier", "1.0");
+        List<Expansion> expansions = new ArrayList<>();
+        Expansion expansion = new Expansion();
+        expansion.setIdentifier("identifier");
+        expansion.setVersion("1.1");
+        expansion.setOolite(instance);
+        expansions.add(expansion);
+        
+        List<Expansion> result = instance.getExpansionByReference(reference, expansions, true);
+        assertEquals(0, result.size());
+    }
 }

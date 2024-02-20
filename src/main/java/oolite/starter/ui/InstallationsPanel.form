@@ -126,7 +126,7 @@
         <Component class="javax.swing.JButton" name="btActivate">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/icons/star_FILL0_wght400_GRAD0_opsz24.png"/>
+              <Image iconType="3" name="/icons/star_FILL1_wght400_GRAD0_opsz24.png"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Select"/>
           </Properties>

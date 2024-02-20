@@ -22,6 +22,7 @@ import java.lang.module.ModuleDescriptor;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
+import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -154,6 +155,16 @@ public class Oolite implements PropertyChangeListener {
     List<Expansion> getExpansionByReference(Expansion.Dependency reference, List<Expansion> expansions, boolean checkEnabled) {
         log.debug("getExpansionByReference({}, {}, {})", reference, expansions, checkEnabled);
         
+        if (reference == null) {
+            throw new IllegalArgumentException("reference must not be null");
+        }
+        if (expansions == null) {
+            throw new IllegalArgumentException("expansions must not be null");
+        }
+        if (reference.getIdentifier() == null) {
+            throw new IllegalArgumentException("reference must have a non-null identifier");
+        }
+        
         List<Expansion> result = new ArrayList<>();
         
         ModuleDescriptor.Version minVersion = parseVersion(reference.getVersion());
@@ -180,7 +191,7 @@ public class Oolite implements PropertyChangeListener {
                 if (minVersion == null) {
                     // we have not even a minimum version? Then all versions match
                     result.add(expansion);
-                } else if (minVersion.compareTo(expVersion) <= 0) {
+                } else if (minVersion.compareTo(expVersion) <= 0 || "0".equals(reference.getVersion())) {
                     log.trace("minVersion matched");
                     // we have a minVersion that matches. What about the maxversion?
                     if (maxVersion == null) {
@@ -553,7 +564,7 @@ public class Oolite implements PropertyChangeListener {
                 ExpansionReference ref = new ExpansionReference();
                 ref.setName(expansion.getIdentifier() + "@" + expansion.getVersion());
                 ref.setStatus(ExpansionReference.Status.SURPLUS);
-                ref.addReason("not required for this savegame but installed");
+                ref.addReason("not required but installed");
                 surplus.add(ref);
             }
         }
@@ -635,7 +646,9 @@ public class Oolite implements PropertyChangeListener {
     
     void fireActivatedInstallation(Installation installation) {
         for (OoliteListener l: listeners) {
+            Instant start = Instant.now();
             l.activatedInstallation(installation);
+            log.warn("Listener {} took {} to process activatedInstallation(...)", l, Duration.between(start, Instant.now()));
         }
     }
     
@@ -1127,6 +1140,8 @@ public class Oolite implements PropertyChangeListener {
      */
     public List<Expansion> getAllExpansions() throws IOException {
         log.debug("getAllExpansions()");
+        Instant start = Instant.now();
+        
         List<Expansion> resultList = new ArrayList<>();
         List<Expansion> localList = getLocalExpansions();
         List<Expansion> remoteList = getOnlineExpansions();
@@ -1155,6 +1170,8 @@ public class Oolite implements PropertyChangeListener {
         validateUpdates(resultList);
         
         Collections.sort(resultList);
+        
+        log.warn("Performed getAllExpansions() on {} expansions in {}", resultList.size(), Duration.between(start, Instant.now()));
         return resultList;
     }
 
@@ -1288,7 +1305,7 @@ public class Oolite implements PropertyChangeListener {
      * @param f the file to investigate
      * @return the expansion found, or null
      */
-    private Expansion getExpansionFrom(File f) throws ParserConfigurationException, SAXException, XPathExpressionException {
+    protected Expansion getExpansionFrom(File f) throws ParserConfigurationException, SAXException, XPathExpressionException {
         log.debug("getExpansionFrom({})", f);
         try {
             if (f.isDirectory()) {
@@ -1659,9 +1676,17 @@ public class Oolite implements PropertyChangeListener {
         t.transform(new DOMSource(doc), new StreamResult(destination));
     }
     
+    /**
+     * Tries to resolve dependencies via the filesystem.
+     * @param expansion the expansion whose requirements shall be checked
+     * @param result the result list to append our result
+     */
     void validateRequirements(Expansion expansion, List<ExpansionReference> result) {
+        log.debug("validateRequirements(...)");
+        
         if (expansion.getRequiresOxps() != null) {
             for (Expansion.Dependency dependency: expansion.getRequiresOxps()) {
+                // for each required expansion...
                 ExpansionReference er = getExpansionReference(dependency);
                 if (er.getStatus() == ExpansionReference.Status.MISSING) {
                     er.addReason("missed by " + expansion.getIdentifier());
@@ -1699,7 +1724,10 @@ public class Oolite implements PropertyChangeListener {
      * 
      * @param expansions the expansions to check
      * @return the list of discrepancies found
+     * 
+     * @deprecated use validateDependencies2 instead, which is richer in information
      */
+    @Deprecated
     public List<ExpansionReference> validateDependencies(List<Expansion> expansions) {
         log.debug("validateDependencies(...)");
         
@@ -1873,7 +1901,7 @@ public class Oolite implements PropertyChangeListener {
         String[] r = dep.split("@|\\.oxz");
         result.setName(String.join(":", r));
         result.setStatus(ExpansionReference.Status.MISSING);
-        result.addReason("required for this savegame but not enabled");
+        result.addReason("required but not enabled");
         
         // find a direct match
         if (

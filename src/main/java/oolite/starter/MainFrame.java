@@ -93,6 +93,16 @@ public class MainFrame extends javax.swing.JFrame {
             @Override
             public void statusChanged(Oolite2.Status status) {
                 log.warn("statusChanged({})", status);
+                
+                if (status == Oolite2.Status.initializing) {
+                    getContentPane().setEnabled(false);
+                    jProgressBar1.setIndeterminate(true);
+                    jProgressBar1.setString("rescanning...");
+                    jProgressBar1.setVisible(true);
+                } else {
+                    jProgressBar1.setVisible(false);
+                    getContentPane().setEnabled(true);
+                }
             }
 
             @Override
@@ -151,7 +161,6 @@ public class MainFrame extends javax.swing.JFrame {
 
         ip = new InstallationsPanel();
         ip.setConfiguration(configuration);
-        ip.setBorder(new LineBorder(Color.blue));
         jTabbedPane1.add(ip);
 
         AboutPanel ap = new AboutPanel("text/html", getClass().getResource("/about.html"));
@@ -223,7 +232,12 @@ public class MainFrame extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jMenuItem1 = new javax.swing.JMenuItem();
         jTabbedPane1 = new javax.swing.JTabbedPane();
+        jProgressBar1 = new javax.swing.JProgressBar();
+        jMenuBar1 = new javax.swing.JMenuBar();
+
+        jMenuItem1.setText("jMenuItem1");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setMinimumSize(new java.awt.Dimension(800, 600));
@@ -233,6 +247,12 @@ public class MainFrame extends javax.swing.JFrame {
             }
         });
         getContentPane().add(jTabbedPane1, java.awt.BorderLayout.CENTER);
+
+        jProgressBar1.setFocusable(false);
+        jProgressBar1.setIndeterminate(true);
+        jProgressBar1.setStringPainted(true);
+        getContentPane().add(jProgressBar1, java.awt.BorderLayout.PAGE_END);
+        setJMenuBar(jMenuBar1);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -415,11 +435,12 @@ public class MainFrame extends javax.swing.JFrame {
                         MrGimlet.showMessage(mf.getRootPane(), message.toString(), 0);
                     } else {
                         boolean foundSomething = false;
-                        //foundSomething = gvc.maybeAnnounceUpdate(mf.getRootPane());
-                        
+
                         Installation i = mf.getConfiguration().getActiveInstallation();
+                        foundSomething = ovc.maybeAnnounceUpdate(mf.getRootPane(), ModuleDescriptor.Version.parse(i.getVersion()));
+                        
                         if (!foundSomething && i != null) {
-                            foundSomething = ovc.maybeAnnounceUpdate(mf.getRootPane(), ModuleDescriptor.Version.parse(i.getVersion()));
+                            foundSomething = gvc.maybeAnnounceUpdate(mf.getRootPane());
                         }
                     }
 
@@ -480,6 +501,9 @@ public class MainFrame extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JMenuItem jMenuItem1;
+    private javax.swing.JProgressBar jProgressBar1;
     private javax.swing.JTabbedPane jTabbedPane1;
     // End of variables declaration//GEN-END:variables
 }

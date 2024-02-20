@@ -817,7 +817,7 @@ public class Expansion implements Comparable<Expansion> {
         List<ExpansionReference> result = new ArrayList<>();
         if (getRequiresOxps() != null) {
             for (Dependency dep: getRequiresOxps()) {
-                log.warn("getting expansionn reference for '{}'", dep);
+                log.warn("getting expansion reference for '{}'", dep);
                 ExpansionReference er = oolite.getExpansionReference(dep);
                 result.add(er);
             }
@@ -832,24 +832,26 @@ public class Expansion implements Comparable<Expansion> {
      */
     public List<ExpansionReference> getConflictRefs() {
         List<ExpansionReference> result = new ArrayList<>();
-        for (Dependency dep: getConflictOxps()) {
-            ExpansionReference er = oolite.getExpansionReference(dep);
-            switch (er.getStatus()) {
-                case CONFLICT:
-                    break;
-                case MISSING:
-                    er.setStatus(ExpansionReference.Status.OK);
-                    break;
-                case OK:
-                    er.setStatus(ExpansionReference.Status.CONFLICT);
-                    break;
-                case REQUIRED_MISSING:
-                    er.setStatus(ExpansionReference.Status.OK);
-                    break;
-                case SURPLUS:
-                    break;
+        if (conflictOxps != null) {
+            for (Dependency dep: conflictOxps) {
+                ExpansionReference er = oolite.getExpansionReference(dep);
+                switch (er.getStatus()) {
+                    case CONFLICT:
+                        break;
+                    case MISSING:
+                        er.setStatus(ExpansionReference.Status.OK);
+                        break;
+                    case OK:
+                        er.setStatus(ExpansionReference.Status.CONFLICT);
+                        break;
+                    case REQUIRED_MISSING:
+                        er.setStatus(ExpansionReference.Status.OK);
+                        break;
+                    case SURPLUS:
+                        break;
+                }
+                result.add(er);
             }
-            result.add(er);
         }
         return result;
     }

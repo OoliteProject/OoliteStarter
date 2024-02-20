@@ -162,6 +162,8 @@ public class Oolite2 {
                         status = Status.uninitialized;
                         fireActivatedInstallation(i);
                         fireStatusChanged();
+                        
+                        initialize();
                     }
                 }
             };
@@ -309,6 +311,15 @@ public class Oolite2 {
         return oolite.getActiveInstallation();
     }
     
+    void validateDependencies() {
+        log.warn("validateDependencies()");
+        
+        oolite.validateCompatibility(expansions);
+        oolite.validateConflicts(expansions);
+        oolite.validateDependencies2(expansions);
+        oolite.validateUpdates(expansions);
+    }
+    
     /**
      * Checks the status for one expansion.
      * 
@@ -316,6 +327,14 @@ public class Oolite2 {
      */
     public void rescan(Expansion e) {
         log.warn("rescan({})", e);
+        
+        if (e.isLocal()) {
+            rescan(e.getLocalFile());
+        } else {
+            // no longer local? Was it removed?
+            validateDependencies();
+            fire();
+        }
     }
     
     /**
@@ -338,9 +357,21 @@ public class Oolite2 {
             }
         } else {
             log.warn("File exists!");
-            
+            try {
+                Expansion newExpansion = oolite.getExpansionFrom(f);
+                if (newExpansion != null) {
+                    // replace the right one
+                }
+            } catch (Exception e) {
+                log.warn("could not read {}", f, e);
+            }
         }
 
+        // recompute dependencies
+        validateDependencies();
+        
+        // notify clients
+        fire();
     }
-
+    
 }

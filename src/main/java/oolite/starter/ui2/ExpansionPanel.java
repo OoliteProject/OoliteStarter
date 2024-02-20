@@ -2,7 +2,9 @@
  */
 package oolite.starter.ui2;
 
+import java.util.List;
 import oolite.starter.model.Expansion;
+import oolite.starter.model.ExpansionReference;
 import oolite.starter.util.Util;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -14,14 +16,14 @@ import org.apache.logging.log4j.Logger;
  */
 public class ExpansionPanel extends javax.swing.JPanel implements ExpansionsPanel2.SelectionListener {
     private static final Logger log = LogManager.getLogger();
-
+    
     /**
      * Creates new form ExpansionPanel.
      */
     public ExpansionPanel() {
         initComponents();
     }
-
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -62,8 +64,9 @@ public class ExpansionPanel extends javax.swing.JPanel implements ExpansionsPane
     public void selectionChanged(Expansion expansion) {
         log.debug("selectionChanged({})", expansion);
         
-        String text = ("<html>"
-                + "<table><tr>"
+        StringBuilder sb = new StringBuilder("<html>");
+        sb.append("<h2>").append(expansion.getTitle()).append(" ").append(expansion.getVersion()).append("</h2>");
+        String text = ("<table><tr>"
                 + "<td>Title</td><td colspan=\"3\">%s</td>"
                 + "</tr><tr>"
                 + "<td valign=\"top\">Description</td><td colspan=\"3\" valign=\"top\">%s</td>"
@@ -75,20 +78,44 @@ public class ExpansionPanel extends javax.swing.JPanel implements ExpansionsPane
                 + "<td>Local File</td><td colspan=\"3\">%s</td>"
                 + "</tr><tr>"
                 + "<td>Download&nbsp;URL</td><td colspan=\"3\">%s</td>"
-                + "</tr></table>"
-                + "</html>")
+                + "</tr></table>")
                 .formatted(
                         expansion.getTitle(), 
                         expansion.getDescription(),
-                        expansion.getVersion(), 
+                        expansion.getVersion() + (expansion.getEMStatus().isLatest()?" (latest)":""), 
                         expansion.getCategory(),
                         Util.humanreadableSize(expansion.getFileSize()), 
                         expansion.getAuthor(),
                         expansion.getLocalFile(),
                         expansion.getDownloadUrl()
                 );
-        
-        jEditorPane1.setText(text);
+        sb.append(text);
+        if (expansion.getEMStatus().isConflicting()) {
+            sb.append("<h2>Conflicting</h2>");
+            sb.append("<table>");
+            List<ExpansionReference> cs = expansion.getConflictRefs();
+            if (cs == null || cs.size() == 0) {
+                sb.append("<tr><td>Other expansions declare conflicts with this one</td></tr>");
+            } else {
+                for (ExpansionReference er: cs) {
+                    sb.append("<tr><td>").append(er.getName()).append(er.getReasons()).append("</td></tr>");
+                }
+            }
+            sb.append("</table>");
+        }
+        if (expansion.getEMStatus().isIncompatible()) {
+            sb.append("<h2>Incompatible!</h2>");
+        }
+        if (expansion.getEMStatus().isMissingDeps()) {
+            sb.append("<h2>Missing Dependencies</h2>");
+            sb.append("<table>");
+            for (ExpansionReference er: expansion.getRequiredRefs()) {
+                sb.append("<tr><td>").append(er.getName()).append(er.getReasons()).append("</td></tr>");
+            }
+            sb.append("</table>");
+        }
+        sb.append("</html>");
+        jEditorPane1.setText(sb.toString());
         jEditorPane1.setCaretPosition(0);
     }
 }

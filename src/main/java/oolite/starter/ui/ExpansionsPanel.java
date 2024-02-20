@@ -13,6 +13,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.net.URI;
+import java.time.Duration;
+import java.time.Instant;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.time.temporal.TemporalAccessor;
@@ -309,6 +311,7 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
      */
     public void update() {
         log.debug("update()");
+        Instant start = Instant.now();
         try {
             expansions = oolite.getAllExpansions();
 
@@ -348,18 +351,20 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
         } catch (Exception e) {
             log.warn("Could not update", e);
         }
+        log.warn("performed update() in {}", Duration.between(start, Instant.now()));
     }
 
     @Override
     public void activatedInstallation(Installation installation) {
         log.debug("activatedInstallation({})", installation);
-        
-        try {
-            update();
-        } catch (Exception e) {
-            log.error(EXPANSIONSPANEL_COULD_NOT_RELOAD, e);
-            JOptionPane.showMessageDialog(null, EXPANSIONSPANEL_COULD_NOT_RELOAD);
-        }
+        log.warn("Not autoscanning on old interface...");
+//        
+//        try {
+//            update();
+//        } catch (Exception e) {
+//            log.error(EXPANSIONSPANEL_COULD_NOT_RELOAD, e);
+//            JOptionPane.showMessageDialog(null, EXPANSIONSPANEL_COULD_NOT_RELOAD);
+//        }
     }
     
     /**
