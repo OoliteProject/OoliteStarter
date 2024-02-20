@@ -4,11 +4,11 @@
 package oolite.starter;
 
 import com.owlike.genson.Genson;
-import com.vdurmont.semver4j.Semver;
 import java.awt.Component;
 import java.awt.EventQueue;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.module.ModuleDescriptor;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -28,19 +28,19 @@ import org.apache.logging.log4j.Logger;
  * 
  * @author hiran
  */
-public class GithubVersionChecker {
+public class OoliteVersionChecker {
     private static final Logger log = LogManager.getLogger();
 
-    private String OWNER = "HiranChaudhuri";
-    private String REPO = "OoliteStarter";
+    private String OWNER = "OoliteProject";
+    private String REPO = "oolite";
     
-    private List<Semver> versions;
+    private List<ModuleDescriptor.Version> versions;
     private Duration updateCheckInterval = null;
     
     /**
      * Creates a default version checker for OoliteStarter.
      */
-    public GithubVersionChecker() {
+    public OoliteVersionChecker() {
         log.debug("GithubVersionChecker()");
     }
 
@@ -50,7 +50,7 @@ public class GithubVersionChecker {
      * @param owner the repository owner
      * @param repo the repository name
      */
-    public GithubVersionChecker(String owner, String repo) {
+    public OoliteVersionChecker(String owner, String repo) {
         log.debug("GithubVersionChecker({}, {})", owner, repo);
         
         this.OWNER = owner;
@@ -104,11 +104,12 @@ public class GithubVersionChecker {
         Instant nextUpdateCheckInstant = lastUpdateCheckInstant.plus(updateCheckInterval);
         
         if (Instant.now().isAfter(nextUpdateCheckInstant)) {
+            URL url = null;
             try {
-                URL url = getReleasesURL();
+                url = getReleasesURL();
                 url.openStream();
                 HttpURLConnection connection = (HttpURLConnection)url.openConnection();
-                connection.setRequestProperty("Referer", "http://oolite.org");
+                //connection.setRequestProperty("Referer", "http://oolite.org");
                 connection.setDoInput(true);
                 InputStream in = connection.getInputStream();
 
@@ -119,15 +120,16 @@ public class GithubVersionChecker {
                         if (v.startsWith("v")) {
                             v = v.substring(1);
                         }
-                        versions.add(new Semver(v));
+                        
+                        versions.add(ModuleDescriptor.Version.parse(v));
                     } else {
                         log.debug("class {}", release.getClass());
                         log.debug("release {}", release);
                     }
                 }
             } catch (Exception e) {
-                log.info("Could not check for new versions", e);
-                versions.add(new Semver("0.1.11"));
+                log.info("Could not check for new versions at " + url, e);
+                versions.add(ModuleDescriptor.Version.parse("0.1.11"));
             } finally {
                 storeLastCheckInstant(Instant.now());
             }
@@ -154,24 +156,10 @@ public class GithubVersionChecker {
      * @throws MalformedURLException something went wrong
      */
     public URL getHtmlReleaseURL(String releaseTag) throws MalformedURLException {
-        if (!releaseTag.startsWith("v")) {
-            releaseTag = "v" + releaseTag;
-        }
+//        if (!releaseTag.startsWith("v")) {
+//            releaseTag = "v" + releaseTag;
+//        }
         return new URL("https://github.com/" + OWNER + "/" + REPO + "/releases/tag/" + releaseTag);
-    }
-    
-    /**
-     * Returns this current software's version number.
-     * 
-     * @return the version number
-     */
-    public Semver getMyVersion() {
-        String v = getClass().getPackage().getImplementationVersion();
-        if (v==null || v.contains("SNAPSHOT")) { // this is the case when running from the IDE
-            v = "0.1.10";
-        }
-        Semver me = new Semver(v);
-        return me;
     }
     
     /**
@@ -182,7 +170,7 @@ public class GithubVersionChecker {
      * @throws MalformedURLException something went wrong
      * @throws IOException something went wrong
      */
-    public Semver getLatestVersion(Semver currentVersion) throws IOException {
+    public ModuleDescriptor.Version getLatestVersion(ModuleDescriptor.Version currentVersion) throws IOException {
         if (versions == null) {
             throw new IllegalStateException("versions is null. Use init()");
         }
@@ -190,10 +178,10 @@ public class GithubVersionChecker {
         if (!versions.isEmpty()) {
             Collections.sort(versions);
             log.debug("versions {}", versions);
-            Semver latest = versions.get(versions.size()-1);
+            ModuleDescriptor.Version latest = versions.get(versions.size()-1);
             log.debug("version me={} latest={}", currentVersion, latest);
             
-            if (latest.isGreaterThan(currentVersion)) {
+            if (latest.compareTo(currentVersion)>0) {
                 log.debug("latest is greater!");
                 return latest;
             }
@@ -209,14 +197,11 @@ public class GithubVersionChecker {
      * @param version the latest version
      * @return the html message
      */
-    public String getHtmlUserMessage(Semver version) throws MalformedURLException {
+    public String getHtmlUserMessage(ModuleDescriptor.Version version) throws MalformedURLException {
         URL url = getHtmlReleaseURL(version.toString());
         
         StringBuilder html = new StringBuilder("<html><body>");
-        html.append("<p>All right there. We heard rumors the new");
-        if (!version.isStable()) {
-            html.append(" experimental");
-        }
+        html.append("<p>All right there. We heard rumors the new " + REPO);
         html.append(" version " + version + " has been released.</p>");
         html.append("<p>You need to check <a href=\"" + url + "\">" + url + "</a> and report back to me.</p>");
         html.append("<p>But don't keep me waiting too long, kid!</p>");
@@ -230,9 +215,9 @@ public class GithubVersionChecker {
      * @param parentComponent the component upon which to present the message
      * @return true if an update was found and announced, false otherwise
      */
-    public boolean maybeAnnounceUpdate(Component parentComponent) {
+    public boolean maybeAnnounceUpdate(Component parentComponent, ModuleDescriptor.Version myVersion) {
         try {
-            Semver latest = getLatestVersion(getMyVersion());
+            ModuleDescriptor.Version latest = getLatestVersion(myVersion);
             if (latest != null) {
                 String message = getHtmlUserMessage(latest);
                 EventQueue.invokeLater(() -> MrGimlet.showMessage(parentComponent, message, 10000) );
