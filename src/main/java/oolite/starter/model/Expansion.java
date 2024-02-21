@@ -49,7 +49,6 @@ public class Expansion implements Comparable<Expansion> {
         public EMStatus(Color color, boolean latest, boolean incompatible) {
             this.color = color;
             this.latest = latest;
-            this.conflicting = conflicting;
             this.incompatible = incompatible;
         }
 

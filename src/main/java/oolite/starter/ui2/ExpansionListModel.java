@@ -41,6 +41,7 @@ public class ExpansionListModel extends AbstractListModel<Expansion> {
      * @param expansions the list of expansions
      */
     public ExpansionListModel(List<Expansion> expansions) {
+        log.debug("ExpansionListModel({})", expansions);
         this.expansions = new ArrayList<>(expansions);
     }
 
@@ -52,6 +53,7 @@ public class ExpansionListModel extends AbstractListModel<Expansion> {
      * @param f the filter function to apply
      */
     public ExpansionListModel(List<Expansion> expansions, Filter f) {
+        log.debug("ExpansionListModel({}, {})", expansions, f);
         this.expansions = new ArrayList<>();
         for (Expansion e: expansions) {
             if (f.willShow(e)) {
@@ -66,6 +68,7 @@ public class ExpansionListModel extends AbstractListModel<Expansion> {
      * @param e the expansion to add
      */
     public void add(Expansion e) {
+        log.debug("add({})", e);
         expansions.add(e);
         int rowIndex = expansions.indexOf(e);
         
@@ -78,6 +81,7 @@ public class ExpansionListModel extends AbstractListModel<Expansion> {
      * @param e the expansion to remove
      */
     public void remove(Expansion e) {
+        log.debug("remove({})", e);
         int rowIndex = expansions.indexOf(e);
         remove(rowIndex);
     }
@@ -88,17 +92,20 @@ public class ExpansionListModel extends AbstractListModel<Expansion> {
      * @param e the index of the expansion
      */
     public void remove(int rowIndex) {
+        log.debug("remove({})", rowIndex);
         expansions.remove(rowIndex);
         fireIntervalRemoved(this, rowIndex, rowIndex);
     }
 
     @Override
     public int getSize() {
+        log.debug("getSize()");
         return expansions.size();
     }
 
     @Override
     public Expansion getElementAt(int i) {
+        log.debug("getElementAt({})", i);
         return expansions.get(i);
     }
 }

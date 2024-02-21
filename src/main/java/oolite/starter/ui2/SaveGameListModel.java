@@ -16,7 +16,7 @@ import org.apache.logging.log4j.Logger;
 public class SaveGameListModel extends AbstractListModel<SaveGame> {
     private static final Logger log = LogManager.getLogger();
     
-    private List<SaveGame> saveGames;
+    private transient List<SaveGame> saveGames;
 
     /**
      * Creates a new SaveGameListModel.
@@ -24,16 +24,19 @@ public class SaveGameListModel extends AbstractListModel<SaveGame> {
      * @param saveGames the saveGames
      */
     public SaveGameListModel(List<SaveGame> saveGames) {
+        log.debug("SaveGameListModel({})", saveGames);
         this.saveGames = saveGames;
     }
 
     @Override
     public int getSize() {
+        log.debug("getSize()");
         return saveGames.size();
     }
 
     @Override
     public SaveGame getElementAt(int i) {
+        log.debug("getElementAt({})", i);
         return saveGames.get(i);
     }
 }

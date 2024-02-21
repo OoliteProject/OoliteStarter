@@ -135,10 +135,10 @@ public class Util {
      */
     public static String humanreadableSize(long size) {
         if (size >= 1024*1024) {
-            return String.format("%.2f MB", ((float)size)/(1024f*1024f));
+            return String.format("%.2f MB", (size)/(1024f*1024f));
         }
         if (size >= 1024) {
-            return String.format("%.2f kB", ((float)size)/1024f);
+            return String.format("%.2f kB", (size)/1024f);
         }
         return String.valueOf(size);
     }

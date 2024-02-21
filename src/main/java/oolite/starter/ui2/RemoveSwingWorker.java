@@ -26,7 +26,7 @@ public class RemoveSwingWorker extends SwingWorker<Void, Void> {
      * @param expansion the expansion to remove
      */
     public RemoveSwingWorker(Component parent, Expansion expansion, Oolite2 oolite) {
-        log.debug("RemoveSwingWorker(...)");
+        log.debug("RemoveSwingWorker({}, {}, {})", parent, expansion, oolite);
         this.expansion = expansion;
         this.oolite = oolite;
     }

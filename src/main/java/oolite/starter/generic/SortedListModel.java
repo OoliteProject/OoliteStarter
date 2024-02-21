@@ -22,6 +22,8 @@ import org.apache.logging.log4j.Logger;
  */
 public class SortedListModel<T> extends AbstractListModel<T> {
     private static final Logger log = LogManager.getLogger();
+    
+    private static final String LISTENER_THREW_EXCEPTION = "listener threw exception";
 
     private class SortedListEntry implements Comparable<SortedListEntry> {
         
@@ -83,7 +85,7 @@ public class SortedListModel<T> extends AbstractListModel<T> {
                 try {
                     fireIntervalAdded(this, 0, sortedList.size()-1);
                 } catch (Exception e) {
-                    log.warn("listener threw exception", e);
+                    log.warn(LISTENER_THREW_EXCEPTION, e);
                 }
             }
 
@@ -94,7 +96,7 @@ public class SortedListModel<T> extends AbstractListModel<T> {
                 try {
                     fireIntervalRemoved(this, 0, sortedList.size()-1);
                 } catch (Exception e) {
-                    log.warn("listener threw exception", e);
+                    log.warn(LISTENER_THREW_EXCEPTION, e);
                 }
             }
 
@@ -105,7 +107,7 @@ public class SortedListModel<T> extends AbstractListModel<T> {
                 try {
                     fireContentsChanged(this, 0, sortedList.size()-1);
                 } catch (Exception e) {
-                    log.warn("listener threw exception", e);
+                    log.warn(LISTENER_THREW_EXCEPTION, e);
                 }
             }
         });
