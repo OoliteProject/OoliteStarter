@@ -94,7 +94,7 @@ public class ComponentBorder implements Border {
      * @param ajustInsets the flag
      */
     public void setAdjustInsets(boolean adjustInsets) {
-            this.adjustInsets = adjustInsets;
+        this.adjustInsets = adjustInsets;
     }
 
     /**
@@ -103,7 +103,7 @@ public class ComponentBorder implements Border {
      *  @return the alignment
      */
     public float getAlignment() {
-            return alignment;
+        return alignment;
     }
 
     /**
@@ -113,7 +113,13 @@ public class ComponentBorder implements Border {
      *                   CENTER (default), LEFT and RIGHT.
      */
     public void setAlignment(float alignment) {
-        this.alignment = alignment > 1.0f ? 1.0f : alignment < 0.0f ? 0.0f : alignment;
+        if (alignment > 1.0f) {
+            this.alignment = 1.0f;
+        } else if (alignment < 0.0f) {
+            this.alignment = 0.0f;
+        } else {
+            this.alignment = alignment;
+        }
     }
 
     /**

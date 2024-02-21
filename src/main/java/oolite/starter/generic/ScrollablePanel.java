@@ -38,10 +38,10 @@ public class ScrollablePanel extends JPanel implements Scrollable, SwingConstant
     private ScrollableSizeHint scrollableHeight = ScrollableSizeHint.NONE;
     private ScrollableSizeHint scrollableWidth  = ScrollableSizeHint.NONE;
 
-    private IncrementInfo horizontalBlock;
-    private IncrementInfo horizontalUnit;
-    private IncrementInfo verticalBlock;
-    private IncrementInfo verticalUnit;
+    private transient IncrementInfo horizontalBlock;
+    private transient IncrementInfo horizontalUnit;
+    private transient IncrementInfo verticalBlock;
+    private transient IncrementInfo verticalUnit;
 
     /**
      *  Default constructor that uses a FlowLayout.

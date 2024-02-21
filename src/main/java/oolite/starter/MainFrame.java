@@ -94,7 +94,7 @@ public class MainFrame extends javax.swing.JFrame {
             public void statusChanged(Oolite2.Status status) {
                 log.warn("statusChanged({})", status);
                 
-                if (status == Oolite2.Status.initializing) {
+                if (status == Oolite2.Status.INITIALIZING) {
                     getContentPane().setEnabled(false);
                     jProgressBar1.setIndeterminate(true);
                     jProgressBar1.setString("rescanning...");
@@ -149,7 +149,6 @@ public class MainFrame extends javax.swing.JFrame {
         esp.setName("Old Expansions Panel");
 
         JSplitPane expansions = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
-        //expansions.setCursor(Cursor.getPredefinedCursor(Cursor.S_RESIZE_CURSOR));
         jTabbedPane1.add(expansions, "Expansions");
 
         esp2 = new ExpansionsPanel2(oolite2);
@@ -172,8 +171,6 @@ public class MainFrame extends javax.swing.JFrame {
             @Override
             public void windowClosing(WindowEvent event) {
                 if (configuration.isDirty()) {
-//                    jTabbedPane1.setSelectedIndex(2);
-//                    
                     // show dialog
                     int choice = MrGimlet.showConfirmation(MainFrame.this, "<html>Your configuration changed since it was last saved.<p>Would you like to save now?</html>");
                     switch (choice) {
@@ -232,12 +229,8 @@ public class MainFrame extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jMenuItem1 = new javax.swing.JMenuItem();
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jProgressBar1 = new javax.swing.JProgressBar();
-        jMenuBar1 = new javax.swing.JMenuBar();
-
-        jMenuItem1.setText("jMenuItem1");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setMinimumSize(new java.awt.Dimension(800, 600));
@@ -252,7 +245,6 @@ public class MainFrame extends javax.swing.JFrame {
         jProgressBar1.setIndeterminate(true);
         jProgressBar1.setStringPainted(true);
         getContentPane().add(jProgressBar1, java.awt.BorderLayout.PAGE_END);
-        setJMenuBar(jMenuBar1);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -290,7 +282,6 @@ public class MainFrame extends javax.swing.JFrame {
         newSplash = new JFrame();
         newSplash.setUndecorated(true);
         newSplash.setIconImage(new ImageIcon(MainFrame.class.getResource("/images/Mr_Gimlet_transparent.png")).getImage());
-        //newSplash.add(new SplashPanel(new ImageIcon(MainFrame.class.getResource("/images/OoliteStarter_Splashscreen_640x360.png"))));
         ImageIcon screen = new ImageIcon(MainFrame.class.getResource("/images/Digebiti.png"));
         String motd = "This is an experimental prerelease. Use the menu to turn on UI elements.";
         SplashPanel sp = new SplashPanel(screen, motd);
@@ -436,11 +427,16 @@ public class MainFrame extends javax.swing.JFrame {
                     } else {
                         boolean foundSomething = false;
 
+                        // we always have an installation as the other case is above
                         Installation i = mf.getConfiguration().getActiveInstallation();
                         foundSomething = ovc.maybeAnnounceUpdate(mf.getRootPane(), ModuleDescriptor.Version.parse(i.getVersion()));
                         
-                        if (!foundSomething && i != null) {
+                        if (!foundSomething) {
                             foundSomething = gvc.maybeAnnounceUpdate(mf.getRootPane());
+                        }
+                        
+                        if (foundSomething) {
+                            log.trace("Notified user about upgrades");
                         }
                     }
 
@@ -501,8 +497,6 @@ public class MainFrame extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JMenuBar jMenuBar1;
-    private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JProgressBar jProgressBar1;
     private javax.swing.JTabbedPane jTabbedPane1;
     // End of variables declaration//GEN-END:variables

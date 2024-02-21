@@ -3,10 +3,8 @@
 
 package oolite.starter;
 
-import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
-import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,9 +31,9 @@ public class Oolite2 {
     private static final Logger log = LogManager.getLogger();
 
     public enum Status {
-        uninitialized,
-        initializing,
-        initialized
+        UNINITIALIZED,
+        INITIALIZING,
+        INITIALIZED
     }
     
     public static interface OoliteListener extends Oolite.OoliteListener {
@@ -83,7 +81,7 @@ public class Oolite2 {
 
     private List<OoliteListener> listeners = new ArrayList<>();
     private Configuration configuration;
-    private Status status = Status.uninitialized;
+    private Status status = Status.UNINITIALIZED;
     private PropertyChangeListener configurationListener;
     private FileAlterationMonitor monitor;
     private Oolite oolite;
@@ -153,18 +151,15 @@ public class Oolite2 {
         this.configuration = configuration;
         
         if (configuration != null) {
-            this.configurationListener = new PropertyChangeListener() {
-                @Override
-                public void propertyChange(PropertyChangeEvent pce) {
-                    log.debug("configurationListener propertyChange({})", pce);
-                    if ("activeInstallation".equals(pce.getPropertyName())) {
-                        Installation i = (Installation)pce.getNewValue();
-                        status = Status.uninitialized;
-                        fireActivatedInstallation(i);
-                        fireStatusChanged();
-                        
-                        initialize();
-                    }
+            this.configurationListener = pce -> {
+                log.debug("configurationListener propertyChange({})", pce);
+                if ("activeInstallation".equals(pce.getPropertyName())) {
+                    Installation i = (Installation)pce.getNewValue();
+                    status = Status.UNINITIALIZED;
+                    fireActivatedInstallation(i);
+                    fireStatusChanged();
+
+                    initialize();
                 }
             };
             this.configuration.addPropertyChangeListener(this.configurationListener);
@@ -172,7 +167,7 @@ public class Oolite2 {
 
         oolite.setConfiguration(configuration);
 
-        status = Status.uninitialized;
+        status = Status.UNINITIALIZED;
         fireStatusChanged();
     }
 
@@ -191,12 +186,12 @@ public class Oolite2 {
     /**
      * Installs filesystem watchers for the currently active installation.
      */
-    public void installWatchers() throws IOException {
+    public void installWatchers() {
         log.debug("installWatchers()");
         
         Installation i = configuration.getActiveInstallation();
         
-        ExpansionFolderAlterationListener.ExpansionFolderChangedListener efcl = (files) -> {
+        ExpansionFolderAlterationListener.ExpansionFolderChangedListener efcl = files -> {
             log.debug("ExpansionFolderChangedListener called with {}", files);
             for (File f: files) {
                 rescan(f);
@@ -243,38 +238,31 @@ public class Oolite2 {
      * about state changes.
      */
     public synchronized void initialize() {
-        if (status != Status.uninitialized) {
+        if (status != Status.UNINITIALIZED) {
             throw new IllegalStateException();
         }
         
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    status = Status.initializing;
-                    SwingUtilities.invokeLater(() -> {
-                        fireStatusChanged();
-                    });
+        new Thread( () ->  {
+            try {
+                status = Status.INITIALIZING;
+                SwingUtilities.invokeLater(this::fireStatusChanged);
 
-                    // remove filesyste watchers
-                    removeWatchers();
+                // remove filesyste watchers
+                removeWatchers();
 
-                    // scan directories
-                    expansions = oolite.getAllExpansions();
+                // scan directories
+                expansions = oolite.getAllExpansions();
 
-                    // install filesystem watchers
-                    installWatchers();
+                // install filesystem watchers
+                installWatchers();
 
-                    // fire update events to clients
-                    fire();
+                // fire update events to clients
+                fire();
 
-                    status = Status.initialized;
-                    SwingUtilities.invokeLater(() -> {
-                        fireStatusChanged();
-                    });
-                } catch (Exception e) {
-                    log.error("Problem in deferred initialization", e);
-                }
+                status = Status.INITIALIZED;
+                SwingUtilities.invokeLater(Oolite2.this::fireStatusChanged);
+            } catch (Exception e) {
+                log.error("Problem in deferred initialization", e);
             }
         }).start();
     }

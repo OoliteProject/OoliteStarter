@@ -19,25 +19,28 @@ import org.apache.logging.log4j.Logger;
  *
  * The Action can be reset at any time.
  */
-public class ListAction implements MouseListener {
+public class ListAction<T> implements MouseListener {
     private static final Logger log = LogManager.getLogger();
     
     private static final KeyStroke ENTER = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
 
-    private JList list;
+    private JList<T> list;
     private KeyStroke keyStroke;
 
     /**
      * Add an Action to the JList bound by the default KeyStroke.
      */
-    public ListAction(JList list, Action action) {
+    public ListAction(JList<T> list, Action action) {
         this(list, action, ENTER);
+        log.debug("ListAction(...)");
     }
 
     /**
      * Add an Action to the JList bound by the specified KeyStroke.
      */
-    public ListAction(JList list, Action action, KeyStroke keyStroke) {
+    public ListAction(JList<T> list, Action action, KeyStroke keyStroke) {
+        log.debug("ListAction(...)");
+
         this.list = list;
         this.keyStroke = keyStroke;
 
@@ -58,8 +61,8 @@ public class ListAction implements MouseListener {
     /**
      * Add the Action to the ActionMap.
      */
-    public void setAction(Action action)
-    {
+    public void setAction(Action action) {
+        log.debug("setAction(...)");
         list.getActionMap().put(keyStroke, action);
     }
 
@@ -70,8 +73,8 @@ public class ListAction implements MouseListener {
      * 
      * @param e the mouse event
      */
-    public void mouseClicked(MouseEvent e)
-    {
+    public void mouseClicked(MouseEvent e) {
+        log.debug("mouseClicked(...)");
         if (e.getClickCount() == 2)
         {
             Action action = list.getActionMap().get(keyStroke);
@@ -92,26 +95,34 @@ public class ListAction implements MouseListener {
      * 
      * @param e the mouse event
      */
-    public void mouseEntered(MouseEvent e) {}
+    public void mouseEntered(MouseEvent e) {
+        // intentionally empty
+    }
 
     /**
      * Called when the mouse exits the component. Does nothing.
      * 
      * @param e the mouse event
      */
-    public void mouseExited(MouseEvent e) {}
+    public void mouseExited(MouseEvent e) {
+        // intentionally empty
+    }
 
     /**
      * Called when the mouse button was pressed.
      * 
      * @param e the mouse event
      */
-    public void mousePressed(MouseEvent e) {}
+    public void mousePressed(MouseEvent e) {
+        // intentionally empty
+    }
 
     /**
      * Called when the mouse is released.
      * 
      * @param e the mouse event
      */
-    public void mouseReleased(MouseEvent e) {}
+    public void mouseReleased(MouseEvent e) {
+        // intentionally empty
+    }
 }

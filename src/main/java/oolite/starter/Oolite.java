@@ -159,7 +159,7 @@ public class Oolite implements PropertyChangeListener {
             throw new IllegalArgumentException("reference must not be null");
         }
         if (expansions == null) {
-            throw new IllegalArgumentException("expansions must not be null");
+            throw new IllegalArgumentException(OOLITE_EXPANSIONS_MUST_NOT_BE_NULL);
         }
         if (reference.getIdentifier() == null) {
             throw new IllegalArgumentException("reference must have a non-null identifier");
@@ -214,8 +214,9 @@ public class Oolite implements PropertyChangeListener {
      * @param expansions the list to find it in
      * @param checkEnabled set to true if only enabled expansions shall be considered
      * @return the Expansions found
-     * 
+     * @deprecated use the Dependency type for reference instead
      */
+    @Deprecated(since = "21FEB24", forRemoval = true)
     List<Expansion> getExpansionByReference(String reference, List<Expansion> expansions, boolean checkEnabled) {
         log.debug("getExpansionByReference({}, {})", reference, expansions);
         if (reference == null) {
@@ -1389,12 +1390,6 @@ public class Oolite implements PropertyChangeListener {
         log.debug("install({})", expansion);
         URL url = new URL(expansion.getDownloadUrl());
         
-        String filename = url.getFile();
-        int index = filename.lastIndexOf("/");
-        if (index >=0) {
-            filename = filename.substring(index);
-        }
-        
         File file = new File(configuration.getManagedAddonsDir(), expansion.getIdentifier() + "@" + expansion.getVersion() + ".oxz");
         HttpUtil.downloadUrl(url, file);
         
@@ -1703,7 +1698,7 @@ public class Oolite implements PropertyChangeListener {
      * @deprecated we will validate on Expansions directly and store that
      *   information in EMStatus
      */
-    @Deprecated
+    @Deprecated(since = "21FEB24", forRemoval = true)
     void validateConflicts(Expansion expansion, List<ExpansionReference> result) {
         if (expansion.getConflictOxps() != null) {
             for (Expansion.Dependency dependency: expansion.getConflictOxps()) {
@@ -1727,7 +1722,7 @@ public class Oolite implements PropertyChangeListener {
      * 
      * @deprecated use validateDependencies2 instead, which is richer in information
      */
-    @Deprecated
+    @Deprecated(since = "21DEB24", forRemoval = true)
     public List<ExpansionReference> validateDependencies(List<Expansion> expansions) {
         log.debug("validateDependencies(...)");
         
@@ -1759,7 +1754,6 @@ public class Oolite implements PropertyChangeListener {
                 List<Expansion.Dependency> deps = e.getRequiresOxps();
                 if (deps != null) {
                     for (Expansion.Dependency dep: deps) {
-                        // List<Expansion> ds = getExpansionByReference(dep.getIdentifier(), expansions, true);
                         List<Expansion> ds = getExpansionByReference(dep, expansions, true);
                         if (ds.isEmpty()) {
                             log.info("Expansion {} is missing {}", e.getIdentifier(), dep);

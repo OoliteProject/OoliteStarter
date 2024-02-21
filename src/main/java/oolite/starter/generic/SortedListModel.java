@@ -60,7 +60,7 @@ public class SortedListModel<T> extends AbstractListModel<T> {
         
     }
     
-    private ListModel<T> unsortedModel;
+    private transient ListModel<T> unsortedModel;
     private ArrayList<SortedListEntry> sortedList;
     private SortOrder sortOrder;
     private Comparator<T> comparator;

@@ -27,6 +27,8 @@ import org.apache.logging.log4j.Logger;
  */
 public class ExpansionFolderAlterationListener implements FileAlterationListener {
     private static final Logger log = LogManager.getLogger();
+    
+    public static final int EXPANSION_FOLDER_ALTERATION_LISTENER_THRESHOLD_MS = 3000;
 
     public interface ExpansionFolderChangedListener {
         
@@ -57,7 +59,7 @@ public class ExpansionFolderAlterationListener implements FileAlterationListener
         this.directoryPath = directory.toPath();
         this.changedExpansions = new ArrayList<>();
         
-        timer = new Timer(5000, (ae) -> {
+        timer = new Timer(EXPANSION_FOLDER_ALTERATION_LISTENER_THRESHOLD_MS, ae -> {
             log.debug("timer fired");
             
             synchronized (changedExpansions) {
@@ -87,8 +89,6 @@ public class ExpansionFolderAlterationListener implements FileAlterationListener
         Path p = file.toPath();
         Path rel = directoryPath.relativize(p);
 
-        File result = file;
-        
         for (int i= 0; i< rel.getNameCount(); i++) {
             Path element = rel;
             if (i>0) {
@@ -97,9 +97,7 @@ public class ExpansionFolderAlterationListener implements FileAlterationListener
             String elementStr = element.toString();
             log.trace("element {}: {}", i, element);
             
-            if (elementStr.endsWith(".oxz")) {
-                return directoryPath.resolve(element).toFile();
-            } else if (elementStr.endsWith(".oxp")) {
+            if (elementStr.endsWith(".oxz") || elementStr.endsWith(".oxp")) {
                 return directoryPath.resolve(element).toFile();
             }
         }
@@ -166,13 +164,13 @@ public class ExpansionFolderAlterationListener implements FileAlterationListener
 
     @Override
     public void onStart(FileAlterationObserver fao) {
-        //log.trace("onStart({})", fao);
+        log.trace("onStart({})", fao);
         scanStart = Instant.now();
     }
 
     @Override
     public void onStop(FileAlterationObserver fao) {
-        //log.trace("onStop({})", fao);
+        log.trace("onStop({})", fao);
         log.trace("Scanned in {}", Duration.between(scanStart, Instant.now()));
     }
 

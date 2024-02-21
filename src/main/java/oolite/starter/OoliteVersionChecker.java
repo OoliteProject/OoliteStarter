@@ -31,8 +31,8 @@ import org.apache.logging.log4j.Logger;
 public class OoliteVersionChecker {
     private static final Logger log = LogManager.getLogger();
 
-    private String OWNER = "OoliteProject";
-    private String REPO = "oolite";
+    private String owner = "OoliteProject";
+    private String repo = "oolite";
     
     private List<ModuleDescriptor.Version> versions;
     private Duration updateCheckInterval = null;
@@ -53,8 +53,8 @@ public class OoliteVersionChecker {
     public OoliteVersionChecker(String owner, String repo) {
         log.debug("GithubVersionChecker({}, {})", owner, repo);
         
-        this.OWNER = owner;
-        this.REPO = repo;
+        this.owner = owner;
+        this.repo = repo;
     }
 
     /**
@@ -77,13 +77,13 @@ public class OoliteVersionChecker {
     
     private Instant readLastCheckInstant() {
         Preferences prefs = Preferences.userRoot().node(getClass().getName());
-        String s = prefs.get("lastUpdateCheckInstant." + OWNER + "." + REPO, "2007-12-03T10:15:30.00Z");
+        String s = prefs.get("lastUpdateCheckInstant." + owner + "." + repo, "2007-12-03T10:15:30.00Z");
         return Instant.parse(s);
     }
     
     private void storeLastCheckInstant(Instant instant) {
         Preferences prefs = Preferences.userRoot().node(getClass().getName());
-        prefs.put("lastUpdateCheckInstant." + OWNER + "." + REPO, instant.toString());
+        prefs.put("lastUpdateCheckInstant." + owner + "." + repo, instant.toString());
     }
     
     /**
@@ -109,7 +109,7 @@ public class OoliteVersionChecker {
                 url = getReleasesURL();
                 url.openStream();
                 HttpURLConnection connection = (HttpURLConnection)url.openConnection();
-                //connection.setRequestProperty("Referer", "http://oolite.org");
+                connection.setRequestProperty("Referer", "http://oolite.org");
                 connection.setDoInput(true);
                 InputStream in = connection.getInputStream();
 
@@ -128,7 +128,7 @@ public class OoliteVersionChecker {
                     }
                 }
             } catch (Exception e) {
-                log.info("Could not check for new versions at " + url, e);
+                log.info("Could not check for new versions at {}", url, e);
                 versions.add(ModuleDescriptor.Version.parse("0.1.11"));
             } finally {
                 storeLastCheckInstant(Instant.now());
@@ -145,7 +145,7 @@ public class OoliteVersionChecker {
      * @throws MalformedURLException something went wrong
      */
     public URL getReleasesURL() throws MalformedURLException {
-        return new URL("https://api.github.com/repos/" + OWNER + "/" + REPO + "/releases");
+        return new URL("https://api.github.com/repos/" + owner + "/" + repo + "/releases");
     }
     
     /**
@@ -156,10 +156,7 @@ public class OoliteVersionChecker {
      * @throws MalformedURLException something went wrong
      */
     public URL getHtmlReleaseURL(String releaseTag) throws MalformedURLException {
-//        if (!releaseTag.startsWith("v")) {
-//            releaseTag = "v" + releaseTag;
-//        }
-        return new URL("https://github.com/" + OWNER + "/" + REPO + "/releases/tag/" + releaseTag);
+        return new URL("https://github.com/" + owner + "/" + repo + "/releases/tag/" + releaseTag);
     }
     
     /**
@@ -201,7 +198,7 @@ public class OoliteVersionChecker {
         URL url = getHtmlReleaseURL(version.toString());
         
         StringBuilder html = new StringBuilder("<html><body>");
-        html.append("<p>All right there. We heard rumors the new " + REPO);
+        html.append("<p>All right there. We heard rumors the new " + repo);
         html.append(" version " + version + " has been released.</p>");
         html.append("<p>You need to check <a href=\"" + url + "\">" + url + "</a> and report back to me.</p>");
         html.append("<p>But don't keep me waiting too long, kid!</p>");

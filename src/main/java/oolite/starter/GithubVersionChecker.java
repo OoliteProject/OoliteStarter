@@ -31,8 +31,8 @@ import org.apache.logging.log4j.Logger;
 public class GithubVersionChecker {
     private static final Logger log = LogManager.getLogger();
 
-    private String OWNER = "HiranChaudhuri";
-    private String REPO = "OoliteStarter";
+    private String owner = "HiranChaudhuri";
+    private String repo = "OoliteStarter";
     
     private List<Semver> versions;
     private Duration updateCheckInterval = null;
@@ -53,8 +53,8 @@ public class GithubVersionChecker {
     public GithubVersionChecker(String owner, String repo) {
         log.debug("GithubVersionChecker({}, {})", owner, repo);
         
-        this.OWNER = owner;
-        this.REPO = repo;
+        this.owner = owner;
+        this.repo = repo;
     }
 
     /**
@@ -77,13 +77,13 @@ public class GithubVersionChecker {
     
     private Instant readLastCheckInstant() {
         Preferences prefs = Preferences.userRoot().node(getClass().getName());
-        String s = prefs.get("lastUpdateCheckInstant." + OWNER + "." + REPO, "2007-12-03T10:15:30.00Z");
+        String s = prefs.get("lastUpdateCheckInstant." + owner + "." + repo, "2007-12-03T10:15:30.00Z");
         return Instant.parse(s);
     }
     
     private void storeLastCheckInstant(Instant instant) {
         Preferences prefs = Preferences.userRoot().node(getClass().getName());
-        prefs.put("lastUpdateCheckInstant." + OWNER + "." + REPO, instant.toString());
+        prefs.put("lastUpdateCheckInstant." + owner + "." + repo, instant.toString());
     }
     
     /**
@@ -143,7 +143,7 @@ public class GithubVersionChecker {
      * @throws MalformedURLException something went wrong
      */
     public URL getReleasesURL() throws MalformedURLException {
-        return new URL("https://api.github.com/repos/" + OWNER + "/" + REPO + "/releases");
+        return new URL("https://api.github.com/repos/" + owner + "/" + repo + "/releases");
     }
     
     /**
@@ -157,7 +157,7 @@ public class GithubVersionChecker {
         if (!releaseTag.startsWith("v")) {
             releaseTag = "v" + releaseTag;
         }
-        return new URL("https://github.com/" + OWNER + "/" + REPO + "/releases/tag/" + releaseTag);
+        return new URL("https://github.com/" + owner + "/" + repo + "/releases/tag/" + releaseTag);
     }
     
     /**
@@ -170,8 +170,7 @@ public class GithubVersionChecker {
         if (v==null || v.contains("SNAPSHOT")) { // this is the case when running from the IDE
             v = "0.1.10";
         }
-        Semver me = new Semver(v);
-        return me;
+        return new Semver(v);
     }
     
     /**

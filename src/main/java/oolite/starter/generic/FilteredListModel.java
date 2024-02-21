@@ -138,8 +138,8 @@ public class FilteredListModel<T> extends AbstractListModel<T> {
         }
     }
     
-    private ListModel<T> model;
-    private Filter filter;
+    private transient ListModel<T> model;
+    private transient Filter filter;
     private ArrayList<Integer> entries;
 
     /**
