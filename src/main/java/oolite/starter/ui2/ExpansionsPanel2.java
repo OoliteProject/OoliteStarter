@@ -53,7 +53,15 @@ public class ExpansionsPanel2 extends javax.swing.JPanel implements Oolite2.Ooli
     private transient Action removeAction;
     private transient Action downloadAction;
     private transient Action deleteAction;
+    
+    /**
+     * Field required to hold a reference to a homogenously triggererable action on list.
+     */
     private transient ListAction<Expansion> installListAction;
+
+    /**
+     * Field required to hold a reference to a homogenously triggererable action on list.
+     */
     private transient ListAction<Expansion> removeListAction;
     private Oolite2.OoliteExpansionListModel elmAvailable;
     private Oolite2.OoliteExpansionListModel elmInstalled;
