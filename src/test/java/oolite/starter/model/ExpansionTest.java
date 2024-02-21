@@ -647,7 +647,7 @@ public class ExpansionTest {
         instance.setColor(Color.yellow);
         assertEquals(Color.yellow, instance.getColor());
         
-        instance.setConflicting(true);
+        instance.getConflicting().add(new Expansion());
         assertTrue(instance.isConflicting());
         
         instance.setIncompatible(true);
@@ -656,7 +656,7 @@ public class ExpansionTest {
         instance.setLatest(true);
         assertTrue(instance.isLatest());
         
-        instance.setMissingDeps(true);
+        instance.getMissing().add(new Expansion());
         assertTrue(instance.isMissingDeps());
     }
     
@@ -665,7 +665,7 @@ public class ExpansionTest {
         log.info("testEMStatus2");
         
         Color color = Color.BLUE;
-        Expansion.EMStatus instance = new Expansion.EMStatus(color, false, false, false, false);
+        Expansion.EMStatus instance = new Expansion.EMStatus(color, false, false);
         assertEquals(color, instance.getColor());
         assertEquals(false, instance.isConflicting());
         assertEquals(false, instance.isIncompatible());
@@ -678,7 +678,7 @@ public class ExpansionTest {
         log.info("testEMStatus3");
         
         Color color = Color.black;
-        Expansion.EMStatus instance = new Expansion.EMStatus(color, true, false, false, false);
+        Expansion.EMStatus instance = new Expansion.EMStatus(color, true, false);
         assertEquals(color, instance.getColor());
         assertEquals(false, instance.isConflicting());
         assertEquals(false, instance.isIncompatible());
@@ -691,7 +691,8 @@ public class ExpansionTest {
         log.info("testEMStatus4");
         
         Color color = Color.yellow;
-        Expansion.EMStatus instance = new Expansion.EMStatus(color, true, true, false, false);
+        Expansion.EMStatus instance = new Expansion.EMStatus(color, true, false);
+        instance.getConflicting().add(new Expansion());
         assertEquals(color, instance.getColor());
         assertEquals(true, instance.isConflicting());
         assertEquals(false, instance.isIncompatible());
@@ -704,7 +705,9 @@ public class ExpansionTest {
         log.info("testEMStatus5");
         
         Color color = Color.CYAN;
-        Expansion.EMStatus instance = new Expansion.EMStatus(color, true, true, true, false);
+        Expansion.EMStatus instance = new Expansion.EMStatus(color, true, false);
+        instance.getConflicting().add(new Expansion());
+        instance.getMissing().add(new Expansion());
         assertEquals(color, instance.getColor());
         assertEquals(true, instance.isConflicting());
         assertEquals(false, instance.isIncompatible());
@@ -717,7 +720,9 @@ public class ExpansionTest {
         log.info("testEMStatus6");
         
         Color color = Color.PINK;
-        Expansion.EMStatus instance = new Expansion.EMStatus(color, true, true, true, true);
+        Expansion.EMStatus instance = new Expansion.EMStatus(color, true, true);
+        instance.getConflicting().add(new Expansion());
+        instance.getMissing().add(new Expansion());
         assertEquals(color, instance.getColor());
         assertEquals(true, instance.isConflicting());
         assertEquals(true, instance.isIncompatible());

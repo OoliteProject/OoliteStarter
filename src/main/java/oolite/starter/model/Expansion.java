@@ -32,9 +32,10 @@ public class Expansion implements Comparable<Expansion> {
     public static class EMStatus {
         private Color color;
         private boolean latest;
-        private boolean conflicting;
-        private boolean missingDeps;
         private boolean incompatible;
+        private List<Expansion> conflicting = new ArrayList<>();
+        private List<Expansion> missing = new ArrayList<>();
+        private List<Expansion> requiredBy = new ArrayList<>();
 
         /**
          * Create a new status.
@@ -45,11 +46,10 @@ public class Expansion implements Comparable<Expansion> {
         /**
          * Create a new status with parameters.
          */
-        public EMStatus(Color color, boolean latest, boolean conflicting, boolean missingDeps, boolean incompatible) {
+        public EMStatus(Color color, boolean latest, boolean incompatible) {
             this.color = color;
             this.latest = latest;
             this.conflicting = conflicting;
-            this.missingDeps = missingDeps;
             this.incompatible = incompatible;
         }
 
@@ -85,28 +85,50 @@ public class Expansion implements Comparable<Expansion> {
          * Returns if the expansion is conflicting.
          */
         public boolean isConflicting() {
-            return conflicting;
+            return !conflicting.isEmpty();
         }
 
         /**
-         * Sets if the expansion is conflicting.
+         * Returns the expansion this expansion is conflicting with.
+         * 
+         * @return the list of expansions
          */
-        public void setConflicting(boolean conflicting) {
-            this.conflicting = conflicting;
+        public List<Expansion> getConflicting() {
+            return this.conflicting;
         }
 
         /**
          * Returns if required other expansions are missing.
          */
         public boolean isMissingDeps() {
-            return missingDeps;
+            return !missing.isEmpty();
         }
 
         /**
-         * Sets if required other expansions are missing.
+         * Returns the list of unresolved expansions.
+         * 
+         * @return the list of expansions
          */
-        public void setMissingDeps(boolean missingDeps) {
-            this.missingDeps = missingDeps;
+        public List<Expansion> getMissing() {
+            return this.missing;
+        }
+        
+        /**
+         * Returns if this expansion is required by others.
+         * 
+         * @return true if it is required, false otherwise
+         */
+        public boolean isRequired() {
+            return !requiredBy.isEmpty();
+        }
+        
+        /**
+         * Returns the list of expansions requiring this one.
+         * 
+         * @return the list of expansions
+         */
+        public List<Expansion> getRequiredBy() {
+            return this.requiredBy;
         }
 
         /**
@@ -122,8 +144,7 @@ public class Expansion implements Comparable<Expansion> {
         public void setIncompatible(boolean incompatible) {
             this.incompatible = incompatible;
         }
-        
-        
+
     }
     
     public static class Dependency {

@@ -262,7 +262,7 @@ public class Oolite implements PropertyChangeListener {
      * Checks for conflicts between OXPs.
      * 
      * @param expansions list of OXPs that need to be checked with each other.
-     *      Pass in the enabled ones.
+     *      Pass in all expansions (enabled and not enabled).
      */
     void validateConflicts(List<Expansion> expansions) {
         log.debug("validateConflicts({})", expansions);
@@ -273,31 +273,31 @@ public class Oolite implements PropertyChangeListener {
         // reset conflict flag
         log.trace("Reset conflict flags for {} expansions", expansions.size());
         expansions.stream()
-                .forEach(t -> t.getEMStatus().setConflicting(false) );
+                .forEach(t -> t.getEMStatus().getConflicting().removeAll(expansions) );
 
         log.trace("Fetching conflicts...");
         expansions.stream()
             .filter(t -> t.isEnabled())
-            .forEach(e -> {
-                log.info("Fetching conflicts for {}:{}...", e.getIdentifier(), e.getVersion());
+            .forEach(expansion -> {
+                log.info("Fetching conflicts for {}:{}...", expansion.getIdentifier(), expansion.getVersion());
                 try {
-                    List<Expansion.Dependency> conflicts = e.getConflictOxps();
-                    if (conflicts != null) {
-                        log.trace("potential conflicts {}", conflicts);
-                        for (Expansion.Dependency dep: conflicts) {
+                    List<Expansion.Dependency> conflictDeps = expansion.getConflictOxps();
+                    if (conflictDeps != null) {
+                        log.trace("potential conflicts {}", conflictDeps);
+                        for (Expansion.Dependency dep: conflictDeps) {
                             log.trace("processing potential conflicts on {}", dep);
-                            List<Expansion> cs = getExpansionByReference(dep, expansions, true);
-                            log.trace("found conflicts {}", cs);
-                            if (!cs.isEmpty()) {
-                                log.warn("Expansion {} conflicts with {}", e.getIdentifier(), cs);
-                                e.getEMStatus().setConflicting(true);
+                            List<Expansion> conflicts = getExpansionByReference(dep, expansions, true);
+                            log.trace("found conflicts {}", conflicts);
+                            if (!conflicts.isEmpty()) {
+                                log.warn("Expansion {} conflicts with {}", expansion.getIdentifier(), conflicts);
+                                expansion.getEMStatus().getConflicting().addAll(conflicts);
                             }
-                            cs.stream()
-                              .forEach(t -> t.getEMStatus().setConflicting(true) );
+                            conflicts.stream()
+                              .forEach(t -> t.getEMStatus().getConflicting().add(expansion) );
                         }
                     }
                 } catch (Exception ex) {
-                    log.warn("Could not assess conflicts for {}", e.getIdentifier(), ex);
+                    log.warn("Could not assess conflicts for {}", expansion.getIdentifier(), ex);
                 }
             });
     }
@@ -1747,24 +1747,26 @@ public class Oolite implements PropertyChangeListener {
      */
     public void validateDependencies2(List<Expansion> expansions) {
         log.debug("validateDependencies2({})", expansions);
-        for (Expansion e: expansions) {
-            e.getEMStatus().setMissingDeps(false);
+        
+        expansions.stream().forEach(expansion -> {
+            expansion.getEMStatus().getMissing().removeAll(expansions);
+            expansion.getEMStatus().getRequiredBy().removeAll(expansions);
+        });
 
-            try {
-                List<Expansion.Dependency> deps = e.getRequiresOxps();
-                if (deps != null) {
-                    for (Expansion.Dependency dep: deps) {
-                        List<Expansion> ds = getExpansionByReference(dep, expansions, true);
-                        if (ds.isEmpty()) {
-                            log.info("Expansion {} is missing {}", e.getIdentifier(), dep);
-                            e.getEMStatus().setMissingDeps(true);
+        expansions.stream().forEach(expansion -> {
+            List<Expansion.Dependency> deps = expansion.getRequiresOxps();
+            if (deps != null) {
+                deps.stream().forEach(dependency -> {
+                    List<Expansion> ds = getExpansionByReference(dependency, expansions, false);
+                    ds.stream().forEach(d -> {
+                        if (!d.isEnabled()) {
+                            expansion.getEMStatus().getMissing().add(d);
                         }
-                    }
-                }
-            } catch (Exception ex) {
-                log.warn("Could not validate dependencies for {}", e.getIdentifier(), ex);
+                        d.getEMStatus().getRequiredBy().add(expansion);
+                    });
+                });
             }
-        }
+        });
     }
     
     /**

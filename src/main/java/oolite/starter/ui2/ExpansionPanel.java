@@ -4,7 +4,6 @@ package oolite.starter.ui2;
 
 import java.util.List;
 import oolite.starter.model.Expansion;
-import oolite.starter.model.ExpansionReference;
 import oolite.starter.util.Util;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -91,14 +90,14 @@ public class ExpansionPanel extends javax.swing.JPanel implements ExpansionsPane
                 );
         sb.append(text);
         if (expansion.getEMStatus().isConflicting()) {
-            sb.append("<h2>Conflicting</h2>");
+            sb.append("<h2>Conflicting with</h2>");
             sb.append("<table>");
-            List<ExpansionReference> cs = expansion.getConflictRefs();
+            List<Expansion> cs = expansion.getEMStatus().getConflicting();
             if (cs == null || cs.isEmpty()) {
                 sb.append("<tr><td>Other expansions declare conflicts with this one</td></tr>");
             } else {
-                for (ExpansionReference er: cs) {
-                    sb.append("<tr><td>").append(er.getName()).append(er.getReasons()).append("</td></tr>");
+                for (Expansion e: cs) {
+                    sb.append("<tr><td>").append(e.getTitle()).append(" ").append(e.getVersion()).append("</td></tr>");
                 }
             }
             sb.append("</table>");
@@ -109,8 +108,16 @@ public class ExpansionPanel extends javax.swing.JPanel implements ExpansionsPane
         if (expansion.getEMStatus().isMissingDeps()) {
             sb.append("<h2>Missing Dependencies</h2>");
             sb.append("<table>");
-            for (ExpansionReference er: expansion.getRequiredRefs()) {
-                sb.append("<tr><td>").append(er.getName()).append(er.getReasons()).append("</td></tr>");
+            for (Expansion e: expansion.getEMStatus().getMissing()) {
+                sb.append("<tr><td>").append(e.getTitle()).append(" ").append(e.getVersion()).append("</td></tr>");
+            }
+            sb.append("</table>");
+        }
+        if (expansion.getEMStatus().isRequired()) {
+            sb.append("<h2>Required by</h2>");
+            sb.append("<table>");
+            for (Expansion e: expansion.getEMStatus().getRequiredBy()) {
+                sb.append("<tr><td>").append(e.getTitle()).append(" ").append(e.getVersion()).append("</td></tr>");
             }
             sb.append("</table>");
         }
