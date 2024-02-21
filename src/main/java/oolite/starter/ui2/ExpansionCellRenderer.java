@@ -25,10 +25,10 @@ public class ExpansionCellRenderer extends JLabel implements ListCellRenderer<Ex
     private static final Logger log = LogManager.getLogger();
 
     private ImageIcon expansionIcon = new ImageIcon(getClass().getResource("/icons/32px-Oolite-oxp-icon.png"));
-    private Border emtpyBorder = new EmptyBorder(4, 2, 4, 4);
-    private Border normalBorder = new CompoundBorder(new MatteBorder(0, 4, 0, 0, getBackground()), emtpyBorder);
-    private Border warningBorder = new CompoundBorder(new MatteBorder(0, 4, 0, 0, Color.ORANGE), emtpyBorder);
-    private Border problemBorder = new CompoundBorder(new MatteBorder(0, 4, 0, 0, Color.RED), emtpyBorder);
+    private final Border emtpyBorder = new EmptyBorder(4, 2, 4, 4);
+    private final Border normalBorder = new CompoundBorder(new MatteBorder(0, 4, 0, 0, getBackground()), emtpyBorder);
+    private final Border warningBorder = new CompoundBorder(new MatteBorder(0, 4, 0, 0, Color.ORANGE), emtpyBorder);
+    private final Border problemBorder = new CompoundBorder(new MatteBorder(0, 4, 0, 0, Color.RED), emtpyBorder);
     
     /**
      * Creates a new ExpansionCellRenderer.

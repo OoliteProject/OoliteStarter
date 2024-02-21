@@ -60,7 +60,9 @@ import org.w3c.dom.NodeList;
 /**
  *
  * @author hiran
+ * @deprecated use oolite.starter.ui2.ExpansionsPanel2 instead
  */
+@Deprecated(since = "22FEB24", forRemoval = false)
 public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.OoliteListener, ExpansionManager.ExpansionManagerListener {
     private static final Logger log = LogManager.getLogger();
     
@@ -358,7 +360,13 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
     public void activatedInstallation(Installation installation) {
         log.debug("activatedInstallation({})", installation);
         log.warn("Not autoscanning on old interface...");
+
+//        This panel needs to rescan all expansions to be up to date.
+//        However this panel is going to be removed in favor of the new
+//        panel, which performs background loading.
 //        
+//        So this one will not get fixed any more.
+//
 //        try {
 //            update();
 //        } catch (Exception e) {
@@ -664,7 +672,9 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
             for (int i= 0; i< trw.getViewRowCount(); i++) {
                 es.add(model.getRow(jTable1.convertRowIndexToModel(i)));
             }
-            List<ExpansionReference> warnings = oolite.validateDependencies(es);
+            oolite.validateDependencies2(es);
+            List<ExpansionReference> warnings = new ArrayList<>();            
+            // todo: need to populate list of errors and warnings
             
             if (warnings.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "All dependencies resolved.");

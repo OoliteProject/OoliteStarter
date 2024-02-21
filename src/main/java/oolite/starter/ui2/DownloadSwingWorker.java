@@ -22,7 +22,6 @@ import org.apache.logging.log4j.Logger;
 public class DownloadSwingWorker extends SwingWorker<Void, Void> {
     private static final Logger log = LogManager.getLogger();
 
-    private Component parent;
     private String downloadUrl;
     private Path destinationDir;
     private Oolite2 oolite;
@@ -33,8 +32,7 @@ public class DownloadSwingWorker extends SwingWorker<Void, Void> {
      * @param expansion the expansion to remove
      */
     public DownloadSwingWorker(Component parent, String downloadUrl, Path destinationDir, Oolite2 oolite) {
-        log.debug("DownloadSwingWorker(...)");
-        this.parent = parent;
+        log.debug("DownloadSwingWorker{}, {}, {}, {})", parent, downloadUrl, destinationDir, oolite);
         this.downloadUrl = downloadUrl;
         this.destinationDir = destinationDir;
         this.oolite = oolite;

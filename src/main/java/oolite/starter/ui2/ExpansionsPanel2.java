@@ -49,16 +49,16 @@ public class ExpansionsPanel2 extends javax.swing.JPanel implements Oolite2.Ooli
     }
 
     private transient Oolite2 ooliteDriver;
-    private Action installAction;
-    private Action removeAction;
-    private Action downloadAction;
-    private Action deleteAction;
-    private ListAction installListAction;
-    private ListAction removeListAction;
+    private transient Action installAction;
+    private transient Action removeAction;
+    private transient Action downloadAction;
+    private transient Action deleteAction;
+    private transient ListAction<Expansion> installListAction;
+    private transient ListAction<Expansion> removeListAction;
     private Oolite2.OoliteExpansionListModel elmAvailable;
     private Oolite2.OoliteExpansionListModel elmInstalled;
     
-    private SwingWorker sw;
+    private transient SwingWorker sw;
     
     private List<SelectionListener> listeners = new ArrayList<>();
     
@@ -240,7 +240,7 @@ public class ExpansionsPanel2 extends javax.swing.JPanel implements Oolite2.Ooli
 //        btRemove.addActionListener((ae) -> removeAction.actionPerformed(ae));
 //        btDelete.addActionListener((ae) -> deleteAction.actionPerformed(ae));
         
-        installListAction = new ListAction(jlAvailable, installAction);
+        installListAction = new ListAction<Expansion>(jlAvailable, installAction);
         removeListAction = new ListAction(jlInstalled, new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent ae) {
@@ -283,20 +283,27 @@ public class ExpansionsPanel2 extends javax.swing.JPanel implements Oolite2.Ooli
         setOolite(oolite);
     }
     
+    /**
+     * Enables/disables the actions depending on what is going on.
+     * @param e If something about a specific expansion is going on, this is the one
+     */
     private void updateActions(Expansion e) {
         boolean working = sw != null && sw.getState() != SwingWorker.StateValue.DONE;
         jProgressBar1.setVisible(working);
         log.debug("working: {}", working);
-        if (working) {
-            jProgressBar1.setString(sw.getClass().getName() + e.getTitle());
-        }
 
         if (e != null) {
+            if (working) {
+                jProgressBar1.setString(sw.getClass().getName() + e.getTitle());
+            }
+
             installAction.setEnabled(!e.isEnabled() && !working);
             removeAction.setEnabled(e.isEnabled() && e.isManaged() && !working);
             deleteAction.setEnabled(
                 e.isEnabled() && !e.isManaged() && !"Oolite Debug OXP".equals(e.getTitle()) && !working
                 );
+        } else {
+            jProgressBar1.setString(sw.getClass().getName());
         }
     }
 

@@ -15,7 +15,7 @@ import org.apache.logging.log4j.Logger;
  * @author hiran
  * @deprecated Make use of the Oolite2-integrated list
  */
-@Deprecated
+@Deprecated(since = "21FEB24", forRemoval = true)
 public class ExpansionListModel extends AbstractListModel<Expansion> {
     private static final Logger log = LogManager.getLogger();
     
@@ -32,7 +32,7 @@ public class ExpansionListModel extends AbstractListModel<Expansion> {
         public boolean willShow(Expansion e);
     }
     
-    private List<Expansion> expansions;
+    private transient List<Expansion> expansions;
 
     /**
      * Creates a new ExpansionListModel.

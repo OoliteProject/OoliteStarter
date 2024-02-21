@@ -58,6 +58,9 @@ public class StartGamePanel2 extends javax.swing.JPanel implements Oolite.Oolite
             } else {
                 ooliteDriver.run(saveGame);
             }
+        } catch (InterruptedException e) {
+            log.warn("runSaveGame was interrupted");
+            Thread.currentThread().interrupt();
         } catch (Exception e) {
             log.error("Could not run game", e);
             JOptionPane.showMessageDialog(this, "Could not run game: " + e.getMessage(), "Error", JOptionPane.PLAIN_MESSAGE);

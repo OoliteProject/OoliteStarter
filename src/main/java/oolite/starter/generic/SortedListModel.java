@@ -23,7 +23,7 @@ import org.apache.logging.log4j.Logger;
 public class SortedListModel<T> extends AbstractListModel<T> {
     private static final Logger log = LogManager.getLogger();
 
-    private class SortedListEntry implements Comparable {
+    private class SortedListEntry implements Comparable<SortedListEntry> {
         
         private int index;
         
@@ -36,11 +36,10 @@ public class SortedListModel<T> extends AbstractListModel<T> {
         }
 
         @Override
-        public int compareTo(Object o) {
+        public int compareTo(SortedListEntry thatEntry) {
             // Retrieve the element that this entry points to 
               // in the original model.
               T thisElement = unsortedModel.getElementAt(index);
-              SortedListEntry thatEntry = (SortedListEntry)o;
               // Retrieve the element that thatEntry points to 
               // in the original model.
               T thatElement = 
@@ -61,9 +60,9 @@ public class SortedListModel<T> extends AbstractListModel<T> {
     }
     
     private transient ListModel<T> unsortedModel;
-    private ArrayList<SortedListEntry> sortedList;
+    private transient ArrayList<SortedListEntry> sortedList;
     private SortOrder sortOrder;
-    private Comparator<T> comparator;
+    private transient Comparator<T> comparator;
 
     /**
      * Creates a new SortedListModel.

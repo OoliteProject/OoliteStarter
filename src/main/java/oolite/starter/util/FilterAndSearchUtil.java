@@ -80,10 +80,10 @@ public class FilterAndSearchUtil {
                 }
                 if (t.getDescription() != null && t.getDescription().toLowerCase().contains(searchString)) {
                     return true;
-                };
+                }
                 if (t.getAuthor() != null && t.getAuthor().toLowerCase().contains(searchString)) {
                     return true;
-                };
+                }
                 return false;
             }
         }
@@ -93,7 +93,7 @@ public class FilterAndSearchUtil {
             return "SearchFilter(" + searchString + ")";
         }
         
-    };
+    }
     
     /**
      * Returns a filter suitable for the given filter mode and search string.
@@ -154,7 +154,7 @@ public class FilterAndSearchUtil {
         if (chosenFilter == null) {
             return searchFilter;
         } else {
-            return new FilteredListModel.AndFilter<Expansion>(chosenFilter, searchFilter);
+            return new FilteredListModel.AndFilter<>(chosenFilter, searchFilter);
         }
     }
     

@@ -24,6 +24,8 @@ import org.apache.logging.log4j.Logger;
 public class ScrollablePanel extends JPanel implements Scrollable, SwingConstants {
     private static final Logger log = LogManager.getLogger();
     
+    private static final String SCROLLABLE_PANEL_INVAILD_ORIENTATION = "Invalid orientation: ";
+    
     public enum ScrollableSizeHint {
             NONE,
             FIT,
@@ -57,6 +59,7 @@ public class ScrollablePanel extends JPanel implements Scrollable, SwingConstant
      */
     public ScrollablePanel(LayoutManager layout) {
         super( layout );
+        log.debug("ScrollablePanel(...)");
 
         IncrementInfo block = new IncrementInfo(IncrementType.PERCENT, 100);
         IncrementInfo unit = new IncrementInfo(IncrementType.PERCENT, 10);
@@ -72,8 +75,8 @@ public class ScrollablePanel extends JPanel implements Scrollable, SwingConstant
      *
      *  @return the ScrollableSizeHint enum for the height
      */
-    public ScrollableSizeHint getScrollableHeight()
-    {
+    public ScrollableSizeHint getScrollableHeight() {
+        log.debug("getScrollableHeight()");
         return scrollableHeight;
     }
 
@@ -92,6 +95,7 @@ public class ScrollablePanel extends JPanel implements Scrollable, SwingConstant
      *  @param scrollableHeight as represented by the ScrollableSizeHint enum.
      */
     public void setScrollableHeight(ScrollableSizeHint scrollableHeight) {
+        log.debug("setScrollableHeight(...)");
         this.scrollableHeight = scrollableHeight;
         revalidate();
     }
@@ -102,6 +106,7 @@ public class ScrollablePanel extends JPanel implements Scrollable, SwingConstant
      * @return the ScrollableSizeHint enum for the width
      */
     public ScrollableSizeHint getScrollableWidth() {
+        log.debug("getScrollableWidth()");
         return scrollableWidth;
     }
 
@@ -120,6 +125,7 @@ public class ScrollablePanel extends JPanel implements Scrollable, SwingConstant
      *  @param scrollableWidth as represented by the ScrollableSizeHint enum.
      */
     public void setScrollableWidth(ScrollableSizeHint scrollableWidth) {
+        log.debug("setScrollableWidth(...)");
         this.scrollableWidth = scrollableWidth;
         revalidate();
     }
@@ -130,6 +136,7 @@ public class ScrollablePanel extends JPanel implements Scrollable, SwingConstant
      *  @return the block IncrementInfo for the specified orientation
      */
     public IncrementInfo getScrollableBlockIncrement(int orientation) {
+        log.debug("getScrollableBlockIncrement(...)");
         return orientation == SwingConstants.HORIZONTAL ? horizontalBlock : verticalBlock;
     }
 
@@ -146,6 +153,7 @@ public class ScrollablePanel extends JPanel implements Scrollable, SwingConstant
      *      scrollable amount
      */
     public void setScrollableBlockIncrement(int orientation, IncrementType type, int amount) {
+        log.debug("setScrollableBlockIncrement(...)");
         IncrementInfo info = new IncrementInfo(type, amount);
         setScrollableBlockIncrement(orientation, info);
     }
@@ -159,6 +167,7 @@ public class ScrollablePanel extends JPanel implements Scrollable, SwingConstant
      *      calculate the scrollable amount.
      */
     public void setScrollableBlockIncrement(int orientation, IncrementInfo info) {
+        log.debug("setScrollableBlockIncrement(...)");
         switch(orientation) {
             case SwingConstants.HORIZONTAL:
                 horizontalBlock = info;
@@ -167,7 +176,7 @@ public class ScrollablePanel extends JPanel implements Scrollable, SwingConstant
                 verticalBlock = info;
                 break;
             default:
-                throw new IllegalArgumentException("Invalid orientation: " + orientation);
+                throw new IllegalArgumentException(SCROLLABLE_PANEL_INVAILD_ORIENTATION + orientation);
         }
     }
 
@@ -177,6 +186,7 @@ public class ScrollablePanel extends JPanel implements Scrollable, SwingConstant
      *  @return the unit IncrementInfo for the specified orientation
      */
     public IncrementInfo getScrollableUnitIncrement(int orientation) {
+        log.debug("getScrollableUnitIncrement(...)");
         return orientation == SwingConstants.HORIZONTAL ? horizontalUnit : verticalUnit;
     }
 
@@ -193,6 +203,7 @@ public class ScrollablePanel extends JPanel implements Scrollable, SwingConstant
      *                 scrollable amount
      */
     public void setScrollableUnitIncrement(int orientation, IncrementType type, int amount) {
+        log.debug("setScrollableUnitIncrement(...)");
         IncrementInfo info = new IncrementInfo(type, amount);
         setScrollableUnitIncrement(orientation, info);
     }
@@ -206,6 +217,7 @@ public class ScrollablePanel extends JPanel implements Scrollable, SwingConstant
      *               calculate the scrollable amount.
      */
     public void setScrollableUnitIncrement(int orientation, IncrementInfo info) {
+        log.debug("setScrollableUnitIncrement(...)");
         switch(orientation) {
             case SwingConstants.HORIZONTAL:
                 horizontalUnit = info;
@@ -214,7 +226,7 @@ public class ScrollablePanel extends JPanel implements Scrollable, SwingConstant
                 verticalUnit = info;
                 break;
             default:
-                throw new IllegalArgumentException("Invalid orientation: " + orientation);
+                throw new IllegalArgumentException(SCROLLABLE_PANEL_INVAILD_ORIENTATION + orientation);
         }
     }
 
@@ -233,6 +245,7 @@ public class ScrollablePanel extends JPanel implements Scrollable, SwingConstant
      * @see JComponent.getPreferredSize() 
      */
     public Dimension getPreferredScrollableViewportSize() {
+        log.debug("getPreferredScrollableViewportSize()");
         return getPreferredSize();
     }
 
@@ -254,13 +267,14 @@ public class ScrollablePanel extends JPanel implements Scrollable, SwingConstant
      * @see JScrollBar.setUnitIncrement(int)
      */
     public int getScrollableUnitIncrement(Rectangle visibleRect, int orientation, int direction) {
+        log.debug("getScrollableUnitIncrement(...)");
         switch(orientation) {
             case SwingConstants.HORIZONTAL:
                 return getScrollableIncrement(horizontalUnit, visibleRect.width);
             case SwingConstants.VERTICAL:
                 return getScrollableIncrement(verticalUnit, visibleRect.height);
             default:
-                throw new IllegalArgumentException("Invalid orientation: " + orientation);
+                throw new IllegalArgumentException(SCROLLABLE_PANEL_INVAILD_ORIENTATION + orientation);
         }
     }
 
@@ -278,17 +292,19 @@ public class ScrollablePanel extends JPanel implements Scrollable, SwingConstant
      * @see JScrollBar.setBlockIncrement(int)
      */
     public int getScrollableBlockIncrement(Rectangle visibleRect, int orientation, int direction) {
+        log.debug("getScrollableBlockIncrement(...)");
         switch(orientation) {
             case SwingConstants.HORIZONTAL:
                 return getScrollableIncrement(horizontalBlock, visibleRect.width);
             case SwingConstants.VERTICAL:
                 return getScrollableIncrement(verticalBlock, visibleRect.height);
             default:
-                throw new IllegalArgumentException("Invalid orientation: " + orientation);
+                throw new IllegalArgumentException(SCROLLABLE_PANEL_INVAILD_ORIENTATION + orientation);
         }
     }
 
     protected int getScrollableIncrement(IncrementInfo info, int distance) {
+        log.debug("getScrollableIncrement(...)");
         if (info.getIncrement() == IncrementType.PIXELS)
             return info.getAmount();
         else
@@ -311,6 +327,7 @@ public class ScrollablePanel extends JPanel implements Scrollable, SwingConstant
      * @return True if a viewport should force the Scrollables width to match its own. 
     */
     public boolean getScrollableTracksViewportWidth() {
+        log.debug("getScrollableTracksViewportWidth(...)");
         if (scrollableWidth == ScrollableSizeHint.NONE)
             return false;
 
@@ -319,8 +336,8 @@ public class ScrollablePanel extends JPanel implements Scrollable, SwingConstant
 
         //  STRETCH sizing, use the greater of the panel or viewport width
 
-        if (getParent() instanceof JViewport) {
-            return (((JViewport)getParent()).getWidth() > getPreferredSize().width);
+        if (getParent() instanceof JViewport jviewport) {
+            return jviewport.getWidth() > getPreferredSize().width;
         }
 
         return false;
@@ -339,6 +356,7 @@ public class ScrollablePanel extends JPanel implements Scrollable, SwingConstant
      * @return True if a viewport should force the Scrollables height to match its own. 
      */
     public boolean getScrollableTracksViewportHeight() {
+        log.debug("getScrollableTracksViewportHeight(...)");
         if (scrollableHeight == ScrollableSizeHint.NONE)
             return false;
 
@@ -347,8 +365,8 @@ public class ScrollablePanel extends JPanel implements Scrollable, SwingConstant
 
         //  STRETCH sizing, use the greater of the panel or viewport height
 
-        if (getParent() instanceof JViewport) {
-            return (((JViewport)getParent()).getHeight() > getPreferredSize().height);
+        if (getParent() instanceof JViewport jviewport) {
+            return jviewport.getHeight() > getPreferredSize().height;
         }
 
         return false;

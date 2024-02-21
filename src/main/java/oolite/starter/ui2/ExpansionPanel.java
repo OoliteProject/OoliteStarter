@@ -94,7 +94,7 @@ public class ExpansionPanel extends javax.swing.JPanel implements ExpansionsPane
             sb.append("<h2>Conflicting</h2>");
             sb.append("<table>");
             List<ExpansionReference> cs = expansion.getConflictRefs();
-            if (cs == null || cs.size() == 0) {
+            if (cs == null || cs.isEmpty()) {
                 sb.append("<tr><td>Other expansions declare conflicts with this one</td></tr>");
             } else {
                 for (ExpansionReference er: cs) {

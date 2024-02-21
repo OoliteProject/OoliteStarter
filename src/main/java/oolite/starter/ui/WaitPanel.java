@@ -110,7 +110,7 @@ public class WaitPanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btCancelActionPerformed
-        log.warn("btCancelActionPerformed(...)");
+        log.warn("btCancelActionPerformed({})", evt);
         oolite.terminate();
     }//GEN-LAST:event_btCancelActionPerformed
 

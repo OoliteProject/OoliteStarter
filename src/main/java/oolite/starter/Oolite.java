@@ -1722,7 +1722,7 @@ public class Oolite implements PropertyChangeListener {
      * 
      * @deprecated use validateDependencies2 instead, which is richer in information
      */
-    @Deprecated(since = "21DEB24", forRemoval = true)
+    @Deprecated(since = "21FEB24", forRemoval = true)
     public List<ExpansionReference> validateDependencies(List<Expansion> expansions) {
         log.debug("validateDependencies(...)");
         
@@ -1745,7 +1745,7 @@ public class Oolite implements PropertyChangeListener {
      * It checks for unfulfilled requirements and conflicts, but only on the
      * enabled ones. The result will be stored in the Expansion's EMStatus.
      */
-    void validateDependencies2(List<Expansion> expansions) {
+    public void validateDependencies2(List<Expansion> expansions) {
         log.debug("validateDependencies2({})", expansions);
         for (Expansion e: expansions) {
             e.getEMStatus().setMissingDeps(false);
@@ -1779,8 +1779,7 @@ public class Oolite implements PropertyChangeListener {
                 .filter(e -> e.getIdentifier() != null)
                 .forEach(e -> {
 
-            List<Expansion> ds = getExpansionByReference(e.getIdentifier(), expansions, false);
-            //List<Expansion> ds = getExpansionByReference(e.getIdentifier(), expansions, false);
+            List<Expansion> ds = getExpansionByReference(new Expansion.Dependency(e.getIdentifier()), expansions, false);
             try {
                 if (ds.size() > 1) {
                     // sort backwards (latest is first)

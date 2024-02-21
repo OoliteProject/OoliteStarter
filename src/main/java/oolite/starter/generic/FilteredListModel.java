@@ -139,7 +139,7 @@ public class FilteredListModel<T> extends AbstractListModel<T> {
     }
     
     private transient ListModel<T> model;
-    private transient Filter filter;
+    private transient Filter<T> filter;
     private ArrayList<Integer> entries;
 
     /**
@@ -148,7 +148,7 @@ public class FilteredListModel<T> extends AbstractListModel<T> {
      * @param model the model to filter on
      * @param filter the filter criteria
      */
-    public FilteredListModel(ListModel<T> model, Filter filter) {
+    public FilteredListModel(ListModel<T> model, Filter<T> filter) {
         log.debug("FilteredListModel({}, {})", model, filter);
         
         this.model = model;
