@@ -3,9 +3,19 @@
 package oolite.starter.ui;
 
 import java.awt.Color;
+import java.awt.Toolkit;
+import java.awt.datatransfer.StringSelection;
+import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.List;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.ActionMap;
 import javax.swing.DefaultListModel;
+import javax.swing.InputMap;
+import javax.swing.KeyStroke;
+import javax.swing.TransferHandler;
 import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
 import oolite.starter.model.ExpansionReference;
@@ -44,6 +54,36 @@ public class SaveGamePanel extends javax.swing.JPanel {
                 }
             }
         });
+        
+        // add CCP support - see https://docs.oracle.com/javase/tutorial/uiswing/dnd/listpaste.html
+        ActionMap map = lsExpansions.getActionMap();
+        //map.put(TransferHandler.getCutAction().getValue(Action.NAME), TransferHandler.getCutAction());
+        map.put(TransferHandler.getCopyAction().getValue(Action.NAME), new AbstractAction("Copy") {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                log.warn("actionPerformed({})", ae);
+
+                StringBuilder sb = new StringBuilder("Identifier\tStatus\n");
+                
+                List<ExpansionReference> selection = lsExpansions.getSelectedValuesList();
+                for (ExpansionReference er: selection) {
+                    log.warn("  er: {}", er);
+                    //sb.append(String.valueOf(er)).append("\n");
+                    sb.append(er.getName());
+                    sb.append("\t");
+                    sb.append(er.getStatus());
+                    sb.append("\n");
+                }
+
+                Toolkit toolkit = lsExpansions.getToolkit();
+                toolkit.getSystemClipboard().setContents(new StringSelection(sb.toString()), null);
+            }
+        });
+        //map.put(TransferHandler.getPasteAction().getValue(Action.NAME), TransferHandler.getPasteAction());
+        
+        InputMap imap = lsExpansions.getInputMap();
+        imap.put(KeyStroke.getKeyStroke("ctrl C"), TransferHandler.getCopyAction().getValue(Action.NAME));
+        
     }
     
     private void updateFields() {

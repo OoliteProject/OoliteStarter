@@ -20,7 +20,9 @@ import org.apache.logging.log4j.Logger;
  * 
  * @author arquebus
  * @author hiran
+ * @deprecated Use oolite.starter.ui.StartGamePanel instead
  */
+@Deprecated(since = "21FEB24", forRemoval = true)
 public class StartGamePanel2 extends javax.swing.JPanel implements Oolite.OoliteListener {
     private static final Logger log = LogManager.getLogger();
 

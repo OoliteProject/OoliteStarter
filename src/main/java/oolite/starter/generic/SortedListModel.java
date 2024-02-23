@@ -102,7 +102,7 @@ public class SortedListModel<T> extends AbstractListModel<T> {
 
             @Override
             public void contentsChanged(ListDataEvent lde) {
-                log.debug("contensChanged(...)");
+                log.debug("contentsChanged(...)");
                 resort();
                 try {
                     fireContentsChanged(this, 0, sortedList.size()-1);

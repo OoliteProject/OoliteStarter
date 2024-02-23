@@ -80,7 +80,7 @@ public class Oolite implements PropertyChangeListener {
     
     private static final String OOLITE_CONFIGURATION_MUST_NOT_BE_NULL = "configuration must not be null";
     private static final String OOLITE_DOWNLOAD_URL = "downloadUrl";
-    private static final String OOLITE_EXPANSION_FQN = "org.oolite.hiran.OoliteStarter.oxp";
+    private static final String OOLITE_STARTER_EXPANSION_FQN = "org.oolite.hiran.OoliteStarter.oxp";
     private static final String OOLITE_EXPANSIONS_MUST_NOT_BE_NULL = "expansions must not be null";
     private static final String OOLITE_EXPANSION_MUST_NOT_BE_NULL = "expansion must not be null";
     private static final String OOLITE_IDENTIFIER = "identifier";
@@ -469,6 +469,13 @@ public class Oolite implements PropertyChangeListener {
         return result;
     }
     
+    /**
+     * Reads a SaveGame from a DOM.
+     * 
+     * @param doc the DOM document
+     * @return the save game
+     * @throws XPathExpressionException something went wrong
+     */
     protected SaveGame createSaveGame(Document doc) throws XPathExpressionException {
         log.debug("createSaveGame({})", doc);
         SaveGame result = new SaveGame();
@@ -482,37 +489,41 @@ public class Oolite implements PropertyChangeListener {
         result.setShipName(xpath.evaluate("/plist/dict/key[.='ship_unique_name']/following-sibling::string", doc));
 
         String resourcepaths = xpath.evaluate("/plist/dict/key[.='mission_variables']/following-sibling::dict/key[.='mission_ooliteStarter_oxpList']/following-sibling::string", doc);
-
         if (resourcepaths != null && !resourcepaths.isEmpty()) {
-            List<ExpansionReference> expansions = new ArrayList<>();
+            // we have a comma separated list of expansion pathnames
+            
+            List<ExpansionReference> expansionRefs = new ArrayList<>();
             StringTokenizer st = new StringTokenizer(resourcepaths, ",");
+            // let's skip the first three as they point to generic Oolite directories
             st.nextToken(); // Resources
             String managedAddOnDir = st.nextToken(); // ManagedAddOns
             String addOnDir = st.nextToken(); // AddOns
-            String myAddOn = addOnDir + File.separator + OOLITE_EXPANSION_FQN;
+
+            // figure out the two expansions we want to filter out always
+            String myAddOn = addOnDir + File.separator + OOLITE_STARTER_EXPANSION_FQN;
             String debugAddOn = addOnDir + File.separator + "Basic-debug.oxp";
 
             while (st.hasMoreTokens()) {
                 String token = st.nextToken();
-                if (token.startsWith(managedAddOnDir)) {
+                if (token.equals(debugAddOn)) {
+                    // do nothing for Oolite's debug OXP
+                } else if (token.equals(myAddOn) || token.endsWith(OOLITE_STARTER_EXPANSION_FQN)) {
+                    // do nothing for OoliteStarter's companion
+                } else if (token.startsWith(managedAddOnDir)) {
                     // get the last path component
                     String name = token.substring(managedAddOnDir.length()+1);
-                    expansions.add(getExpansionReference(name));
-                } else if (token.equals(debugAddOn)) {
-                    // do nothing
-                } else if (token.equals(myAddOn) || token.endsWith(OOLITE_EXPANSION_FQN)) {
-                    // do nothing
+                    expansionRefs.add(getExpansionReference(name));
                 } else if (token.startsWith(addOnDir)) {
                     String name = token.substring(addOnDir.length()+1);
-                    expansions.add(getExpansionReference(name));
+                    expansionRefs.add(getExpansionReference(name));
                 } else {
-                    expansions.add(getExpansionReference(token));
+                    expansionRefs.add(getExpansionReference(token));
                 }
             }
 
-            Collections.sort(expansions);
+            Collections.sort(expansionRefs);
 
-            result.setExpansions(expansions);
+            result.setExpansions(expansionRefs);
         }
         return result;
     }
@@ -557,7 +568,7 @@ public class Oolite implements PropertyChangeListener {
         List<ExpansionReference> surplus = new ArrayList<>();
         
         for (Expansion expansion: localExpansions) {
-            if (!OOLITE_EXPANSION_FQN.equals(expansion.getIdentifier()) 
+            if (!OOLITE_STARTER_EXPANSION_FQN.equals(expansion.getIdentifier()) 
                 && !"org.oolite.oolite.debug".equals(expansion.getIdentifier())
                 && !contains(references, expansion)
             ) {
@@ -573,6 +584,13 @@ public class Oolite implements PropertyChangeListener {
         references.addAll(surplus);
     }
     
+    /**
+     * Reads a SaveGame from a file.
+     * 
+     * @param f the file to read
+     * @return the savegame
+     * @throws IOException something went wrong
+     */
     protected SaveGame createSaveGame(File f) throws IOException {
         log.debug("createSaveGame({})", f);
         SaveGame result = null;
@@ -1817,7 +1835,7 @@ public class Oolite implements PropertyChangeListener {
         // just to be sure we do not rely on old stuff
         removeExpansion();
         
-        URL src = getClass().getResource("/" + OOLITE_EXPANSION_FQN + ".zip");
+        URL src = getClass().getResource("/" + OOLITE_STARTER_EXPANSION_FQN + ".zip");
         log.debug("src={}", src);
         String filename = new File(src.getFile()).getName();
         if (filename.endsWith(".zip")) {
@@ -1851,7 +1869,7 @@ public class Oolite implements PropertyChangeListener {
     public void removeExpansion() throws IOException {
         log.debug("removeExpansion()");
         
-        File destDir = new File(configuration.getAddonsDir(), OOLITE_EXPANSION_FQN);
+        File destDir = new File(configuration.getAddonsDir(), OOLITE_STARTER_EXPANSION_FQN);
         if (! destDir.exists()) {
             return;
         }
@@ -1887,7 +1905,7 @@ public class Oolite implements PropertyChangeListener {
      * @return the reference
      */
     public ExpansionReference getExpansionReference(String dep) {
-        log.debug("getExpansionReference({})", dep);
+        log.warn("getExpansionReference({})", dep);
         if (configuration == null) {
             throw new IllegalStateException(OOLITE_CONFIGURATION_MUST_NOT_BE_NULL);
         }
