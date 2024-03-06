@@ -3,7 +3,6 @@
 
 package oolite.starter;
 
-import com.owlike.genson.Genson;
 import com.vdurmont.semver4j.Semver;
 import java.awt.Component;
 import java.awt.EventQueue;
@@ -22,6 +21,8 @@ import java.util.prefs.Preferences;
 import oolite.starter.ui.MrGimlet;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONTokener;
 
 /**
  * Checks Github to see if we are still running the latest version.
@@ -111,8 +112,9 @@ public class GithubVersionChecker {
                 connection.setRequestProperty("Referer", "http://oolite.org");
                 connection.setDoInput(true);
                 InputStream in = connection.getInputStream();
-
-                List<Object> releases = new Genson().deserialize(in, List.class);
+                
+                JSONArray ja = new JSONArray(new JSONTokener(in));
+                List<Object> releases = ja.toList();
                 for (Object release: releases) {
                     if (release instanceof Map<?,?> map) {
                         String v = String.valueOf(map.get("tag_name"));
