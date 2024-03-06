@@ -1257,7 +1257,7 @@ public class OoliteTest {
         instance.setConfiguration(configuration);
         
         ExpansionReference ref = instance.getExpansionReference(dep);
-        assertEquals("org.oolite.Two:1.0", ref.getName());
+        assertEquals("org.oolite.Two@1.0", ref.getName());
         assertEquals(ExpansionReference.Status.MISSING, ref.getStatus());
     }
 
@@ -1295,7 +1295,7 @@ public class OoliteTest {
         instance.setConfiguration(configuration);
 
         ExpansionReference ref = instance.getExpansionReference(dep);
-        assertEquals("org.oolite.Two:1.0", ref.getName());
+        assertEquals("org.oolite.Two@1.0", ref.getName());
         assertEquals(ExpansionReference.Status.MISSING, ref.getStatus());
     }
 

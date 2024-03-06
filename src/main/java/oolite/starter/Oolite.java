@@ -273,7 +273,7 @@ public class Oolite implements PropertyChangeListener {
         // reset conflict flag
         log.trace("Reset conflict flags for {} expansions", expansions.size());
         expansions.stream()
-                .forEach(t -> t.getEMStatus().getConflicting().removeAll(expansions) );
+                .forEach(t -> t.getEMStatus().getConflicting().clear());
 
         log.trace("Fetching conflicts...");
         expansions.stream()
@@ -315,6 +315,10 @@ public class Oolite implements PropertyChangeListener {
         
         if (version.startsWith("v")) {
             version = version.substring(1);
+        }
+        
+        if (version.isBlank()) {
+            version ="0";
         }
         return ModuleDescriptor.Version.parse(version);
     }
@@ -544,7 +548,7 @@ public class Oolite implements PropertyChangeListener {
             throw new IllegalArgumentException(OOLITE_EXPANSION_MUST_NOT_BE_NULL);
         }
         for (ExpansionReference ref: list) {
-            if (expansion.getLocalFile().getName().endsWith(ref.getName())) {
+            if (expansion.getLocalFile().getName().contains(ref.getName())) {
                 return true;
             }
         }
@@ -1767,8 +1771,8 @@ public class Oolite implements PropertyChangeListener {
         log.debug("validateDependencies2({})", expansions);
         
         expansions.stream().forEach(expansion -> {
-            expansion.getEMStatus().getMissing().removeAll(expansions);
-            expansion.getEMStatus().getRequiredBy().removeAll(expansions);
+            expansion.getEMStatus().getMissing().clear();
+            expansion.getEMStatus().getRequiredBy().clear();
         });
 
         expansions.stream().forEach(expansion -> {
@@ -1894,6 +1898,19 @@ public class Oolite implements PropertyChangeListener {
         
         return getExpansionReference("" + dep.getIdentifier() + "@" + dep.getVersion());
     }
+    
+    private String stripVersion(String string) {
+        String id = string;
+        int idx = id.lastIndexOf("@");
+        if (idx >= 0) {
+            id = id.substring(0, idx);
+        }
+        idx = id.lastIndexOf(":");
+        if (idx >= 0) {
+            id = id.substring(0, idx);
+        }
+        return id;
+    }
 
     /**
      * Returns an ExpansionReference for an enabled expansion.
@@ -1912,11 +1929,13 @@ public class Oolite implements PropertyChangeListener {
         
         ExpansionReference result = new ExpansionReference();
         String[] r = dep.split("@|\\.oxz");
-        result.setName(String.join(":", r));
+        result.setName(String.join("@", r));
+        
+        // assume the expansion is missing
         result.setStatus(ExpansionReference.Status.MISSING);
         result.addReason("required but not enabled");
         
-        // find a direct match
+        // find a direct match to prove it exists
         if (
                 new File(configuration.getAddonsDir(), dep).exists()
             ||
@@ -1928,28 +1947,24 @@ public class Oolite implements PropertyChangeListener {
         }
         
         // find some indirect match. First strip off version number, then find substring
-        String id = dep;
-        int idx = id.lastIndexOf("@");
-        if (idx >= 0) {
-            id = id.substring(0, idx);
-        }
-        idx = id.lastIndexOf(":");
-        if (idx >= 0) {
-            id = id.substring(0, idx);
-        }
+        String id = stripVersion(dep);
 
         File[] files = configuration.getAddonsDir().listFiles();
         for (File f: files) {
-            if (f.getName().startsWith(id)) {
+            String fname = f.getName();
+            if (fname.startsWith(id)) {
                 result.setStatus(ExpansionReference.Status.OK);
+                result.getReasons().clear();
                 return result;
             }
         }
         files = configuration.getManagedAddonsDir().listFiles();
         if (files != null) {
             for (File f: files) {
-                if (f.getName().startsWith(id)) {
+                String fname = f.getName();
+                if (fname.startsWith(id)) {
                     result.setStatus(ExpansionReference.Status.OK);
+                    result.getReasons().clear();
                     return result;
                 }
             }
