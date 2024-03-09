@@ -20,6 +20,7 @@ import javax.swing.SortOrder;
 import javax.swing.SwingUtilities;
 import javax.swing.table.TableRowSorter;
 import oolite.starter.Oolite;
+import oolite.starter.Oolite2;
 import oolite.starter.model.Installation;
 import oolite.starter.model.ProcessData;
 import oolite.starter.model.SaveGame;
@@ -30,15 +31,30 @@ import org.apache.logging.log4j.Logger;
  *
  * @author hiran
  */
-public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteListener {
+public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteListener, Oolite2.OoliteListener {
     private static final Logger log = LogManager.getLogger();
 
     private static final String STARTGAMEPANEL_COULD_NOT_RUN_GAME = "Could not run game";
     private static final String STARTGAMEPANEL_COULD_NOT_RELOAD = "Could not reload";
     
     private transient Oolite ooliteDriver;
+    private transient Oolite2 oolite2Driver;
     private SaveGameTableModel model;
     private SaveGamePanel sgp;
+
+    /**
+     * Invoked whenever the Oolite2 status changes.
+     * From Oolite2.OoliteListener
+     * 
+     * @param status the new status
+     */
+    @Override
+    public void statusChanged(Oolite2.Status status) {
+        log.debug("statusChanged({})", status);
+        if (status == Oolite2.Status.INITIALIZED) {
+            update();
+        }
+    }
     
     private enum RunState {
         IDLE, RUNNING
@@ -65,7 +81,7 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
      * @throws ParserConfigurationException something went wrong
      * @throws XPathExpressionException  something went wrong
      */
-    public void setOolite(Oolite oolite) {
+    public void setOolite(Oolite oolite, Oolite2 oolite2) {
         if (this.ooliteDriver != null) {
             this.ooliteDriver.removeOoliteListener(this);
         }
@@ -91,6 +107,12 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
         
         sgp = new SaveGamePanel();
         jSplitPane1.setRightComponent(sgp);
+        
+        if (oolite2Driver != null) {
+            oolite2Driver.removeOoliteListener(this);
+        }
+        this.oolite2Driver = oolite2;
+        oolite2Driver.addOoliteListener(this);
         
         update();
     }

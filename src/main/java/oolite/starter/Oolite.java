@@ -1923,7 +1923,7 @@ public class Oolite implements PropertyChangeListener {
      * @return the reference
      */
     public ExpansionReference getExpansionReference(String dep) {
-        log.warn("getExpansionReference({})", dep);
+        log.debug("getExpansionReference({})", dep);
         if (configuration == null) {
             throw new IllegalStateException(OOLITE_CONFIGURATION_MUST_NOT_BE_NULL);
         }
@@ -1950,23 +1950,30 @@ public class Oolite implements PropertyChangeListener {
         // find some indirect match. First strip off version number, then find substring
         String id = stripVersion(dep);
 
-        File[] files = configuration.getAddonsDir().listFiles();
-        for (File f: files) {
-            String fname = f.getName();
-            if (fname.startsWith(id)) {
-                result.setStatus(ExpansionReference.Status.OK);
-                result.getReasons().clear();
-                return result;
-            }
-        }
-        files = configuration.getManagedAddonsDir().listFiles();
-        if (files != null) {
+        File addonsDir = configuration.getAddonsDir();
+        if (addonsDir != null && addonsDir.isDirectory()) {
+            File[] files = addonsDir.listFiles();
             for (File f: files) {
                 String fname = f.getName();
                 if (fname.startsWith(id)) {
                     result.setStatus(ExpansionReference.Status.OK);
                     result.getReasons().clear();
                     return result;
+                }
+            }
+        }
+        
+        File managedAddonsDir = configuration.getManagedAddonsDir();
+        if (managedAddonsDir != null && managedAddonsDir.isDirectory()) {
+            File[] files = managedAddonsDir.listFiles();
+            if (files != null) {
+                for (File f: files) {
+                    String fname = f.getName();
+                    if (fname.startsWith(id)) {
+                        result.setStatus(ExpansionReference.Status.OK);
+                        result.getReasons().clear();
+                        return result;
+                    }
                 }
             }
         }

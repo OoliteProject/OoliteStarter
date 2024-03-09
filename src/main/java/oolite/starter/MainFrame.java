@@ -135,7 +135,7 @@ public class MainFrame extends javax.swing.JFrame {
         setInstallationTitle(configuration.getActiveInstallation());
         
         sgp = new StartGamePanel();
-        sgp.setOolite(oolite);
+        sgp.setOolite(oolite, oolite2);
         jTabbedPane1.add(sgp);
 
         ExpansionManager em = ExpansionManager.getInstance();

@@ -33,7 +33,8 @@ public class Oolite2 {
     public enum Status {
         UNINITIALIZED,
         INITIALIZING,
-        INITIALIZED
+        INITIALIZED,
+        RESCANNING
     }
     
     public static interface OoliteListener extends Oolite.OoliteListener {
@@ -332,6 +333,9 @@ public class Oolite2 {
     public void rescan(File f) {
         log.warn("rescan({})", f);
         
+        status = Status.RESCANNING;
+        fireStatusChanged(); // notify listeners
+        
         if (!f.exists()) {
             // looks like something was deleted
             // let's find the expansion in our list and mark it up accordingly
@@ -358,7 +362,10 @@ public class Oolite2 {
         // recompute dependencies
         validateDependencies();
         
-        // notify clients
+        status = Status.INITIALIZED;
+        fireStatusChanged(); // notify listeners
+        
+        // notify managed list models
         fire();
     }
     

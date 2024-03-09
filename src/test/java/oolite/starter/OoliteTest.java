@@ -276,7 +276,7 @@ public class OoliteTest {
         oolite.setConfiguration(configuration);
         
         List<SaveGame> saveGames = oolite.getSaveGames();
-        assertEquals(1, saveGames.size());
+        assertEquals(2, saveGames.size());
     }
     
     @Test

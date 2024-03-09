@@ -26,7 +26,7 @@ public class FlavorsPanel extends javax.swing.JPanel {
     public FlavorsPanel() {
         log.debug("FlavorsPanel()");
         initComponents();
-        jList1.setCellRenderer(new OoliteFlavorListRenderer());
+        jList1.setCellRenderer(new OoliteFlavorListCellRenderer());
     }
     
     /**
