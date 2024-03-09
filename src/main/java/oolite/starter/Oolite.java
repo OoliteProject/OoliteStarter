@@ -57,6 +57,7 @@ import oolite.starter.model.Command;
 import oolite.starter.model.Expansion;
 import oolite.starter.model.ExpansionReference;
 import oolite.starter.model.Installation;
+import oolite.starter.model.OoliteFlavor;
 import oolite.starter.model.ProcessData;
 import oolite.starter.model.SaveGame;
 import oolite.starter.util.HttpUtil;
@@ -2466,5 +2467,30 @@ public class Oolite implements PropertyChangeListener {
      */
     public Installation getActiveInstallation() {
         return configuration.getActiveInstallation();
+    }
+
+    /**
+     * Downloads the list of OoliteFlavors that can be offered to a user.
+     * 
+     * @return the list of flavors
+     * @throws Exception something went wrong
+     */
+    public List<OoliteFlavor> getFlavorList() throws Exception {
+        URL url = new URL("https://addons.oolite.space/api/1.0/flavors/");
+        List<OoliteFlavor> result = new ArrayList<>();
+        DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+        
+        try (InputStream in = url.openStream()) {
+            Document doc = db.parse(in);
+            NodeList nl = doc.getDocumentElement().getElementsByTagName("flavor");
+            for (int i=0; i<nl.getLength(); i++) {
+                result.add(OoliteFlavor.buildFrom(url, (Element)nl.item(i)));
+            }
+            
+            return result;
+        } catch (Exception e) {
+            throw new Exception("Could not load flavor list from " + url, e);
+        }
+        
     }
 }

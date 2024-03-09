@@ -20,6 +20,7 @@ import oolite.starter.model.Command;
 import oolite.starter.model.Expansion;
 import oolite.starter.model.ExpansionReference;
 import oolite.starter.model.Installation;
+import oolite.starter.model.OoliteFlavor;
 import oolite.starter.model.ProcessData;
 import oolite.starter.model.SaveGame;
 import org.apache.logging.log4j.LogManager;
@@ -1495,5 +1496,19 @@ public class OoliteTest {
         
         List<Expansion> result = instance.getExpansionByReference(reference, expansions, true);
         assertEquals(0, result.size());
+    }
+    
+    @Test
+    public void testGetFlavorsList() throws Exception {
+        log.info("testGetFlavorsList()");
+        
+        Oolite instance = new Oolite();
+        List<OoliteFlavor> list = instance.getFlavorList();
+        assertNotNull(list);
+        log.info("Received list: {}", list);
+        assertEquals(4, list.size());
+        assertEquals("Vanilla", list.get(0).getName());
+        assertEquals("Play Oolite as close as possible to th original Elite.", list.get(0).getDescription());
+        assertEquals("https://addons.oolite.space/api/1.0/flavors/Vanilla.oolite-es", list.get(0).getExpansionSetUrl().toString());
     }
 }

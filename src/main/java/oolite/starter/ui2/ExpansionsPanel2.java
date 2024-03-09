@@ -3,6 +3,8 @@
 package oolite.starter.ui2;
 
 import java.awt.event.ActionEvent;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.nio.file.Path;
@@ -287,6 +289,27 @@ public class ExpansionsPanel2 extends javax.swing.JPanel implements Oolite2.Ooli
                 
         jlAvailable.addListSelectionListener(lsl);
         jlInstalled.addListSelectionListener(lsl);
+        
+        FocusListener fl = new FocusListener() {
+            @Override
+            public void focusGained(FocusEvent fe) {
+                log.warn("focusGained({})", fe);
+
+                JList<Expansion> jlist = (JList<Expansion>)fe.getSource();
+                Expansion e = jlist.getSelectedValue();
+
+                updateActions(e);
+                fireSelectionEvent(e);
+            }
+
+            @Override
+            public void focusLost(FocusEvent fe) {
+                log.debug("focusLost({})", fe);
+            }
+        };
+        
+        jlAvailable.addFocusListener(fl);
+        jlInstalled.addFocusListener(fl);
         
         setOolite(oolite);
     }

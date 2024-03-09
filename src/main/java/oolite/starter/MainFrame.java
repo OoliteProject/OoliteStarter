@@ -19,13 +19,12 @@ import javax.swing.JOptionPane;
 import javax.swing.JSplitPane;
 import javax.swing.SwingWorker;
 import javax.swing.UnsupportedLookAndFeelException;
-import javax.swing.border.LineBorder;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
 import oolite.starter.model.Installation;
 import oolite.starter.model.ProcessData;
 import oolite.starter.ui.AboutPanel;
-import oolite.starter.ui.ExpansionsPanel;
+import oolite.starter.ui2.FlavorsPanel;
 import oolite.starter.ui.InstallationsPanel;
 import oolite.starter.ui.MrGimlet;
 import oolite.starter.ui.SplashPanel;
@@ -57,7 +56,7 @@ public class MainFrame extends javax.swing.JFrame {
     private transient Configuration configuration;
 
     private StartGamePanel sgp;
-    private ExpansionsPanel esp;
+    //private ExpansionsPanel esp;
     private ExpansionsPanel2 esp2;
     private ExpansionPanel ep2;
     private InstallationsPanel ip;
@@ -142,11 +141,11 @@ public class MainFrame extends javax.swing.JFrame {
         ExpansionManager em = ExpansionManager.getInstance();
         em.start();
 
-        esp = new ExpansionsPanel();
-        esp.setOolite(oolite);
-        esp.setBorder(new LineBorder(Color.orange));
-        em.addExpansionManagerListener(esp);
-        esp.setName("Old Expansions Panel");
+        //esp = new ExpansionsPanel();
+        //esp.setOolite(oolite);
+        //esp.setBorder(new LineBorder(Color.orange));
+        //em.addExpansionManagerListener(esp);
+        //esp.setName("Old Expansions Panel");
 
         JSplitPane expansions = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
         jTabbedPane1.add(expansions, "Expansions");
@@ -165,7 +164,12 @@ public class MainFrame extends javax.swing.JFrame {
         AboutPanel ap = new AboutPanel("text/html", getClass().getResource("/about.html"));
         jTabbedPane1.add("About", ap);
 
-        jTabbedPane1.add(esp);
+        // experimental
+        //jTabbedPane1.add(esp);
+        
+        FlavorsPanel fp = new FlavorsPanel();
+        fp.setOolite(oolite);
+        jTabbedPane1.add("Flavors", fp);
         
         addWindowListener(new WindowAdapter() {
             @Override
