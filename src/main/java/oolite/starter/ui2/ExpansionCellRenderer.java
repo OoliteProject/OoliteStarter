@@ -43,7 +43,7 @@ public class ExpansionCellRenderer extends JLabel implements ListCellRenderer<Ex
 
         setIcon(expansionIcon);
         
-        setText("<html>%s<br>%s %s %s</html>".formatted(expansion.getTitle(), expansion.getVersion(), expansion.getCategory(), expansion.isManaged()));
+        setText("<html>%s<br>%s %s</html>".formatted(expansion.getTitle(), expansion.getVersion(), expansion.getCategory()));
         setToolTipText("%s (%s)".formatted(expansion.getTitle(), expansion.getVersion()));
 
         if (isSelected) {
