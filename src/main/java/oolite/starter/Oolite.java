@@ -1789,12 +1789,19 @@ public class Oolite implements PropertyChangeListener {
             if (deps != null) {
                 deps.stream().forEach(dependency -> {
                     List<Expansion> ds = getExpansionByReference(dependency, expansions, false);
-                    ds.stream().forEach(d -> {
-                        if (!d.isEnabled()) {
-                            expansion.getEMStatus().getMissing().add(d);
-                        }
+                    // for one dependency we may get several matches. If any of those
+                    // is installed, we are good.
+                    if (ds.size() > 1) {
+                        log.warn("Expansion {} depends on {}", expansion, ds);
+                    }
+                    boolean enabled = false;
+                    for (Expansion d: ds) {
+                        enabled |= d.isEnabled();
                         d.getEMStatus().getRequiredBy().add(expansion);
-                    });
+                    };
+                    if (!enabled) {
+                        expansion.getEMStatus().getMissing().addAll(ds);
+                    }
                 });
             }
         });
