@@ -9,10 +9,12 @@ import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -30,6 +32,15 @@ import org.apache.logging.log4j.Logger;
 public class SplashPanel extends JPanel implements MouseListener, MouseMotionListener {
     private static final Logger log = LogManager.getLogger();
 
+    private static Image logo;
+    static {
+        try {
+            logo = ImageIO.read(MrGimlet.class.getResourceAsStream("/oolite_logo.png"));
+        } catch (Exception e) {
+            log.error("Could not load image", e);
+        }
+    }
+    
     private String text;
     private Point dragOriginMouse;
     private Point dragOriginScreen;
@@ -80,6 +91,10 @@ public class SplashPanel extends JPanel implements MouseListener, MouseMotionLis
         super.paint(g); 
         
         Graphics2D g2d = (Graphics2D)g;
+        
+        int x = getWidth() - logo.getWidth(null) - 50;
+        int y = getHeight() - logo.getHeight(null) - 30;
+        g2d.drawImage(logo, x, y, null);
 
         g2d.setFont(g.getFont().deriveFont(Font.BOLD, 22.0f));
         g2d.setColor(Color.white);
