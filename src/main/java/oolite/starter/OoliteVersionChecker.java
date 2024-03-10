@@ -18,6 +18,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.prefs.Preferences;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import oolite.starter.ui.MrGimlet;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -31,6 +33,8 @@ import org.json.JSONTokener;
  */
 public class OoliteVersionChecker {
     private static final Logger log = LogManager.getLogger();
+    
+    private static Icon image = new ImageIcon(MrGimlet.class.getResource("/images/Mr_Gimlet_Oolite.png"));
 
     private String owner = "OoliteProject";
     private String repo = "oolite";
@@ -219,7 +223,7 @@ public class OoliteVersionChecker {
             ModuleDescriptor.Version latest = getLatestVersion(myVersion);
             if (latest != null) {
                 String message = getHtmlUserMessage(latest);
-                EventQueue.invokeLater(() -> MrGimlet.showMessage(parentComponent, message, 10000) );
+                EventQueue.invokeLater(() -> MrGimlet.showMessage(parentComponent, message, 10000, image) );
                 return true;
             }
         } catch (IOException e) {

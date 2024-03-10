@@ -383,6 +383,9 @@ public class Oolite2 {
      */
     public Expansion getExpansionByExpansionReference(ExpansionReference er) {
         log.warn("getExpansionByExpansionReference({})", er);
+        if (er == null) {
+            throw new IllegalArgumentException("er must not be null");
+        }
         
         String id = er.getName();
         String versionStr = er.getName();

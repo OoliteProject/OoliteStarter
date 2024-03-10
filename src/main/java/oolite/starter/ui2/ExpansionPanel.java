@@ -65,14 +65,14 @@ public class ExpansionPanel extends javax.swing.JPanel implements ExpansionsPane
         
         StringBuilder sb = new StringBuilder("<html>");
         sb.append("<h2>").append(expansion.getTitle()).append(" ").append(expansion.getVersion()).append("</h2>");
-        String text = ("<table><tr>"
-                + "<td>Title</td><td colspan=\"3\">%s</td>"
+        String text = ("<table border=\"0\"><tr>"
+                + "<td>Title</td><td colspan=\"4\">%s</td>"
                 + "</tr><tr>"
                 + "<td valign=\"top\">Description</td><td colspan=\"3\" valign=\"top\">%s</td>"
                 + "</tr><tr>"
-                + "<td>Version</td><td>%s<</td><td>Category</td><td>%s</td>"
+                + "<td>Version</td><td>%s<</td><td>Category</td><td>%s</td><td></td>"
                 + "</tr><tr>"
-                + "<td>Size</td><td>%s</td><td>Author</td><td>%s</td>"
+                + "<td>Size</td><td>%s</td><td>Author</td><td>%s</td><td></td>"
                 + "</tr><tr>"
                 + "<td>Local File</td><td colspan=\"3\">%s</td>"
                 + "</tr><tr>"

@@ -92,6 +92,25 @@ public class SaveGamePanel extends javax.swing.JPanel {
         InputMap imap = lsExpansions.getInputMap();
         imap.put(KeyStroke.getKeyStroke("ctrl C"), TransferHandler.getCopyAction().getValue(Action.NAME));
         
+        lsExpansions.addListSelectionListener((lse) -> {
+            log.info("selectionChanged({})", lse);
+            ExpansionReference er = lsExpansions.getSelectedValue();
+            if (er == null) {
+                installAction.setEnabled(false);
+                removeAction.setEnabled(false);
+            } else if (er.getStatus() == ExpansionReference.Status.MISSING) {
+                installAction.setEnabled(true);
+                removeAction.setEnabled(false);
+            } else if (er.getStatus() == ExpansionReference.Status.SURPLUS
+                || er.getStatus() == ExpansionReference.Status.CONFLICT
+                || er.getStatus() == ExpansionReference.Status.REQUIRED_MISSING) {
+                installAction.setEnabled(false);
+                removeAction.setEnabled(true);
+            } else {
+                installAction.setEnabled(false);
+                removeAction.setEnabled(false);
+            }
+        });
     }
     
     /**
@@ -181,6 +200,11 @@ public class SaveGamePanel extends javax.swing.JPanel {
                 }
 
                 ExpansionReference er = lsExpansions.getSelectedValue();
+                if (er == null) {
+                    JOptionPane.showMessageDialog(SaveGamePanel.this, "Please select reference first.", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                
                 Expansion e = oolite.getExpansionByExpansionReference(er);
                 log.warn("Expansion={}", e);
                 
