@@ -5,17 +5,22 @@ package oolite.starter;
 
 import java.beans.PropertyChangeListener;
 import java.io.File;
+import java.lang.module.ModuleDescriptor;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.AbstractListModel;
 import javax.swing.SwingUtilities;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPathExpressionException;
 import oolite.starter.model.Expansion;
+import oolite.starter.model.ExpansionReference;
 import oolite.starter.model.Installation;
 import org.apache.commons.io.monitor.FileAlterationMonitor;
 import org.apache.commons.io.monitor.FileAlterationObserver;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.xml.sax.SAXException;
 
 /**
  * This class shall model the Oolite expansion state on disk.
@@ -179,7 +184,8 @@ public class Oolite2 {
     }
     
     protected void fireStatusChanged() {
-        for (OoliteListener l: listeners) {
+        List<OoliteListener> ls = new ArrayList<>(listeners);
+        for (OoliteListener l: ls) {
             l.statusChanged(status);
         }
     }
@@ -369,4 +375,54 @@ public class Oolite2 {
         fire();
     }
     
+    /**
+     * Returns the Expansion matching the reference.
+     * 
+     * @param er the reference to match
+     * @return the expansion, or null if not found
+     */
+    public Expansion getExpansionByExpansionReference(ExpansionReference er) {
+        log.warn("getExpansionByExpansionReference({})", er);
+        
+        String id = er.getName();
+        String versionStr = er.getName();
+        int idx = id.indexOf("@");
+        if (idx >= 0) {
+            id = id.substring(0, idx);
+            versionStr = versionStr.substring(idx+1);
+        }
+        
+        for (Expansion e: expansions) {
+            // check if this expansion matches
+            if (id.equals(e.getIdentifier())) {
+                // identifier matches. Check version information
+                if (versionStr.equals(e.getVersion())) {
+                    // exact match found!
+                    return e;
+                }
+                
+                log.warn("Expansion {} needed in {} but found {}", id, versionStr, e.getVersion());
+
+                // else we need to check if we found a newer version
+                ModuleDescriptor.Version erv = ModuleDescriptor.Version.parse(versionStr);
+                ModuleDescriptor.Version ev = ModuleDescriptor.Version.parse(e.getVersion());
+                if (ev.compareTo(erv) >= 0) {
+                    // found greater or equal - let's use it
+                    return e;
+                }
+            }
+        }
+        
+        return null;
+    }
+    
+    /**
+     * Investigates whether a File holds an expansion and returns it.
+     * 
+     * @param f the file to investigate
+     * @return the expansion found, or null
+     */
+    public Expansion getExpansionFrom(File f) throws ParserConfigurationException, SAXException, XPathExpressionException {
+        return oolite.getExpansionFrom(f);
+    }
 }

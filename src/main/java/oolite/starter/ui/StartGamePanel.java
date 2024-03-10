@@ -90,7 +90,7 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
         oolite.addOoliteListener(this);
         
         jTable1.getSelectionModel().addListSelectionListener(lse -> {
-            log.debug("valueChanged({})", lse);
+            log.trace("valueChanged({})", lse);
             if (!lse.getValueIsAdjusting()) {
                 // we have a final value - let's render it
                 int rowIndex = jTable1.getSelectedRow();
@@ -106,6 +106,7 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
         });
         
         sgp = new SaveGamePanel();
+        sgp.setOolite(oolite2);
         jSplitPane1.setRightComponent(sgp);
         
         if (oolite2Driver != null) {

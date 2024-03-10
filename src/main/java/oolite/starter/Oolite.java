@@ -12,12 +12,10 @@ import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.lang.module.ModuleDescriptor;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -38,7 +36,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-import java.util.zip.ZipInputStream;
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -566,6 +563,8 @@ public class Oolite implements PropertyChangeListener {
      * @param references 
      */
     protected void checkSurplusExpansions(List<ExpansionReference> references) {
+        StackTraceElement ste = Thread.currentThread().getStackTrace()[2];
+        log.warn("checkSurplusExpansions({}) called by {} {} ({}:{})", references, ste.getClassName(), ste.getMethodName(), ste.getFileName(), ste.getLineNumber());
         if (references == null) {
             throw new IllegalArgumentException("references must not be null");
         }
@@ -591,6 +590,7 @@ public class Oolite implements PropertyChangeListener {
     
     /**
      * Reads a SaveGame from a file.
+     * Surplus expansions are not checked.
      * 
      * @param f the file to read
      * @return the savegame
@@ -604,11 +604,13 @@ public class Oolite implements PropertyChangeListener {
             Document doc = XmlUtil.parseXmlFile(f);
             result = createSaveGame(doc);
             
-            if (result.getExpansions() != null) {
-                // the savegame has it's references already checked. But
-                // we need to find SURPLUS expansions...
-                checkSurplusExpansions(result.getExpansions());
-            }
+//            // todo: place this code into Oolite2 so we can make use of the cached
+//            // expansion
+//            if (result.getExpansions() != null) {
+//                // the savegame has it's references already checked. But
+//                // we need to find SURPLUS expansions...
+//                checkSurplusExpansions(result.getExpansions());
+//            }
 
         } catch (SAXException | XPathExpressionException | ParserConfigurationException e) {
             throw new IOException("Could not parse " + f.getAbsolutePath(), e);
@@ -1163,7 +1165,8 @@ public class Oolite implements PropertyChangeListener {
      * @return the list
      */
     public List<Expansion> getAllExpansions() throws IOException {
-        log.debug("getAllExpansions()");
+        StackTraceElement ste = Thread.currentThread().getStackTrace()[2];
+        log.warn("getAllExpansions() called by {} {} ({}:{})", ste.getClassName(), ste.getMethodName(), ste.getFileName(), ste.getLineNumber());
         Instant start = Instant.now();
         
         List<Expansion> resultList = new ArrayList<>();
@@ -1295,6 +1298,7 @@ public class Oolite implements PropertyChangeListener {
                 result.addAll(getLocalExpansionFromThisFile(f));
             }
         }
+        log.trace("getLocalExpansions() found {} expansions in {}", result.size(), dir);
         return result;
     }
     
@@ -1306,7 +1310,9 @@ public class Oolite implements PropertyChangeListener {
      * @return the list
      */
     public List<Expansion> getLocalExpansions() {
-        log.debug("getLocalExpansions()");
+        StackTraceElement ste = Thread.currentThread().getStackTrace()[2];
+        log.warn("getLocalExpansions() called by {} {} ({}:{})", ste.getClassName(), ste.getMethodName(), ste.getFileName(), ste.getLineNumber());
+
         if (configuration == null) {
             throw new IllegalStateException(OOLITE_CONFIGURATION_MUST_NOT_BE_NULL);
         }
@@ -1315,7 +1321,9 @@ public class Oolite implements PropertyChangeListener {
         
         for (File dir: configuration.getAddonDirs()) {
             if (dir.isDirectory()) {
-                result.addAll(getLocalExpansions(dir));
+                List<Expansion> list = getLocalExpansions(dir);
+                log.warn("  found {} expansions in {}", list.size(), dir);
+                result.addAll(list);
             }
         }
         
@@ -1850,20 +1858,7 @@ public class Oolite implements PropertyChangeListener {
         File destDir = new File(configuration.getAddonsDir(), filename);
         log.info("installing {}", destDir);
         
-        try (ZipInputStream zis = new ZipInputStream(src.openStream())) {
-            ZipEntry zEntry = null;
-            while ( (zEntry = zis.getNextEntry()) != null ) {
-                log.debug("ZipEntry {}", zEntry.getName());
-                File dest = new File(destDir, zEntry.getName());
-                if (zEntry.isDirectory()) {
-                    dest.mkdirs();
-                } else {
-                    try (OutputStream os = new FileOutputStream(dest)) {
-                        IOUtils.copy(zis, os, 4096);
-                    }
-                }
-            }
-        }
+        Util.unzip(src.openStream(), destDir);
     }
 
     /**

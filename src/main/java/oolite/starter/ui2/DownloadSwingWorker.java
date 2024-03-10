@@ -4,14 +4,19 @@
 package oolite.starter.ui2;
 
 import java.awt.Component;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import javax.swing.SwingWorker;
 import oolite.starter.Oolite2;
+import oolite.starter.model.Expansion;
+import oolite.starter.util.Util;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -43,10 +48,47 @@ public class DownloadSwingWorker extends SwingWorker<Void, Void> {
         log.debug("doInBackground()");
 
         URL url = new URL(downloadUrl);
-        Path outpath = destinationDir.resolve("filename");
+        File tempFile = File.createTempFile("OoliteStarter-", ".OXP");
+        Path outpath = tempFile.toPath();
         
-        try (InputStream in = url.openConnection().getInputStream(); OutputStream out = Files.newOutputStream(outpath, StandardOpenOption.CREATE_NEW)) {
-            in.transferTo(out);
+        try {
+            HttpURLConnection httpurlconnection = (HttpURLConnection)url.openConnection();
+            httpurlconnection.connect();
+            log.info("HTTP response code {}", httpurlconnection.getResponseCode());
+            try (InputStream in = httpurlconnection.getInputStream(); OutputStream out = Files.newOutputStream(outpath, StandardOpenOption.TRUNCATE_EXISTING)) {
+                long bytes = in.transferTo(out);
+                log.info("Downloaded {} bytes to {}", bytes, outpath);
+            } 
+            
+            // file is downloaded. Do we need to unzip?
+            if (Util.isZipFile(tempFile)) {
+                log.warn("Downloaded file {} is zip", tempFile);
+                
+                // is it in OXZ format? If yes, just move.
+                Expansion e = oolite.getExpansionFrom(tempFile);
+                if (e != null) {
+                    // we have an OXZ, just move it!
+                    log.warn("Downloaded file {} is OXZ", tempFile);
+                } else {
+                    // we have a normal archive, just unzip
+                    log.warn("Downloaded file {} is simple ZIP", tempFile);
+                    
+                    String filename = url.getFile();
+                    filename = filename.substring(filename.lastIndexOf("/")+1);
+                    
+                    Path outputFile = destinationDir.resolve(filename);
+                    Util.unzip(new FileInputStream(tempFile), outputFile.toFile());
+                }
+            } else {
+                log.warn("Not a ZIP file. What next?");
+            }
+            
+        } catch (Exception e) {
+            log.error("Could not download", e);
+            throw e;
+        } finally {
+            tempFile.delete();
+            log.warn("Deleted {}", tempFile);
         }
         
         return null;

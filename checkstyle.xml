@@ -44,7 +44,7 @@
   <!-- Checks for Size Violations.                    -->
   <!-- See https://checkstyle.org/config_sizes.html -->
   <module name="FileLength">
-    <property name="max" value="2510"/>
+    <property name="max" value="2500"/>
   </module>
   <!-- TODO: This is a lot of work, despite easy to resolve.
   <module name="LineLength">

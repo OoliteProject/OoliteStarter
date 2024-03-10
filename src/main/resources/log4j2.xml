@@ -32,6 +32,7 @@
     <Logger level="info"  name="oolite.starter.GithubVersionChecker"/>
     <Logger level="info"  name="oolite.starter.Oolite"/>
     <Logger level="info"  name="oolite.starter.Oolite2.OoliteExpansionListModel"/>
+    <Logger level="info"  name="oolite.starter.OoliteVersionChecker"/>
     <Logger level="info"  name="oolite.starter.ui.AnnotationRenderer"/>
     <Logger level="info"  name="oolite.starter.ui.DeferredDocumentChangeListener"/>
     <Logger level="warn"  name="oolite.starter.ui.ExpansionReferenceCellRenderer"/>
@@ -45,6 +46,7 @@
     <Logger level="info"  name="oolite.starter.ui.SplashPanel"/>
     <Logger level="warn"  name="oolite.starter.ui.Util"/>
     <Logger level="info"  name="oolite.starter.ui.Util.BalloonHandler"/>
+    <Logger level="info"  name="oolite.starter.util.FilterAndSearchUtil"/>
     <Logger level="info"  name="oolite.starter.util.FilterAndSearchUtil.SearchFilter"/>
     <Logger level="info"  name="oolite.starter.ui2.ExpansionCellRenderer"/>
     <Logger level="info"  name="oolite.starter.ui2.ExpansionPanel"/>
@@ -52,6 +54,7 @@
     <Logger level="info"  name="oolite.starter.ui2.ExpansionsPanel2$1"/>
     <Logger level="info"  name="oolite.starter.ui2.ExpansionsPanel2$2"/>
     <Logger level="info"  name="oolite.starter.ui2.InstallSwingWorker"/>
+    <Logger level="info"  name="oolite.starter.ui2.OoliteFlavorListCellRenderer"/>
     <Logger level="info"  name="oolite.starter.ui2.RemoveSwingWorker"/>
     <Logger level="info"  name="oolite.starter.ui2.SaveGameCellRenderer"/>
     <Logger level="info"  name="oolite.starter.ui2.StartGamePanel2"/>

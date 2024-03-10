@@ -14,10 +14,14 @@ import javax.swing.Action;
 import javax.swing.ActionMap;
 import javax.swing.DefaultListModel;
 import javax.swing.InputMap;
+import javax.swing.JOptionPane;
+import javax.swing.JPopupMenu;
 import javax.swing.KeyStroke;
 import javax.swing.TransferHandler;
 import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
+import oolite.starter.Oolite2;
+import oolite.starter.model.Expansion;
 import oolite.starter.model.ExpansionReference;
 import oolite.starter.model.SaveGame;
 import org.apache.logging.log4j.LogManager;
@@ -32,6 +36,10 @@ public class SaveGamePanel extends javax.swing.JPanel {
     
     private transient SaveGame data;
     private DefaultListModel<ExpansionReference> dlm;
+    
+    private Action installAction;
+    private Action removeAction;
+    private Oolite2 oolite;
     
     /**
      * Creates new form SaveGamePanel.
@@ -86,6 +94,15 @@ public class SaveGamePanel extends javax.swing.JPanel {
         
     }
     
+    /**
+     * Sets the oolite instance to fix expansions.
+     * 
+     * @param oolite the oolite to use
+     */
+    public void setOolite(Oolite2 oolite) {
+        this.oolite = oolite;
+    }
+    
     private void updateFields() {
         txtFilename.setText(String.valueOf(data.getFile()));
         txtOoliteVersion.setText(String.valueOf(data.getOoliteVersion()));
@@ -118,6 +135,74 @@ public class SaveGamePanel extends javax.swing.JPanel {
         lsExpansions.setModel(dlm);
         
         // todo: btFix.setVisible(data.hasMissingExpansions() || data.hasTooManyExpansions());
+        if (!dlm.isEmpty()) {
+            lsExpansions.setComponentPopupMenu(getPopupMenu());
+        }
+    }
+    
+    private JPopupMenu getPopupMenu() {
+        installAction = new AbstractAction("Install") {
+            private static final Logger log = LogManager.getLogger();
+            
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                log.warn("actionPerformed({})", ae);
+                if (oolite == null) {
+                    throw new IllegalStateException("oolite must not be null");
+                }
+                
+                ExpansionReference er = lsExpansions.getSelectedValue();
+                Expansion e = oolite.getExpansionByExpansionReference(er);
+                log.warn("Expansion={}", e);
+                
+                if (e == null) {
+                    JOptionPane.showMessageDialog(SaveGamePanel.this, "Don't know how to install\n    " + er.getName() + "\nCould this possibly be an OXP?", "Error", JOptionPane.ERROR_MESSAGE);
+                } else {
+
+                    new Thread(() -> {
+                        try {
+                            e.install();
+                        } catch (Exception ex) {
+                            log.error("Could not install", ex);
+                        }
+                    }).start();
+                }
+            }
+        };
+
+        removeAction = new AbstractAction("Remove") {
+            private static final Logger log = LogManager.getLogger();
+            
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                log.warn("actionPerformed({})", ae);
+                if (oolite == null) {
+                    throw new IllegalStateException("oolite must not be null");
+                }
+
+                ExpansionReference er = lsExpansions.getSelectedValue();
+                Expansion e = oolite.getExpansionByExpansionReference(er);
+                log.warn("Expansion={}", e);
+                
+                if (e == null) {
+                    JOptionPane.showMessageDialog(SaveGamePanel.this, "Don't know how to remove " + er.getName(), "Error", JOptionPane.ERROR_MESSAGE);
+                } else {
+
+                    new Thread(() -> {
+                        try {
+                            e.remove();
+                        } catch (Exception ex) {
+                            log.error("Could not remove", ex);
+                        }
+                    }).start();
+                }
+            }
+        };
+        
+        JPopupMenu jpm = new JPopupMenu();
+        jpm.add(installAction);
+        jpm.add(removeAction);
+        return jpm;
     }
     
     private void emptyFields() {
@@ -131,6 +216,7 @@ public class SaveGamePanel extends javax.swing.JPanel {
         txtPilotName.setText("");
 
         lsExpansions.setModel(new DefaultListModel<>());
+        lsExpansions.setComponentPopupMenu(null);
         jScrollPane1.setBorder(null);
     }
     

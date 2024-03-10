@@ -189,7 +189,7 @@ public class ExpansionsPanel2 extends javax.swing.JPanel implements Oolite2.Ooli
 //                        JOptionPane.INFORMATION_MESSAGE);
                 String input = JOptionPane.showInputDialog(
                         ExpansionsPanel2.this, 
-                        "Please enter download URL",
+                        "Please enter download URL.\nYou can find download URLs at https://wiki.alioth.net/index.php/Guide_to_Unlisted_OXPs",
                         "Download OXP...",
                         JOptionPane.QUESTION_MESSAGE
                 );
@@ -293,7 +293,7 @@ public class ExpansionsPanel2 extends javax.swing.JPanel implements Oolite2.Ooli
         FocusListener fl = new FocusListener() {
             @Override
             public void focusGained(FocusEvent fe) {
-                log.warn("focusGained({})", fe);
+                log.debug("focusGained({})", fe);
 
                 JList<Expansion> jlist = (JList<Expansion>)fe.getSource();
                 Expansion e = jlist.getSelectedValue();
@@ -357,7 +357,7 @@ public class ExpansionsPanel2 extends javax.swing.JPanel implements Oolite2.Ooli
     }
     
     private void update() {
-        log.warn("update()");
+        log.debug("update()");
         // todo: align this with the new situation
         try {
 //            List<Expansion> expansions = ooliteDriver.getAllExpansions();
@@ -533,8 +533,8 @@ public class ExpansionsPanel2 extends javax.swing.JPanel implements Oolite2.Ooli
         Comparator<Expansion> comparator = FilterAndSearchUtil.getExpansionComparator(sortMode);
         SortedListModel<Expansion> elmSorted = new SortedListModel<>(lm, SortOrder.ASCENDING, comparator);
         
-        log.warn("setting filter {}", filter);
-        log.warn("setting comparator {}", comparator);
+        log.trace("setting filter {}", filter);
+        log.trace("setting comparator {}", comparator);
         
         list.setModel(elmSorted);
     }

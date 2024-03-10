@@ -745,6 +745,9 @@ public class Expansion implements Comparable<Expansion> {
         StringBuilder sb = new StringBuilder(getClass().getName());
         sb.append("(");
         sb.append(getIdentifier() + ", " + getVersion() + ", " + getDownloadUrl());
+        if (isLocal()) {
+            sb.append(", local");
+        }
         sb.append(")");
         return sb.toString();
     }
