@@ -9,6 +9,7 @@ import java.lang.module.ModuleDescriptor;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.swing.AbstractListModel;
 import javax.swing.SwingUtilities;
 import javax.xml.parsers.ParserConfigurationException;
@@ -428,4 +429,16 @@ public class Oolite2 {
     public Expansion getExpansionFrom(File f) throws ParserConfigurationException, SAXException, XPathExpressionException {
         return oolite.getExpansionFrom(f);
     }
+
+    /**
+     * Returns expansions that are updates for already installed ones..
+     * 
+     * @return the list of updates
+     */
+    public List<Expansion> getUpdates() {
+        return expansions.stream()
+                .filter(exp -> exp.getEMStatus().isUpdate())
+                .collect(Collectors.toList());
+    }
+
 }

@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.lang.module.ModuleDescriptor;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.List;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -21,6 +22,7 @@ import javax.swing.SwingWorker;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
+import oolite.starter.model.Expansion;
 import oolite.starter.model.Installation;
 import oolite.starter.model.ProcessData;
 import oolite.starter.ui.AboutPanel;
@@ -345,6 +347,29 @@ public class MainFrame extends javax.swing.JFrame {
         //</editor-fold>
     }
     
+    private static boolean maybeAnnounceExpansionUpdate(MainFrame mf) {
+        List<Expansion> updates = mf.oolite2.getUpdates();
+
+        if (!updates.isEmpty()) {
+            StringBuilder message = new StringBuilder("<html>");
+            message.append("<p>Good news for you, my son: Updated expansions are available.<br/>Have a look at</p>");
+            message.append("<ul>");
+            for (Expansion exp: updates) {
+                message.append("<li>");
+                message.append(exp.getTitle()).append(" version ").append(exp.getVersion());
+                message.append("</li>");
+            }
+            message.append("</ul>");
+            message.append("</html>");
+
+            MrGimlet.showMessage(mf.getRootPane(), message.toString(), 0);
+            
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
     private static void startupUI() {
         log.info("{} {}  starting up...", MainFrame.class.getPackage().getImplementationTitle(), MainFrame.class.getPackage().getImplementationVersion());
         
@@ -437,6 +462,10 @@ public class MainFrame extends javax.swing.JFrame {
                         
                         if (!foundSomething) {
                             foundSomething = gvc.maybeAnnounceUpdate(mf.getRootPane());
+                        }
+
+                        if (!foundSomething) {
+                            foundSomething = maybeAnnounceExpansionUpdate(mf);
                         }
                         
                         if (foundSomething) {
