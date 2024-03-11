@@ -3,15 +3,10 @@
 package oolite.starter.ui2;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Component;
 import javax.swing.JEditorPane;
 import javax.swing.JList;
 import javax.swing.ListCellRenderer;
-import javax.swing.border.Border;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.MatteBorder;
 import oolite.starter.model.OoliteFlavor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -23,10 +18,10 @@ import org.apache.logging.log4j.Logger;
 public class OoliteFlavorListCellRenderer extends javax.swing.JPanel implements ListCellRenderer<OoliteFlavor> {
     private static final Logger log = LogManager.getLogger();
     
-    private final Border emtpyBorder = new EmptyBorder(4, 2, 4, 4);
-    private final Border normalBorder = new CompoundBorder(new MatteBorder(0, 4, 0, 0, getBackground()), emtpyBorder);
-    private final Border warningBorder = new CompoundBorder(new MatteBorder(0, 4, 0, 0, Color.ORANGE), emtpyBorder);
-    private final Border problemBorder = new CompoundBorder(new MatteBorder(0, 4, 0, 0, Color.RED), emtpyBorder);
+    //private final Border emtpyBorder = new EmptyBorder(4, 2, 4, 4);
+    //private final Border normalBorder = new CompoundBorder(new MatteBorder(0, 4, 0, 0, getBackground()), emtpyBorder);
+    //private final Border warningBorder = new CompoundBorder(new MatteBorder(0, 4, 0, 0, Color.ORANGE), emtpyBorder);
+    //private final Border problemBorder = new CompoundBorder(new MatteBorder(0, 4, 0, 0, Color.RED), emtpyBorder);
 
     private JEditorPane editor;
 

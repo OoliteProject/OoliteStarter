@@ -137,8 +137,6 @@ public class FilterAndSearchUtil {
                      */
                     @Override
                     public boolean willShow(Expansion t) {
-//                        return t.isEnabled() && !t.getEMStatus().isLatest()
-//                                || !t.isEnabled() && t.getEMStatus().isLatest();
                         return t.isEnabled() && !t.getEMStatus().isLatest()
                                 || !t.isEnabled() && t.getEMStatus().isUpdate();
                     }

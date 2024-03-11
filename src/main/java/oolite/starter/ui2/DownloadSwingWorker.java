@@ -77,7 +77,9 @@ public class DownloadSwingWorker extends SwingWorker<Void, Void> {
                     filename = filename.substring(filename.lastIndexOf("/")+1);
                     
                     Path outputFile = destinationDir.resolve(filename);
-                    Util.unzip(new FileInputStream(tempFile), outputFile.toFile());
+                    try (InputStream in = new FileInputStream(tempFile)) {
+                        Util.unzip(in, outputFile.toFile());
+                    }
                 }
             } else {
                 log.warn("Not a ZIP file. What next?");
@@ -87,7 +89,7 @@ public class DownloadSwingWorker extends SwingWorker<Void, Void> {
             log.error("Could not download", e);
             throw e;
         } finally {
-            tempFile.delete();
+            Files.delete(tempFile.toPath());
             log.warn("Deleted {}", tempFile);
         }
         

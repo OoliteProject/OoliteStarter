@@ -9,7 +9,6 @@ import java.lang.module.ModuleDescriptor;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import javax.swing.AbstractListModel;
 import javax.swing.SwingUtilities;
 import javax.xml.parsers.ParserConfigurationException;
@@ -86,15 +85,15 @@ public class Oolite2 {
         }
     }
 
-    private List<OoliteListener> listeners = new ArrayList<>();
+    private final List<OoliteListener> listeners = new ArrayList<>();
     private Configuration configuration;
     private Status status = Status.UNINITIALIZED;
     private PropertyChangeListener configurationListener;
     private FileAlterationMonitor monitor;
-    private Oolite oolite;
+    private final Oolite oolite;
     
     private List<Expansion> expansions;
-    private List<WeakReference<OoliteExpansionListModel>> ooliteExpansionListModels;
+    private final List<WeakReference<OoliteExpansionListModel>> ooliteExpansionListModels;
     
     /**
      * Creates a new Oolite2 driver.
@@ -438,7 +437,7 @@ public class Oolite2 {
     public List<Expansion> getUpdates() {
         return expansions.stream()
                 .filter(exp -> exp.getEMStatus().isUpdate())
-                .collect(Collectors.toList());
+                .toList();
     }
 
 }

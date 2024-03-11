@@ -37,9 +37,70 @@ public class SaveGamePanel extends javax.swing.JPanel {
     private transient SaveGame data;
     private DefaultListModel<ExpansionReference> dlm;
     
-    private Action installAction;
-    private Action removeAction;
-    private Oolite2 oolite;
+    private transient Action installAction = new AbstractAction("Install") {
+        private static final Logger log = LogManager.getLogger();
+
+        @Override
+        public void actionPerformed(ActionEvent ae) {
+            log.warn("actionPerformed({})", ae);
+            if (oolite == null) {
+                throw new IllegalStateException("oolite must not be null");
+            }
+
+            ExpansionReference er = lsExpansions.getSelectedValue();
+            Expansion e = oolite.getExpansionByExpansionReference(er);
+            log.warn("Expansion={}", e);
+
+            if (e == null) {
+                JOptionPane.showMessageDialog(SaveGamePanel.this, "Don't know how to install\n    " + er.getName() + "\nCould this possibly be an OXP?", "Error", JOptionPane.ERROR_MESSAGE);
+            } else {
+
+                new Thread(() -> {
+                    try {
+                        e.install();
+                    } catch (Exception ex) {
+                        log.error("Could not install", ex);
+                    }
+                }).start();
+            }
+        }
+    };
+    
+    private transient Action removeAction = new AbstractAction("Remove") {
+        private static final Logger log = LogManager.getLogger();
+
+        @Override
+        public void actionPerformed(ActionEvent ae) {
+            log.warn("actionPerformed({})", ae);
+            if (oolite == null) {
+                throw new IllegalStateException("oolite must not be null");
+            }
+
+            ExpansionReference er = lsExpansions.getSelectedValue();
+            if (er == null) {
+                JOptionPane.showMessageDialog(SaveGamePanel.this, "Please select reference first.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            Expansion e = oolite.getExpansionByExpansionReference(er);
+            log.warn("Expansion={}", e);
+
+            if (e == null) {
+                JOptionPane.showMessageDialog(SaveGamePanel.this, "Don't know how to remove " + er.getName(), "Error", JOptionPane.ERROR_MESSAGE);
+            } else {
+
+                new Thread(() -> {
+                    try {
+                        e.remove();
+                    } catch (Exception ex) {
+                        log.error("Could not remove", ex);
+                    }
+                }).start();
+            }
+        }
+    };
+    
+    private transient Oolite2 oolite;
     
     /**
      * Creates new form SaveGamePanel.
@@ -65,7 +126,6 @@ public class SaveGamePanel extends javax.swing.JPanel {
         
         // add CCP support - see https://docs.oracle.com/javase/tutorial/uiswing/dnd/listpaste.html
         ActionMap map = lsExpansions.getActionMap();
-        //map.put(TransferHandler.getCutAction().getValue(Action.NAME), TransferHandler.getCutAction());
         map.put(TransferHandler.getCopyAction().getValue(Action.NAME), new AbstractAction("Copy") {
             @Override
             public void actionPerformed(ActionEvent ae) {
@@ -76,7 +136,6 @@ public class SaveGamePanel extends javax.swing.JPanel {
                 List<ExpansionReference> selection = lsExpansions.getSelectedValuesList();
                 for (ExpansionReference er: selection) {
                     log.warn("  er: {}", er);
-                    //sb.append(String.valueOf(er)).append("\n");
                     sb.append(er.getName());
                     sb.append("\t");
                     sb.append(er.getStatus());
@@ -87,18 +146,14 @@ public class SaveGamePanel extends javax.swing.JPanel {
                 toolkit.getSystemClipboard().setContents(new StringSelection(sb.toString()), null);
             }
         });
-        //map.put(TransferHandler.getPasteAction().getValue(Action.NAME), TransferHandler.getPasteAction());
         
         InputMap imap = lsExpansions.getInputMap();
         imap.put(KeyStroke.getKeyStroke("ctrl C"), TransferHandler.getCopyAction().getValue(Action.NAME));
         
-        lsExpansions.addListSelectionListener((lse) -> {
+        lsExpansions.addListSelectionListener(lse -> {
             log.info("selectionChanged({})", lse);
             ExpansionReference er = lsExpansions.getSelectedValue();
-            if (er == null) {
-                installAction.setEnabled(false);
-                removeAction.setEnabled(false);
-            } else if (er.getStatus() == ExpansionReference.Status.MISSING) {
+            if (er.getStatus() == ExpansionReference.Status.MISSING) {
                 installAction.setEnabled(true);
                 removeAction.setEnabled(false);
             } else if (er.getStatus() == ExpansionReference.Status.SURPLUS
@@ -160,69 +215,6 @@ public class SaveGamePanel extends javax.swing.JPanel {
     }
     
     private JPopupMenu getPopupMenu() {
-        installAction = new AbstractAction("Install") {
-            private static final Logger log = LogManager.getLogger();
-            
-            @Override
-            public void actionPerformed(ActionEvent ae) {
-                log.warn("actionPerformed({})", ae);
-                if (oolite == null) {
-                    throw new IllegalStateException("oolite must not be null");
-                }
-                
-                ExpansionReference er = lsExpansions.getSelectedValue();
-                Expansion e = oolite.getExpansionByExpansionReference(er);
-                log.warn("Expansion={}", e);
-                
-                if (e == null) {
-                    JOptionPane.showMessageDialog(SaveGamePanel.this, "Don't know how to install\n    " + er.getName() + "\nCould this possibly be an OXP?", "Error", JOptionPane.ERROR_MESSAGE);
-                } else {
-
-                    new Thread(() -> {
-                        try {
-                            e.install();
-                        } catch (Exception ex) {
-                            log.error("Could not install", ex);
-                        }
-                    }).start();
-                }
-            }
-        };
-
-        removeAction = new AbstractAction("Remove") {
-            private static final Logger log = LogManager.getLogger();
-            
-            @Override
-            public void actionPerformed(ActionEvent ae) {
-                log.warn("actionPerformed({})", ae);
-                if (oolite == null) {
-                    throw new IllegalStateException("oolite must not be null");
-                }
-
-                ExpansionReference er = lsExpansions.getSelectedValue();
-                if (er == null) {
-                    JOptionPane.showMessageDialog(SaveGamePanel.this, "Please select reference first.", "Error", JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
-                
-                Expansion e = oolite.getExpansionByExpansionReference(er);
-                log.warn("Expansion={}", e);
-                
-                if (e == null) {
-                    JOptionPane.showMessageDialog(SaveGamePanel.this, "Don't know how to remove " + er.getName(), "Error", JOptionPane.ERROR_MESSAGE);
-                } else {
-
-                    new Thread(() -> {
-                        try {
-                            e.remove();
-                        } catch (Exception ex) {
-                            log.error("Could not remove", ex);
-                        }
-                    }).start();
-                }
-            }
-        };
-        
         JPopupMenu jpm = new JPopupMenu();
         jpm.add(installAction);
         jpm.add(removeAction);

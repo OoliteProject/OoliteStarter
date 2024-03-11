@@ -16,7 +16,7 @@ import org.apache.logging.log4j.Logger;
 public class FlavorsPanel extends javax.swing.JPanel {
     private static final Logger log = LogManager.getLogger();
     
-    private Oolite oolite;
+    private transient Oolite oolite;
     
     DefaultListModel<OoliteFlavor> model;
 

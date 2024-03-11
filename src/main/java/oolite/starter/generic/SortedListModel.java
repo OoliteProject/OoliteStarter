@@ -40,23 +40,18 @@ public class SortedListModel<T> extends AbstractListModel<T> {
         @Override
         public int compareTo(SortedListEntry thatEntry) {
             // Retrieve the element that this entry points to 
-              // in the original model.
-              T thisElement = unsortedModel.getElementAt(index);
-              // Retrieve the element that thatEntry points to 
-              // in the original model.
-              T thatElement = 
-                unsortedModel.getElementAt(thatEntry.getIndex());
-//              if (comparator instanceof Collator) {
-//                thisElement = thisElement.toString();
-//                thatElement = thatElement.toString();
-//              }
-              // Compare the base model's elements using the provided comparator.
-              int comparison = comparator.compare(thisElement, thatElement);
-              // Convert to descending order as necessary.
-              if (sortOrder == SortOrder.DESCENDING) {
+            // in the original model.
+            T thisElement = unsortedModel.getElementAt(index);
+            // Retrieve the element that thatEntry points to 
+            // in the original model.
+            T thatElement = unsortedModel.getElementAt(thatEntry.getIndex());
+            // Compare the base model's elements using the provided comparator.
+            int comparison = comparator.compare(thisElement, thatElement);
+            // Convert to descending order as necessary.
+            if (sortOrder == SortOrder.DESCENDING) {
                 comparison = -comparison;
-              }
-              return comparison;
+            }
+            return comparison;
         }
         
     }

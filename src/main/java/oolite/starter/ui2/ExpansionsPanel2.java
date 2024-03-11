@@ -70,7 +70,7 @@ public class ExpansionsPanel2 extends javax.swing.JPanel implements Oolite2.Ooli
     
     private transient SwingWorker sw;
     
-    private List<SelectionListener> listeners = new ArrayList<>();
+    private transient List<SelectionListener> listeners = new ArrayList<>();
     
     private String availableSearchString = "";
     private FilterAndSearchUtil.FilterMode availableFilterMode = FilterAndSearchUtil.FilterMode.NONE;
@@ -250,8 +250,8 @@ public class ExpansionsPanel2 extends javax.swing.JPanel implements Oolite2.Ooli
 //        btRemove.addActionListener((ae) -> removeAction.actionPerformed(ae));
 //        btDelete.addActionListener((ae) -> deleteAction.actionPerformed(ae));
         
-        installListAction = new ListAction<Expansion>(jlAvailable, installAction);
-        removeListAction = new ListAction(jlInstalled, new AbstractAction() {
+        installListAction = new ListAction<>(jlAvailable, installAction);
+        removeListAction = new ListAction<>(jlInstalled, new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent ae) {
                 int rowIndex = jlInstalled.getSelectedIndex();
@@ -325,11 +325,7 @@ public class ExpansionsPanel2 extends javax.swing.JPanel implements Oolite2.Ooli
 
         if (e != null) {
             if (working) {
-                if (sw != null) {
-                    jProgressBar1.setString(sw.getClass().getName() + e.getTitle());
-                } else {
-                    jProgressBar1.setString("");
-                }
+                jProgressBar1.setString(sw.getClass().getName() + e.getTitle());
             }
 
             installAction.setEnabled(!e.isEnabled() && !working);

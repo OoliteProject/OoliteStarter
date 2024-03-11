@@ -366,13 +366,6 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
 //        panel, which performs background loading.
 //        
 //        So this one will not get fixed any more.
-//
-//        try {
-//            update();
-//        } catch (Exception e) {
-//            log.error(EXPANSIONSPANEL_COULD_NOT_RELOAD, e);
-//            JOptionPane.showMessageDialog(null, EXPANSIONSPANEL_COULD_NOT_RELOAD);
-//        }
     }
     
     /**
@@ -674,7 +667,8 @@ public class ExpansionsPanel extends javax.swing.JPanel implements Oolite.Oolite
             }
             oolite.validateDependencies2(es);
             List<ExpansionReference> warnings = new ArrayList<>();            
-            // todo: need to populate list of errors and warnings
+            // missing the need to populate list of errors and warnings
+            // but this class is deprecated anyway
             
             if (warnings.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "All dependencies resolved.");

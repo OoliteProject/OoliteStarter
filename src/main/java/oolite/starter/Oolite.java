@@ -604,15 +604,6 @@ public class Oolite implements PropertyChangeListener {
         try {
             Document doc = XmlUtil.parseXmlFile(f);
             result = createSaveGame(doc);
-            
-//            // todo: place this code into Oolite2 so we can make use of the cached
-//            // expansion
-//            if (result.getExpansions() != null) {
-//                // the savegame has it's references already checked. But
-//                // we need to find SURPLUS expansions...
-//                checkSurplusExpansions(result.getExpansions());
-//            }
-
         } catch (SAXException | XPathExpressionException | ParserConfigurationException e) {
             throw new IOException("Could not parse " + f.getAbsolutePath(), e);
         }
@@ -845,15 +836,6 @@ public class Oolite implements PropertyChangeListener {
             }
         }
         
-//        TODO: Sort the list - somehow
-//        Collections.sort(result, new Comparator<Expansion.Dependency>() {
-//            @Override
-//            public int compare(Expansion.Dependency t, Expansion.Dependency t1) {
-//                if (t==null && t1== null) {
-//                    return 0;
-//                }
-//            }
-//        });
         return result;
     }
         
@@ -1802,7 +1784,7 @@ public class Oolite implements PropertyChangeListener {
                     for (Expansion d: ds) {
                         enabled |= d.isEnabled();
                         d.getEMStatus().getRequiredBy().add(expansion);
-                    };
+                    }
                     if (!enabled) {
                         expansion.getEMStatus().getMissing().addAll(ds);
                     }
@@ -1827,7 +1809,7 @@ public class Oolite implements PropertyChangeListener {
         
         expansions.stream()
                 .filter(expansion -> expansion.getIdentifier() != null)
-                .filter(expansion -> expansion.isEnabled())
+                .filter(Expansion::isEnabled)
                 .forEach(expansion -> {
 
             List<Expansion> ds = getExpansionByReference(new Expansion.Dependency(expansion.getIdentifier()), expansions, false);
@@ -2497,12 +2479,19 @@ public class Oolite implements PropertyChangeListener {
      * @return the list of flavors
      * @throws Exception something went wrong
      */
-    public List<OoliteFlavor> getFlavorList() throws Exception {
+    public List<OoliteFlavor> getFlavorList() throws IOException {
         URL url = new URL("https://addons.oolite.space/api/1.0/flavors/");
         List<OoliteFlavor> result = new ArrayList<>();
-        DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
         
         try (InputStream in = url.openStream()) {
+            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+            dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+            dbf.setFeature("http://xml.org/sax/features/external-general-entities", false);
+            dbf.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+            dbf.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+            dbf.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
+
+            DocumentBuilder db = dbf.newDocumentBuilder();
             Document doc = db.parse(in);
             NodeList nl = doc.getDocumentElement().getElementsByTagName("flavor");
             for (int i=0; i<nl.getLength(); i++) {
@@ -2511,7 +2500,7 @@ public class Oolite implements PropertyChangeListener {
             
             return result;
         } catch (Exception e) {
-            throw new Exception("Could not load flavor list from " + url, e);
+            throw new IOException("Could not load flavor list from " + url, e);
         }
         
     }
