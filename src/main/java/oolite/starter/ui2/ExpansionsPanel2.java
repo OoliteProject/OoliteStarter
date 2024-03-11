@@ -325,7 +325,11 @@ public class ExpansionsPanel2 extends javax.swing.JPanel implements Oolite2.Ooli
 
         if (e != null) {
             if (working) {
-                jProgressBar1.setString(sw.getClass().getName() + e.getTitle());
+                if (sw != null) {
+                    jProgressBar1.setString(sw.getClass().getName() + e.getTitle());
+                } else {
+                    jProgressBar1.setString("");
+                }
             }
 
             installAction.setEnabled(!e.isEnabled() && !working);
@@ -334,7 +338,11 @@ public class ExpansionsPanel2 extends javax.swing.JPanel implements Oolite2.Ooli
                 e.isEnabled() && !e.isManaged() && !"Oolite Debug OXP".equals(e.getTitle()) && !working
                 );
         } else {
-            jProgressBar1.setString(sw.getClass().getName());
+            if (sw != null) {
+                jProgressBar1.setString(sw.getClass().getName());
+            } else {
+                jProgressBar1.setString("");
+            }
         }
     }
 
@@ -533,8 +541,8 @@ public class ExpansionsPanel2 extends javax.swing.JPanel implements Oolite2.Ooli
         Comparator<Expansion> comparator = FilterAndSearchUtil.getExpansionComparator(sortMode);
         SortedListModel<Expansion> elmSorted = new SortedListModel<>(lm, SortOrder.ASCENDING, comparator);
         
-        log.trace("setting filter {}", filter);
-        log.trace("setting comparator {}", comparator);
+        log.warn("setting filter on {}: {}", list.getName(), filter);
+        log.warn("setting comparator on {}: {}", list.getName(), comparator);
         
         list.setModel(elmSorted);
     }

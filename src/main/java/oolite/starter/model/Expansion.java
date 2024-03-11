@@ -31,7 +31,8 @@ public class Expansion implements Comparable<Expansion> {
      */
     public static class EMStatus {
         private Color color;
-        private boolean latest;
+        private Expansion latest;
+        private boolean update;
         private boolean incompatible;
         private List<Expansion> conflicting = new ArrayList<>();
         private List<Expansion> missing = new ArrayList<>();
@@ -46,10 +47,28 @@ public class Expansion implements Comparable<Expansion> {
         /**
          * Create a new status with parameters.
          */
-        public EMStatus(Color color, boolean latest, boolean incompatible) {
+        public EMStatus(Color color, Expansion latest, boolean incompatible) {
             this.color = color;
             this.latest = latest;
             this.incompatible = incompatible;
+        }
+
+        /**
+         * Returns true if this expansion can be installed as update.
+         * 
+         * @return whether this expansion is an update
+         */
+        public boolean isUpdate() {
+            return update;
+        }
+
+        /**
+         * Sets whether this expansion is an update for some other one.
+         * 
+         * @param update if this expansion is the newer version of something else
+         */
+        public void setUpdate(boolean update) {
+            this.update = update;
         }
 
         /**
@@ -68,16 +87,28 @@ public class Expansion implements Comparable<Expansion> {
 
         /**
          * Returns if the version is the latest.
+         * 
+         * @return true if no expansion
          */
         public boolean isLatest() {
-            return latest;
+            return latest==null;
         }
 
         /**
-         * Sets if the version is the latest.
+         * Sets the latest expansion.
+         * To mark an expansion to be the latest, set this property to null.
          */
-        public void setLatest(boolean latest) {
+        public void setLatest(Expansion latest) {
             this.latest = latest;
+        }
+        
+        /**
+         * Returns the expansion that should be updated to.
+         * 
+         * @return the expansion
+         */
+        public Expansion getLatest() {
+            return latest;
         }
 
         /**

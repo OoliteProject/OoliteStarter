@@ -65,30 +65,20 @@ public class ExpansionPanel extends javax.swing.JPanel implements ExpansionsPane
         
         StringBuilder sb = new StringBuilder("<html>");
         sb.append("<h2>").append(expansion.getTitle()).append(" ").append(expansion.getVersion()).append("</h2>");
-        String text = ("<table border=\"0\"><tr>"
-                + "<td>Title</td><td colspan=\"4\">%s</td>"
-                + "</tr><tr>"
-                + "<td valign=\"top\">Description</td><td colspan=\"3\" valign=\"top\">%s</td>"
-                + "</tr><tr>"
-                + "<td>Version</td><td>%s<</td><td>Category</td><td>%s</td><td></td>"
-                + "</tr><tr>"
-                + "<td>Size</td><td>%s</td><td>Author</td><td>%s</td><td></td>"
-                + "</tr><tr>"
-                + "<td>Local File</td><td colspan=\"3\">%s</td>"
-                + "</tr><tr>"
-                + "<td>Download&nbsp;URL</td><td colspan=\"3\">%s</td>"
-                + "</tr></table>")
-                .formatted(
-                        expansion.getTitle(), 
-                        expansion.getDescription(),
-                        expansion.getVersion() + (expansion.getEMStatus().isLatest()?" (latest)":""), 
-                        expansion.getCategory(),
-                        Util.humanreadableSize(expansion.getFileSize()), 
-                        expansion.getAuthor(),
-                        expansion.getLocalFile(),
-                        expansion.getDownloadUrl()
-                );
-        sb.append(text);
+        sb.append("<table border=\"0\"><tr>");
+        sb.append("<td>Title</td><td colspan=\"4\">").append(expansion.getTitle()).append("</td>");
+        sb.append("</tr><tr>");
+        sb.append("<td valign=\"top\">Description</td><td colspan=\"3\" valign=\"top\">").append(expansion.getDescription()).append("</td>");
+        sb.append("</tr><tr>");
+        sb.append("<td>Version</td><td>").append(expansion.getVersion()).append("</td><td>Category</td><td>").append(expansion.getCategory()).append("</td><td></td>");
+        sb.append("</tr><tr>");
+        sb.append("<td>Size</td><td>").append(Util.humanreadableSize(expansion.getFileSize())).append("</td><td>Author</td><td>").append(expansion.getAuthor()).append("</td><td></td>");
+        sb.append("</tr><tr>");
+        sb.append("<td>Local File</td><td colspan=\"3\">").append(expansion.getLocalFile()).append("</td>");
+        sb.append("</tr><tr>");
+        sb.append("<td>Download&nbsp;URL</td><td colspan=\"3\">").append(expansion.getDownloadUrl()).append("</td>");
+        sb.append("</tr></table>");
+
         if (expansion.getEMStatus().isConflicting()) {
             sb.append("<h2>Conflicting with</h2>");
             sb.append("<table>");
@@ -120,6 +110,24 @@ public class ExpansionPanel extends javax.swing.JPanel implements ExpansionsPane
                 sb.append("<tr><td>").append(e.getTitle()).append(" ").append(e.getVersion()).append("</td></tr>");
             }
             sb.append("</table>");
+        }
+        if (!expansion.getEMStatus().isLatest()) {
+            Expansion exp = expansion.getEMStatus().getLatest();
+            sb.append("<h2>Update to</h2>");
+            sb.append("<h3>").append(exp.getTitle()).append(" ").append(exp.getVersion()).append("</h3>");
+            sb.append("<table border=\"0\"><tr>");
+            sb.append("<td>Title</td><td colspan=\"4\">").append(exp.getTitle()).append("</td>");
+            sb.append("</tr><tr>");
+            sb.append("<td valign=\"top\">Description</td><td colspan=\"3\" valign=\"top\">").append(exp.getDescription()).append("</td>");
+            sb.append("</tr><tr>");
+            sb.append("<td>Version</td><td>").append(exp.getVersion()).append("</td><td>Category</td><td>").append(exp.getCategory()).append("</td><td></td>");
+            sb.append("</tr><tr>");
+            sb.append("<td>Size</td><td>").append(Util.humanreadableSize(exp.getFileSize())).append("</td><td>Author</td><td>").append(exp.getAuthor()).append("</td><td></td>");
+            sb.append("</tr><tr>");
+            sb.append("<td>Local File</td><td colspan=\"3\">").append(exp.getLocalFile()).append("</td>");
+            sb.append("</tr><tr>");
+            sb.append("<td>Download&nbsp;URL</td><td colspan=\"3\">").append(exp.getDownloadUrl()).append("</td>");
+            sb.append("</tr></table>");
         }
         sb.append("</html>");
         jEditorPane1.setText(sb.toString());

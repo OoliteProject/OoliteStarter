@@ -34,6 +34,7 @@ import java.util.StringTokenizer;
 import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import javax.xml.XMLConstants;
@@ -1192,6 +1193,9 @@ public class Oolite implements PropertyChangeListener {
         }
         
         validateCompatibility(resultList);
+        resultList = resultList.stream()
+                .filter(expansion -> !expansion.getEMStatus().isIncompatible())
+                .collect(Collectors.toList());
         validateConflicts(resultList);
         validateDependencies2(resultList);
         validateUpdates(resultList);
@@ -1808,18 +1812,30 @@ public class Oolite implements PropertyChangeListener {
     }
     
     /**
-     * Find updates that are updatable from non-active ones in the list.
+     * Find expansions that are updatable from non-active ones in the list.
      * 
      * @param expansions the list of expansions
      */
     void validateUpdates(List<Expansion> expansions) {
         log.debug("validateUpdates({})", expansions);
+
+        expansions.stream()
+                .forEach(expansion -> {
+                    expansion.getEMStatus().setLatest( null );
+                    expansion.getEMStatus().setUpdate(false);
+                });
         
         expansions.stream()
-                .filter(e -> e.getIdentifier() != null)
-                .forEach(e -> {
+                .filter(expansion -> expansion.getIdentifier() != null)
+                .filter(expansion -> expansion.isEnabled())
+                .forEach(expansion -> {
 
-            List<Expansion> ds = getExpansionByReference(new Expansion.Dependency(e.getIdentifier()), expansions, false);
+            List<Expansion> ds = getExpansionByReference(new Expansion.Dependency(expansion.getIdentifier()), expansions, false);
+            // filter out those that are incompatible
+            ds = ds.stream()
+                    .filter(exp -> !exp.getEMStatus().isIncompatible())
+                    .collect(Collectors.toList());
+            
             try {
                 if (ds.size() > 1) {
                     // sort backwards (latest is first)
@@ -1831,15 +1847,12 @@ public class Oolite implements PropertyChangeListener {
                     });
                 }
 
-                if (e.getVersion().equals(ds.get(0).getVersion())) {
-                    log.trace("latest = true on {}", e.getIdentifier());
-                    e.getEMStatus().setLatest( true );
-                } else {
-                    log.trace("latest = false on {}", e.getIdentifier());
-                    e.getEMStatus().setLatest( false );
+                if (!expansion.getVersion().equals(ds.get(0).getVersion())) {
+                    expansion.getEMStatus().setLatest( ds.get(0) );
+                    ds.get(0).getEMStatus().setUpdate(true);
                 }
             } catch (Exception ex) {
-                log.warn("Could not check updates for {}", e.getIdentifier(), ex);
+                log.warn("Could not check updates for {}", expansion.getIdentifier(), ex);
             }
 
         });
