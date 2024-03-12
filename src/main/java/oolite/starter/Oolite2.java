@@ -435,6 +435,10 @@ public class Oolite2 {
      * @return the list of updates
      */
     public List<Expansion> getUpdates() {
+        if (expansions==null) {
+            log.warn("Cannot make out updates in status {}", status);
+            return new ArrayList<Expansion>();
+        }
         return expansions.stream()
                 .filter(exp -> exp.getEMStatus().isUpdate())
                 .toList();

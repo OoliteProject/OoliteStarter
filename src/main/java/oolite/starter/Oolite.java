@@ -1764,6 +1764,9 @@ public class Oolite implements PropertyChangeListener {
      */
     public void validateDependencies2(List<Expansion> expansions) {
         log.debug("validateDependencies2({})", expansions);
+        if (expansions == null) {
+            throw new IllegalArgumentException("expansions must not be null");
+        }
         
         expansions.stream().forEach(expansion -> {
             expansion.getEMStatus().getMissing().clear();
@@ -1800,6 +1803,9 @@ public class Oolite implements PropertyChangeListener {
      */
     void validateUpdates(List<Expansion> expansions) {
         log.debug("validateUpdates({})", expansions);
+        if (expansions == null) {
+            throw new IllegalArgumentException("expansions must not be null");
+        }
 
         expansions.stream()
                 .forEach(expansion -> {
