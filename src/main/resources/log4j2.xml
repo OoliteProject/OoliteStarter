@@ -30,6 +30,7 @@
     <Logger level="info"  name="oolite.starter.generic.ListAction"/>
     <Logger level="info"  name="oolite.starter.generic.SortedListModel"/>
     <Logger level="info"  name="oolite.starter.GithubVersionChecker"/>
+    <Logger level="info"  name="oolite.starter.model.OoliteFlavor"/>
     <Logger level="info"  name="oolite.starter.Oolite"/>
     <Logger level="info"  name="oolite.starter.Oolite2.OoliteExpansionListModel"/>
     <Logger level="info"  name="oolite.starter.OoliteVersionChecker"/>

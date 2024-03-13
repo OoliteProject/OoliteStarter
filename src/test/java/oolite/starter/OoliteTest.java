@@ -359,10 +359,11 @@ public class OoliteTest {
         oolite.setConfiguration(configuration);
         
         List<Expansion> expansions = oolite.getLocalExpansions();
-        assertEquals(3, expansions.size());
+        assertEquals(4, expansions.size());
         assertTrue(String.valueOf(expansions.get(0).getIdentifier()).endsWith("Asteroids3D1.2.oxp"));
         assertTrue(String.valueOf(expansions.get(1).getIdentifier()).endsWith("Galactic_Navy 5.4.3.oxp"));
         assertEquals("oolite.oxp.Norby.Addons_for_Beginners", expansions.get(2).getIdentifier());
+        assertEquals("oolite.oxp.UK_Eliter.Ferdelance_3G", expansions.get(3).getIdentifier());
     }
     
     @Test
@@ -962,6 +963,43 @@ public class OoliteTest {
         assertEquals(false, e1.getEMStatus().isConflicting());
         assertEquals(false, e2.getEMStatus().isConflicting());
     }
+
+    /**
+     * Ensure Ferdelance does not conflict with itself.
+     * 
+     * @throws IOException 
+     */
+    @Test
+    public void testValidateConflicts6() throws IOException {
+        log.info("testValidateConflicts6");
+
+        File dir = new File("src/test/resources/data");
+        List<File> dirs = new ArrayList<>();
+        dirs.add(dir);
+        
+        Installation installation = Mockito.mock(Installation.class);
+        Mockito.when(installation.getVersion()).thenReturn("1.90");
+        Configuration configuration = Mockito.mock(Configuration.class);
+        Mockito.when(configuration.getActiveInstallation()).thenReturn(installation);
+        Mockito.when(configuration.getDeactivatedAddonsDir()).thenReturn(dir);
+        Mockito.when(configuration.getAddonsDir()).thenReturn(dir);
+        Mockito.when(configuration.getAddonDirs()).thenReturn(dirs);
+        Oolite instance = new Oolite();
+        instance.setConfiguration(configuration);
+        
+        List<Expansion> expansions = instance.getAllExpansions();
+        
+        assertNotNull(expansions);
+        assertEquals(4, expansions.size());
+        
+        instance.validateConflicts(expansions);
+        
+        assertEquals(4, expansions.size());
+        assertEquals("oolite.oxp.UK_Eliter.Ferdelance_3G", expansions.get(3).getIdentifier());
+        
+        Expansion exp = expansions.get(3);
+        assertEquals(0, exp.getEMStatus().getConflicting().size());
+    }
     
     @Test
     public void testCheckForUpdates() {
@@ -1054,11 +1092,12 @@ public class OoliteTest {
         
         instance.checkSurplusExpansions(references);
         
-        assertEquals(4, references.size());
+        assertEquals(5, references.size());
         assertEquals("oolite.oxp.Norby.Addons_for_Beginners:1.5", references.get(0).getName());
         assertTrue(references.get(1).getName().endsWith("Asteroids3D1.2.oxp@0"));
         assertTrue(references.get(2).getName().endsWith("Galactic_Navy 5.4.3.oxp@0"));
         assertEquals("oolite.oxp.Norby.Addons_for_Beginners@1.5", references.get(3).getName());
+        assertEquals("oolite.oxp.UK_Eliter.Ferdelance_3G@6.63", references.get(4).getName());
     }
     
     @Test
@@ -1107,6 +1146,21 @@ public class OoliteTest {
         List<Expansion> result = instance.getAllExpansions();
         
         assertNotNull(result);
+        assertEquals(4, result.size());
+        assertTrue(String.valueOf(result.get(0).getIdentifier()).endsWith("/PHKB_Folder.oxp/Asteroids3D1.2.oxp"));
+        assertTrue(String.valueOf(result.get(1).getIdentifier()).endsWith("/PHKB_Folder.oxp/Galactic_Navy 5.4.3.oxp"));
+        assertEquals("oolite.oxp.Norby.Addons_for_Beginners", result.get(2).getIdentifier());
+        assertEquals("oolite.oxp.UK_Eliter.Ferdelance_3G", result.get(3).getIdentifier());
+        
+        Expansion e = result.get(3);
+        assertEquals(2, e.getConflictOxps().size());
+        assertEquals("oolite.oxp.UK_Eliter.Ferdelance_3G", e.getConflictOxps().get(0).getIdentifier());
+        assertEquals("oolite.oxp.Ferdelance_3G", e.getConflictOxps().get(1).getIdentifier());
+        
+        Expansion.Dependency d = e.getConflictOxps().get(0);
+        assertEquals("oolite.oxp.UK_Eliter.Ferdelance_3G", d.getIdentifier());
+        assertNull(d.getVersion());
+        assertEquals("6.5", d.getMaximumVersion());
     }
     
     @Test
@@ -1511,4 +1565,5 @@ public class OoliteTest {
         assertEquals("Play Oolite as close as possible to th original Elite.", list.get(0).getDescription());
         assertEquals("https://addons.oolite.space/api/1.0/flavors/Vanilla.oolite-es", list.get(0).getExpansionSetUrl().toString());
     }
+
 }

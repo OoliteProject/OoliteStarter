@@ -185,20 +185,30 @@ public class Oolite implements PropertyChangeListener {
                 log.trace("identifier matched");
                 
                 ModuleDescriptor.Version expVersion = parseVersion(expansion.getVersion());
+                boolean minOk = false;
+                boolean maxOk = false;
                 
                 log.info("expVersion {}", expVersion);
                 if (minVersion == null) {
                     // we have not even a minimum version? Then all versions match
-                    result.add(expansion);
+                    minOk = true;
+                    //result.add(expansion);
                 } else if (minVersion.compareTo(expVersion) <= 0 || "0".equals(reference.getVersion())) {
                     log.trace("minVersion matched");
-                    // we have a minVersion that matches. What about the maxversion?
-                    if (maxVersion == null) {
-                        result.add(expansion);
-                    } else if (expVersion.compareTo(maxVersion) <= 0) {
-                        log.trace("maxVersion matched");
-                        result.add(expansion);
-                    }
+                    minOk = true;
+                }
+                
+                // we have a minVersion that matches. What about the maxversion?
+                if (maxVersion == null) {
+                    maxOk = true;
+                } else if (expVersion.compareTo(maxVersion) <= 0) {
+                    log.trace("maxVersion matched");
+                    maxOk = true;
+                }
+
+                // only if both min and max match this one counts
+                if (minOk && maxOk) {
+                    result.add(expansion);
                 }
             }
         }
