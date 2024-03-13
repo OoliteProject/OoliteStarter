@@ -79,7 +79,7 @@ public class ExpansionsPanel2 extends javax.swing.JPanel implements Oolite2.Ooli
     private FilterAndSearchUtil.FilterMode installedFilterMode = FilterAndSearchUtil.FilterMode.NONE;
     private FilterAndSearchUtil.SortMode installedSortMode = FilterAndSearchUtil.SortMode.BY_TITLE;
     
-    private FilteredListModel.Filter<Expansion> enabledFilter =  new FilteredListModel.Filter<Expansion>() {
+    private transient FilteredListModel.Filter<Expansion> enabledFilter =  new FilteredListModel.Filter<Expansion>() {
         private static final Logger log = LogManager.getLogger();
         
         @Override
@@ -96,7 +96,7 @@ public class ExpansionsPanel2 extends javax.swing.JPanel implements Oolite2.Ooli
 
     };
     
-    private FilteredListModel.Filter<Expansion> notEnabledFilter =  new FilteredListModel.Filter<Expansion>() {
+    private transient FilteredListModel.Filter<Expansion> notEnabledFilter =  new FilteredListModel.Filter<Expansion>() {
         private static final Logger log = LogManager.getLogger();
         
         @Override
@@ -182,11 +182,6 @@ public class ExpansionsPanel2 extends javax.swing.JPanel implements Oolite2.Ooli
                     return;
                 }
 
-//                JOptionPane.showMessageDialog(
-//                        ExpansionsPanel2.this, 
-//                        "Use your browser to download some OXP, then drop it into " + ooliteDriver.getActiveInstallation().getAddonDir(), 
-//                        "Direct Download", 
-//                        JOptionPane.INFORMATION_MESSAGE);
                 String input = JOptionPane.showInputDialog(
                         ExpansionsPanel2.this, 
                         "Please enter download URL.\nYou can find download URLs at https://wiki.alioth.net/index.php/Guide_to_Unlisted_OXPs",

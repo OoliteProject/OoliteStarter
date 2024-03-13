@@ -95,6 +95,123 @@ public class FilterAndSearchUtil {
         
     }
     
+    public static class TitleComparator implements Comparator<Expansion> {
+        @Override
+        public int compare(Expansion t1, Expansion t2) {
+            if (t1 == null) {
+                throw new IllegalArgumentException("t1 must not be null");
+            }
+            if (t2 == null) {
+                throw new IllegalArgumentException("t2 must not be null");
+            }
+            return t1.getTitle().toLowerCase().compareTo(t2.getTitle().toLowerCase());
+        }
+
+        @Override
+        public String toString() {
+            return "Comparator<Expansion>(BY_TITLE)";
+        }
+    }
+    
+    public static class AuthorComparator implements Comparator<Expansion> {
+        @Override
+        public int compare(Expansion t1, Expansion t2) {
+            String a1 = t1.getAuthor();
+            if (a1 == null) {
+                a1 = "";
+            }
+            String a2 = t2.getAuthor();
+            if (a2 == null) {
+                a2 = "";
+            }
+            int i = a1.toLowerCase().compareTo(a2.toLowerCase());
+            if (i != 0) {
+                return i;
+            }
+            return t1.getTitle().toLowerCase().compareTo(t2.getTitle().toLowerCase());
+        }
+
+        @Override
+        public String toString() {
+            return "Comparator<Expansion>(BY_AUTHOR)";
+        }
+    }
+
+    public static class CategoryComparator implements Comparator<Expansion> {
+        @Override
+        public int compare(Expansion t1, Expansion t2) {
+            String c1 = t1.getCategory();
+            if (c1 == null) {
+                c1 = "";
+            }
+            String c2 = t2.getCategory();
+            if (c2 == null) {
+                c2 = "";
+            }
+
+            int i = c1.toLowerCase().compareTo(c2.toLowerCase());
+            if (i != 0) {
+                return i;
+            }
+            return t1.getTitle().toLowerCase().compareTo(t2.getTitle().toLowerCase());
+        }
+
+        @Override
+        public String toString() {
+            return "Comparator<Expansion>(BY_CATEGORY)";
+        }
+    }
+
+    public static class TagsComparator implements Comparator<Expansion> {
+        @Override
+        public int compare(Expansion e1, Expansion e2) {
+            String t1 = e1.getTags();
+            if (t1 == null) {
+                t1 = "";
+            }
+            String t2 = e2.getTags();
+            if (t2 == null) {
+                t2 = "";
+            }
+            int i = t1.compareTo(t2);
+            if (i != 0) {
+                return i;
+            }
+            return e1.getTitle().toLowerCase().compareTo(e2.getTitle().toLowerCase());
+        }
+
+        @Override
+        public String toString() {
+            return "Comparator<Expansion>(BY_TAGS)";
+        }
+    }
+    
+    public static class PublishDateComparator implements Comparator<Expansion> {
+        @Override
+        public int compare(Expansion e1, Expansion e2) {
+            LocalDateTime d1 = e1.getUploadDate();
+            if (d1 == null) {
+                d1 = LocalDateTime.MIN;
+            }
+            LocalDateTime d2 = e2.getUploadDate();
+            if (d2 == null) {
+                d2 = LocalDateTime.MIN;
+            }
+
+            int i = d1.compareTo(d2);
+            if (i != 0) {
+                return i;
+            }
+            return e1.getTitle().toLowerCase().compareTo(e2.getTitle().toLowerCase());
+        }
+
+        @Override
+        public String toString() {
+            return "Comparator<Expansion>(BY_PUBLISH_DATE)";
+        }
+    }
+
+
     /**
      * Returns a filter suitable for the given filter mode and search string.
      * 
@@ -173,121 +290,15 @@ public class FilterAndSearchUtil {
         
         switch(sm) {
             case BY_TITLE:
-                return new Comparator<Expansion>() {
-                        @Override
-                        public int compare(Expansion t1, Expansion t2) {
-                            if (t1 == null) {
-                                throw new IllegalArgumentException("t1 must not be null");
-                            }
-                            if (t2 == null) {
-                                throw new IllegalArgumentException("t2 must not be null");
-                            }
-                            return t1.getTitle().toLowerCase().compareTo(t2.getTitle().toLowerCase());
-                        }
-
-                        @Override
-                        public String toString() {
-                            return "Comparator<Expansion>(BY_TITLE)";
-                        }
-                    };
+                return new TitleComparator();
             case BY_AUTHOR:
-                return new Comparator<Expansion>() {
-                        @Override
-                        public int compare(Expansion t1, Expansion t2) {
-                            String a1 = t1.getAuthor();
-                            if (a1 == null) {
-                                a1 = "";
-                            }
-                            String a2 = t2.getAuthor();
-                            if (a2 == null) {
-                                a2 = "";
-                            }
-                            int i = a1.toLowerCase().compareTo(a2.toLowerCase());
-                            if (i != 0) {
-                                return i;
-                            }
-                            return t1.getTitle().toLowerCase().compareTo(t2.getTitle().toLowerCase());
-                        }
-
-                        @Override
-                        public String toString() {
-                            return "Comparator<Expansion>(BY_AUTHOR)";
-                        }
-                    };
+                return new AuthorComparator();
             case BY_CATEGORY:
-                return new Comparator<Expansion>() {
-                        @Override
-                        public int compare(Expansion t1, Expansion t2) {
-                            String c1 = t1.getCategory();
-                            if (c1 == null) {
-                                c1 = "";
-                            }
-                            String c2 = t2.getCategory();
-                            if (c2 == null) {
-                                c2 = "";
-                            }
-
-                            int i = c1.toLowerCase().compareTo(c2.toLowerCase());
-                            if (i != 0) {
-                                return i;
-                            }
-                            return t1.getTitle().toLowerCase().compareTo(t2.getTitle().toLowerCase());
-                        }
-
-                        @Override
-                        public String toString() {
-                            return "Comparator<Expansion>(BY_CATEGORY)";
-                        }
-                    };
+                return new CategoryComparator();
             case BY_TAGS:
-                return new Comparator<Expansion>() {
-                        @Override
-                        public int compare(Expansion e1, Expansion e2) {
-                            String t1 = e1.getTags();
-                            if (t1 == null) {
-                                t1 = "";
-                            }
-                            String t2 = e2.getTags();
-                            if (t2 == null) {
-                                t2 = "";
-                            }
-                            int i = t1.compareTo(t2);
-                            if (i != 0) {
-                                return i;
-                            }
-                            return e1.getTitle().toLowerCase().compareTo(e2.getTitle().toLowerCase());
-                        }
-
-                        @Override
-                        public String toString() {
-                            return "Comparator<Expansion>(BY_TAGS)";
-                        }
-                    };
+                return new TagsComparator();
             case BY_PUBLISH_DATE:
-                return new Comparator<Expansion>() {
-                        @Override
-                        public int compare(Expansion e1, Expansion e2) {
-                            LocalDateTime d1 = e1.getUploadDate();
-                            if (d1 == null) {
-                                d1 = LocalDateTime.MIN;
-                            }
-                            LocalDateTime d2 = e2.getUploadDate();
-                            if (d2 == null) {
-                                d2 = LocalDateTime.MIN;
-                            }
-                            
-                            int i = d1.compareTo(d2);
-                            if (i != 0) {
-                                return i;
-                            }
-                            return e1.getTitle().toLowerCase().compareTo(e2.getTitle().toLowerCase());
-                        }
-
-                        @Override
-                        public String toString() {
-                            return "Comparator<Expansion>(BY_PUBLISH_DATE)";
-                        }
-                    };
+                return new PublishDateComparator();
             default:
                 throw new IllegalArgumentException("unknown sm " + sm);
         }

@@ -100,7 +100,9 @@ public class DownloadSwingWorker extends SwingWorker<Void, Void> {
     protected void done() {
         log.debug("done()");
         
-        // todo: ask Oolite to scan the path in question
+        // todo: ask Oolite to scan the path in question. Then the user does
+        // not have to wait for the filesystem watcher
+        
         oolite.fire();
     }
 

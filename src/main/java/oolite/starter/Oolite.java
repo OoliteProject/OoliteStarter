@@ -142,6 +142,34 @@ public class Oolite implements PropertyChangeListener {
         }
     }
     
+    boolean versionMatches(ModuleDescriptor.Version minVersion, String current, ModuleDescriptor.Version maxVersion) {
+        log.debug("versionMatches({}, {}, {})", minVersion, current, maxVersion);
+        
+        ModuleDescriptor.Version expVersion = parseVersion(current);
+        boolean minOk = false;
+        boolean maxOk = false;
+
+        log.info("expVersion {}", expVersion);
+        if (minVersion == null) {
+            // we have not even a minimum version? Then all versions match
+            minOk = true;
+        } else if (minVersion.compareTo(expVersion) <= 0 || "0".equals(minVersion.toString())) {
+            log.trace("minVersion matched");
+            minOk = true;
+        }
+
+        // we have a minVersion that matches. What about the maxversion?
+        if (maxVersion == null) {
+            maxOk = true;
+        } else if (expVersion.compareTo(maxVersion) <= 0) {
+            log.trace("maxVersion matched");
+            maxOk = true;
+        }
+
+        // only if both min and max match this one counts
+        return minOk && maxOk;
+    }
+    
     /**
      * Finds an expansion by given reference. Mainly used during requires and collision checks.
      * That's why the version and the maximum_version need to be taken into account.
@@ -183,31 +211,8 @@ public class Oolite implements PropertyChangeListener {
             
             if (reference.getIdentifier().equals(expansion.getIdentifier())) {
                 log.trace("identifier matched");
-                
-                ModuleDescriptor.Version expVersion = parseVersion(expansion.getVersion());
-                boolean minOk = false;
-                boolean maxOk = false;
-                
-                log.info("expVersion {}", expVersion);
-                if (minVersion == null) {
-                    // we have not even a minimum version? Then all versions match
-                    minOk = true;
-                    //result.add(expansion);
-                } else if (minVersion.compareTo(expVersion) <= 0 || "0".equals(reference.getVersion())) {
-                    log.trace("minVersion matched");
-                    minOk = true;
-                }
-                
-                // we have a minVersion that matches. What about the maxversion?
-                if (maxVersion == null) {
-                    maxOk = true;
-                } else if (expVersion.compareTo(maxVersion) <= 0) {
-                    log.trace("maxVersion matched");
-                    maxOk = true;
-                }
 
-                // only if both min and max match this one counts
-                if (minOk && maxOk) {
+                if (versionMatches(minVersion, expansion.getVersion(), maxVersion)) {
                     result.add(expansion);
                 }
             }
@@ -226,7 +231,7 @@ public class Oolite implements PropertyChangeListener {
      * @deprecated use the Dependency type for reference instead
      */
     @Deprecated(since = "21FEB24", forRemoval = true)
-    List<Expansion> getExpansionByReference(String reference, List<Expansion> expansions, boolean checkEnabled) {
+    List<Expansion> getExpansionByReference(final String reference, List<Expansion> expansions, boolean checkEnabled) {
         log.debug("getExpansionByReference({}, {})", reference, expansions);
         if (reference == null) {
             throw new IllegalArgumentException("reference must not be null");
@@ -237,27 +242,26 @@ public class Oolite implements PropertyChangeListener {
 
         List<Expansion> result = new ArrayList<>();
        
-        // first find the full reference
-        for (Expansion e: expansions) {
-            if (reference.equals(e.getIdentifier())
-                    && (!checkEnabled || e.isEnabled())) {
-                result.add(e);
-            }
-        }
+        // first find all full references
+        expansions.stream()
+                .filter(e -> reference.equals(e.getIdentifier()))
+                .filter(e -> !checkEnabled || e.isEnabled())
+                .forEach(result::add);
         
         if (!result.isEmpty()) {
             // we found something? Let's return it.
             return result;
         }
         
-        // then strip off version and try again
+        // still here? strip off version and try again
 
         int pos = reference.lastIndexOf(":");
         if (pos >= 0) {
-            reference = reference.substring(0, pos);
+            String reference2 = reference.substring(0, pos);
 
+            // we only need to search if the reference has changed
             for (Expansion e: expansions) {
-                if (reference.equals(e.getIdentifier())
+                if (reference2.equals(e.getIdentifier())
                         && (!checkEnabled || e.isEnabled())) {
                     result.add(e);
                 }
@@ -1339,14 +1343,10 @@ public class Oolite implements PropertyChangeListener {
             if (f.isDirectory()) {
                 // if it is a directory, is it an OXP?
                 if (f.getName().toLowerCase().endsWith(".oxp")) {
-                    
-                    // todo: Here we need to check for more subdirectories
-                    
+                    // Subdirectories as used by phkb are handled well
                     return getExpansionFromOxp(f);
                 } else {
-                    // not a subdirectory, but we do not scan subdirectories
-                    
-                    // todo: here deactivated addons might be identified
+                    // just a subdirectory, but we do not scan subdirectories
                 }
             } else {
                 // if not a directory, is it an OXZ?
@@ -1738,34 +1738,6 @@ public class Oolite implements PropertyChangeListener {
             }
         }
     }
-    
-    /**
-     * Validates whether the list of expansions is satisfied.
-     * It checks for unfulfilled requirements and conflicts, but only on the
-     * enabled ones.
-     * 
-     * @param expansions the expansions to check
-     * @return the list of discrepancies found
-     * 
-     * @deprecated use validateDependencies2 instead, which is richer in information
-     */
-    @Deprecated(since = "21FEB24", forRemoval = true)
-    public List<ExpansionReference> validateDependencies(List<Expansion> expansions) {
-        log.debug("validateDependencies(...)");
-        
-        List<ExpansionReference> result =  new ArrayList<>();
-                
-        for (Expansion expansion: expansions) {
-            if (!expansion.isEnabled()) {
-                continue;
-            }                
-            
-            validateRequirements(expansion, result);
-            validateConflicts(expansion, result);
-        }
-        
-        return result;
-    }
 
     /**
      * Validates whether the list of expansions is satisfied.
@@ -1775,7 +1747,7 @@ public class Oolite implements PropertyChangeListener {
     public void validateDependencies2(List<Expansion> expansions) {
         log.debug("validateDependencies2({})", expansions);
         if (expansions == null) {
-            throw new IllegalArgumentException("expansions must not be null");
+            throw new IllegalArgumentException(OOLITE_EXPANSIONS_MUST_NOT_BE_NULL);
         }
         
         expansions.stream().forEach(expansion -> {
@@ -1783,7 +1755,8 @@ public class Oolite implements PropertyChangeListener {
             expansion.getEMStatus().getRequiredBy().clear();
         });
 
-        expansions.stream().forEach(expansion -> {
+        expansions.stream()
+                .forEach(expansion -> {
             List<Expansion.Dependency> deps = expansion.getRequiresOxps();
             if (deps != null) {
                 deps.stream().forEach(dependency -> {
@@ -1791,7 +1764,7 @@ public class Oolite implements PropertyChangeListener {
                     // for one dependency we may get several matches. If any of those
                     // is installed, we are good.
                     if (ds.size() > 1) {
-                        log.warn("Expansion {} depends on {}", expansion, ds);
+                        log.info("Expansion {} depends on {}", expansion, ds);
                     }
                     boolean enabled = false;
                     for (Expansion d: ds) {
@@ -1814,7 +1787,7 @@ public class Oolite implements PropertyChangeListener {
     void validateUpdates(List<Expansion> expansions) {
         log.debug("validateUpdates({})", expansions);
         if (expansions == null) {
-            throw new IllegalArgumentException("expansions must not be null");
+            throw new IllegalArgumentException(OOLITE_EXPANSIONS_MUST_NOT_BE_NULL);
         }
 
         expansions.stream()
@@ -1940,6 +1913,8 @@ public class Oolite implements PropertyChangeListener {
         if (configuration == null) {
             throw new IllegalStateException(OOLITE_CONFIGURATION_MUST_NOT_BE_NULL);
         }
+        
+        // todo: this method tests based on the filesystem. Is there some in-memory solution?
         
         ExpansionReference result = new ExpansionReference();
         String[] r = dep.split("@|\\.oxz");
@@ -2411,7 +2386,7 @@ public class Oolite implements PropertyChangeListener {
     /**
      * Calculate deviations.
      * The result list will contain differences between want and have, including
-     * transitive dependencies and conlicts.
+     * transitive dependencies (not yet implemented) and conlicts (not yet implemented).
      * 
      * Each of the elements in the diff list will have reasons attached.
      * 

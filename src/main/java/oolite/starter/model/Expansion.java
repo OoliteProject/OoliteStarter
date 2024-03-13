@@ -153,6 +153,20 @@ public class Expansion implements Comparable<Expansion> {
         }
         
         /**
+         * Returns if this expansion is required by currently installed ones.
+         * 
+         * @return true if it is required, false otherwise
+         */
+        public boolean isCurrentlyRequired() {
+            for (Expansion r: requiredBy) {
+                if (r.isEnabled()) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        
+        /**
          * Returns the list of expansions requiring this one.
          * 
          * @return the list of expansions

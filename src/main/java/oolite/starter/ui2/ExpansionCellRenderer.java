@@ -57,7 +57,7 @@ public class ExpansionCellRenderer extends JLabel implements ListCellRenderer<Ex
         
         if (expansion.getEMStatus().isConflicting() || expansion.getEMStatus().isMissingDeps()) {
             setBorder(problemBorder);
-        } else if (expansion.getEMStatus().isRequired()) {
+        } else if (expansion.getEMStatus().isCurrentlyRequired()) {
             setBorder(warningBorder);
         } else  {
             setBorder(normalBorder);

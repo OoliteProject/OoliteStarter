@@ -112,15 +112,7 @@ public class SaveGamePanel extends javax.swing.JPanel {
         lsExpansions.addMouseMotionListener(new MouseAdapter() {
             @Override
             public void mouseMoved(MouseEvent e) {
-                int rowIndex = lsExpansions.locationToIndex(e.getPoint());
-                if (dlm != null && rowIndex >= 0) {
-                    ExpansionReference er = dlm.getElementAt(rowIndex);
-                    if (er.getReasons().isEmpty()) {
-                        lsExpansions.setToolTipText(null);
-                    } else {
-                        lsExpansions.setToolTipText(String.valueOf(er.getReasons()));
-                    }
-                }
+                updateTooltip(e);
             }
         });
         
@@ -151,14 +143,16 @@ public class SaveGamePanel extends javax.swing.JPanel {
         imap.put(KeyStroke.getKeyStroke("ctrl C"), TransferHandler.getCopyAction().getValue(Action.NAME));
         
         lsExpansions.addListSelectionListener(lse -> {
-            log.info("selectionChanged({})", lse);
+            log.debug("selectionChanged({})", lse);
             ExpansionReference er = lsExpansions.getSelectedValue();
-            if (er.getStatus() == ExpansionReference.Status.MISSING) {
+            if (er != null && er.getStatus() == ExpansionReference.Status.MISSING) {
                 installAction.setEnabled(true);
                 removeAction.setEnabled(false);
-            } else if (er.getStatus() == ExpansionReference.Status.SURPLUS
-                || er.getStatus() == ExpansionReference.Status.CONFLICT
-                || er.getStatus() == ExpansionReference.Status.REQUIRED_MISSING) {
+            } else if (er != null && (
+                    er.getStatus() == ExpansionReference.Status.SURPLUS
+                    || er.getStatus() == ExpansionReference.Status.CONFLICT
+                    || er.getStatus() == ExpansionReference.Status.REQUIRED_MISSING)
+                ) {
                 installAction.setEnabled(false);
                 removeAction.setEnabled(true);
             } else {
@@ -166,6 +160,18 @@ public class SaveGamePanel extends javax.swing.JPanel {
                 removeAction.setEnabled(false);
             }
         });
+    }
+    
+    private void updateTooltip(MouseEvent e) {
+        int rowIndex = lsExpansions.locationToIndex(e.getPoint());
+        if (dlm != null && rowIndex >= 0) {
+            ExpansionReference er = dlm.getElementAt(rowIndex);
+            if (er.getReasons().isEmpty()) {
+                lsExpansions.setToolTipText(null);
+            } else {
+                lsExpansions.setToolTipText(String.valueOf(er.getReasons()));
+            }
+        }
     }
     
     /**

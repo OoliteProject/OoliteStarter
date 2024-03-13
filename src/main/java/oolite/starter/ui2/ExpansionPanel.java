@@ -59,6 +59,17 @@ public class ExpansionPanel extends javax.swing.JPanel implements ExpansionsPane
     private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
 
+    void addCurrentlyRequired(Expansion expansion, StringBuilder sb) {
+        sb.append("<h2>Required by</h2>");
+        sb.append("<table>");
+        for (Expansion e: expansion.getEMStatus().getRequiredBy()) {
+            if (e.isEnabled()) {
+                sb.append("<tr><td>").append(e.getTitle()).append(" ").append(e.getVersion()).append("</td></tr>");
+            }
+        }
+        sb.append("</table>");
+    }
+    
     @Override
     public void selectionChanged(Expansion expansion) {
         log.debug("selectionChanged({})", expansion);
@@ -103,13 +114,8 @@ public class ExpansionPanel extends javax.swing.JPanel implements ExpansionsPane
             }
             sb.append("</table>");
         }
-        if (expansion.getEMStatus().isRequired()) {
-            sb.append("<h2>Required by</h2>");
-            sb.append("<table>");
-            for (Expansion e: expansion.getEMStatus().getRequiredBy()) {
-                sb.append("<tr><td>").append(e.getTitle()).append(" ").append(e.getVersion()).append("</td></tr>");
-            }
-            sb.append("</table>");
+        if (expansion.getEMStatus().isCurrentlyRequired()) {
+            addCurrentlyRequired(expansion, sb);
         }
         if (!expansion.getEMStatus().isLatest()) {
             Expansion exp = expansion.getEMStatus().getLatest();

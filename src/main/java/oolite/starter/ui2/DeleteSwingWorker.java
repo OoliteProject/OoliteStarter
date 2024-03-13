@@ -18,7 +18,6 @@ public class DeleteSwingWorker extends SwingWorker<Void, Void> {
     private static final Logger log = LogManager.getLogger();
     
     private Expansion expansion;
-    //private Oolite2.OoliteExpansionListModel a;
     private Oolite2 oolite;
     
     /**

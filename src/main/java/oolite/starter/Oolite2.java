@@ -350,7 +350,10 @@ public class Oolite2 {
             for (Expansion e: expansions) {
                 if (e.getLocalFile() != null) {
                     String gstr = e.getLocalFile().getAbsolutePath();
-                    log.warn("Compare expansion\n{}\n{}", fstr, gstr);
+                    if (fstr.equals(gstr)) {
+                        log.warn("Need to remove expansion {}", e);
+                        // todo: really remove that expansion, or mark it as not installed
+                    }
                 }
             }
         } else {
@@ -437,7 +440,7 @@ public class Oolite2 {
     public List<Expansion> getUpdates() {
         if (expansions==null) {
             log.warn("Cannot make out updates in status {}", status);
-            return new ArrayList<Expansion>();
+            return new ArrayList<>();
         }
         return expansions.stream()
                 .filter(exp -> exp.getEMStatus().isUpdate())
