@@ -302,7 +302,7 @@ public class Oolite implements PropertyChangeListener {
                             List<Expansion> conflicts = getExpansionByReference(dep, expansions, true);
                             log.trace("found conflicts {}", conflicts);
                             if (!conflicts.isEmpty()) {
-                                log.warn("Expansion {} conflicts with {}", expansion.getIdentifier(), conflicts);
+                                log.trace("Expansion {} conflicts with {}", expansion.getIdentifier(), conflicts);
                                 expansion.getEMStatus().getConflicting().addAll(conflicts);
                             }
                             conflicts.stream()
@@ -640,6 +640,7 @@ public class Oolite implements PropertyChangeListener {
 
         List<String> command = new ArrayList<>();
         command.add(executable);
+        command.add("-nosplash");
         File dir = new File(executable).getParentFile();
         
         run(command, dir);
@@ -659,6 +660,7 @@ public class Oolite implements PropertyChangeListener {
         command.add(configuration.getOoliteCommand());
         command.add("-load");
         command.add(savegame.getFile().getAbsolutePath());
+        command.add("-nosplash");
         File dir = new File(configuration.getOoliteCommand()).getParentFile();
 
         run(command, dir);

@@ -532,8 +532,8 @@ public class ExpansionsPanel2 extends javax.swing.JPanel implements Oolite2.Ooli
         Comparator<Expansion> comparator = FilterAndSearchUtil.getExpansionComparator(sortMode);
         SortedListModel<Expansion> elmSorted = new SortedListModel<>(lm, SortOrder.ASCENDING, comparator);
         
-        log.warn("setting filter on {}: {}", list.getName(), filter);
-        log.warn("setting comparator on {}: {}", list.getName(), comparator);
+        log.trace("setting filter on {}: {}", list.getName(), filter);
+        log.trace("setting comparator on {}: {}", list.getName(), comparator);
         
         list.setModel(elmSorted);
     }

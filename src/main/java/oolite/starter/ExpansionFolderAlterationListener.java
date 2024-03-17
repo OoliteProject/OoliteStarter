@@ -69,7 +69,13 @@ public class ExpansionFolderAlterationListener implements FileAlterationListener
 
                 if (changes != null && !changes.isEmpty()) {
                     log.trace("need to fire {}", changes);
-                    fireFoldersChanged(changes);
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            fireFoldersChanged(changes);
+                        }
+                    }, "ExpansionFolderActractionListenerThread").start();
+                    
                 }
             }
         });

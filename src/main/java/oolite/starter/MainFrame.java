@@ -108,7 +108,7 @@ public class MainFrame extends javax.swing.JFrame {
                 message.append("</ul>");
                 message.append("</html>");
 
-                MrGimlet.showMessage(mf.getRootPane(), message.toString(), 0);
+                MrGimlet.showMessage(mf.getRootPane(), message.toString(), 5000);
 
                 return true;
             } else {

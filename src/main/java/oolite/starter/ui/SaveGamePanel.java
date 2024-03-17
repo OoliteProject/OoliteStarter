@@ -13,14 +13,19 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ActionMap;
 import javax.swing.DefaultListModel;
+import javax.swing.ImageIcon;
 import javax.swing.InputMap;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
 import javax.swing.KeyStroke;
 import javax.swing.TransferHandler;
 import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
+import oolite.starter.ExpansionManager;
 import oolite.starter.Oolite2;
+import oolite.starter.model.Command;
 import oolite.starter.model.Expansion;
 import oolite.starter.model.ExpansionReference;
 import oolite.starter.model.SaveGame;
@@ -31,7 +36,7 @@ import org.apache.logging.log4j.Logger;
  *
  * @author hiran
  */
-public class SaveGamePanel extends javax.swing.JPanel {
+public class SaveGamePanel extends javax.swing.JPanel implements ExpansionManager.ExpansionManagerListener {
     private static final Logger log = LogManager.getLogger();
     
     private transient SaveGame data;
@@ -100,6 +105,79 @@ public class SaveGamePanel extends javax.swing.JPanel {
         }
     };
     
+    private transient Action copyAction =  new AbstractAction("Copy") {
+        private static final Logger log = LogManager.getLogger();
+
+        @Override
+        public void actionPerformed(ActionEvent ae) {
+            log.warn("actionPerformed({})", ae);
+
+            StringBuilder sb = new StringBuilder("Identifier\tStatus\n");
+
+            List<ExpansionReference> selection = lsExpansions.getSelectedValuesList();
+            for (ExpansionReference er: selection) {
+                log.warn("  er: {}", er);
+                sb.append(er.getName());
+                sb.append("\t");
+                sb.append(er.getStatus());
+                sb.append("\n");
+            }
+
+            Toolkit toolkit = lsExpansions.getToolkit();
+            toolkit.getSystemClipboard().setContents(new StringSelection(sb.toString()), null);
+        }
+    };
+    
+    private transient Action fixAction = new AbstractAction("Fix...", new ImageIcon(getClass().getResource("/icons/healing_FILL0_wght400_GRAD0_opsz24.png"))) {
+        private static final Logger log = LogManager.getLogger();
+
+        @Override
+        public void actionPerformed(ActionEvent ae) {
+            log.debug("actionPerformed({})", ae);
+            
+            // list all the missing/superfluous expansions
+            List<Command> commands = data.getExpansions().stream()
+                    .filter(er -> er.getStatus()==ExpansionReference.Status.MISSING 
+                            || er.getStatus()==ExpansionReference.Status.REQUIRED_MISSING
+                            || er.getStatus()==ExpansionReference.Status.SURPLUS
+                    )
+                    .map((er) -> {
+                        Command.Action action = Command.Action.INSTALL;
+                        if (er.getStatus()==ExpansionReference.Status.SURPLUS) {
+                            action = Command.Action.DELETE;
+                        }
+                        Expansion e = oolite.getExpansionByExpansionReference(er);
+                        if (e == null) {
+                            return null;
+                        } else {
+                            Command c = new Command(action, e);
+                            return c;
+                        }
+                    })
+                    .filter(c -> c != null)
+                    .toList();
+            
+            if (commands.isEmpty()) {
+                JOptionPane.showMessageDialog(SaveGamePanel.this, "Don't know how to install");
+            } else {
+                DefaultListModel<Command> dlm = new DefaultListModel<>();
+                dlm.addAll(commands);
+                JList<Command> list = new JList<>(dlm);
+                list.setCellRenderer(new CommandCellRenderer());
+                JScrollPane jsp = new JScrollPane(list);
+                // allow the user to approve
+                if (JOptionPane.showOptionDialog(SaveGamePanel.this, jsp, "Confirm fix...", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, null, null)
+                        == JOptionPane.OK_OPTION) {
+                    
+                    ExpansionManager.getInstance().addExpansionManagerListener(SaveGamePanel.this);
+                    ExpansionManager.getInstance().addCommands(commands);
+                }
+            }
+            
+            // execute the approved list while rendering progress
+        }
+    };
+    
     private transient Oolite2 oolite;
     
     /**
@@ -118,26 +196,7 @@ public class SaveGamePanel extends javax.swing.JPanel {
         
         // add CCP support - see https://docs.oracle.com/javase/tutorial/uiswing/dnd/listpaste.html
         ActionMap map = lsExpansions.getActionMap();
-        map.put(TransferHandler.getCopyAction().getValue(Action.NAME), new AbstractAction("Copy") {
-            @Override
-            public void actionPerformed(ActionEvent ae) {
-                log.warn("actionPerformed({})", ae);
-
-                StringBuilder sb = new StringBuilder("Identifier\tStatus\n");
-                
-                List<ExpansionReference> selection = lsExpansions.getSelectedValuesList();
-                for (ExpansionReference er: selection) {
-                    log.warn("  er: {}", er);
-                    sb.append(er.getName());
-                    sb.append("\t");
-                    sb.append(er.getStatus());
-                    sb.append("\n");
-                }
-
-                Toolkit toolkit = lsExpansions.getToolkit();
-                toolkit.getSystemClipboard().setContents(new StringSelection(sb.toString()), null);
-            }
-        });
+        map.put(TransferHandler.getCopyAction().getValue(Action.NAME), copyAction);
         
         InputMap imap = lsExpansions.getInputMap();
         imap.put(KeyStroke.getKeyStroke("ctrl C"), TransferHandler.getCopyAction().getValue(Action.NAME));
@@ -160,6 +219,9 @@ public class SaveGamePanel extends javax.swing.JPanel {
                 removeAction.setEnabled(false);
             }
         });
+
+        fixAction.setEnabled(false);
+        btFix.setAction(fixAction);
     }
     
     private void updateTooltip(MouseEvent e) {
@@ -192,6 +254,7 @@ public class SaveGamePanel extends javax.swing.JPanel {
         txtCredits.setText(String.valueOf(data.getCredits()));
         txtShipKills.setText(String.valueOf(data.getShipKills()));
         txtPilotName.setText(String.valueOf(data.getPlayerName()));
+        fixAction.setEnabled(false);
 
         dlm = new DefaultListModel<>();
         if (data.getExpansions() != null) {
@@ -204,8 +267,10 @@ public class SaveGamePanel extends javax.swing.JPanel {
             Border border = null;
             if (data.hasMissingExpansions()) {
                 border = new LineBorder(Color.red);
+                fixAction.setEnabled(true);
             } else if (data.hasTooManyExpansions()) {
                 border = new LineBorder(Color.orange);
+                fixAction.setEnabled(true);
             }
             jScrollPane1.setBorder(border);
         } else {
@@ -214,10 +279,11 @@ public class SaveGamePanel extends javax.swing.JPanel {
         }
         lsExpansions.setModel(dlm);
         
-        // todo: btFix.setVisible(data.hasMissingExpansions() || data.hasTooManyExpansions());
         if (!dlm.isEmpty()) {
             lsExpansions.setComponentPopupMenu(getPopupMenu());
         }
+        
+        revalidate();
     }
     
     private JPopupMenu getPopupMenu() {
@@ -287,6 +353,7 @@ public class SaveGamePanel extends javax.swing.JPanel {
         jLabel9 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         lsExpansions = new javax.swing.JList<>();
+        btFix = new javax.swing.JButton();
 
         jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder("Pilot"));
 
@@ -319,15 +386,12 @@ public class SaveGamePanel extends javax.swing.JPanel {
                     .addComponent(jLabel2))
                 .addGap(12, 12, 12)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(txtCredits, javax.swing.GroupLayout.PREFERRED_SIZE, 493, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtStarSystem, javax.swing.GroupLayout.PREFERRED_SIZE, 493, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtShipKills, javax.swing.GroupLayout.PREFERRED_SIZE, 493, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtPilotName, javax.swing.GroupLayout.PREFERRED_SIZE, 493, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtCredits)
+                    .addComponent(txtStarSystem)
+                    .addComponent(txtShipKills)
+                    .addComponent(txtPilotName))
                 .addContainerGap())
         );
-
-        jPanel4Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {txtCredits, txtPilotName, txtShipKills, txtStarSystem});
-
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
@@ -371,13 +435,10 @@ public class SaveGamePanel extends javax.swing.JPanel {
                     .addComponent(jLabel6))
                 .addGap(54, 54, 54)
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(txtShipName, javax.swing.GroupLayout.PREFERRED_SIZE, 493, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtShipClass, javax.swing.GroupLayout.PREFERRED_SIZE, 493, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtShipName)
+                    .addComponent(txtShipClass))
                 .addContainerGap())
         );
-
-        jPanel5Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {txtShipClass, txtShipName});
-
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
@@ -406,6 +467,8 @@ public class SaveGamePanel extends javax.swing.JPanel {
 
         jScrollPane1.setViewportView(lsExpansions);
 
+        btFix.setText("Fix...");
+
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
         jPanel6.setLayout(jPanel6Layout);
         jPanel6Layout.setHorizontalGroup(
@@ -418,14 +481,14 @@ public class SaveGamePanel extends javax.swing.JPanel {
                     .addComponent(jLabel9))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1)
-                    .addComponent(txtOoliteVersion, javax.swing.GroupLayout.PREFERRED_SIZE, 483, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtFilename, javax.swing.GroupLayout.PREFERRED_SIZE, 483, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel6Layout.createSequentialGroup()
+                        .addComponent(jScrollPane1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btFix))
+                    .addComponent(txtOoliteVersion)
+                    .addComponent(txtFilename, javax.swing.GroupLayout.DEFAULT_SIZE, 483, Short.MAX_VALUE))
                 .addContainerGap())
         );
-
-        jPanel6Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {txtFilename, txtOoliteVersion});
-
         jPanel6Layout.setVerticalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel6Layout.createSequentialGroup()
@@ -441,7 +504,9 @@ public class SaveGamePanel extends javax.swing.JPanel {
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 118, Short.MAX_VALUE)
                     .addGroup(jPanel6Layout.createSequentialGroup()
-                        .addComponent(jLabel9)
+                        .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel9)
+                            .addComponent(btFix))
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -453,14 +518,11 @@ public class SaveGamePanel extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jPanel5, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel5, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
-
-        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jPanel4, jPanel5, jPanel6});
-
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
@@ -474,6 +536,7 @@ public class SaveGamePanel extends javax.swing.JPanel {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btFix;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -497,4 +560,17 @@ public class SaveGamePanel extends javax.swing.JPanel {
     private javax.swing.JTextField txtShipName;
     private javax.swing.JTextField txtStarSystem;
     // End of variables declaration//GEN-END:variables
+
+    /**
+     * From ExpansionManager.ExpansionManagerListener.
+     * 
+     * @param status
+     * @param queue 
+     */
+    @Override
+    public void updateStatus(ExpansionManager.Status status, List<Command> queue) {
+        log.debug("updateStatus(...)");
+        int pending = 0;
+        log.info("ExpansionManager queue size: {}", queue.size());
+    }
 }

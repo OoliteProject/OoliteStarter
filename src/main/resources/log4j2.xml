@@ -50,6 +50,7 @@
     <Logger level="info"  name="oolite.starter.ui.Util.BalloonHandler"/>
     <Logger level="info"  name="oolite.starter.util.FilterAndSearchUtil"/>
     <Logger level="info"  name="oolite.starter.util.FilterAndSearchUtil.SearchFilter"/>
+    <Logger level="warn"  name="oolite.starter.util.HttpUtil"/>
     <Logger level="info"  name="oolite.starter.ui2.ExpansionCellRenderer"/>
     <Logger level="info"  name="oolite.starter.ui2.ExpansionPanel"/>
     <Logger level="info"  name="oolite.starter.ui2.ExpansionsPanel2"/>
