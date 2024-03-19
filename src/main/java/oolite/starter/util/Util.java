@@ -4,10 +4,17 @@ package oolite.starter.util;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.RandomAccessFile;
 import java.util.Locale;
 import java.util.Scanner;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -123,5 +130,66 @@ public class Util {
         bos.close();
         
         return new ByteArrayInputStream(bos.toByteArray());
+    }
+    
+    /**
+     * Takes a size in Bytes and transforms it into a human-readable String.
+     * That means if the number is too high it will be converted to kilobytes,
+     * or Megabytes respectively.
+     * 
+     * @param size the amount of bytes
+     * @return the human readable String
+     */
+    public static String humanreadableSize(long size) {
+        log.debug("humanreadableSize({})", size);
+        if (size >= 1024*1024) {
+            return String.format("%.2f MB", (size)/(1024f*1024f));
+        }
+        if (size >= 1024) {
+            return String.format("%.2f kB", (size)/1024f);
+        }
+        return String.valueOf(size);
+    }
+    
+    /**
+     * Checks if a file is a ZIP archive.
+     * 
+     * @param f the file to check
+     * @return true if it is a ZIP, false otherwise
+     */
+    public static boolean isZipFile(File f) throws IOException {
+        log.debug("isZipFile({})", f);
+        
+        try (RandomAccessFile raf = new RandomAccessFile(f, "r")) {
+            int fileSignature = raf.readInt();
+            return fileSignature == 0x504B0304 || fileSignature == 0x504B0506 || fileSignature == 0x504B0708;
+        }
+    }
+    
+    /**
+     * Unzips the ZIP file's inputstream to the destination directory.
+     * 
+     * @param src The input ZIP
+     * @param destDir the destination directory
+     * @throws IOException something went wrong
+     */
+    public static void unzip(InputStream src, File destDir) throws IOException {
+        log.warn("unzip({}, {})", src, destDir);
+        try (ZipInputStream zis = new ZipInputStream(src)) {
+            ZipEntry zEntry = null;
+            
+            while ( (zEntry = zis.getNextEntry()) != null ) {
+                File dest = new File(destDir, zEntry.getName());
+                log.warn("ZipEntry {} -> {}", zEntry.getName(), dest);
+                if (zEntry.isDirectory()) {
+                    dest.mkdirs();
+                } else {
+                    dest.getParentFile().mkdirs();
+                    try (OutputStream os = new FileOutputStream(dest)) {
+                        IOUtils.copy(zis, os, 4096);
+                    }
+                }
+            }
+        }
     }
 }

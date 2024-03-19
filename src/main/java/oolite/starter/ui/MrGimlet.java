@@ -10,6 +10,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.Insets;
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JEditorPane;
@@ -70,7 +71,28 @@ public class MrGimlet {
      * @param parentComponent the parent window that should be blocked by this modal dialog
      * @param message The message to show
      */
+    public static void showMessage(Component parentComponent, String message, Icon image) {
+        showMessage(parentComponent, message, 4000, image);
+    }
+    
+    /**
+     * Shows a message in Mr Gimlet style.
+     * 
+     * @param parentComponent the parent window that should be blocked by this modal dialog
+     * @param message The message to show
+     */
     public static void showMessage(Component parentComponent, String message, int fadeMillis) {
+        log.debug("showMessage({}, {}, {})", parentComponent, message, fadeMillis);
+        showMessage(parentComponent, message, fadeMillis, null);
+    }
+
+    /**
+     * Shows a message in Mr Gimlet style.
+     * 
+     * @param parentComponent the parent window that should be blocked by this modal dialog
+     * @param message The message to show
+     */
+    public static void showMessage(Component parentComponent, String message, int fadeMillis, Icon image) {
         JEditorPane jep = new JEditorPane("text/html", message);
         jep.setEditable(false);
         jep.addHyperlinkListener(he-> {
@@ -92,7 +114,10 @@ public class MrGimlet {
             }
             
             JPanel payload = new JPanel();
-            payload.add(new JLabel(ii));
+            if (image == null) {
+                image = ii;
+            }
+            payload.add(new JLabel(image));
             payload.add(jep);
             payload.setBackground(new Color(0,0,0, 0));
             
@@ -125,6 +150,7 @@ public class MrGimlet {
      * @param message The message to show
      */
     public static int showConfirmation(Component parent, String message) {
+        log.debug("showConfirmation({}, {})", parent, message);
         JEditorPane jep = new JEditorPane("text/html", message);
         jep.setEditable(false);
         jep.addHyperlinkListener(he-> {

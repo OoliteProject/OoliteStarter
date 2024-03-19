@@ -3,11 +3,30 @@
 package oolite.starter.ui;
 
 import java.awt.Color;
+import java.awt.Toolkit;
+import java.awt.datatransfer.StringSelection;
+import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.List;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.ActionMap;
 import javax.swing.DefaultListModel;
+import javax.swing.ImageIcon;
+import javax.swing.InputMap;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
+import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
+import javax.swing.KeyStroke;
+import javax.swing.TransferHandler;
 import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
+import oolite.starter.ExpansionManager;
+import oolite.starter.Oolite2;
+import oolite.starter.model.Command;
+import oolite.starter.model.Expansion;
 import oolite.starter.model.ExpansionReference;
 import oolite.starter.model.SaveGame;
 import org.apache.logging.log4j.LogManager;
@@ -17,11 +36,149 @@ import org.apache.logging.log4j.Logger;
  *
  * @author hiran
  */
-public class SaveGamePanel extends javax.swing.JPanel {
+public class SaveGamePanel extends javax.swing.JPanel implements ExpansionManager.ExpansionManagerListener {
     private static final Logger log = LogManager.getLogger();
     
     private transient SaveGame data;
     private DefaultListModel<ExpansionReference> dlm;
+    
+    private transient Action installAction = new AbstractAction("Install") {
+        private static final Logger log = LogManager.getLogger();
+
+        @Override
+        public void actionPerformed(ActionEvent ae) {
+            log.warn("actionPerformed({})", ae);
+            if (oolite == null) {
+                throw new IllegalStateException("oolite must not be null");
+            }
+
+            ExpansionReference er = lsExpansions.getSelectedValue();
+            Expansion e = oolite.getExpansionByExpansionReference(er);
+            log.warn("Expansion={}", e);
+
+            if (e == null) {
+                JOptionPane.showMessageDialog(SaveGamePanel.this, "Don't know how to install\n    " + er.getName() + "\nCould this possibly be an OXP?", "Error", JOptionPane.ERROR_MESSAGE);
+            } else {
+
+                new Thread(() -> {
+                    try {
+                        e.install();
+                    } catch (Exception ex) {
+                        log.error("Could not install", ex);
+                    }
+                }).start();
+            }
+        }
+    };
+    
+    private transient Action removeAction = new AbstractAction("Remove") {
+        private static final Logger log = LogManager.getLogger();
+
+        @Override
+        public void actionPerformed(ActionEvent ae) {
+            log.warn("actionPerformed({})", ae);
+            if (oolite == null) {
+                throw new IllegalStateException("oolite must not be null");
+            }
+
+            ExpansionReference er = lsExpansions.getSelectedValue();
+            if (er == null) {
+                JOptionPane.showMessageDialog(SaveGamePanel.this, "Please select reference first.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            Expansion e = oolite.getExpansionByExpansionReference(er);
+            log.warn("Expansion={}", e);
+
+            if (e == null) {
+                JOptionPane.showMessageDialog(SaveGamePanel.this, "Don't know how to remove " + er.getName(), "Error", JOptionPane.ERROR_MESSAGE);
+            } else {
+
+                new Thread(() -> {
+                    try {
+                        e.remove();
+                    } catch (Exception ex) {
+                        log.error("Could not remove", ex);
+                    }
+                }).start();
+            }
+        }
+    };
+    
+    private transient Action copyAction =  new AbstractAction("Copy") {
+        private static final Logger log = LogManager.getLogger();
+
+        @Override
+        public void actionPerformed(ActionEvent ae) {
+            log.warn("actionPerformed({})", ae);
+
+            StringBuilder sb = new StringBuilder("Identifier\tStatus\n");
+
+            List<ExpansionReference> selection = lsExpansions.getSelectedValuesList();
+            for (ExpansionReference er: selection) {
+                log.warn("  er: {}", er);
+                sb.append(er.getName());
+                sb.append("\t");
+                sb.append(er.getStatus());
+                sb.append("\n");
+            }
+
+            Toolkit toolkit = lsExpansions.getToolkit();
+            toolkit.getSystemClipboard().setContents(new StringSelection(sb.toString()), null);
+        }
+    };
+    
+    private transient Action fixAction = new AbstractAction("Fix...", new ImageIcon(getClass().getResource("/icons/healing_FILL0_wght400_GRAD0_opsz24.png"))) {
+        private static final Logger log = LogManager.getLogger();
+
+        @Override
+        public void actionPerformed(ActionEvent ae) {
+            log.debug("actionPerformed({})", ae);
+            
+            // list all the missing/superfluous expansions
+            List<Command> commands = data.getExpansions().stream()
+                    .filter(er -> er.getStatus()==ExpansionReference.Status.MISSING 
+                            || er.getStatus()==ExpansionReference.Status.REQUIRED_MISSING
+                            || er.getStatus()==ExpansionReference.Status.SURPLUS
+                    )
+                    .map((er) -> {
+                        Command.Action action = Command.Action.INSTALL;
+                        if (er.getStatus()==ExpansionReference.Status.SURPLUS) {
+                            action = Command.Action.DELETE;
+                        }
+                        Expansion e = oolite.getExpansionByExpansionReference(er);
+                        if (e == null) {
+                            return null;
+                        } else {
+                            Command c = new Command(action, e);
+                            return c;
+                        }
+                    })
+                    .filter(c -> c != null)
+                    .toList();
+            
+            if (commands.isEmpty()) {
+                JOptionPane.showMessageDialog(SaveGamePanel.this, "Don't know how to install");
+            } else {
+                DefaultListModel<Command> dlm = new DefaultListModel<>();
+                dlm.addAll(commands);
+                JList<Command> list = new JList<>(dlm);
+                list.setCellRenderer(new CommandCellRenderer());
+                JScrollPane jsp = new JScrollPane(list);
+                // allow the user to approve
+                if (JOptionPane.showOptionDialog(SaveGamePanel.this, jsp, "Confirm fix...", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, null, null)
+                        == JOptionPane.OK_OPTION) {
+                    
+                    ExpansionManager.getInstance().addExpansionManagerListener(SaveGamePanel.this);
+                    ExpansionManager.getInstance().addCommands(commands);
+                }
+            }
+            
+            // execute the approved list while rendering progress
+        }
+    };
+    
+    private transient Oolite2 oolite;
     
     /**
      * Creates new form SaveGamePanel.
@@ -33,17 +190,59 @@ public class SaveGamePanel extends javax.swing.JPanel {
         lsExpansions.addMouseMotionListener(new MouseAdapter() {
             @Override
             public void mouseMoved(MouseEvent e) {
-                int rowIndex = lsExpansions.locationToIndex(e.getPoint());
-                if (dlm != null && rowIndex >= 0) {
-                    ExpansionReference er = dlm.getElementAt(rowIndex);
-                    if (er.getReasons().isEmpty()) {
-                        lsExpansions.setToolTipText(null);
-                    } else {
-                        lsExpansions.setToolTipText(String.valueOf(er.getReasons()));
-                    }
-                }
+                updateTooltip(e);
             }
         });
+        
+        // add CCP support - see https://docs.oracle.com/javase/tutorial/uiswing/dnd/listpaste.html
+        ActionMap map = lsExpansions.getActionMap();
+        map.put(TransferHandler.getCopyAction().getValue(Action.NAME), copyAction);
+        
+        InputMap imap = lsExpansions.getInputMap();
+        imap.put(KeyStroke.getKeyStroke("ctrl C"), TransferHandler.getCopyAction().getValue(Action.NAME));
+        
+        lsExpansions.addListSelectionListener(lse -> {
+            log.debug("selectionChanged({})", lse);
+            ExpansionReference er = lsExpansions.getSelectedValue();
+            if (er != null && er.getStatus() == ExpansionReference.Status.MISSING) {
+                installAction.setEnabled(true);
+                removeAction.setEnabled(false);
+            } else if (er != null && (
+                    er.getStatus() == ExpansionReference.Status.SURPLUS
+                    || er.getStatus() == ExpansionReference.Status.CONFLICT
+                    || er.getStatus() == ExpansionReference.Status.REQUIRED_MISSING)
+                ) {
+                installAction.setEnabled(false);
+                removeAction.setEnabled(true);
+            } else {
+                installAction.setEnabled(false);
+                removeAction.setEnabled(false);
+            }
+        });
+
+        fixAction.setEnabled(false);
+        btFix.setAction(fixAction);
+    }
+    
+    private void updateTooltip(MouseEvent e) {
+        int rowIndex = lsExpansions.locationToIndex(e.getPoint());
+        if (dlm != null && rowIndex >= 0) {
+            ExpansionReference er = dlm.getElementAt(rowIndex);
+            if (er.getReasons().isEmpty()) {
+                lsExpansions.setToolTipText(null);
+            } else {
+                lsExpansions.setToolTipText(String.valueOf(er.getReasons()));
+            }
+        }
+    }
+    
+    /**
+     * Sets the oolite instance to fix expansions.
+     * 
+     * @param oolite the oolite to use
+     */
+    public void setOolite(Oolite2 oolite) {
+        this.oolite = oolite;
     }
     
     private void updateFields() {
@@ -55,6 +254,7 @@ public class SaveGamePanel extends javax.swing.JPanel {
         txtCredits.setText(String.valueOf(data.getCredits()));
         txtShipKills.setText(String.valueOf(data.getShipKills()));
         txtPilotName.setText(String.valueOf(data.getPlayerName()));
+        fixAction.setEnabled(false);
 
         dlm = new DefaultListModel<>();
         if (data.getExpansions() != null) {
@@ -65,22 +265,32 @@ public class SaveGamePanel extends javax.swing.JPanel {
             }
 
             Border border = null;
-            for (ExpansionReference er: data.getExpansions()) {
-                if (er.getStatus() == ExpansionReference.Status.SURPLUS && border==null) {
-                    border = new LineBorder(Color.orange);
-                }
-                if (er.getStatus() == ExpansionReference.Status.MISSING) {
-                    border = new LineBorder(Color.red);
-                    break;
-                }
+            if (data.hasMissingExpansions()) {
+                border = new LineBorder(Color.red);
+                fixAction.setEnabled(true);
+            } else if (data.hasTooManyExpansions()) {
+                border = new LineBorder(Color.orange);
+                fixAction.setEnabled(true);
             }
-
             jScrollPane1.setBorder(border);
         } else {
                 // indicate we have no data?
                 jScrollPane1.setBorder(null);
         }
         lsExpansions.setModel(dlm);
+        
+        if (!dlm.isEmpty()) {
+            lsExpansions.setComponentPopupMenu(getPopupMenu());
+        }
+        
+        revalidate();
+    }
+    
+    private JPopupMenu getPopupMenu() {
+        JPopupMenu jpm = new JPopupMenu();
+        jpm.add(installAction);
+        jpm.add(removeAction);
+        return jpm;
     }
     
     private void emptyFields() {
@@ -94,6 +304,7 @@ public class SaveGamePanel extends javax.swing.JPanel {
         txtPilotName.setText("");
 
         lsExpansions.setModel(new DefaultListModel<>());
+        lsExpansions.setComponentPopupMenu(null);
         jScrollPane1.setBorder(null);
     }
     
@@ -142,6 +353,7 @@ public class SaveGamePanel extends javax.swing.JPanel {
         jLabel9 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         lsExpansions = new javax.swing.JList<>();
+        btFix = new javax.swing.JButton();
 
         jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder("Pilot"));
 
@@ -255,6 +467,8 @@ public class SaveGamePanel extends javax.swing.JPanel {
 
         jScrollPane1.setViewportView(lsExpansions);
 
+        btFix.setText("Fix...");
+
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
         jPanel6.setLayout(jPanel6Layout);
         jPanel6Layout.setHorizontalGroup(
@@ -267,9 +481,12 @@ public class SaveGamePanel extends javax.swing.JPanel {
                     .addComponent(jLabel9))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel6Layout.createSequentialGroup()
+                        .addComponent(jScrollPane1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btFix))
                     .addComponent(txtOoliteVersion)
-                    .addComponent(txtFilename)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 495, Short.MAX_VALUE))
+                    .addComponent(txtFilename, javax.swing.GroupLayout.DEFAULT_SIZE, 483, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel6Layout.setVerticalGroup(
@@ -285,8 +502,12 @@ public class SaveGamePanel extends javax.swing.JPanel {
                     .addComponent(txtFilename, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel9)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 118, Short.MAX_VALUE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 118, Short.MAX_VALUE)
+                    .addGroup(jPanel6Layout.createSequentialGroup()
+                        .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel9)
+                            .addComponent(btFix))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
 
@@ -294,9 +515,13 @@ public class SaveGamePanel extends javax.swing.JPanel {
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel5, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -311,6 +536,7 @@ public class SaveGamePanel extends javax.swing.JPanel {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btFix;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -334,4 +560,17 @@ public class SaveGamePanel extends javax.swing.JPanel {
     private javax.swing.JTextField txtShipName;
     private javax.swing.JTextField txtStarSystem;
     // End of variables declaration//GEN-END:variables
+
+    /**
+     * From ExpansionManager.ExpansionManagerListener.
+     * 
+     * @param status
+     * @param queue 
+     */
+    @Override
+    public void updateStatus(ExpansionManager.Status status, List<Command> queue) {
+        log.debug("updateStatus(...)");
+        int pending = 0;
+        log.info("ExpansionManager queue size: {}", queue.size());
+    }
 }

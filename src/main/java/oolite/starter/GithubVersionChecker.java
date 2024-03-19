@@ -3,7 +3,6 @@
 
 package oolite.starter;
 
-import com.owlike.genson.Genson;
 import com.vdurmont.semver4j.Semver;
 import java.awt.Component;
 import java.awt.EventQueue;
@@ -22,6 +21,8 @@ import java.util.prefs.Preferences;
 import oolite.starter.ui.MrGimlet;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONTokener;
 
 /**
  * Checks Github to see if we are still running the latest version.
@@ -31,11 +32,31 @@ import org.apache.logging.log4j.Logger;
 public class GithubVersionChecker {
     private static final Logger log = LogManager.getLogger();
 
-    public static final String OWNER = "HiranChaudhuri";
-    public static final String REPO = "OoliteStarter";
+    private String owner = "HiranChaudhuri";
+    private String repo = "OoliteStarter";
     
     private List<Semver> versions;
     private Duration updateCheckInterval = null;
+    
+    /**
+     * Creates a default version checker for OoliteStarter.
+     */
+    public GithubVersionChecker() {
+        log.debug("GithubVersionChecker()");
+    }
+
+    /**
+     * Creates a version checker for OoliteStarter.
+     * 
+     * @param owner the repository owner
+     * @param repo the repository name
+     */
+    public GithubVersionChecker(String owner, String repo) {
+        log.debug("GithubVersionChecker({}, {})", owner, repo);
+        
+        this.owner = owner;
+        this.repo = repo;
+    }
 
     /**
      * Returns the minimum duration between update checks.
@@ -57,13 +78,13 @@ public class GithubVersionChecker {
     
     private Instant readLastCheckInstant() {
         Preferences prefs = Preferences.userRoot().node(getClass().getName());
-        String s = prefs.get("lastUpdateCheckInstant", "2007-12-03T10:15:30.00Z");
+        String s = prefs.get("lastUpdateCheckInstant." + owner + "." + repo, "2007-12-03T10:15:30.00Z");
         return Instant.parse(s);
     }
     
     private void storeLastCheckInstant(Instant instant) {
         Preferences prefs = Preferences.userRoot().node(getClass().getName());
-        prefs.put("lastUpdateCheckInstant", instant.toString());
+        prefs.put("lastUpdateCheckInstant." + owner + "." + repo, instant.toString());
     }
     
     /**
@@ -91,8 +112,9 @@ public class GithubVersionChecker {
                 connection.setRequestProperty("Referer", "http://oolite.org");
                 connection.setDoInput(true);
                 InputStream in = connection.getInputStream();
-
-                List<Object> releases = new Genson().deserialize(in, List.class);
+                
+                JSONArray ja = new JSONArray(new JSONTokener(in));
+                List<Object> releases = ja.toList();
                 for (Object release: releases) {
                     if (release instanceof Map<?,?> map) {
                         String v = String.valueOf(map.get("tag_name"));
@@ -123,7 +145,7 @@ public class GithubVersionChecker {
      * @throws MalformedURLException something went wrong
      */
     public URL getReleasesURL() throws MalformedURLException {
-        return new URL("https://api.github.com/repos/" + OWNER + "/" + REPO + "/releases");
+        return new URL("https://api.github.com/repos/" + owner + "/" + repo + "/releases");
     }
     
     /**
@@ -137,7 +159,20 @@ public class GithubVersionChecker {
         if (!releaseTag.startsWith("v")) {
             releaseTag = "v" + releaseTag;
         }
-        return new URL("https://github.com/" + OWNER + "/" + REPO + "/releases/tag/" + releaseTag);
+        return new URL("https://github.com/" + owner + "/" + repo + "/releases/tag/" + releaseTag);
+    }
+    
+    /**
+     * Returns this current software's version number.
+     * 
+     * @return the version number
+     */
+    public Semver getMyVersion() {
+        String v = getClass().getPackage().getImplementationVersion();
+        if (v==null || v.contains("SNAPSHOT")) { // this is the case when running from the IDE
+            v = "0.1.10";
+        }
+        return new Semver(v);
     }
     
     /**
@@ -148,24 +183,18 @@ public class GithubVersionChecker {
      * @throws MalformedURLException something went wrong
      * @throws IOException something went wrong
      */
-    public Semver getLatestVersion() throws IOException {
+    public Semver getLatestVersion(Semver currentVersion) throws IOException {
         if (versions == null) {
             throw new IllegalStateException("versions is null. Use init()");
         }
-        
-        String v = getClass().getPackage().getImplementationVersion();
-        if (v==null || v.contains("SNAPSHOT")) { // this is the case when running from the IDE
-            v = "0.1.10";
-        }
-        Semver me = new Semver(v);
         
         if (!versions.isEmpty()) {
             Collections.sort(versions);
             log.debug("versions {}", versions);
             Semver latest = versions.get(versions.size()-1);
-            log.debug("version me={} latest={}", me, latest);
+            log.debug("version me={} latest={}", currentVersion, latest);
             
-            if (latest.isGreaterThan(me)) {
+            if (latest.isGreaterThan(currentVersion)) {
                 log.debug("latest is greater!");
                 return latest;
             }
@@ -197,19 +226,22 @@ public class GithubVersionChecker {
     }
     
     /**
-     * Checks for updates and displays a message.
+     * Checks for updates of this software package and displays a message.
      * 
      * @param parentComponent the component upon which to present the message
+     * @return true if an update was found and announced, false otherwise
      */
-    public void maybeAnnounceUpdate(Component parentComponent) {
+    public boolean maybeAnnounceUpdate(Component parentComponent) {
         try {
-            Semver latest = getLatestVersion();
+            Semver latest = getLatestVersion(getMyVersion());
             if (latest != null) {
                 String message = getHtmlUserMessage(latest);
                 EventQueue.invokeLater(() -> MrGimlet.showMessage(parentComponent, message, 10000) );
+                return true;
             }
         } catch (IOException e) {
             log.info("Could not check for update", e);
         }
+        return false;
     }
 }

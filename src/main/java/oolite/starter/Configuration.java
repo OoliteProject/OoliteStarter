@@ -44,7 +44,7 @@ public class Configuration {
     
     private static final String CONF_NO_ACTIVE_INSTALLATION = "No active installation";
     public static final Color COLOR_ATTENTION = new Color(160, 80, 0);
-    private static final String DEFAULT_URL = "https://addons.oolite.space/api/1.0/overview";
+    private static final String DEFAULT_URL = "https://addons.oolite.space/api/1.0/overview/";
 
     private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
     
@@ -261,6 +261,8 @@ public class Configuration {
      * @param installation the installation to activate. Null if no installation is chosen
      */
     public void activateInstallation(Installation installation) {
+        log.warn("activateInstallation({})", installation);
+        
         if (installation == null) {
             Installation oldInstallation = activeInstallation;
             activeInstallation = null;
@@ -286,13 +288,17 @@ public class Configuration {
                 log.debug("firing propertyChange activeInstallation to {} listeners: {}", pcs.getPropertyChangeListeners().length, pcs.getPropertyChangeListeners());
                 PropertyChangeEvent pce = new PropertyChangeEvent(this, "activeInstallation", oldInstallation, installation);
                 for (PropertyChangeListener pcl: pcs.getPropertyChangeListeners()) {
+                    Instant start = Instant.now();
                     pcl.propertyChange(pce);
+                    log.debug("Listener {} took {} to process propertyChange({})", pcl, Duration.between(start, Instant.now()), pce);
                 }
                 // for some reason this simple call was not enough: pcs.firePropertyChange("activeInstallation", oldInstallation, installation);
             }
         } else {
             throw new IllegalArgumentException("installation must be known");
         }
+
+        log.trace("activateInstallation(...) done");
     }
 
     /**

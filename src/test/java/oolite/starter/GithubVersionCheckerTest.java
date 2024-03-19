@@ -4,6 +4,7 @@
 package oolite.starter;
 
 import com.vdurmont.semver4j.Semver;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.time.Duration;
 import org.junit.jupiter.api.AfterEach;
@@ -50,7 +51,7 @@ public class GithubVersionCheckerTest {
 
         GithubVersionChecker instance = new GithubVersionChecker();
         try {
-            instance.getLatestVersion();
+            instance.getLatestVersion(instance.getMyVersion());
             fail("expected exception");
         } catch (IllegalStateException e) {
             assertEquals("versions is null. Use init()", e.getMessage());
@@ -67,7 +68,7 @@ public class GithubVersionCheckerTest {
         GithubVersionChecker instance = new GithubVersionChecker();
         instance.setUpdateCheckInterval(Duration.ofSeconds(0));
         instance.init();
-        Semver s = instance.getLatestVersion();
+        Semver s = instance.getLatestVersion(instance.getMyVersion());
         assertNotNull(s);
     }
 
@@ -104,7 +105,7 @@ public class GithubVersionCheckerTest {
         instance.setUpdateCheckInterval(Duration.ofSeconds(0));
         instance.init();
         
-        Semver v = instance.getLatestVersion();
+        Semver v = instance.getLatestVersion(instance.getMyVersion());
         assertNotNull(v);
     }
 
@@ -150,5 +151,4 @@ public class GithubVersionCheckerTest {
         instance.setUpdateCheckInterval(Duration.ofDays(12));
         assertEquals(Duration.ofDays(12), instance.getUpdateCheckInterval());
     }
-
 }

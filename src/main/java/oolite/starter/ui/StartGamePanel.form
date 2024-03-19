@@ -72,8 +72,8 @@
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
               <Image iconType="3" name="/icons/resume_FILL0_wght400_GRAD0_opsz48.png"/>
             </Property>
+            <Property name="text" type="java.lang.String" value="Resume"/>
             <Property name="horizontalAlignment" type="int" value="2"/>
-            <Property name="label" type="java.lang.String" value="Resume"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btResumeActionPerformed"/>

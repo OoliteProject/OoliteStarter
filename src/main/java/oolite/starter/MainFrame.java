@@ -10,22 +10,29 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
+import java.lang.module.ModuleDescriptor;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.List;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JSplitPane;
 import javax.swing.SwingWorker;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
+import oolite.starter.model.Expansion;
 import oolite.starter.model.Installation;
+import oolite.starter.model.ProcessData;
 import oolite.starter.ui.AboutPanel;
-import oolite.starter.ui.ExpansionsPanel;
+import oolite.starter.ui2.FlavorsPanel;
 import oolite.starter.ui.InstallationsPanel;
 import oolite.starter.ui.MrGimlet;
 import oolite.starter.ui.SplashPanel;
 import oolite.starter.ui.StartGamePanel;
+import oolite.starter.ui2.ExpansionPanel;
+import oolite.starter.ui2.ExpansionsPanel2;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -46,9 +53,148 @@ public class MainFrame extends javax.swing.JFrame {
 
     private static transient JFrame newSplash;
     
+    private static class InitFrameSwingWorker extends SwingWorker<MainFrame, Object> {
+            
+        private GithubVersionChecker gvc;
+        private OoliteVersionChecker ovc;
+        private JFrame newSplash;
+        
+        public InitFrameSwingWorker(JFrame newSplash) {
+            this.newSplash = newSplash;
+        }
+
+        @Override
+        protected MainFrame doInBackground() throws Exception {
+            Instant i0 = Instant.now();
+
+            log.info("Initialize UI...");
+            MainFrame mf = new MainFrame();
+            mf.pack();
+            mf.setLocationRelativeTo(null);
+
+            Instant i1 = Instant.now();
+
+            log.info("Check for new version...");
+            gvc = new GithubVersionChecker();
+            gvc.setUpdateCheckInterval(mf.getConfiguration().getUpdateCheckInterval());
+            gvc.init();
+
+            ovc = new OoliteVersionChecker();
+            ovc.setUpdateCheckInterval(mf.getConfiguration().getUpdateCheckInterval());
+            ovc.init();
+
+            Duration spent = Duration.between(i0, i1);
+            long spentMillis = spent.toMillis();
+
+            if (spentMillis < 4000) {
+                Thread.sleep(4000 - spentMillis);
+            }
+
+            return mf;
+        }
+
+        private boolean maybeAnnounceExpansionUpdate(MainFrame mf) {
+            List<Expansion> updates = mf.oolite2.getUpdates();
+
+            if (!updates.isEmpty()) {
+                StringBuilder message = new StringBuilder("<html>");
+                message.append("<p>Good news for you, my son: Updated expansions are available.<br/>Have a look at</p>");
+                message.append("<ul>");
+                for (Expansion exp: updates) {
+                    message.append("<li>");
+                    message.append(exp.getTitle()).append(" version ").append(exp.getVersion());
+                    message.append("</li>");
+                }
+                message.append("</ul>");
+                message.append("</html>");
+
+                MrGimlet.showMessage(mf.getRootPane(), message.toString(), 5000);
+
+                return true;
+            } else {
+                return false;
+            }
+        }
+    
+        @Override
+        protected void done() {
+            try {
+
+                MainFrame mf = get();
+                mf.setLocationRelativeTo(newSplash);
+                mf.setVisible(true);
+                if (newSplash != null) {
+                    newSplash.setVisible(false);
+                    newSplash.dispose();
+                    newSplash = null;
+                }
+
+                if (mf.configuration.getInstallations().isEmpty()) {
+                    // point user to creating an active installation
+                    mf.jTabbedPane1.setEnabledAt(0, false);
+                    mf.jTabbedPane1.setEnabledAt(1, false);
+                    mf.jTabbedPane1.setSelectedIndex(2);
+
+                    StringBuilder message = new StringBuilder("<html>");
+                    message.append("<p>I see a lot of blanks on this here board... Kid, you gotta do something about it.</p>");
+                    message.append("<p>Have at least one active Oolite version. You need one. It's pretty much compulsory.<br/>");
+                    message.append("Hit the Scan or Add button and fill in the form, at least once to add Oolite versions.");
+                    message.append("</html>");
+
+                    MrGimlet.showMessage(mf.getRootPane(), message.toString(), 0);
+                } else if (mf.configuration.getActiveInstallation() == null) {
+                    // point user to creating an active installation
+                    mf.jTabbedPane1.setEnabledAt(0, false);
+                    mf.jTabbedPane1.setEnabledAt(1, false);
+                    mf.jTabbedPane1.setSelectedIndex(2);
+
+                    StringBuilder message = new StringBuilder("<html>");
+                    message.append("<p>Much better, son. But there is still something to do:</p>");
+                    message.append("<p>Decide for one of your Oolite versions. Otherwise this Starter would not know what to do.<br/>");
+                    message.append("<p>Choose one from the list and click Select.");
+                    message.append("</html>");
+
+                    MrGimlet.showMessage(mf.getRootPane(), message.toString(), 0);
+                } else {
+                    boolean foundSomething = false;
+
+                    // we always have an installation as the other case is above
+                    Installation i = mf.getConfiguration().getActiveInstallation();
+                    foundSomething = ovc.maybeAnnounceUpdate(mf.getRootPane(), ModuleDescriptor.Version.parse(i.getVersion()));
+
+                    if (!foundSomething) {
+                        foundSomething = gvc.maybeAnnounceUpdate(mf.getRootPane());
+                    }
+
+                    if (!foundSomething) {
+                        foundSomething = maybeAnnounceExpansionUpdate(mf);
+                    }
+
+                    if (foundSomething) {
+                        log.trace("Notified user about upgrades");
+                    }
+                }
+
+            } catch (InterruptedException e) {
+                log.fatal("Interrupted", e);
+                Thread.currentThread().interrupt();
+            } catch (Exception e) {
+                log.fatal("Could not initialize UI", e);
+                JOptionPane.showMessageDialog(null, e.getClass().getName() + ":\n" + e.getMessage(), "Fatal Error", JOptionPane.ERROR_MESSAGE);
+                System.exit(1);
+            }
+        }
+    }            
+    
     private transient Oolite oolite;
+    private transient Oolite2 oolite2;
     private transient Configuration configuration;
 
+    private StartGamePanel sgp;
+    private ExpansionsPanel2 esp2;
+    private ExpansionPanel ep2;
+    private InstallationsPanel ip;
+    
     /**
      * Creates new form MainFrame.
      */
@@ -71,6 +217,44 @@ public class MainFrame extends javax.swing.JFrame {
 
         oolite = new Oolite();
         oolite.setConfiguration(configuration);
+        
+        oolite2 = new Oolite2();
+        oolite2.setConfiguration(configuration);
+        oolite2.addOoliteListener(new Oolite2.OoliteListener() {
+            private static Logger log = LogManager.getLogger();
+            
+            @Override
+            public void statusChanged(Oolite2.Status status) {
+                log.warn("statusChanged({})", status);
+                
+                if (status == Oolite2.Status.INITIALIZING) {
+                    getContentPane().setEnabled(false);
+                    jProgressBar1.setIndeterminate(true);
+                    jProgressBar1.setString("rescanning...");
+                    jProgressBar1.setVisible(true);
+                } else {
+                    jProgressBar1.setVisible(false);
+                    getContentPane().setEnabled(true);
+                }
+            }
+
+            @Override
+            public void launched(ProcessData pd) {
+                log.warn("launched({})", pd);
+            }
+
+            @Override
+            public void terminated() {
+                log.warn("terminated()");
+            }
+
+            @Override
+            public void activatedInstallation(Installation installation) {
+                log.warn("activatedInstallation({})", installation);
+            }
+        });
+        
+        oolite2.initialize();
 
         configuration.addPropertyChangeListener(pce -> {
             if (pce.getSource() instanceof Configuration) {
@@ -84,31 +268,40 @@ public class MainFrame extends javax.swing.JFrame {
         });
         setInstallationTitle(configuration.getActiveInstallation());
         
-        StartGamePanel sgp = new StartGamePanel();
-        sgp.setOolite(oolite);
+        sgp = new StartGamePanel();
+        sgp.setOolite(oolite, oolite2);
         jTabbedPane1.add(sgp);
 
         ExpansionManager em = ExpansionManager.getInstance();
         em.start();
-        
-        ExpansionsPanel ep = new ExpansionsPanel();
-        ep.setOolite(oolite);
-        jTabbedPane1.add(ep);
-        em.addExpansionManagerListener(ep);
 
-        InstallationsPanel ip = new InstallationsPanel();
+        JSplitPane expansions = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
+        jTabbedPane1.add(expansions, "Expansions");
+
+        esp2 = new ExpansionsPanel2(oolite2);
+        expansions.setTopComponent(esp2);
+
+        ep2 = new ExpansionPanel();
+        esp2.addSelectionListener(ep2);
+        expansions.setBottomComponent(ep2);
+
+        ip = new InstallationsPanel();
         ip.setConfiguration(configuration);
         jTabbedPane1.add(ip);
 
         AboutPanel ap = new AboutPanel("text/html", getClass().getResource("/about.html"));
         jTabbedPane1.add("About", ap);
+
+        // experimental
+        
+        FlavorsPanel fp = new FlavorsPanel();
+        fp.setOolite(oolite);
+        jTabbedPane1.add("Flavors", fp);
         
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent event) {
                 if (configuration.isDirty()) {
-                    jTabbedPane1.setSelectedIndex(2);
-                    
                     // show dialog
                     int choice = MrGimlet.showConfirmation(MainFrame.this, "<html>Your configuration changed since it was last saved.<p>Would you like to save now?</html>");
                     switch (choice) {
@@ -168,6 +361,7 @@ public class MainFrame extends javax.swing.JFrame {
     private void initComponents() {
 
         jTabbedPane1 = new javax.swing.JTabbedPane();
+        jProgressBar1 = new javax.swing.JProgressBar();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setMinimumSize(new java.awt.Dimension(800, 600));
@@ -177,6 +371,11 @@ public class MainFrame extends javax.swing.JFrame {
             }
         });
         getContentPane().add(jTabbedPane1, java.awt.BorderLayout.CENTER);
+
+        jProgressBar1.setFocusable(false);
+        jProgressBar1.setIndeterminate(true);
+        jProgressBar1.setStringPainted(true);
+        getContentPane().add(jProgressBar1, java.awt.BorderLayout.PAGE_END);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -214,7 +413,10 @@ public class MainFrame extends javax.swing.JFrame {
         newSplash = new JFrame();
         newSplash.setUndecorated(true);
         newSplash.setIconImage(new ImageIcon(MainFrame.class.getResource("/images/Mr_Gimlet_transparent.png")).getImage());
-        newSplash.add(new SplashPanel(new ImageIcon(MainFrame.class.getResource("/images/OoliteStarter_Splashscreen_640x360.png"))));
+        ImageIcon screen = new ImageIcon(MainFrame.class.getResource("/images/Digebiti.png"));
+        String motd = "This is an experimental prerelease. Use the menu to turn on UI elements.";
+        SplashPanel sp = new SplashPanel(screen, motd);
+        newSplash.add(sp);
         newSplash.pack();
         newSplash.setLocationRelativeTo(null);
         newSplash.setVisible(true);
@@ -279,90 +481,7 @@ public class MainFrame extends javax.swing.JFrame {
 
         
         /* Create and display the form */
-        new SwingWorker<MainFrame, Object>() {
-            
-            private GithubVersionChecker gvc;
-            
-            @Override
-            protected MainFrame doInBackground() throws Exception {
-                Instant i0 = Instant.now();
-
-                log.info("Initialize UI...");
-                MainFrame mf = new MainFrame();
-                mf.pack();
-                mf.setLocationRelativeTo(null);
-
-                Instant i1 = Instant.now();
-
-                log.info("Check for new version...");
-                gvc = new GithubVersionChecker();
-                gvc.setUpdateCheckInterval(mf.getConfiguration().getUpdateCheckInterval());
-                gvc.init();
-
-                Duration spent = Duration.between(i0, i1);
-                long spentMillis = spent.toMillis();
-
-                if (spentMillis < 4000) {
-                    Thread.sleep(4000 - spentMillis);
-                }
-                
-                return mf;
-            }
-
-            @Override
-            protected void done() {
-                try {
-
-                    MainFrame mf = get();
-                    mf.setLocationRelativeTo(newSplash);
-                    mf.setVisible(true);
-                    if (newSplash != null) {
-                        newSplash.setVisible(false);
-                        newSplash.dispose();
-                        newSplash = null;
-                    }
-
-                    if (mf.configuration.getInstallations().isEmpty()) {
-                        // point user to creating an active installation
-                        mf.jTabbedPane1.setEnabledAt(0, false);
-                        mf.jTabbedPane1.setEnabledAt(1, false);
-                        mf.jTabbedPane1.setSelectedIndex(2);
-
-                        StringBuilder message = new StringBuilder("<html>");
-                        message.append("<p>I see a lot of blanks on this here board... Kid, you gotta do something about it.</p>");
-                        message.append("<p>Have at least one active Oolite version. You need one. It's pretty much compulsory.<br/>");
-                        message.append("Hit the Scan or Add button and fill in the form, at least once to add Oolite versions.");
-                        message.append("</html>");
-
-                        MrGimlet.showMessage(mf.getRootPane(), message.toString(), 0);
-                    } else if (mf.configuration.getActiveInstallation() == null) {
-                        // point user to creating an active installation
-                        mf.jTabbedPane1.setEnabledAt(0, false);
-                        mf.jTabbedPane1.setEnabledAt(1, false);
-                        mf.jTabbedPane1.setSelectedIndex(2);
-
-                        StringBuilder message = new StringBuilder("<html>");
-                        message.append("<p>Much better, son. But there is still something to do:</p>");
-                        message.append("<p>Decide for one of your Oolite versions. Otherwise this Starter would not know what to do.<br/>");
-                        message.append("<p>Choose one from the list and click Select.");
-                        message.append("</html>");
- 
-                        MrGimlet.showMessage(mf.getRootPane(), message.toString(), 0);
-                    } else {
-                        gvc.maybeAnnounceUpdate(mf.getRootPane());
-                    }
-
-                } catch (InterruptedException e) {
-                    log.fatal("Interrupted", e);
-                    Thread.currentThread().interrupt();
-                } catch (Exception e) {
-                    log.fatal("Could not initialize UI", e);
-                    JOptionPane.showMessageDialog(null, e.getClass().getName() + ":\n" + e.getMessage(), "Fatal Error", JOptionPane.ERROR_MESSAGE);
-                    System.exit(1);
-                }
-            }
-
-        }.execute();
+        new InitFrameSwingWorker(newSplash).execute();
     }
     
     private static void showHelp(Options options) {
@@ -375,7 +494,7 @@ public class MainFrame extends javax.swing.JFrame {
      */
     public static void main(String[] args) {
         if (log.isInfoEnabled()) {
-            log.info("Args: {}", args);
+            log.info("Args: {}", ((Object)args));
             log.info("JVM: {} {}", System.getProperty("java.runtime.name"), Runtime.version());
             log.info("OS: {} {} {}", System.getProperty("os.name"), System.getProperty("os.arch"), System.getProperty("os.version"));
         }
@@ -409,6 +528,7 @@ public class MainFrame extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JProgressBar jProgressBar1;
     private javax.swing.JTabbedPane jTabbedPane1;
     // End of variables declaration//GEN-END:variables
 }

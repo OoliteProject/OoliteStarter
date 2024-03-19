@@ -31,10 +31,12 @@ public class Expansion implements Comparable<Expansion> {
      */
     public static class EMStatus {
         private Color color;
-        private boolean latest;
-        private boolean conflicting;
-        private boolean missingDeps;
+        private Expansion latest;
+        private boolean update;
         private boolean incompatible;
+        private List<Expansion> conflicting = new ArrayList<>();
+        private List<Expansion> missing = new ArrayList<>();
+        private List<Expansion> requiredBy = new ArrayList<>();
 
         /**
          * Create a new status.
@@ -45,12 +47,28 @@ public class Expansion implements Comparable<Expansion> {
         /**
          * Create a new status with parameters.
          */
-        public EMStatus(Color color, boolean latest, boolean conflicting, boolean missingDeps, boolean incompatible) {
+        public EMStatus(Color color, Expansion latest, boolean incompatible) {
             this.color = color;
             this.latest = latest;
-            this.conflicting = conflicting;
-            this.missingDeps = missingDeps;
             this.incompatible = incompatible;
+        }
+
+        /**
+         * Returns true if this expansion can be installed as update.
+         * 
+         * @return whether this expansion is an update
+         */
+        public boolean isUpdate() {
+            return update;
+        }
+
+        /**
+         * Sets whether this expansion is an update for some other one.
+         * 
+         * @param update if this expansion is the newer version of something else
+         */
+        public void setUpdate(boolean update) {
+            this.update = update;
         }
 
         /**
@@ -69,44 +87,92 @@ public class Expansion implements Comparable<Expansion> {
 
         /**
          * Returns if the version is the latest.
+         * 
+         * @return true if no expansion
          */
         public boolean isLatest() {
-            return latest;
+            return latest==null;
         }
 
         /**
-         * Sets if the version is the latest.
+         * Sets the latest expansion.
+         * To mark an expansion to be the latest, set this property to null.
          */
-        public void setLatest(boolean latest) {
+        public void setLatest(Expansion latest) {
             this.latest = latest;
+        }
+        
+        /**
+         * Returns the expansion that should be updated to.
+         * 
+         * @return the expansion
+         */
+        public Expansion getLatest() {
+            return latest;
         }
 
         /**
          * Returns if the expansion is conflicting.
          */
         public boolean isConflicting() {
-            return conflicting;
+            return !conflicting.isEmpty();
         }
 
         /**
-         * Sets if the expansion is conflicting.
+         * Returns the expansion this expansion is conflicting with.
+         * 
+         * @return the list of expansions
          */
-        public void setConflicting(boolean conflicting) {
-            this.conflicting = conflicting;
+        public List<Expansion> getConflicting() {
+            return this.conflicting;
         }
 
         /**
          * Returns if required other expansions are missing.
          */
         public boolean isMissingDeps() {
-            return missingDeps;
+            return !missing.isEmpty();
         }
 
         /**
-         * Sets if required other expansions are missing.
+         * Returns the list of unresolved expansions.
+         * 
+         * @return the list of expansions
          */
-        public void setMissingDeps(boolean missingDeps) {
-            this.missingDeps = missingDeps;
+        public List<Expansion> getMissing() {
+            return this.missing;
+        }
+        
+        /**
+         * Returns if this expansion is required by others.
+         * 
+         * @return true if it is required, false otherwise
+         */
+        public boolean isRequired() {
+            return !requiredBy.isEmpty();
+        }
+        
+        /**
+         * Returns if this expansion is required by currently installed ones.
+         * 
+         * @return true if it is required, false otherwise
+         */
+        public boolean isCurrentlyRequired() {
+            for (Expansion r: requiredBy) {
+                if (r.isEnabled()) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        
+        /**
+         * Returns the list of expansions requiring this one.
+         * 
+         * @return the list of expansions
+         */
+        public List<Expansion> getRequiredBy() {
+            return this.requiredBy;
         }
 
         /**
@@ -122,8 +188,7 @@ public class Expansion implements Comparable<Expansion> {
         public void setIncompatible(boolean incompatible) {
             this.incompatible = incompatible;
         }
-        
-        
+
     }
     
     public static class Dependency {
@@ -725,6 +790,9 @@ public class Expansion implements Comparable<Expansion> {
         StringBuilder sb = new StringBuilder(getClass().getName());
         sb.append("(");
         sb.append(getIdentifier() + ", " + getVersion() + ", " + getDownloadUrl());
+        if (isLocal()) {
+            sb.append(", local");
+        }
         sb.append(")");
         return sb.toString();
     }
@@ -817,7 +885,7 @@ public class Expansion implements Comparable<Expansion> {
         List<ExpansionReference> result = new ArrayList<>();
         if (getRequiresOxps() != null) {
             for (Dependency dep: getRequiresOxps()) {
-                log.warn("getting expansionn reference for '{}'", dep);
+                log.warn("getting expansion reference for '{}'", dep);
                 ExpansionReference er = oolite.getExpansionReference(dep);
                 result.add(er);
             }
@@ -832,24 +900,26 @@ public class Expansion implements Comparable<Expansion> {
      */
     public List<ExpansionReference> getConflictRefs() {
         List<ExpansionReference> result = new ArrayList<>();
-        for (Dependency dep: getConflictOxps()) {
-            ExpansionReference er = oolite.getExpansionReference(dep);
-            switch (er.getStatus()) {
-                case CONFLICT:
-                    break;
-                case MISSING:
-                    er.setStatus(ExpansionReference.Status.OK);
-                    break;
-                case OK:
-                    er.setStatus(ExpansionReference.Status.CONFLICT);
-                    break;
-                case REQUIRED_MISSING:
-                    er.setStatus(ExpansionReference.Status.OK);
-                    break;
-                case SURPLUS:
-                    break;
+        if (conflictOxps != null) {
+            for (Dependency dep: conflictOxps) {
+                ExpansionReference er = oolite.getExpansionReference(dep);
+                switch (er.getStatus()) {
+                    case CONFLICT:
+                        break;
+                    case MISSING:
+                        er.setStatus(ExpansionReference.Status.OK);
+                        break;
+                    case OK:
+                        er.setStatus(ExpansionReference.Status.CONFLICT);
+                        break;
+                    case REQUIRED_MISSING:
+                        er.setStatus(ExpansionReference.Status.OK);
+                        break;
+                    case SURPLUS:
+                        break;
+                }
+                result.add(er);
             }
-            result.add(er);
         }
         return result;
     }

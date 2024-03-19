@@ -41,8 +41,9 @@ public class InstallationsPanel extends javax.swing.JPanel {
     private static final String INSTALLATIONSPANEL_ERROR = "Error";
     private static final String INSTALLATIONSPANEL_SELECT_ROW = "Please select row";
     private static final String INSTALLATIONSPANEL_COULD_NOT_SAVE = "Could not save";
+    private static final String INSTALLATIONSPANEL_COULD_NOT_ACTIVATE = "Could not select";
     
-    private static final ImageIcon icon_star = new ImageIcon(InstallationsPanel.class.getResource("/icons/star_FILL0_wght400_GRAD0_opsz24.png"));
+    private static final ImageIcon icon_star = new ImageIcon(InstallationsPanel.class.getResource("/icons/star_FILL1_wght400_GRAD0_opsz24.png"));
     
     private InstallationForm installationDetails;
     private InstallationTableModel model;
@@ -287,7 +288,7 @@ public class InstallationsPanel extends javax.swing.JPanel {
             }
         });
 
-        btActivate.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/star_FILL0_wght400_GRAD0_opsz24.png"))); // NOI18N
+        btActivate.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/star_FILL1_wght400_GRAD0_opsz24.png"))); // NOI18N
         btActivate.setText("Select");
         btActivate.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -519,6 +520,11 @@ public class InstallationsPanel extends javax.swing.JPanel {
         }        
     }//GEN-LAST:event_btSaveActionPerformed
 
+    /**
+     * Activates the selected installation.
+     * 
+     * @param evt 
+     */
     private void btActivateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btActivateActionPerformed
         log.debug("btActivateActionPerformed({})", evt);
         
@@ -531,8 +537,8 @@ public class InstallationsPanel extends javax.swing.JPanel {
             
             activateRow(rowIndex);
         } catch (Exception e) {
-            log.error(INSTALLATIONSPANEL_COULD_NOT_SAVE, e);
-            JOptionPane.showMessageDialog(this, INSTALLATIONSPANEL_COULD_NOT_SAVE);
+            log.error(INSTALLATIONSPANEL_COULD_NOT_ACTIVATE, e);
+            JOptionPane.showMessageDialog(this, INSTALLATIONSPANEL_COULD_NOT_ACTIVATE);
         }        
     }//GEN-LAST:event_btActivateActionPerformed
 

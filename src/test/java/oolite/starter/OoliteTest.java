@@ -20,6 +20,7 @@ import oolite.starter.model.Command;
 import oolite.starter.model.Expansion;
 import oolite.starter.model.ExpansionReference;
 import oolite.starter.model.Installation;
+import oolite.starter.model.OoliteFlavor;
 import oolite.starter.model.ProcessData;
 import oolite.starter.model.SaveGame;
 import org.apache.logging.log4j.LogManager;
@@ -275,7 +276,7 @@ public class OoliteTest {
         oolite.setConfiguration(configuration);
         
         List<SaveGame> saveGames = oolite.getSaveGames();
-        assertEquals(1, saveGames.size());
+        assertEquals(2, saveGames.size());
     }
     
     @Test
@@ -358,10 +359,11 @@ public class OoliteTest {
         oolite.setConfiguration(configuration);
         
         List<Expansion> expansions = oolite.getLocalExpansions();
-        assertEquals(3, expansions.size());
+        assertEquals(4, expansions.size());
         assertTrue(String.valueOf(expansions.get(0).getIdentifier()).endsWith("Asteroids3D1.2.oxp"));
         assertTrue(String.valueOf(expansions.get(1).getIdentifier()).endsWith("Galactic_Navy 5.4.3.oxp"));
         assertEquals("oolite.oxp.Norby.Addons_for_Beginners", expansions.get(2).getIdentifier());
+        assertEquals("oolite.oxp.UK_Eliter.Ferdelance_3G", expansions.get(3).getIdentifier());
     }
     
     @Test
@@ -703,20 +705,6 @@ public class OoliteTest {
     }
     
     @Test
-    public void testGetExpansionByReference2() {
-        log.info("testGetExpansionByReference2()");
-
-        Oolite instance = new Oolite();
-        try {
-            instance.getExpansionByReference((String)null, null, false);
-            fail("expected exception");
-        } catch (IllegalArgumentException e) {
-            assertEquals("reference must not be null", e.getMessage());
-            log.debug("caught expected exception", e);
-        }
-    }
-    
-    @Test
     public void testGetExpansionByReference3() {
         log.info("testGetExpansionByReference3()");
 
@@ -975,6 +963,43 @@ public class OoliteTest {
         assertEquals(false, e1.getEMStatus().isConflicting());
         assertEquals(false, e2.getEMStatus().isConflicting());
     }
+
+    /**
+     * Ensure Ferdelance does not conflict with itself.
+     * 
+     * @throws IOException 
+     */
+    @Test
+    public void testValidateConflicts6() throws IOException {
+        log.info("testValidateConflicts6");
+
+        File dir = new File("src/test/resources/data");
+        List<File> dirs = new ArrayList<>();
+        dirs.add(dir);
+        
+        Installation installation = Mockito.mock(Installation.class);
+        Mockito.when(installation.getVersion()).thenReturn("1.90");
+        Configuration configuration = Mockito.mock(Configuration.class);
+        Mockito.when(configuration.getActiveInstallation()).thenReturn(installation);
+        Mockito.when(configuration.getDeactivatedAddonsDir()).thenReturn(dir);
+        Mockito.when(configuration.getAddonsDir()).thenReturn(dir);
+        Mockito.when(configuration.getAddonDirs()).thenReturn(dirs);
+        Oolite instance = new Oolite();
+        instance.setConfiguration(configuration);
+        
+        List<Expansion> expansions = instance.getAllExpansions();
+        
+        assertNotNull(expansions);
+        assertEquals(4, expansions.size());
+        
+        instance.validateConflicts(expansions);
+        
+        assertEquals(4, expansions.size());
+        assertEquals("oolite.oxp.UK_Eliter.Ferdelance_3G", expansions.get(3).getIdentifier());
+        
+        Expansion exp = expansions.get(3);
+        assertEquals(0, exp.getEMStatus().getConflicting().size());
+    }
     
     @Test
     public void testCheckForUpdates() {
@@ -1067,11 +1092,12 @@ public class OoliteTest {
         
         instance.checkSurplusExpansions(references);
         
-        assertEquals(4, references.size());
+        assertEquals(5, references.size());
         assertEquals("oolite.oxp.Norby.Addons_for_Beginners:1.5", references.get(0).getName());
         assertTrue(references.get(1).getName().endsWith("Asteroids3D1.2.oxp@0"));
         assertTrue(references.get(2).getName().endsWith("Galactic_Navy 5.4.3.oxp@0"));
         assertEquals("oolite.oxp.Norby.Addons_for_Beginners@1.5", references.get(3).getName());
+        assertEquals("oolite.oxp.UK_Eliter.Ferdelance_3G@6.63", references.get(4).getName());
     }
     
     @Test
@@ -1120,6 +1146,21 @@ public class OoliteTest {
         List<Expansion> result = instance.getAllExpansions();
         
         assertNotNull(result);
+        assertEquals(4, result.size());
+        assertTrue(String.valueOf(result.get(0).getIdentifier()).endsWith("/PHKB_Folder.oxp/Asteroids3D1.2.oxp"));
+        assertTrue(String.valueOf(result.get(1).getIdentifier()).endsWith("/PHKB_Folder.oxp/Galactic_Navy 5.4.3.oxp"));
+        assertEquals("oolite.oxp.Norby.Addons_for_Beginners", result.get(2).getIdentifier());
+        assertEquals("oolite.oxp.UK_Eliter.Ferdelance_3G", result.get(3).getIdentifier());
+        
+        Expansion e = result.get(3);
+        assertEquals(2, e.getConflictOxps().size());
+        assertEquals("oolite.oxp.UK_Eliter.Ferdelance_3G", e.getConflictOxps().get(0).getIdentifier());
+        assertEquals("oolite.oxp.Ferdelance_3G", e.getConflictOxps().get(1).getIdentifier());
+        
+        Expansion.Dependency d = e.getConflictOxps().get(0);
+        assertEquals("oolite.oxp.UK_Eliter.Ferdelance_3G", d.getIdentifier());
+        assertNull(d.getVersion());
+        assertEquals("6.5", d.getMaximumVersion());
     }
     
     @Test
@@ -1271,7 +1312,7 @@ public class OoliteTest {
         instance.setConfiguration(configuration);
         
         ExpansionReference ref = instance.getExpansionReference(dep);
-        assertEquals("org.oolite.Two:1.0", ref.getName());
+        assertEquals("org.oolite.Two@1.0", ref.getName());
         assertEquals(ExpansionReference.Status.MISSING, ref.getStatus());
     }
 
@@ -1309,7 +1350,7 @@ public class OoliteTest {
         instance.setConfiguration(configuration);
 
         ExpansionReference ref = instance.getExpansionReference(dep);
-        assertEquals("org.oolite.Two:1.0", ref.getName());
+        assertEquals("org.oolite.Two@1.0", ref.getName());
         assertEquals(ExpansionReference.Status.MISSING, ref.getStatus());
     }
 
@@ -1332,4 +1373,197 @@ public class OoliteTest {
         assertEquals(ExpansionReference.Status.MISSING, ref.getStatus());
     }
     
+    @Test
+    public void testGetExpansionByDependency() {
+        log.info("testGetExpansionByDependency()");
+        
+        Oolite instance = new Oolite();
+        
+        try {
+            instance.getExpansionByReference((Expansion.Dependency)null, null, true);
+            fail("expected exception");
+        } catch (IllegalArgumentException e) {
+            assertEquals("reference must not be null", e.getMessage());
+            log.debug("caught expected exception", e);
+        }
+    }
+    
+    @Test
+    public void testGetExpansionByDependency2() {
+        log.info("testGetExpansionByDependency2()");
+        
+        Oolite instance = new Oolite();
+        Expansion.Dependency reference = new Expansion.Dependency();
+        
+        try {
+            instance.getExpansionByReference(reference, null, true);
+            fail("expected exception");
+        } catch (IllegalArgumentException e) {
+            assertEquals("expansions must not be null", e.getMessage());
+            log.debug("caught expected exception", e);
+        }
+    }
+    
+    @Test
+    public void testGetExpansionByDependency3() {
+        log.info("testGetExpansionByDependency3()");
+        
+        Oolite instance = new Oolite();
+        Expansion.Dependency reference = new Expansion.Dependency();
+        List<Expansion> expansions = new ArrayList<>();
+        
+        try {
+            instance.getExpansionByReference(reference, expansions, true);
+            fail("expected exception");
+        } catch (IllegalArgumentException e) {
+            assertEquals("reference must have a non-null identifier", e.getMessage());
+            log.debug("caught expected exception", e);
+        }
+    }
+    
+    @Test
+    public void testGetExpansionByDependency4() {
+        log.info("testGetExpansionByDependency4()");
+        
+        Oolite instance = new Oolite();
+        Expansion.Dependency reference = new Expansion.Dependency("identifier");
+        List<Expansion> expansions = new ArrayList<>();
+        Expansion expansion = new Expansion();
+        expansions.add(expansion);
+        
+        List<Expansion> result = instance.getExpansionByReference(reference, expansions, false);
+        assertNotNull(result);
+        assertEquals(0, result.size());
+    }
+    
+    @Test
+    public void testGetExpansionByDependency5() {
+        log.info("testGetExpansionByDependency5()");
+        
+        Oolite instance = new Oolite();
+        Expansion.Dependency reference = new Expansion.Dependency("identifier");
+        List<Expansion> expansions = new ArrayList<>();
+        Expansion expansion = new Expansion();
+        expansion.setIdentifier("identifier");
+        expansions.add(expansion);
+        
+        List<Expansion> result = instance.getExpansionByReference(reference, expansions, false);
+        assertEquals(1, result.size());
+    }
+    
+    @Test
+    public void testGetExpansionByDependency6() {
+        log.info("testGetExpansionByDependency6()");
+        
+        Oolite instance = new Oolite();
+        Expansion.Dependency reference = new Expansion.Dependency("identifier");
+        List<Expansion> expansions = new ArrayList<>();
+        Expansion expansion = new Expansion();
+        expansion.setIdentifier("identifier");
+        expansion.setOolite(instance);
+        expansions.add(expansion);
+        
+        List<Expansion> result = instance.getExpansionByReference(reference, expansions, true);
+        assertEquals(0, result.size());
+    }
+    
+    @Test
+    public void testGetExpansionByDependency7() {
+        log.info("testGetExpansionByDependency7()");
+        
+        Oolite instance = new Oolite();
+        Expansion.Dependency reference = new Expansion.Dependency("identifier");
+        List<Expansion> expansions = new ArrayList<>();
+        Expansion expansion = new Expansion();
+        expansion.setIdentifier("identifier");
+        expansion.setVersion("1.1");
+        expansion.setOolite(instance);
+        expansions.add(expansion);
+        
+        List<Expansion> result = instance.getExpansionByReference(reference, expansions, false);
+        assertEquals(1, result.size());
+    }
+    
+    @Test
+    public void testGetExpansionByDependency8() {
+        log.info("testGetExpansionByDependency8()");
+        
+        Oolite instance = new Oolite();
+        Expansion.Dependency reference = new Expansion.Dependency("identifier", "0");
+        List<Expansion> expansions = new ArrayList<>();
+        Expansion expansion = new Expansion();
+        expansion.setIdentifier("identifier");
+        expansion.setVersion("1.1");
+        expansion.setOolite(instance);
+        expansions.add(expansion);
+        
+        List<Expansion> result = instance.getExpansionByReference(reference, expansions, false);
+        assertEquals(1, result.size());
+    }
+    
+    @Test
+    public void testGetExpansionByDependency9() {
+        log.info("testGetExpansionByDependency9()");
+        
+        Oolite instance = new Oolite();
+        Expansion.Dependency reference = new Expansion.Dependency("identifier", "1.0");
+        List<Expansion> expansions = new ArrayList<>();
+        Expansion expansion = new Expansion();
+        expansion.setIdentifier("identifier");
+        expansion.setVersion("1.1");
+        expansion.setOolite(instance);
+        expansions.add(expansion);
+        
+        List<Expansion> result = instance.getExpansionByReference(reference, expansions, false);
+        assertEquals(1, result.size());
+    }
+    
+    @Test
+    public void testGetExpansionByDependency10() {
+        log.info("testGetExpansionByDependency10()");
+        
+        Oolite instance = new Oolite();
+        Expansion.Dependency reference = new Expansion.Dependency("identifier", "1.2");
+        List<Expansion> expansions = new ArrayList<>();
+        Expansion expansion = new Expansion();
+        expansion.setIdentifier("identifier");
+        expansion.setVersion("1.1");
+        expansion.setOolite(instance);
+        expansions.add(expansion);
+        
+        List<Expansion> result = instance.getExpansionByReference(reference, expansions, false);
+        assertEquals(0, result.size());
+    }
+
+    @Test
+    public void testGetExpansionByDependency11() {
+        log.info("testGetExpansionByDependency11()");
+        
+        Oolite instance = new Oolite();
+        Expansion.Dependency reference = new Expansion.Dependency("identifier", "1.0");
+        List<Expansion> expansions = new ArrayList<>();
+        Expansion expansion = new Expansion();
+        expansion.setIdentifier("identifier");
+        expansion.setVersion("1.1");
+        expansion.setOolite(instance);
+        expansions.add(expansion);
+        
+        List<Expansion> result = instance.getExpansionByReference(reference, expansions, true);
+        assertEquals(0, result.size());
+    }
+    
+    @Test
+    public void testGetFlavorsList() throws Exception {
+        log.info("testGetFlavorsList()");
+        
+        Oolite instance = new Oolite();
+        List<OoliteFlavor> list = instance.getFlavorList();
+        assertNotNull(list);
+        log.info("Received list: {}", list);
+        assertEquals(4, list.size());
+        assertEquals("Vanilla", list.get(0).getName());
+        assertEquals("Play Oolite as close as possible to th original Elite.", list.get(0).getDescription());
+        assertEquals("https://addons.oolite.space/api/1.0/flavors/Vanilla.oolite-es", list.get(0).getExpansionSetUrl().toString());
+    }
+
 }
