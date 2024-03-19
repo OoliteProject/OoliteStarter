@@ -2,8 +2,13 @@
  */
 package oolite.starter.ui2;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import javax.swing.AbstractAction;
 import javax.swing.DefaultListModel;
 import oolite.starter.Oolite;
+import oolite.starter.generic.ListAction;
 import oolite.starter.model.OoliteFlavor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -18,7 +23,8 @@ public class FlavorsPanel extends javax.swing.JPanel {
     
     private transient Oolite oolite;
     
-    DefaultListModel<OoliteFlavor> model;
+    private DefaultListModel<OoliteFlavor> model;
+    private ListAction listAction;
 
     /**
      * Creates new form FlavorsPanel.
@@ -27,6 +33,27 @@ public class FlavorsPanel extends javax.swing.JPanel {
         log.debug("FlavorsPanel()");
         initComponents();
         jList1.setCellRenderer(new OoliteFlavorListCellRenderer());
+        
+        MouseAdapter ma = new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                log.debug("offer install...");
+            }
+        };
+        jList1.addMouseListener(ma);
+
+        AbstractAction action = new AbstractAction("Install...") {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                log.debug("actionPerformed(...)");
+                OoliteFlavor flavor = jList1.getSelectedValue();
+                if (flavor == null) {
+                    return;
+                }
+                log.warn("Install flavor {}...", flavor.getName());
+            }
+        };
+        listAction = new ListAction(jList1, action);
     }
     
     /**

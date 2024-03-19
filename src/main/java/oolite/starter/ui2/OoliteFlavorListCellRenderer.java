@@ -4,9 +4,13 @@ package oolite.starter.ui2;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import javax.swing.ImageIcon;
 import javax.swing.JEditorPane;
 import javax.swing.JList;
 import javax.swing.ListCellRenderer;
+import javax.swing.border.BevelBorder;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.LineBorder;
 import oolite.starter.model.OoliteFlavor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -22,9 +26,7 @@ public class OoliteFlavorListCellRenderer extends javax.swing.JPanel implements 
     //private final Border normalBorder = new CompoundBorder(new MatteBorder(0, 4, 0, 0, getBackground()), emtpyBorder);
     //private final Border warningBorder = new CompoundBorder(new MatteBorder(0, 4, 0, 0, Color.ORANGE), emtpyBorder);
     //private final Border problemBorder = new CompoundBorder(new MatteBorder(0, 4, 0, 0, Color.RED), emtpyBorder);
-
-    private JEditorPane editor;
-
+    
     /**
      * Creates new form OoliteFlavorListRenderer.
      */
@@ -34,8 +36,9 @@ public class OoliteFlavorListCellRenderer extends javax.swing.JPanel implements 
         editor.setEditable(false);
         editor.setOpaque(false);
         add(editor, BorderLayout.CENTER);
+        setBorder(new CompoundBorder(new LineBorder(getBackground(), 8), new BevelBorder(BevelBorder.RAISED)));
     }
-
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -45,20 +48,42 @@ public class OoliteFlavorListCellRenderer extends javax.swing.JPanel implements 
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jLabel1 = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        editor = new javax.swing.JEditorPane();
+
         setLayout(new java.awt.BorderLayout());
+
+        jLabel1.setAlignmentX(0.5F);
+        jLabel1.setBorder(javax.swing.BorderFactory.createEmptyBorder(8, 8, 8, 8));
+        add(jLabel1, java.awt.BorderLayout.LINE_START);
+
+        editor.setEditable(false);
+        editor.setContentType("text/html"); // NOI18N
+        jScrollPane1.setViewportView(editor);
+
+        add(jScrollPane1, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
     @Override
     public Component getListCellRendererComponent(JList<? extends OoliteFlavor> list, OoliteFlavor data, int i, boolean isSelected, boolean isFocused) {
-        StringBuilder sb = new StringBuilder("<html><table width=\"100%\" border=\"1\">");
-        sb.append("<tr><td>");
-        sb.append("<img src=\"").append(data.getImageUrl()).append("\"></img>");
-        sb.append("</td><td width=\"*\"><b>");
+        jLabel1.setIcon(new ImageIcon(data.getImage()));
+        
+        StringBuilder sb = new StringBuilder("<html>");
+//        sb.append("<table width=\"100%\" border=\"1\">");
+//        sb.append("<tr>");
+//        //sb.append("<td>");
+//        //sb.append("<img src=\"").append(data.getImageUrl()).append("\"></img>");
+//        //sb.append("</td>");
+//        sb.append("<td width=\"*\">");
+        sb.append("<p><b>");
         sb.append(data.getName());
-        sb.append("</b><p>");
+        sb.append("</b></p><p>");
         sb.append(data.getDescription());
-        sb.append("</td></tr>");
-        sb.append("</table></html>");
+        sb.append("</p>&nbsp;");
+//        sb.append("</td></tr>");
+//        sb.append("</table>");
+        sb.append("</html>");
         
         log.trace("text={}", sb);
         editor.setContentType("text/html");
@@ -78,5 +103,8 @@ public class OoliteFlavorListCellRenderer extends javax.swing.JPanel implements 
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JEditorPane editor;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
 }
