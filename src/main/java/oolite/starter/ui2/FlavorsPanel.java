@@ -5,13 +5,21 @@ package oolite.starter.ui2;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.List;
 import javax.swing.AbstractAction;
 import javax.swing.DefaultListModel;
+import javax.swing.JOptionPane;
+import oolite.starter.ExpansionManager;
 import oolite.starter.Oolite;
+import oolite.starter.Oolite2;
 import oolite.starter.generic.ListAction;
+import oolite.starter.model.Command;
 import oolite.starter.model.OoliteFlavor;
+import oolite.starter.ui.MrGimlet;
+import oolite.starter.ui.Util;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.w3c.dom.NodeList;
 
 /**
  * A panel to present Flavors to the user and allow him to install them.
@@ -22,6 +30,7 @@ public class FlavorsPanel extends javax.swing.JPanel {
     private static final Logger log = LogManager.getLogger();
     
     private transient Oolite oolite;
+    private transient Oolite2 oolite2;
     
     private DefaultListModel<OoliteFlavor> model;
     private ListAction listAction;
@@ -50,7 +59,27 @@ public class FlavorsPanel extends javax.swing.JPanel {
                 if (flavor == null) {
                     return;
                 }
-                log.warn("Install flavor {}...", flavor.getName());
+                log.warn("Install flavor {} from {}...", flavor.getName(), flavor.getExpansionSetUrl());
+                
+                try {
+                    NodeList nl = oolite.parseExpansionSet(flavor.getExpansionSetUrl());
+                    log.warn("Parsed expansion set {}", flavor.getExpansionSetUrl());
+                    
+                    List<Command> plan = oolite.buildCommandList(oolite2.getExpansions(), nl);
+                    
+                    if (plan.isEmpty()) {
+                        JOptionPane.showConfirmDialog(FlavorsPanel.this, "We're already there, kiddo.");
+                    } else  {
+                        // have user approve the plan
+                        if (JOptionPane.showConfirmDialog(FlavorsPanel.this, Util.createCommandListPanel(plan), "Confirm these actions...", JOptionPane.OK_CANCEL_OPTION)==JOptionPane.OK_OPTION) {
+                            // execute the plan
+                            ExpansionManager.getInstance().addCommands(plan);
+                            MrGimlet.showMessage(FlavorsPanel.this, "Working on it...");
+                        }
+                    }
+                } catch (Exception e) {
+                    log.error("Could not install expansion set");
+                }
             }
         };
         listAction = new ListAction(jList1, action);
@@ -61,9 +90,10 @@ public class FlavorsPanel extends javax.swing.JPanel {
      * 
      * @param oolite the instance
      */
-    public void setOolite(Oolite oolite) {
-        log.debug("setOolite({})", oolite);
+    public void setOolite(Oolite oolite, Oolite2 oolite2) {
+        log.debug("setOolite({}, {})", oolite, oolite2);
         this.oolite = oolite;
+        this.oolite2 = oolite2;
         
         try {
             model = new DefaultListModel<>();

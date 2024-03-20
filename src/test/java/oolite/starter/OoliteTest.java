@@ -1169,7 +1169,21 @@ public class OoliteTest {
         
         Oolite instance = new Oolite();
         try {
-            instance.parseExpansionSet(null);
+            instance.parseExpansionSet((File)null);
+            fail("expected exception");
+        } catch (IllegalArgumentException e) {
+            assertEquals("source must not be null", e.getMessage());
+            log.debug("caught expected exception", e);
+        }
+    }
+    
+    @Test
+    public void testParseExpansionSetURL() throws ParserConfigurationException, SAXException, IOException, XPathExpressionException {
+        log.info("testParseExpansionSetURL");
+        
+        Oolite instance = new Oolite();
+        try {
+            instance.parseExpansionSet((URL)null);
             fail("expected exception");
         } catch (IllegalArgumentException e) {
             assertEquals("source must not be null", e.getMessage());

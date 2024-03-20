@@ -295,7 +295,7 @@ public class MainFrame extends javax.swing.JFrame {
         // experimental
         
         FlavorsPanel fp = new FlavorsPanel();
-        fp.setOolite(oolite);
+        fp.setOolite(oolite, oolite2);
         jTabbedPane1.add("Flavors", fp);
         
         addWindowListener(new WindowAdapter() {

@@ -13,6 +13,7 @@ import javax.swing.AbstractListModel;
 import javax.swing.SwingUtilities;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
+import oolite.starter.model.Command;
 import oolite.starter.model.Expansion;
 import oolite.starter.model.ExpansionReference;
 import oolite.starter.model.Installation;
@@ -447,4 +448,43 @@ public class Oolite2 {
                 .toList();
     }
 
+    /**
+     * Builds a command list from expansion references.
+     * 
+     * @param expansions the list of expansionreferences we want to install/uninstall
+     * @return the commands to get there
+     */
+    public List<Command> buildCommandList(List<ExpansionReference> expansions) {
+        // list all the missing/superfluous expansions
+        List<Command> commands = expansions.stream()
+                .filter(er -> er.getStatus()==ExpansionReference.Status.MISSING 
+                        || er.getStatus()==ExpansionReference.Status.REQUIRED_MISSING
+                        || er.getStatus()==ExpansionReference.Status.SURPLUS
+                )
+                .map((er) -> {
+                    Command.Action action = Command.Action.INSTALL;
+                    if (er.getStatus()==ExpansionReference.Status.SURPLUS) {
+                        action = Command.Action.DELETE;
+                    }
+                    Expansion e = getExpansionByExpansionReference(er);
+                    if (e != null) {
+                        Command c = new Command(action, e);
+                        return c;
+                    }
+                    return null;
+                })
+                .filter(c -> c != null)
+                .toList();
+        return commands;
+    }
+    
+    /**
+     * Returns an unmanaged copy of currently installed expansions.
+     * 
+     * @return the list
+     */
+    public List<Expansion> getExpansions() {
+        return new ArrayList<>(expansions);
+    }
+    
 }

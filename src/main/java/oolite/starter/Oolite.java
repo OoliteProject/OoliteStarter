@@ -1574,6 +1574,23 @@ public class Oolite implements PropertyChangeListener {
     }
     
     /**
+     * Parses the list of expansions from a expansion set xml file
+     * and returns a list of expansion references.
+     * 
+     * @param source the URL to read from
+     */
+    public NodeList parseExpansionSet(URL source) throws ParserConfigurationException, SAXException, IOException, XPathExpressionException {
+        log.debug("parseExpansionSet({})", source);
+        if (source == null) {
+            throw new IllegalArgumentException("source must not be null");
+        }
+        
+        Document doc = XmlUtil.parseXmlStream(source.openStream());
+        XPath xpath = XPathFactory.newInstance().newXPath();
+        return (NodeList)xpath.evaluate("/ExpansionList/Expansion", doc, XPathConstants.NODESET);
+    }
+    
+    /**
      * Prepare list of enabled addons.
      * 
      * @return a map with identifier:version -> downloadurl
