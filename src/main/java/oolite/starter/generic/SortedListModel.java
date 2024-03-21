@@ -150,7 +150,9 @@ public class SortedListModel<T> extends AbstractListModel<T> {
     @Override
     public T getElementAt(int i) {
         if (i < 0 || i >= sortedList.size()) {
-            throw new IndexOutOfBoundsException("Cannot find index " + i + ": Must be in [0 and " + (sortedList.size()-1) + "]");
+            //throw new IndexOutOfBoundsException("Cannot find index " + i + ": Must be in [0 and " + (sortedList.size()-1) + "]");
+            log.warn("Cannot find index {}: Must be in [0 and {}]", i, sortedList.size()-1);
+            return null;
         }
         return unsortedModel.getElementAt(sortedList.get(i).getIndex());
     }

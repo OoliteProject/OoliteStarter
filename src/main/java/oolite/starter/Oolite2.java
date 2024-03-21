@@ -8,6 +8,7 @@ import java.io.File;
 import java.lang.module.ModuleDescriptor;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import javax.swing.AbstractListModel;
 import javax.swing.SwingUtilities;
@@ -93,7 +94,7 @@ public class Oolite2 {
     private FileAlterationMonitor monitor;
     private final Oolite oolite;
     
-    private List<Expansion> expansions;
+    private final List<Expansion> expansions;
     private final List<WeakReference<OoliteExpansionListModel>> ooliteExpansionListModels;
     
     /**
@@ -102,6 +103,7 @@ public class Oolite2 {
     public Oolite2() {
         log.debug("Oolite2()");
         oolite = new Oolite();
+        expansions = Collections.synchronizedList(new ArrayList<>());
         
         ooliteExpansionListModels = new ArrayList<>();
     }
@@ -259,7 +261,9 @@ public class Oolite2 {
                 removeWatchers();
 
                 // scan directories
-                expansions = oolite.getAllExpansions();
+                List<Expansion> newExpansions = oolite.getAllExpansions();
+                expansions.clear();
+                expansions.addAll(newExpansions);
 
                 // install filesystem watchers
                 installWatchers();
@@ -308,7 +312,7 @@ public class Oolite2 {
     }
     
     void validateDependencies() {
-        log.warn("validateDependencies()");
+        log.debug("validateDependencies()");
         
         oolite.validateCompatibility(expansions);
         oolite.validateConflicts(expansions);
@@ -322,7 +326,7 @@ public class Oolite2 {
      * @param e 
      */
     public void rescan(Expansion e) {
-        log.warn("rescan({})", e);
+        log.debug("rescan({})", e);
         
         if (e.isLocal()) {
             rescan(e.getLocalFile());
@@ -338,7 +342,7 @@ public class Oolite2 {
      * @param f 
      */
     public void rescan(File f) {
-        log.warn("rescan({})", f);
+        log.debug("rescan({})", f);
         
         status = Status.RESCANNING;
         fireStatusChanged(); // notify listeners
@@ -358,7 +362,7 @@ public class Oolite2 {
                 }
             }
         } else {
-            log.warn("File exists!");
+            log.trace("File exists!");
             try {
                 Expansion newExpansion = oolite.getExpansionFrom(f);
                 if (newExpansion != null) {
@@ -386,7 +390,7 @@ public class Oolite2 {
      * @return the expansion, or null if not found
      */
     public Expansion getExpansionByExpansionReference(ExpansionReference er) {
-        log.warn("getExpansionByExpansionReference({})", er);
+        log.debug("getExpansionByExpansionReference({})", er);
         if (er == null) {
             throw new IllegalArgumentException("er must not be null");
         }
@@ -439,6 +443,7 @@ public class Oolite2 {
      * @return the list of updates
      */
     public List<Expansion> getUpdates() {
+        log.debug("getUpdates()");
         if (expansions==null) {
             log.warn("Cannot make out updates in status {}", status);
             return new ArrayList<>();

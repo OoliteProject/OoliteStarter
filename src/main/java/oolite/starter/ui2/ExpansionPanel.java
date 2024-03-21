@@ -75,65 +75,67 @@ public class ExpansionPanel extends javax.swing.JPanel implements ExpansionsPane
         log.debug("selectionChanged({})", expansion);
         
         StringBuilder sb = new StringBuilder("<html>");
-        sb.append("<h2>").append(expansion.getTitle()).append(" ").append(expansion.getVersion()).append("</h2>");
-        sb.append("<table border=\"0\"><tr>");
-        sb.append("<td>Title</td><td colspan=\"4\">").append(expansion.getTitle()).append("</td>");
-        sb.append("</tr><tr>");
-        sb.append("<td valign=\"top\">Description</td><td colspan=\"3\" valign=\"top\">").append(expansion.getDescription()).append("</td>");
-        sb.append("</tr><tr>");
-        sb.append("<td>Version</td><td>").append(expansion.getVersion()).append("</td><td>Category</td><td>").append(expansion.getCategory()).append("</td><td></td>");
-        sb.append("</tr><tr>");
-        sb.append("<td>Size</td><td>").append(Util.humanreadableSize(expansion.getFileSize())).append("</td><td>Author</td><td>").append(expansion.getAuthor()).append("</td><td></td>");
-        sb.append("</tr><tr>");
-        sb.append("<td>Local File</td><td colspan=\"3\">").append(expansion.getLocalFile()).append("</td>");
-        sb.append("</tr><tr>");
-        sb.append("<td>Download&nbsp;URL</td><td colspan=\"3\">").append(expansion.getDownloadUrl()).append("</td>");
-        sb.append("</tr></table>");
+        if (expansion != null) {
+            sb.append("<h2>").append(expansion.getTitle()).append(" ").append(expansion.getVersion()).append("</h2>");
+            sb.append("<table border=\"0\"><tr>");
+            sb.append("<td>Title</td><td colspan=\"4\">").append(expansion.getTitle()).append("</td>");
+            sb.append("</tr><tr>");
+            sb.append("<td valign=\"top\">Description</td><td colspan=\"3\" valign=\"top\">").append(expansion.getDescription()).append("</td>");
+            sb.append("</tr><tr>");
+            sb.append("<td>Version</td><td>").append(expansion.getVersion()).append("</td><td>Category</td><td>").append(expansion.getCategory()).append("</td><td></td>");
+            sb.append("</tr><tr>");
+            sb.append("<td>Size</td><td>").append(Util.humanreadableSize(expansion.getFileSize())).append("</td><td>Author</td><td>").append(expansion.getAuthor()).append("</td><td></td>");
+            sb.append("</tr><tr>");
+            sb.append("<td>Local File</td><td colspan=\"3\">").append(expansion.getLocalFile()).append("</td>");
+            sb.append("</tr><tr>");
+            sb.append("<td>Download&nbsp;URL</td><td colspan=\"3\">").append(expansion.getDownloadUrl()).append("</td>");
+            sb.append("</tr></table>");
 
-        if (expansion.getEMStatus().isConflicting()) {
-            sb.append("<h2>Conflicting with</h2>");
-            sb.append("<table>");
-            List<Expansion> cs = expansion.getEMStatus().getConflicting();
-            if (cs == null || cs.isEmpty()) {
-                sb.append("<tr><td>Other expansions declare conflicts with this one</td></tr>");
-            } else {
-                for (Expansion e: cs) {
+            if (expansion.getEMStatus().isConflicting()) {
+                sb.append("<h2>Conflicting with</h2>");
+                sb.append("<table>");
+                List<Expansion> cs = expansion.getEMStatus().getConflicting();
+                if (cs == null || cs.isEmpty()) {
+                    sb.append("<tr><td>Other expansions declare conflicts with this one</td></tr>");
+                } else {
+                    for (Expansion e: cs) {
+                        sb.append("<tr><td>").append(e.getTitle()).append(" ").append(e.getVersion()).append("</td></tr>");
+                    }
+                }
+                sb.append("</table>");
+            }
+            if (expansion.getEMStatus().isIncompatible()) {
+                sb.append("<h2>Incompatible!</h2>");
+            }
+            if (expansion.getEMStatus().isMissingDeps()) {
+                sb.append("<h2>Missing Dependencies</h2>");
+                sb.append("<table>");
+                for (Expansion e: expansion.getEMStatus().getMissing()) {
                     sb.append("<tr><td>").append(e.getTitle()).append(" ").append(e.getVersion()).append("</td></tr>");
                 }
+                sb.append("</table>");
             }
-            sb.append("</table>");
-        }
-        if (expansion.getEMStatus().isIncompatible()) {
-            sb.append("<h2>Incompatible!</h2>");
-        }
-        if (expansion.getEMStatus().isMissingDeps()) {
-            sb.append("<h2>Missing Dependencies</h2>");
-            sb.append("<table>");
-            for (Expansion e: expansion.getEMStatus().getMissing()) {
-                sb.append("<tr><td>").append(e.getTitle()).append(" ").append(e.getVersion()).append("</td></tr>");
+            if (expansion.getEMStatus().isCurrentlyRequired()) {
+                addCurrentlyRequired(expansion, sb);
             }
-            sb.append("</table>");
-        }
-        if (expansion.getEMStatus().isCurrentlyRequired()) {
-            addCurrentlyRequired(expansion, sb);
-        }
-        if (!expansion.getEMStatus().isLatest()) {
-            Expansion exp = expansion.getEMStatus().getLatest();
-            sb.append("<h2>Update to</h2>");
-            sb.append("<h3>").append(exp.getTitle()).append(" ").append(exp.getVersion()).append("</h3>");
-            sb.append("<table border=\"0\"><tr>");
-            sb.append("<td>Title</td><td colspan=\"4\">").append(exp.getTitle()).append("</td>");
-            sb.append("</tr><tr>");
-            sb.append("<td valign=\"top\">Description</td><td colspan=\"3\" valign=\"top\">").append(exp.getDescription()).append("</td>");
-            sb.append("</tr><tr>");
-            sb.append("<td>Version</td><td>").append(exp.getVersion()).append("</td><td>Category</td><td>").append(exp.getCategory()).append("</td><td></td>");
-            sb.append("</tr><tr>");
-            sb.append("<td>Size</td><td>").append(Util.humanreadableSize(exp.getFileSize())).append("</td><td>Author</td><td>").append(exp.getAuthor()).append("</td><td></td>");
-            sb.append("</tr><tr>");
-            sb.append("<td>Local File</td><td colspan=\"3\">").append(exp.getLocalFile()).append("</td>");
-            sb.append("</tr><tr>");
-            sb.append("<td>Download&nbsp;URL</td><td colspan=\"3\">").append(exp.getDownloadUrl()).append("</td>");
-            sb.append("</tr></table>");
+            if (!expansion.getEMStatus().isLatest()) {
+                Expansion exp = expansion.getEMStatus().getLatest();
+                sb.append("<h2>Update to</h2>");
+                sb.append("<h3>").append(exp.getTitle()).append(" ").append(exp.getVersion()).append("</h3>");
+                sb.append("<table border=\"0\"><tr>");
+                sb.append("<td>Title</td><td colspan=\"4\">").append(exp.getTitle()).append("</td>");
+                sb.append("</tr><tr>");
+                sb.append("<td valign=\"top\">Description</td><td colspan=\"3\" valign=\"top\">").append(exp.getDescription()).append("</td>");
+                sb.append("</tr><tr>");
+                sb.append("<td>Version</td><td>").append(exp.getVersion()).append("</td><td>Category</td><td>").append(exp.getCategory()).append("</td><td></td>");
+                sb.append("</tr><tr>");
+                sb.append("<td>Size</td><td>").append(Util.humanreadableSize(exp.getFileSize())).append("</td><td>Author</td><td>").append(exp.getAuthor()).append("</td><td></td>");
+                sb.append("</tr><tr>");
+                sb.append("<td>Local File</td><td colspan=\"3\">").append(exp.getLocalFile()).append("</td>");
+                sb.append("</tr><tr>");
+                sb.append("<td>Download&nbsp;URL</td><td colspan=\"3\">").append(exp.getDownloadUrl()).append("</td>");
+                sb.append("</tr></table>");
+            }
         }
         sb.append("</html>");
         jEditorPane1.setText(sb.toString());

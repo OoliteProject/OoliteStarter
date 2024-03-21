@@ -22,6 +22,7 @@ import javax.swing.SwingWorker;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
+import oolite.starter.model.Command;
 import oolite.starter.model.Expansion;
 import oolite.starter.model.Installation;
 import oolite.starter.model.ProcessData;
@@ -195,6 +196,9 @@ public class MainFrame extends javax.swing.JFrame {
     private ExpansionPanel ep2;
     private InstallationsPanel ip;
     
+    private boolean expansionMangagerActive;
+    private boolean ooliteActive;
+    
     /**
      * Creates new form MainFrame.
      */
@@ -227,15 +231,8 @@ public class MainFrame extends javax.swing.JFrame {
             public void statusChanged(Oolite2.Status status) {
                 log.warn("statusChanged({})", status);
                 
-                if (status == Oolite2.Status.INITIALIZING) {
-                    getContentPane().setEnabled(false);
-                    jProgressBar1.setIndeterminate(true);
-                    jProgressBar1.setString("rescanning...");
-                    jProgressBar1.setVisible(true);
-                } else {
-                    jProgressBar1.setVisible(false);
-                    getContentPane().setEnabled(true);
-                }
+                ooliteActive = status == Oolite2.Status.INITIALIZING;
+                updateBackgroundProcessIndicator();
             }
 
             @Override
@@ -273,6 +270,15 @@ public class MainFrame extends javax.swing.JFrame {
         jTabbedPane1.add(sgp);
 
         ExpansionManager em = ExpansionManager.getInstance();
+        em.addExpansionManagerListener(new ExpansionManager.ExpansionManagerListener() {
+            @Override
+            public void updateStatus(ExpansionManager.Status status, List<Command> queue) {
+                log.warn("updateStatus({}, {})", status, queue);
+                
+                expansionMangagerActive = status.activity() == ExpansionManager.Activity.PROCESSING;
+                updateBackgroundProcessIndicator();
+            }
+        });
         em.start();
 
         JSplitPane expansions = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
@@ -331,6 +337,19 @@ public class MainFrame extends javax.swing.JFrame {
             }
             
         });
+    }
+    
+    private void updateBackgroundProcessIndicator() {
+        if (ooliteActive || expansionMangagerActive) {
+            getContentPane().setEnabled(false);
+            jProgressBar1.setIndeterminate(true);
+            jProgressBar1.setString("rescanning...");
+            jProgressBar1.setVisible(true);
+        } else {
+            ooliteActive = false;
+            jProgressBar1.setVisible(false);
+            getContentPane().setEnabled(true);
+        }
     }
 
     /**

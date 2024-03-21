@@ -149,7 +149,7 @@ public class Oolite implements PropertyChangeListener {
         boolean minOk = false;
         boolean maxOk = false;
 
-        log.info("expVersion {}", expVersion);
+        log.trace("expVersion {}", expVersion);
         if (minVersion == null) {
             // we have not even a minimum version? Then all versions match
             minOk = true;
@@ -292,7 +292,7 @@ public class Oolite implements PropertyChangeListener {
         expansions.stream()
             .filter(t -> t.isEnabled())
             .forEach(expansion -> {
-                log.info("Fetching conflicts for {}:{}...", expansion.getIdentifier(), expansion.getVersion());
+                log.trace("Fetching conflicts for {}:{}...", expansion.getIdentifier(), expansion.getVersion());
                 try {
                     List<Expansion.Dependency> conflictDeps = expansion.getConflictOxps();
                     if (conflictDeps != null) {
@@ -1617,7 +1617,7 @@ public class Oolite implements PropertyChangeListener {
         for (Expansion expansion: expansions) {
             String i = expansion.getIdentifier() + ":" + expansion.getVersion();
             if (expansion.isLocal() && expansion.isEnabled() && !enabledAddons.containsKey(i)) {
-                result.add(new Command(Command.Action.DISABLE, expansion));
+                result.add(new Command(Command.Action.DELETE, expansion));
             }
         }
         
@@ -1783,7 +1783,7 @@ public class Oolite implements PropertyChangeListener {
                     // for one dependency we may get several matches. If any of those
                     // is installed, we are good.
                     if (ds.size() > 1) {
-                        log.info("Expansion {} depends on {}", expansion, ds);
+                        log.trace("Expansion {} depends on {}", expansion, ds);
                     }
                     boolean enabled = false;
                     for (Expansion d: ds) {
