@@ -598,7 +598,7 @@ public class ExpansionsPanel2 extends javax.swing.JPanel implements Oolite2.Ooli
      */
     @Override
     public void statusChanged(Oolite2.Status status) {
-        log.warn("statusChanged({})", status);
+        log.debug("statusChanged({})", status);
     }
 
     /**

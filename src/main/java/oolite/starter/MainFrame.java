@@ -33,6 +33,7 @@ import oolite.starter.ui.MrGimlet;
 import oolite.starter.ui.SplashPanel;
 import oolite.starter.ui.StartGamePanel;
 import oolite.starter.ui2.ExpansionPanel;
+import oolite.starter.ui2.ExpansionSetPanel;
 import oolite.starter.ui2.ExpansionsPanel2;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -212,7 +213,7 @@ public class MainFrame extends javax.swing.JFrame {
             configuration = new Configuration(confFile);
         } else {
             String msg = String.format("<html><p>Heho, Kid! You've got a problem here that is technical, not financial.</p><p>The configuration file %s was not found.</p><p>I’m a busy frog, I can’t stay here all day to watching you poke buttons. So let's use defaults.</p></html>", confFile.getAbsolutePath());
-            log.warn(msg);
+            log.trace(msg);
             
             MrGimlet.showMessage(null, msg, 0);
             
@@ -229,7 +230,7 @@ public class MainFrame extends javax.swing.JFrame {
             
             @Override
             public void statusChanged(Oolite2.Status status) {
-                log.warn("statusChanged({})", status);
+                log.debug("statusChanged({})", status);
                 
                 ooliteActive = status == Oolite2.Status.INITIALIZING;
                 updateBackgroundProcessIndicator();
@@ -237,17 +238,17 @@ public class MainFrame extends javax.swing.JFrame {
 
             @Override
             public void launched(ProcessData pd) {
-                log.warn("launched({})", pd);
+                log.debug("launched({})", pd);
             }
 
             @Override
             public void terminated() {
-                log.warn("terminated()");
+                log.debug("terminated()");
             }
 
             @Override
             public void activatedInstallation(Installation installation) {
-                log.warn("activatedInstallation({})", installation);
+                log.debug("activatedInstallation({})", installation);
             }
         });
         
@@ -273,7 +274,7 @@ public class MainFrame extends javax.swing.JFrame {
         em.addExpansionManagerListener(new ExpansionManager.ExpansionManagerListener() {
             @Override
             public void updateStatus(ExpansionManager.Status status, List<Command> queue) {
-                log.warn("updateStatus({}, {})", status, queue);
+                log.debug("updateStatus({}, {})", status, queue);
                 
                 expansionMangagerActive = status.activity() == ExpansionManager.Activity.PROCESSING;
                 updateBackgroundProcessIndicator();
@@ -291,6 +292,14 @@ public class MainFrame extends javax.swing.JFrame {
         esp2.addSelectionListener(ep2);
         expansions.setBottomComponent(ep2);
 
+        FlavorsPanel fp = new FlavorsPanel();
+        fp.setOolite(oolite, oolite2);
+        jTabbedPane1.add("Flavors", fp);
+        
+        ExpansionSetPanel esp = new ExpansionSetPanel();
+        esp.setOolite(oolite, oolite2);
+        jTabbedPane1.add(esp, "Expansion Set");
+        
         ip = new InstallationsPanel();
         ip.setConfiguration(configuration);
         jTabbedPane1.add(ip);
@@ -298,12 +307,6 @@ public class MainFrame extends javax.swing.JFrame {
         AboutPanel ap = new AboutPanel("text/html", getClass().getResource("/about.html"));
         jTabbedPane1.add("About", ap);
 
-        // experimental
-        
-        FlavorsPanel fp = new FlavorsPanel();
-        fp.setOolite(oolite, oolite2);
-        jTabbedPane1.add("Flavors", fp);
-        
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent event) {
@@ -343,7 +346,12 @@ public class MainFrame extends javax.swing.JFrame {
         if (ooliteActive || expansionMangagerActive) {
             getContentPane().setEnabled(false);
             jProgressBar1.setIndeterminate(true);
-            jProgressBar1.setString("rescanning...");
+            if (expansionMangagerActive) {
+                int x = ExpansionManager.getInstance().getStatus().queueSize();
+                jProgressBar1.setString("juggling %d expansions...".formatted(x));
+            } else if (ooliteActive) {
+                jProgressBar1.setString("rescanning...");
+            }
             jProgressBar1.setVisible(true);
         } else {
             ooliteActive = false;

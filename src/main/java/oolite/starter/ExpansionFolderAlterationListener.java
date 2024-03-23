@@ -74,7 +74,7 @@ public class ExpansionFolderAlterationListener implements FileAlterationListener
                         public void run() {
                             fireFoldersChanged(changes);
                         }
-                    }, "ExpansionFolderActractionListenerThread").start();
+                    }, "ExpansionFolderAlterationListenerThread").start();
                     
                 }
             }
