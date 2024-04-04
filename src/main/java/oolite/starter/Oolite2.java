@@ -450,6 +450,7 @@ public class Oolite2 {
         }
         return expansions.stream()
                 .filter(exp -> exp.getEMStatus().isUpdate())
+                .filter(exp -> !exp.isLocal())
                 .toList();
     }
 

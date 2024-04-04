@@ -29,6 +29,7 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Scanner;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
@@ -1635,6 +1636,8 @@ public class Oolite implements PropertyChangeListener {
      * @return the list of commands to get there
      */
     public List<Command> buildCommandList(List<Expansion> expansions, NodeList target) {
+        log.debug("buildCommandList({}, {})", expansions, target);
+        
         List<Command> result = new ArrayList<>();
 
         TreeMap<String, String> enabledAddons = prepareEnabledAddonsList(target);
@@ -1678,6 +1681,33 @@ public class Oolite implements PropertyChangeListener {
                     result.add(new Command(Command.Action.INSTALL_ALTERNATIVE, expansion));
                 }
             }
+        }
+
+        return result;
+    }
+
+    /**
+     * Builds a list of commands that resembles the update activities to bring
+     * in the update list.
+     * 
+     * @param expansions where we are
+     * @param updates the updates we want to have
+     * @return the list of commands to get there
+     */
+    public List<Command> buildUpdateCommandList(List<Expansion> expansions, List<Expansion> updates) {
+        log.warn("buildUpdateCommandList({}, {})", expansions, updates);
+        List<Command> result = new ArrayList<>();
+        
+        for (Expansion u: updates) {
+            // uninstall what we want to replace
+            Optional<Expansion> old = expansions.stream()
+                    .filter(exp -> u.getIdentifier().equals(exp.getIdentifier()))
+                    .findFirst();
+            result.add(new Command(Command.Action.DELETE, old.get()));
+            
+            
+            // install the new one
+            result.add(new Command(Command.Action.INSTALL, u));
         }
 
         return result;

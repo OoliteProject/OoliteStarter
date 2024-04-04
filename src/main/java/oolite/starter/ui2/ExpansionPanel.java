@@ -136,6 +136,10 @@ public class ExpansionPanel extends javax.swing.JPanel implements ExpansionsPane
                 sb.append("<td>Download&nbsp;URL</td><td colspan=\"3\">").append(exp.getDownloadUrl()).append("</td>");
                 sb.append("</tr></table>");
             }
+            if (expansion.getEMStatus().isUpdate()) {
+                sb.append("<h2>Update</h2>");
+                sb.append("<p>Install this as update.</p>");
+            }
         }
         sb.append("</html>");
         jEditorPane1.setText(sb.toString());

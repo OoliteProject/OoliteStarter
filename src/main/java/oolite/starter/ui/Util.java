@@ -3,6 +3,7 @@
 
 package oolite.starter.ui;
 
+import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -11,7 +12,9 @@ import java.awt.event.MouseEvent;
 import java.util.List;
 import javax.swing.DefaultListModel;
 import javax.swing.JComponent;
+import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.Timer;
@@ -205,12 +208,36 @@ public class Util {
      * @return the component
      */
     public static JComponent createCommandListPanel(List<Command> commands) {
+        log.debug("createCommandListPanel({})", commands);
+        if (commands == null) {
+            throw new IllegalArgumentException("commands must not be null");
+        }
+        
         DefaultListModel<Command> dlm = new DefaultListModel<>();
         dlm.addAll(commands);
         JList<Command> list = new JList<>(dlm);
         JScrollPane jsp = new JScrollPane(list);
         list.setCellRenderer(new CommandCellRenderer());
         return jsp;
+    }
+    
+    /**
+     * Creates a component to show a list of commands and introductory text to the user.
+     * 
+     * @param commands the commands to show
+     * @return the component
+     */
+    public static JComponent createCommandListPanel(List<Command> commands, String text) {
+        log.debug("createCommandListPanel({})", commands);
+        if (commands == null) {
+            throw new IllegalArgumentException("commands must not be null");
+        }
+
+        JPanel p = new JPanel();
+        p.setLayout(new BorderLayout(0, 10));
+        p.add(new JLabel(text), BorderLayout.NORTH);
+        p.add(createCommandListPanel(commands), BorderLayout.CENTER);
+        return p;
     }
     
 }
