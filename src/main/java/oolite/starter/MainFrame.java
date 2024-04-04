@@ -135,7 +135,9 @@ public class MainFrame extends javax.swing.JFrame {
                     // point user to creating an active installation
                     mf.jTabbedPane1.setEnabledAt(0, false);
                     mf.jTabbedPane1.setEnabledAt(1, false);
-                    mf.jTabbedPane1.setSelectedIndex(2);
+                    mf.jTabbedPane1.setEnabledAt(2, false);
+                    mf.jTabbedPane1.setEnabledAt(3, false);
+                    mf.jTabbedPane1.setSelectedIndex(4);
 
                     StringBuilder message = new StringBuilder("<html>");
                     message.append("<p>I see a lot of blanks on this here board... Kid, you gotta do something about it.</p>");
@@ -148,7 +150,9 @@ public class MainFrame extends javax.swing.JFrame {
                     // point user to creating an active installation
                     mf.jTabbedPane1.setEnabledAt(0, false);
                     mf.jTabbedPane1.setEnabledAt(1, false);
-                    mf.jTabbedPane1.setSelectedIndex(2);
+                    mf.jTabbedPane1.setEnabledAt(2, false);
+                    mf.jTabbedPane1.setEnabledAt(3, false);
+                    mf.jTabbedPane1.setSelectedIndex(4);
 
                     StringBuilder message = new StringBuilder("<html>");
                     message.append("<p>Much better, son. But there is still something to do:</p>");

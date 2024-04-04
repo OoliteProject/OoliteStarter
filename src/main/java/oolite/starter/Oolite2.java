@@ -270,11 +270,11 @@ public class Oolite2 {
 
                 // fire update events to clients
                 fire();
-
-                status = Status.INITIALIZED;
-                SwingUtilities.invokeLater(Oolite2.this::fireStatusChanged);
             } catch (Exception e) {
                 log.error("Problem in deferred initialization", e);
+            } finally {
+                status = Status.INITIALIZED;
+                SwingUtilities.invokeLater(Oolite2.this::fireStatusChanged);
             }
         }).start();
     }

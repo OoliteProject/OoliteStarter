@@ -29,6 +29,7 @@ public class ExpansionCellRenderer extends JLabel implements ListCellRenderer<Ex
     private final Border normalBorder = new CompoundBorder(new MatteBorder(0, 4, 0, 0, getBackground()), emtpyBorder);
     private final Border warningBorder = new CompoundBorder(new MatteBorder(0, 4, 0, 0, Color.ORANGE), emtpyBorder);
     private final Border problemBorder = new CompoundBorder(new MatteBorder(0, 4, 0, 0, Color.RED), emtpyBorder);
+    private final Border updateBorder = new CompoundBorder(new MatteBorder(0, 4, 0, 0, Color.BLUE), emtpyBorder);
     
     /**
      * Creates a new ExpansionCellRenderer.
@@ -54,6 +55,8 @@ public class ExpansionCellRenderer extends JLabel implements ListCellRenderer<Ex
 
             if (expansion.getEMStatus().isConflicting() || expansion.getEMStatus().isMissingDeps()) {
                 setBorder(problemBorder);
+            } else if (expansion.getEMStatus().isUpdate()) {
+                setBorder(updateBorder);
             } else if (expansion.getEMStatus().isCurrentlyRequired()) {
                 setBorder(warningBorder);
             } else  {

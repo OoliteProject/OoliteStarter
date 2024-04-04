@@ -13,10 +13,6 @@
         <sonar.coverage.jacoco.xmlReportPaths>${project.basedir}/target/site/jacoco-aggregate/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
         <sonar.junit.reportsPath>target/surefire-reports/TEST-*.xml</sonar.junit.reportsPath>
         <sonar.tests>src/test/java</sonar.tests>
-        
-        <macos.jvm.file>microsoft-jdk-17.0.7-macOS-x64.tar.gz</macos.jvm.file>
-        <macos.jvm.version>jdk-17.0.7</macos.jvm.version>
-        <macos.jvm.url>https://aka.ms/download-jdk/${macos.jvm.file}</macos.jvm.url>
     </properties>
     
     <build>
@@ -25,7 +21,7 @@
                 <plugin>
                     <groupId>org.antlr</groupId>
                     <artifactId>antlr4-maven-plugin</artifactId>
-                    <version>4.3</version>
+                    <version>4.9</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -253,7 +249,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.3.2</version>
+                <version>3.11.0</version>
                 <configuration>
                     <showDeprecation>true</showDeprecation>
                 </configuration>
@@ -311,7 +307,7 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-junit-jupiter</artifactId>
-            <version>5.2.0</version>
+            <version>5.11.0</version>
             <scope>test</scope>
         </dependency>
 
