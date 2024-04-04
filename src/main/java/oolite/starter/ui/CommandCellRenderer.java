@@ -32,13 +32,20 @@ public class CommandCellRenderer extends JPanel implements ListCellRenderer<Comm
     private static final ImageIcon iiError = new ImageIcon(ExpansionReferenceCellRenderer.class.getResource("/icons/report_FILL0_wght400_GRAD0_opsz24_red.png"));
     private static final ImageIcon iiWarn = new ImageIcon(ExpansionReferenceCellRenderer.class.getResource("/icons/warning_FILL0_wght400_GRAD0_opsz24_orange.png"));
     private static final ImageIcon iiKeep = new ImageIcon(ExpansionReferenceCellRenderer.class.getResource("/icons/check_circle_FILL0_wght400_GRAD0_opsz24.png"));
+
+    private static final ImageIcon iiPending = new ImageIcon(ExpansionReferenceCellRenderer.class.getResource("/icons/pending_FILL0_wght400_GRAD0_opsz24.png"));
+    private static final ImageIcon iiDownloading = new ImageIcon(ExpansionReferenceCellRenderer.class.getResource("/icons/downloading_FILL0_wght400_GRAD0_opsz24.png"));
     
-    private JLabel lbIcon;
     private JLabel lbAction;
     private JLabel lbTitle;
+    private JLabel lbStatus;
     
     /**
      * Creates a new CommandCellRenderer.
+     * It shows the fields:
+     *  - action
+     *  - title
+     *  - status
      */
     public CommandCellRenderer() {
         log.debug("CommandCellRenderer()");
@@ -46,49 +53,49 @@ public class CommandCellRenderer extends JPanel implements ListCellRenderer<Comm
         setOpaque(true);
         setLayout(new GridBagLayout());
         
-        lbIcon = new JLabel(iiWarn);
-        lbIcon.setOpaque(false);
-        add(lbIcon, new GridBagConstraints(0, 0, 1, 1, 0, 0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0,5,0,5), 0, 0));
-        
-        lbIcon.setOpaque(false);
         lbAction = new JLabel();
-        add(lbAction, new GridBagConstraints(1, 0, 1, 1, 0, 0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0,5,0,5), 0, 0));
+        lbAction.setOpaque(false);
+        add(lbAction, new GridBagConstraints(0, 0, 1, 1, 0, 0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0,5,0,5), 0, 0));
         
         lbTitle = new JLabel();
         lbTitle.setOpaque(false);
-        add(lbTitle, new GridBagConstraints(2, 0, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0,5,0,5), 0, 0));
+        add(lbTitle, new GridBagConstraints(1, 0, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0,5,0,5), 0, 0));
+        
+        lbStatus = new JLabel(iiWarn);
+        lbStatus.setOpaque(false);
+        add(lbStatus, new GridBagConstraints(2, 0, 1, 1, 0, 0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0,5,0,5), 0, 0));
         
     }
 
     @Override
     public Component getListCellRendererComponent(JList<? extends Command> list, Command command, int index, boolean isSelected, boolean isFocused) {
-        String a = String.valueOf(command.getAction());
+        String a = ""; //String.valueOf(command.getAction());
         String b = command.getExpansion().getTitle() + " @ " + command.getExpansion().getVersion();
         switch (command.getAction()) {
             case INSTALL:
-                lbIcon.setIcon(iiInstall);
+                lbAction.setIcon(iiInstall);
                 break;
             case INSTALL_ALTERNATIVE:
-                lbIcon.setIcon(iiWarn);
+                lbAction.setIcon(iiWarn);
                 break;
             case ENABLE:
-                lbIcon.setIcon(iiEnable);
+                lbAction.setIcon(iiEnable);
                 break;
             case KEEP:
-                lbIcon.setIcon(iiKeep);
+                lbAction.setIcon(iiKeep);
                 break;
             case UNKNOWN:
-                lbIcon.setIcon(iiError);
+                lbAction.setIcon(iiError);
                 b += " - Have no download URL";
                 break;
             case DISABLE:
-                lbIcon.setIcon(iiDisable);
+                lbAction.setIcon(iiDisable);
                 break;
             case DELETE:
-                lbIcon.setIcon(iiDelete);
+                lbAction.setIcon(iiDelete);
                 break;
             default:
-                lbIcon.setIcon(null);
+                lbAction.setIcon(null);
         }
         if (command.getState() == SwingWorker.StateValue.DONE) {
             try {
@@ -101,12 +108,24 @@ public class CommandCellRenderer extends JPanel implements ListCellRenderer<Comm
                 a = a + " Exception";
                 b = b + "\n" + e.getMessage();
             }
-        } else {
-            a = a + " " + command.getState();
+//        } else {
+//            a = a + " " + command.getState();
         }
         
         if (command.getException() != null) {
             b += " - " + command.getException().getMessage();
+        }
+        
+        switch (command.getState()) {
+            case PENDING:
+                lbStatus.setIcon(iiPending);
+                break;
+            case STARTED:
+                lbStatus.setIcon(iiDownloading);
+                break;
+            case DONE:
+                lbStatus.setIcon(iiKeep);
+                break;
         }
         
         lbAction.setText(a);

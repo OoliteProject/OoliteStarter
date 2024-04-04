@@ -1486,12 +1486,20 @@ public class Oolite implements PropertyChangeListener {
      */
     public void remove(Expansion expansion) throws IOException {
         log.debug("remove({})", expansion);
+        if (expansion == null) {
+            throw new IllegalArgumentException("Expansion must not be null");
+        }
 
-        log.debug("Remove {}", expansion.getLocalFile());
-        if (expansion.getLocalFile().isDirectory()) {
-            FileUtils.deleteDirectory(expansion.getLocalFile());
+        File localFile = expansion.getLocalFile();
+        if (localFile == null) {
+            log.warn("Expansion is not locally installed? {}", expansion);
         } else {
-            FileUtils.delete(expansion.getLocalFile());
+            log.debug("Remove {}", localFile);
+            if (localFile.isDirectory()) {
+                FileUtils.deleteDirectory(expansion.getLocalFile());
+            } else {
+                FileUtils.delete(expansion.getLocalFile());
+            }
         }
         expansion.setLocalFile(null);
     }
