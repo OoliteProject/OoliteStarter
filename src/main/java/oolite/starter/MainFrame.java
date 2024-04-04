@@ -266,6 +266,8 @@ public class MainFrame extends javax.swing.JFrame {
 
                 jTabbedPane1.setEnabledAt(0, i != null);
                 jTabbedPane1.setEnabledAt(1, i != null);
+                jTabbedPane1.setEnabledAt(2, i != null);
+                jTabbedPane1.setEnabledAt(3, i != null);
             }
         });
         setInstallationTitle(configuration.getActiveInstallation());

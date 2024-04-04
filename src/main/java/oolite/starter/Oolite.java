@@ -1617,7 +1617,9 @@ public class Oolite implements PropertyChangeListener {
         for (Expansion expansion: expansions) {
             String i = expansion.getIdentifier() + ":" + expansion.getVersion();
             if (expansion.isLocal() && expansion.isEnabled() && !enabledAddons.containsKey(i)) {
-                result.add(new Command(Command.Action.DELETE, expansion));
+                if (!"org.oolite.oolite.debug".equals(expansion.getIdentifier())) {
+                    result.add(new Command(Command.Action.DELETE, expansion));
+                }
             }
         }
         
