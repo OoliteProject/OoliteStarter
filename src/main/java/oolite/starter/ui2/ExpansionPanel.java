@@ -60,7 +60,8 @@ public class ExpansionPanel extends javax.swing.JPanel implements ExpansionsPane
     // End of variables declaration//GEN-END:variables
 
     void addCurrentlyRequired(Expansion expansion, StringBuilder sb) {
-        sb.append("<h2>Required by</h2>");
+        sb.append("<h2><font color=\"ffc800\">■</font> Required by</h2>");
+        sb.append("<p>Do not remove. Otherwise the following other expantions will not work correctly due to missing dependencies:</p>");
         sb.append("<table>");
         for (Expansion e: expansion.getEMStatus().getRequiredBy()) {
             if (e.isEnabled()) {
@@ -92,7 +93,8 @@ public class ExpansionPanel extends javax.swing.JPanel implements ExpansionsPane
             sb.append("</tr></table>");
 
             if (expansion.getEMStatus().isConflicting()) {
-                sb.append("<h2>Conflicting with</h2>");
+                sb.append("<h2><font color=\"ff0000\">■</font> Conflicting with</h2>");
+                sb.append("<p>This expansion is known to not work together with the following ones. Decide which to keep, otherwise Oolite has to decide what to load on startup.</p>");
                 sb.append("<table>");
                 List<Expansion> cs = expansion.getEMStatus().getConflicting();
                 if (cs == null || cs.isEmpty()) {
@@ -105,10 +107,12 @@ public class ExpansionPanel extends javax.swing.JPanel implements ExpansionsPane
                 sb.append("</table>");
             }
             if (expansion.getEMStatus().isIncompatible()) {
-                sb.append("<h2>Incompatible!</h2>");
+                sb.append("<h2><font color=\"ff0000\">■</font> Incompatible!</h2>");
+                sb.append("<p>This expansion is not compatible with the current version of Oolite.</p>");
             }
             if (expansion.getEMStatus().isMissingDeps()) {
-                sb.append("<h2>Missing Dependencies</h2>");
+                sb.append("<h2><font color=\"ff0000\">■</font> Missing Dependencies</h2>");
+                sb.append("<p>This expansion will not work properly due to these missing dependencies:</p>");
                 sb.append("<table>");
                 for (Expansion e: expansion.getEMStatus().getMissing()) {
                     sb.append("<tr><td>").append(e.getTitle()).append(" ").append(e.getVersion()).append("</td></tr>");
@@ -120,7 +124,8 @@ public class ExpansionPanel extends javax.swing.JPanel implements ExpansionsPane
             }
             if (!expansion.getEMStatus().isLatest()) {
                 Expansion exp = expansion.getEMStatus().getLatest();
-                sb.append("<h2>Update to</h2>");
+                sb.append("<h2><font color=\"0000ff\">■</font> Update to</h2>");
+                sb.append("<p>There is an updated version available that you likely want to install.</p>");
                 sb.append("<h3>").append(exp.getTitle()).append(" ").append(exp.getVersion()).append("</h3>");
                 sb.append("<table border=\"0\"><tr>");
                 sb.append("<td>Title</td><td colspan=\"4\">").append(exp.getTitle()).append("</td>");
@@ -137,7 +142,7 @@ public class ExpansionPanel extends javax.swing.JPanel implements ExpansionsPane
                 sb.append("</tr></table>");
             }
             if (expansion.getEMStatus().isUpdate()) {
-                sb.append("<h2>Update</h2>");
+                sb.append("<h2><font color=\"0000ff\">■</font> Update</h2>");
                 sb.append("<p>Install this as update.</p>");
             }
         }
