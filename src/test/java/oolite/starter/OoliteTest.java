@@ -1576,7 +1576,7 @@ public class OoliteTest {
         log.info("Received list: {}", list);
         assertEquals(4, list.size());
         assertEquals("Vanilla", list.get(0).getName());
-        assertEquals("Play Oolite as close as possible to th original Elite.", list.get(0).getDescription());
+        assertEquals("Play Oolite as close as possible to the original Elite.", list.get(0).getDescription());
         assertEquals("https://addons.oolite.space/api/1.0/flavors/Vanilla.oolite-es", list.get(0).getExpansionSetUrl().toString());
     }
 

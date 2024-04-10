@@ -629,7 +629,7 @@ public class Oolite implements PropertyChangeListener {
     }
     
     /**
-     * Runs Oolite.
+     * Runs Oolite and waits until Oolite has terminated.
      */
     public void run() throws IOException, InterruptedException, ProcessRunException {
         log.debug("run()");
@@ -749,7 +749,8 @@ public class Oolite implements PropertyChangeListener {
     }
     
     /**
-     * Runs Oolite using the specified command in the specified directory.
+     * Runs Oolite using the specified command in the specified directory,
+     * and waits until Oolite has terminated.
      */
     public void run(List<String> command, File dir) throws IOException, InterruptedException, ProcessRunException {
         log.debug("run({}, {})", command, dir);
@@ -1220,7 +1221,7 @@ public class Oolite implements PropertyChangeListener {
         
         for (URL url: configuration.getExpansionManagerURLs()) {
             log.debug("downloading {}", url);
-
+            
             URLConnection urlconnection = url.openConnection();
             if (urlconnection instanceof HttpURLConnection conn) {
                 conn.setReadTimeout(5000);
