@@ -101,19 +101,6 @@ public class MainFrame extends javax.swing.JFrame {
             List<Expansion> updates = mf.oolite2.getUpdates();
 
             if (!updates.isEmpty()) {
-//                StringBuilder message = new StringBuilder("<html>");
-//                message.append("<p>Good news for you, my son: Updated expansions are available.<br/>Have a look at</p>");
-//                message.append("<ul>");
-//                for (Expansion exp: updates) {
-//                    message.append("<li>");
-//                    message.append(exp.getTitle()).append(" version ").append(exp.getVersion());
-//                    message.append("</li>");
-//                }
-//                message.append("</ul>");
-//                message.append("</html>");
-//
-//                MrGimlet.showMessage(mf.getRootPane(), message.toString(), 5000);
-
                 List<Command> plan = mf.oolite.buildUpdateCommandList(mf.oolite2.getExpansions(), updates);
                 // have user approve the plan
                 if (JOptionPane.showConfirmDialog(mf, Util.createCommandListPanel(plan, "Updated expansions are available. Do you want to install them?"), "Confirm these actions...", JOptionPane.OK_CANCEL_OPTION)==JOptionPane.OK_OPTION) {
@@ -175,22 +162,24 @@ public class MainFrame extends javax.swing.JFrame {
                     boolean foundSomething = false;
                     // we always have an installation as the other case is above
                     
-                    // check for Oolite version
-                    Installation i = mf.getConfiguration().getActiveInstallation();
-                    foundSomething = ovc.maybeAnnounceUpdate(mf.getRootPane(), ModuleDescriptor.Version.parse(i.getVersion()));
-
                     if (!foundSomething) {
                         // check for OoliteStarter version
                         foundSomething = gvc.maybeAnnounceUpdate(mf.getRootPane());
                     }
 
                     if (!foundSomething) {
-                        // check for expansion update
-                        foundSomething = maybeAnnounceExpansionUpdate(mf);
+                        // check for Oolite version
+                        Installation i = mf.getConfiguration().getActiveInstallation();
+                        foundSomething = ovc.maybeAnnounceUpdate(mf.getRootPane(), ModuleDescriptor.Version.parse(i.getVersion()));
                     }
 
                     if (foundSomething) {
                         log.trace("Notified user about upgrades");
+                    }
+
+                    if (!foundSomething) {
+                        // check for expansion update
+                        foundSomething = maybeAnnounceExpansionUpdate(mf);
                     }
                 }
 
