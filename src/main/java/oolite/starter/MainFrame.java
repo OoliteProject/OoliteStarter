@@ -20,6 +20,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JSplitPane;
 import javax.swing.SwingWorker;
 import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
 import oolite.starter.model.Command;
@@ -347,6 +349,16 @@ public class MainFrame extends javax.swing.JFrame {
                 System.exit(0);
             }
             
+        });
+        
+        jTabbedPane1.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent ce) {
+                log.info("stateChanged({})", ce);
+                if (jTabbedPane1.getSelectedIndex() == 2) {
+                    MrGimlet.showMessage(jTabbedPane1, "Flavours are collections of expansions which bend your Ooniverse in a particular way.<br/>These collections are not sacrosanct - use the Expansions tab to add or remove expansions until you have attained your desired utopia!<br/>You can save your collection by using the 'Expansion Set' tab.");
+                }
+            }
         });
     }
     

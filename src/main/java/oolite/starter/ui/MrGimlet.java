@@ -59,7 +59,7 @@ public class MrGimlet {
      * Shows a message in Mr Gimlet style.
      * 
      * @param parentComponent the parent window that should be blocked by this modal dialog
-     * @param message The message to show
+     * @param message The message to show. It will be rendered as HTML 3 text.
      */
     public static void showMessage(Component parentComponent, String message) {
         showMessage(parentComponent, message, 4000);
@@ -69,7 +69,7 @@ public class MrGimlet {
      * Shows a message in Mr Gimlet style.
      * 
      * @param parentComponent the parent window that should be blocked by this modal dialog
-     * @param message The message to show
+     * @param message The message to show. It will be rendered as HTML 3 text.
      */
     public static void showMessage(Component parentComponent, String message, Icon image) {
         showMessage(parentComponent, message, 4000, image);
@@ -79,7 +79,7 @@ public class MrGimlet {
      * Shows a message in Mr Gimlet style.
      * 
      * @param parentComponent the parent window that should be blocked by this modal dialog
-     * @param message The message to show
+     * @param message The message to show. It will be rendered as HTML 3 text.
      */
     public static void showMessage(Component parentComponent, String message, int fadeMillis) {
         log.debug("showMessage({}, {}, {})", parentComponent, message, fadeMillis);
@@ -90,7 +90,7 @@ public class MrGimlet {
      * Shows a message in Mr Gimlet style.
      * 
      * @param parentComponent the parent window that should be blocked by this modal dialog
-     * @param message The message to show
+     * @param message The message to show. It will be rendered as HTML 3 text.
      */
     public static void showMessage(Component parentComponent, String message, int fadeMillis, Icon image) {
         JEditorPane jep = new JEditorPane("text/html", message);

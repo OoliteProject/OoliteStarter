@@ -126,8 +126,6 @@ public class FlavorsPanel extends javax.swing.JPanel {
         jList1 = new javax.swing.JList<>();
 
         setLayout(new java.awt.GridBagLayout());
-
-        jLabel1.setText("<html>'Flavours' are collections of expansions which bend your Ooniverse in a particular way. These collections are not sacrosanct - use the Expansions tab to add or remove expansions until you have attained your desired utopia! You can save your collection by using the 'Expansion Set' tab.</html>");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
