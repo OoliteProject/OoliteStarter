@@ -221,11 +221,15 @@ Not available in the current version.
 
 ### Flavors
 
+![](src/main/resources-ext/images/screenshots/Flavors.png)
+
 Flavors are predefined sets of expansions. You can install a flavor simply by
 doubleclicking it on the list. OoliteStarter will automatically compute which
 expansions need to be removed or installed and show a list for your approval.
 
 ### Expansion Set
+
+![](src/main/resources-ext/images/screenshots/ExpansionSet.png)
 
 You can save your set of currently installed expansions into a file.
 Keep it somewhere, or share it with others. When loading such a file, 
