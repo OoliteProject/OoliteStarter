@@ -3,11 +3,9 @@
 package oolite.starter.ui;
 
 import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.MouseAdapter;
 import java.io.File;
 import java.nio.file.Files;
 import java.util.ArrayList;
@@ -61,6 +59,7 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
     }
 
     private int previousWindowState;
+    private DimAroundCenteredPanel glassPanel;
     private WaitPanel waitPanel;
     private RunState runState = RunState.IDLE;
 
@@ -299,8 +298,9 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
                         Thread.currentThread().interrupt();
                     } catch (Exception e) {
                         log.error(STARTGAMEPANEL_COULD_NOT_RUN_GAME, e);
-                        hideWaitPanel();
                         JOptionPane.showMessageDialog(StartGamePanel.this, constructMessage(STARTGAMEPANEL_COULD_NOT_RUN_GAME, e), "Error on Oolite", JOptionPane.ERROR_MESSAGE);
+                    } finally {
+                        hideWaitPanel();
                     }
                 }
             }.start();
@@ -341,8 +341,9 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
                         Thread.currentThread().interrupt();
                     } catch (Exception e) {
                         log.error(STARTGAMEPANEL_COULD_NOT_RUN_GAME, e);
-                        hideWaitPanel();
                         JOptionPane.showMessageDialog(StartGamePanel.this, constructMessage(STARTGAMEPANEL_COULD_NOT_RUN_GAME, e), "Error on Oolite", JOptionPane.ERROR_MESSAGE);
+                    } finally {
+                        hideWaitPanel();
                     }
                 }
             }.start();
@@ -407,20 +408,16 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
     private void showWaitPanel() {
 
         JFrame f = (JFrame) SwingUtilities.getWindowAncestor(this);
-        if (waitPanel == null) {
-            JPanel glassPane = new JPanel() {
-                @Override
-                protected void paintComponent(Graphics g) {
-                    g.setColor(new Color(0, 0, 0, 150));
-                    g.fillRect(0, 0, getWidth(), getHeight());
-                }
-            };
-            glassPane.setLayout(new GridBagLayout());
+        if (glassPanel == null) {
             waitPanel = new WaitPanel(ooliteDriver);
-            glassPane.add(waitPanel, new GridBagConstraints(1, 1, 1, 1, 1.0d, 1.0d, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(50, 50, 50, 50), 0, 0));
-            glassPane.addMouseListener(new MouseAdapter() {
-            });
-            f.setGlassPane(glassPane);
+            glassPanel = new DimAroundCenteredPanel(waitPanel);
+
+            final JPanel glasspane = (JPanel)f.getGlassPane();
+            if (!(glasspane.getLayout() instanceof GridBagLayout)) {
+                glasspane.setLayout(new GridBagLayout());
+            }
+            glasspane.removeAll();
+            glasspane.add(glassPanel, new GridBagConstraints(1, 1, 1, 1, 1.0d, 1.0d, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
         }
         
         f.getGlassPane().setVisible(true);
@@ -429,7 +426,7 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
     private void hideWaitPanel() {
         new Thread(() -> {
             SwingUtilities.invokeLater(() -> {
-                JFrame d = (JFrame)SwingUtilities.getWindowAncestor(waitPanel);
+                JFrame d = (JFrame)SwingUtilities.getWindowAncestor(glassPanel);
                 d.setState(previousWindowState);
             });
             try {
@@ -439,8 +436,16 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
                 Thread.currentThread().interrupt();
             }
             SwingUtilities.invokeLater(() -> {
-                JFrame d = (JFrame)SwingUtilities.getWindowAncestor(waitPanel);
-                d.getGlassPane().setVisible(false);
+                if (glassPanel != null) {
+                    JFrame d = (JFrame)SwingUtilities.getWindowAncestor(glassPanel);
+
+                    final JPanel glasspane = (JPanel)d.getGlassPane();
+                    glasspane.removeAll();
+                    glasspane.setVisible(false);
+                }
+                
+                waitPanel = null;
+                glassPanel = null;
             });
         }).start();
     }

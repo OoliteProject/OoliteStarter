@@ -29,6 +29,7 @@ public class ExpansionCellRenderer extends JLabel implements ListCellRenderer<Ex
     private final Border normalBorder = new CompoundBorder(new MatteBorder(0, 4, 0, 0, getBackground()), emtpyBorder);
     private final Border warningBorder = new CompoundBorder(new MatteBorder(0, 4, 0, 0, Color.ORANGE), emtpyBorder);
     private final Border problemBorder = new CompoundBorder(new MatteBorder(0, 4, 0, 0, Color.RED), emtpyBorder);
+    private final Border updateBorder = new CompoundBorder(new MatteBorder(0, 4, 0, 0, Color.BLUE), emtpyBorder);
     
     /**
      * Creates a new ExpansionCellRenderer.
@@ -40,12 +41,29 @@ public class ExpansionCellRenderer extends JLabel implements ListCellRenderer<Ex
     @Override
     public Component getListCellRendererComponent(JList<? extends Expansion> list, Expansion expansion, int i, boolean isSelected, boolean isFocused) {
         log.debug("getListCellRendererComponent(..., {}, {})", isSelected, isFocused);
-
-        setIcon(expansionIcon);
         
-        setText("<html>%s<br>%s %s</html>".formatted(expansion.getTitle(), expansion.getVersion(), expansion.getCategory()));
-        setToolTipText("%s (%s)".formatted(expansion.getTitle(), expansion.getVersion()));
+        if (expansion == null) {
+            setText("<html>n/a</html>");
+            setToolTipText(null);
+        } else {
+            setIcon(expansionIcon);
 
+            setText("<html>%s<br>%s %s</html>".formatted(expansion.getTitle(), expansion.getVersion(), expansion.getCategory()));
+            setToolTipText("%s (%s)".formatted(expansion.getTitle(), expansion.getVersion()));
+
+            setEnabled(list.isEnabled());
+
+            if (expansion.getEMStatus().isConflicting() || expansion.getEMStatus().isMissingDeps()) {
+                setBorder(problemBorder);
+            } else if (expansion.getEMStatus().isUpdate() && !expansion.isLocal()) {
+                setBorder(updateBorder);
+            } else if (expansion.getEMStatus().isCurrentlyRequired()) {
+                setBorder(warningBorder);
+            } else  {
+                setBorder(normalBorder);
+            }
+        }
+            
         if (isSelected) {
             setBackground(list.getSelectionBackground());
             setForeground(list.getSelectionForeground());
@@ -53,16 +71,7 @@ public class ExpansionCellRenderer extends JLabel implements ListCellRenderer<Ex
             setBackground(list.getBackground());
             setForeground(list.getForeground());
         }
-        setEnabled(list.isEnabled());
-        
-        if (expansion.getEMStatus().isConflicting() || expansion.getEMStatus().isMissingDeps()) {
-            setBorder(problemBorder);
-        } else if (expansion.getEMStatus().isCurrentlyRequired()) {
-            setBorder(warningBorder);
-        } else  {
-            setBorder(normalBorder);
-        }
-            
+
         return this;
     }
 

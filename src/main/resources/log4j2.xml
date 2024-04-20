@@ -30,8 +30,12 @@
     <Logger level="info"  name="oolite.starter.generic.ListAction"/>
     <Logger level="info"  name="oolite.starter.generic.SortedListModel"/>
     <Logger level="info"  name="oolite.starter.GithubVersionChecker"/>
+    <Logger level="info"  name="oolite.starter.MainFrame"/>
+    <Logger level="info"  name="oolite.starter.MainFrame$1"/>
+    <Logger level="info"  name="oolite.starter.model.Command"/>
     <Logger level="info"  name="oolite.starter.model.OoliteFlavor"/>
     <Logger level="info"  name="oolite.starter.Oolite"/>
+    <Logger level="info"  name="oolite.starter.Oolite2"/>
     <Logger level="info"  name="oolite.starter.Oolite2.OoliteExpansionListModel"/>
     <Logger level="info"  name="oolite.starter.OoliteVersionChecker"/>
     <Logger level="info"  name="oolite.starter.ui.AnnotationRenderer"/>
@@ -45,7 +49,7 @@
     <Logger level="info"  name="oolite.starter.ui.SaveGamePanel"/>
     <Logger level="warn"  name="oolite.starter.ui.ScanOolitesSwingWorker"/>
     <Logger level="info"  name="oolite.starter.ui.SplashPanel"/>
-    <Logger level="debug" name="oolite.starter.ui.StartGamePanel"/>
+    <Logger level="info"  name="oolite.starter.ui.StartGamePanel"/>
     <Logger level="warn"  name="oolite.starter.ui.Util"/>
     <Logger level="info"  name="oolite.starter.ui.Util.BalloonHandler"/>
     <Logger level="info"  name="oolite.starter.util.FilterAndSearchUtil"/>
@@ -63,10 +67,8 @@
     <Logger level="info"  name="oolite.starter.ui2.SaveGameCellRenderer"/>
     <Logger level="info"  name="oolite.starter.ui2.StartGamePanel2"/>
     <Logger level="info"  name="oolite.starter.util.HttpUtil"/>
-    <Logger level="warn"  name="oolite.starter.Oolite"/>
     
     <!--
-    <Logger level="info"  name="oolite.starter.MainFrame"/>
     <Logger level="info"  name="oolite.starter.model.Command"/>
     <Logger level="warn"  name="oolite.starter.model.ProcessData"/>
     <Logger level="warn"  name="oolite.starter.ui.InstallationForm"/>

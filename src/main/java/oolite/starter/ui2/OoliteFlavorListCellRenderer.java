@@ -2,11 +2,13 @@
  */
 package oolite.starter.ui2;
 
-import java.awt.BorderLayout;
 import java.awt.Component;
-import javax.swing.JEditorPane;
+import javax.swing.ImageIcon;
 import javax.swing.JList;
 import javax.swing.ListCellRenderer;
+import javax.swing.border.BevelBorder;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.LineBorder;
 import oolite.starter.model.OoliteFlavor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -22,20 +24,15 @@ public class OoliteFlavorListCellRenderer extends javax.swing.JPanel implements 
     //private final Border normalBorder = new CompoundBorder(new MatteBorder(0, 4, 0, 0, getBackground()), emtpyBorder);
     //private final Border warningBorder = new CompoundBorder(new MatteBorder(0, 4, 0, 0, Color.ORANGE), emtpyBorder);
     //private final Border problemBorder = new CompoundBorder(new MatteBorder(0, 4, 0, 0, Color.RED), emtpyBorder);
-
-    private JEditorPane editor;
-
+    
     /**
      * Creates new form OoliteFlavorListRenderer.
      */
     public OoliteFlavorListCellRenderer() {
         initComponents();
-        editor = new JEditorPane();
-        editor.setEditable(false);
-        editor.setOpaque(false);
-        add(editor, BorderLayout.CENTER);
+        setBorder(new CompoundBorder(new LineBorder(getBackground(), 8), new BevelBorder(BevelBorder.RAISED)));
     }
-
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -44,25 +41,55 @@ public class OoliteFlavorListCellRenderer extends javax.swing.JPanel implements 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        java.awt.GridBagConstraints gridBagConstraints;
 
-        setLayout(new java.awt.BorderLayout());
+        lbIcon = new javax.swing.JLabel();
+        txtTitle = new javax.swing.JLabel();
+        txtDescription = new javax.swing.JTextArea();
+
+        setLayout(new java.awt.GridBagLayout());
+
+        lbIcon.setAlignmentX(0.5F);
+        lbIcon.setBorder(javax.swing.BorderFactory.createEmptyBorder(8, 8, 8, 8));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridheight = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        add(lbIcon, gridBagConstraints);
+
+        txtTitle.setFont(new java.awt.Font("Liberation Sans", 1, 15)); // NOI18N
+        txtTitle.setText("jLabel2");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        add(txtTitle, gridBagConstraints);
+
+        txtDescription.setEditable(false);
+        txtDescription.setColumns(20);
+        txtDescription.setLineWrap(true);
+        txtDescription.setRows(5);
+        txtDescription.setWrapStyleWord(true);
+        txtDescription.setOpaque(false);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        add(txtDescription, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
 
     @Override
     public Component getListCellRendererComponent(JList<? extends OoliteFlavor> list, OoliteFlavor data, int i, boolean isSelected, boolean isFocused) {
-        StringBuilder sb = new StringBuilder("<html><table width=\"100%\" border=\"1\">");
-        sb.append("<tr><td>");
-        sb.append("<img src=\"").append(data.getImageUrl()).append("\"></img>");
-        sb.append("</td><td width=\"*\"><b>");
-        sb.append(data.getName());
-        sb.append("</b><p>");
-        sb.append(data.getDescription());
-        sb.append("</td></tr>");
-        sb.append("</table></html>");
+        lbIcon.setIcon(new ImageIcon(data.getImage()));
+
+        txtTitle.setText(data.getName());
         
-        log.trace("text={}", sb);
-        editor.setContentType("text/html");
-        editor.setText(sb.toString());
+        txtDescription.setText(data.getDescription());
         
         if (isSelected) {
             setBackground(list.getSelectionBackground());
@@ -78,5 +105,8 @@ public class OoliteFlavorListCellRenderer extends javax.swing.JPanel implements 
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel lbIcon;
+    private javax.swing.JTextArea txtDescription;
+    private javax.swing.JLabel txtTitle;
     // End of variables declaration//GEN-END:variables
 }

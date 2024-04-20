@@ -2,11 +2,27 @@
  */
 package oolite.starter.ui2;
 
+import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.List;
+import javax.swing.AbstractAction;
 import javax.swing.DefaultListModel;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.SwingConstants;
+import oolite.starter.ExpansionManager;
 import oolite.starter.Oolite;
+import oolite.starter.Oolite2;
+import oolite.starter.generic.ListAction;
+import oolite.starter.model.Command;
 import oolite.starter.model.OoliteFlavor;
+import oolite.starter.ui.MrGimlet;
+import oolite.starter.ui.Util;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.w3c.dom.NodeList;
 
 /**
  * A panel to present Flavors to the user and allow him to install them.
@@ -17,8 +33,10 @@ public class FlavorsPanel extends javax.swing.JPanel {
     private static final Logger log = LogManager.getLogger();
     
     private transient Oolite oolite;
+    private transient Oolite2 oolite2;
     
-    DefaultListModel<OoliteFlavor> model;
+    private DefaultListModel<OoliteFlavor> model;
+    private ListAction listAction;
 
     /**
      * Creates new form FlavorsPanel.
@@ -27,6 +45,47 @@ public class FlavorsPanel extends javax.swing.JPanel {
         log.debug("FlavorsPanel()");
         initComponents();
         jList1.setCellRenderer(new OoliteFlavorListCellRenderer());
+        
+        MouseAdapter ma = new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                log.debug("offer install...");
+            }
+        };
+        jList1.addMouseListener(ma);
+
+        AbstractAction action = new AbstractAction("Install...") {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                log.debug("actionPerformed(...)");
+                OoliteFlavor flavor = jList1.getSelectedValue();
+                if (flavor == null) {
+                    return;
+                }
+                log.warn("Install flavor {} from {}...", flavor.getName(), flavor.getExpansionSetUrl());
+                
+                try {
+                    NodeList nl = oolite.parseExpansionSet(flavor.getExpansionSetUrl());
+                    log.warn("Parsed expansion set {}", flavor.getExpansionSetUrl());
+                    
+                    List<Command> plan = oolite.buildCommandList(oolite2.getExpansions(), nl);
+                    
+                    if (plan.isEmpty()) {
+                        JOptionPane.showConfirmDialog(FlavorsPanel.this, "We're already there, kiddo.");
+                    } else  {
+                        // have user approve the plan
+                        if (JOptionPane.showConfirmDialog(FlavorsPanel.this, Util.createCommandListPanel(plan), "Confirm these actions...", JOptionPane.OK_CANCEL_OPTION)==JOptionPane.OK_OPTION) {
+                            // execute the plan
+                            ExpansionManager.getInstance().addCommands(plan);
+                            MrGimlet.showMessage(FlavorsPanel.this, "Working on it...");
+                        }
+                    }
+                } catch (Exception e) {
+                    log.error("Could not install expansion set");
+                }
+            }
+        };
+        listAction = new ListAction(jList1, action);
     }
     
     /**
@@ -34,9 +93,10 @@ public class FlavorsPanel extends javax.swing.JPanel {
      * 
      * @param oolite the instance
      */
-    public void setOolite(Oolite oolite) {
-        log.debug("setOolite({})", oolite);
+    public void setOolite(Oolite oolite, Oolite2 oolite2) {
+        log.debug("setOolite({}, {})", oolite, oolite2);
         this.oolite = oolite;
+        this.oolite2 = oolite2;
         
         try {
             model = new DefaultListModel<>();
@@ -45,7 +105,9 @@ public class FlavorsPanel extends javax.swing.JPanel {
         } catch (Exception e) {
             log.error("Could not load flavors", e);
             model = null;
-            jList1.setModel(null);
+            
+            remove(jScrollPane1);
+            add(new JLabel("Could not load flavors.", SwingConstants.CENTER), BorderLayout.CENTER);
         }
     }
 
@@ -57,32 +119,36 @@ public class FlavorsPanel extends javax.swing.JPanel {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        java.awt.GridBagConstraints gridBagConstraints;
 
+        jLabel1 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jList1 = new javax.swing.JList<>();
 
+        setLayout(new java.awt.GridBagLayout());
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        add(jLabel1, gridBagConstraints);
+
+        jScrollPane1.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         jScrollPane1.setViewportView(jList1);
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 388, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 288, Short.MAX_VALUE)
-                .addContainerGap())
-        );
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 2.0;
+        add(jScrollPane1, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JList<OoliteFlavor> jList1;
     private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables

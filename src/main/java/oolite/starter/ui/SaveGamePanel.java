@@ -136,29 +136,10 @@ public class SaveGamePanel extends javax.swing.JPanel implements ExpansionManage
             log.debug("actionPerformed({})", ae);
             
             // list all the missing/superfluous expansions
-            List<Command> commands = data.getExpansions().stream()
-                    .filter(er -> er.getStatus()==ExpansionReference.Status.MISSING 
-                            || er.getStatus()==ExpansionReference.Status.REQUIRED_MISSING
-                            || er.getStatus()==ExpansionReference.Status.SURPLUS
-                    )
-                    .map((er) -> {
-                        Command.Action action = Command.Action.INSTALL;
-                        if (er.getStatus()==ExpansionReference.Status.SURPLUS) {
-                            action = Command.Action.DELETE;
-                        }
-                        Expansion e = oolite.getExpansionByExpansionReference(er);
-                        if (e == null) {
-                            return null;
-                        } else {
-                            Command c = new Command(action, e);
-                            return c;
-                        }
-                    })
-                    .filter(c -> c != null)
-                    .toList();
+            List<Command> commands = oolite.buildCommandList(data.getExpansions());
             
             if (commands.isEmpty()) {
-                JOptionPane.showMessageDialog(SaveGamePanel.this, "Don't know how to install");
+                JOptionPane.showMessageDialog(SaveGamePanel.this, "Don't know how to install the missing ones.");
             } else {
                 DefaultListModel<Command> dlm = new DefaultListModel<>();
                 dlm.addAll(commands);

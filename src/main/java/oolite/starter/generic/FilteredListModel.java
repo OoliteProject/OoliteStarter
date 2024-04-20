@@ -201,7 +201,12 @@ public class FilteredListModel<T> extends AbstractListModel<T> {
     public T getElementAt(int i) {
         log.debug("getElementAt({})", i);
 
-        return model.getElementAt(entries.get(i));
+        try {
+            return model.getElementAt(entries.get(i));
+        } catch (IndexOutOfBoundsException e) {
+            log.debug("problem?", e);
+            return null;
+        }
     }
 
 }

@@ -3,8 +3,11 @@
 
 package oolite.starter.model;
 
+import java.awt.Image;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import javax.imageio.ImageIO;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
@@ -24,6 +27,7 @@ public class OoliteFlavor {
     private String description;
     private URL imageUrl;
     private URL expansionSetUrl;
+    private Image image;
 
     /**
      * Creates a new OoliteFlavor.
@@ -64,6 +68,24 @@ public class OoliteFlavor {
      */
     public URL getImageUrl() {
         return imageUrl;
+    }
+    
+    /**
+     * Returns the flavor's image.
+     * If it has not been downloaded before, it will be downloaded and cached.
+     * 
+     * @return the image
+     */
+    public Image getImage() {
+        if (image == null) {
+            try {
+                image = ImageIO.read(imageUrl);
+            } catch (IOException e) {
+                log.warn("Could not load " + imageUrl, e);
+                image = null;
+            }
+        }
+        return image;
     }
 
     /**

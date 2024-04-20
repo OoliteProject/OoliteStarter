@@ -20,8 +20,11 @@ import javax.swing.JOptionPane;
 import javax.swing.JSplitPane;
 import javax.swing.SwingWorker;
 import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
+import oolite.starter.model.Command;
 import oolite.starter.model.Expansion;
 import oolite.starter.model.Installation;
 import oolite.starter.model.ProcessData;
@@ -31,7 +34,9 @@ import oolite.starter.ui.InstallationsPanel;
 import oolite.starter.ui.MrGimlet;
 import oolite.starter.ui.SplashPanel;
 import oolite.starter.ui.StartGamePanel;
+import oolite.starter.ui.Util;
 import oolite.starter.ui2.ExpansionPanel;
+import oolite.starter.ui2.ExpansionSetPanel;
 import oolite.starter.ui2.ExpansionsPanel2;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -94,21 +99,17 @@ public class MainFrame extends javax.swing.JFrame {
         }
 
         private boolean maybeAnnounceExpansionUpdate(MainFrame mf) {
+            log.warn("maybeAnnounceExpansionUpdate(...)");
             List<Expansion> updates = mf.oolite2.getUpdates();
 
             if (!updates.isEmpty()) {
-                StringBuilder message = new StringBuilder("<html>");
-                message.append("<p>Good news for you, my son: Updated expansions are available.<br/>Have a look at</p>");
-                message.append("<ul>");
-                for (Expansion exp: updates) {
-                    message.append("<li>");
-                    message.append(exp.getTitle()).append(" version ").append(exp.getVersion());
-                    message.append("</li>");
+                List<Command> plan = mf.oolite.buildUpdateCommandList(mf.oolite2.getExpansions(), updates);
+                // have user approve the plan
+                if (JOptionPane.showConfirmDialog(mf, Util.createCommandListPanel(plan, "Updated expansions are available. Do you want to install them?"), "Confirm these actions...", JOptionPane.OK_CANCEL_OPTION)==JOptionPane.OK_OPTION) {
+                    // execute the plan
+                    ExpansionManager.getInstance().addCommands(plan);
+                    MrGimlet.showMessage(mf.getRootPane(), "Working on it...");
                 }
-                message.append("</ul>");
-                message.append("</html>");
-
-                MrGimlet.showMessage(mf.getRootPane(), message.toString(), 5000);
 
                 return true;
             } else {
@@ -133,7 +134,9 @@ public class MainFrame extends javax.swing.JFrame {
                     // point user to creating an active installation
                     mf.jTabbedPane1.setEnabledAt(0, false);
                     mf.jTabbedPane1.setEnabledAt(1, false);
-                    mf.jTabbedPane1.setSelectedIndex(2);
+                    mf.jTabbedPane1.setEnabledAt(2, false);
+                    mf.jTabbedPane1.setEnabledAt(3, false);
+                    mf.jTabbedPane1.setSelectedIndex(4);
 
                     StringBuilder message = new StringBuilder("<html>");
                     message.append("<p>I see a lot of blanks on this here board... Kid, you gotta do something about it.</p>");
@@ -146,7 +149,9 @@ public class MainFrame extends javax.swing.JFrame {
                     // point user to creating an active installation
                     mf.jTabbedPane1.setEnabledAt(0, false);
                     mf.jTabbedPane1.setEnabledAt(1, false);
-                    mf.jTabbedPane1.setSelectedIndex(2);
+                    mf.jTabbedPane1.setEnabledAt(2, false);
+                    mf.jTabbedPane1.setEnabledAt(3, false);
+                    mf.jTabbedPane1.setSelectedIndex(4);
 
                     StringBuilder message = new StringBuilder("<html>");
                     message.append("<p>Much better, son. But there is still something to do:</p>");
@@ -157,21 +162,26 @@ public class MainFrame extends javax.swing.JFrame {
                     MrGimlet.showMessage(mf.getRootPane(), message.toString(), 0);
                 } else {
                     boolean foundSomething = false;
-
                     // we always have an installation as the other case is above
-                    Installation i = mf.getConfiguration().getActiveInstallation();
-                    foundSomething = ovc.maybeAnnounceUpdate(mf.getRootPane(), ModuleDescriptor.Version.parse(i.getVersion()));
-
+                    
                     if (!foundSomething) {
+                        // check for OoliteStarter version
                         foundSomething = gvc.maybeAnnounceUpdate(mf.getRootPane());
                     }
 
                     if (!foundSomething) {
-                        foundSomething = maybeAnnounceExpansionUpdate(mf);
+                        // check for Oolite version
+                        Installation i = mf.getConfiguration().getActiveInstallation();
+                        foundSomething = ovc.maybeAnnounceUpdate(mf.getRootPane(), ModuleDescriptor.Version.parse(i.getVersion()));
                     }
 
                     if (foundSomething) {
                         log.trace("Notified user about upgrades");
+                    }
+
+                    if (!foundSomething) {
+                        // check for expansion update
+                        foundSomething = maybeAnnounceExpansionUpdate(mf);
                     }
                 }
 
@@ -195,6 +205,9 @@ public class MainFrame extends javax.swing.JFrame {
     private ExpansionPanel ep2;
     private InstallationsPanel ip;
     
+    private boolean expansionMangagerActive;
+    private boolean ooliteActive;
+    
     /**
      * Creates new form MainFrame.
      */
@@ -208,7 +221,7 @@ public class MainFrame extends javax.swing.JFrame {
             configuration = new Configuration(confFile);
         } else {
             String msg = String.format("<html><p>Heho, Kid! You've got a problem here that is technical, not financial.</p><p>The configuration file %s was not found.</p><p>I’m a busy frog, I can’t stay here all day to watching you poke buttons. So let's use defaults.</p></html>", confFile.getAbsolutePath());
-            log.warn(msg);
+            log.trace(msg);
             
             MrGimlet.showMessage(null, msg, 0);
             
@@ -225,32 +238,25 @@ public class MainFrame extends javax.swing.JFrame {
             
             @Override
             public void statusChanged(Oolite2.Status status) {
-                log.warn("statusChanged({})", status);
+                log.debug("statusChanged({})", status);
                 
-                if (status == Oolite2.Status.INITIALIZING) {
-                    getContentPane().setEnabled(false);
-                    jProgressBar1.setIndeterminate(true);
-                    jProgressBar1.setString("rescanning...");
-                    jProgressBar1.setVisible(true);
-                } else {
-                    jProgressBar1.setVisible(false);
-                    getContentPane().setEnabled(true);
-                }
+                ooliteActive = status == Oolite2.Status.INITIALIZING;
+                updateBackgroundProcessIndicator();
             }
 
             @Override
             public void launched(ProcessData pd) {
-                log.warn("launched({})", pd);
+                log.debug("launched({})", pd);
             }
 
             @Override
             public void terminated() {
-                log.warn("terminated()");
+                log.debug("terminated()");
             }
 
             @Override
             public void activatedInstallation(Installation installation) {
-                log.warn("activatedInstallation({})", installation);
+                log.debug("activatedInstallation({})", installation);
             }
         });
         
@@ -264,6 +270,8 @@ public class MainFrame extends javax.swing.JFrame {
 
                 jTabbedPane1.setEnabledAt(0, i != null);
                 jTabbedPane1.setEnabledAt(1, i != null);
+                jTabbedPane1.setEnabledAt(2, i != null);
+                jTabbedPane1.setEnabledAt(3, i != null);
             }
         });
         setInstallationTitle(configuration.getActiveInstallation());
@@ -273,6 +281,15 @@ public class MainFrame extends javax.swing.JFrame {
         jTabbedPane1.add(sgp);
 
         ExpansionManager em = ExpansionManager.getInstance();
+        em.addExpansionManagerListener(new ExpansionManager.ExpansionManagerListener() {
+            @Override
+            public void updateStatus(ExpansionManager.Status status, List<Command> queue) {
+                log.debug("updateStatus({}, {})", status, queue);
+                
+                expansionMangagerActive = status.activity() == ExpansionManager.Activity.PROCESSING;
+                updateBackgroundProcessIndicator();
+            }
+        });
         em.start();
 
         JSplitPane expansions = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
@@ -285,6 +302,14 @@ public class MainFrame extends javax.swing.JFrame {
         esp2.addSelectionListener(ep2);
         expansions.setBottomComponent(ep2);
 
+        FlavorsPanel fp = new FlavorsPanel();
+        fp.setOolite(oolite, oolite2);
+        jTabbedPane1.add("Flavors", fp);
+        
+        ExpansionSetPanel esp = new ExpansionSetPanel();
+        esp.setOolite(oolite, oolite2);
+        jTabbedPane1.add(esp, "Expansion Set");
+        
         ip = new InstallationsPanel();
         ip.setConfiguration(configuration);
         jTabbedPane1.add(ip);
@@ -292,12 +317,6 @@ public class MainFrame extends javax.swing.JFrame {
         AboutPanel ap = new AboutPanel("text/html", getClass().getResource("/about.html"));
         jTabbedPane1.add("About", ap);
 
-        // experimental
-        
-        FlavorsPanel fp = new FlavorsPanel();
-        fp.setOolite(oolite);
-        jTabbedPane1.add("Flavors", fp);
-        
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent event) {
@@ -331,6 +350,34 @@ public class MainFrame extends javax.swing.JFrame {
             }
             
         });
+        
+        jTabbedPane1.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent ce) {
+                log.info("stateChanged({})", ce);
+                if (jTabbedPane1.getSelectedIndex() == 2) {
+                    MrGimlet.showMessage(jTabbedPane1, "Flavours are collections of expansions which bend your Ooniverse in a particular way.<br/>These collections are not sacrosanct - use the Expansions tab to add or remove expansions until you have attained your desired utopia!<br/>You can save your collection by using the 'Expansion Set' tab.");
+                }
+            }
+        });
+    }
+    
+    private void updateBackgroundProcessIndicator() {
+        if (ooliteActive || expansionMangagerActive) {
+            getContentPane().setEnabled(false);
+            jProgressBar1.setIndeterminate(true);
+            if (expansionMangagerActive) {
+                int x = ExpansionManager.getInstance().getStatus().queueSize();
+                jProgressBar1.setString("juggling %d expansions...".formatted(x));
+            } else if (ooliteActive) {
+                jProgressBar1.setString("rescanning...");
+            }
+            jProgressBar1.setVisible(true);
+        } else {
+            ooliteActive = false;
+            jProgressBar1.setVisible(false);
+            getContentPane().setEnabled(true);
+        }
     }
 
     /**
