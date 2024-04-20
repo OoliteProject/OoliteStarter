@@ -312,3 +312,36 @@ OoliteStarter. Press Save if you want these settings to be available when you
 next time run OoliteStarter.
 
 The configuration data is stored in $HOME/.oolite-starter.conf.
+
+## Tuning
+
+You can modify OoliteStarter's appearance as much as FlatLAF allows. This is done
+by setting the right system properties as can be seen in
+https://www.formdev.com/flatlaf/system-properties/
+
+Now OoliteStarter is packaged using JPackage which automatically wraps Java 
+applications into an easy to distribute executable. So there is no command line
+to set system properties on. Instead there is a configuration file.
+
+This configuration file resides in either one of
+
+    $OOLITESTARTER_HOME/app/OoliteStarter.cfg
+    $OOLITESTARTER_HOME/lib/app/OoliteStarter.cfg.
+
+On Linux this defaults to 
+
+    /opt/oolitestarter/lib/app/OoliteStarter.cfg
+
+on Windows search for 
+
+    C:\Program Files\OoliteStarter\app\OoliteStarter.cfg
+
+Once you found the file, inside you will see a section called JavaOptions.
+You can add more system properties, each one as a new line like so:
+
+    [JavaOptions]
+    java-options=-Djpackage.app-version=0.1-29
+    java-options=-Dflatlaf.uiScale=2.5
+
+The example shows how to scale the fonts used in case you have a high resolution
+screen.
