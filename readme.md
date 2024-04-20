@@ -62,17 +62,19 @@ and choose to uninstall.
 When you run the application, it will seach the configuration file
 $HOME/.oolite-starter.conf
 
-If this file is not present, do not worry. A warning will be displayed and the
-application will run. Switch to the `Oolite Versions` tab and add at least one
+If this file is not present, do not worry. A warning will be displayed and 
+OoliteStarter will run. Switch to the `Oolite Versions` tab and add at least one
 Oolite installation. Then press Save and the missing file will be created.
 
 For each Oolite installation you can define a number of places in the filesystem.
-Since some players have multple such installations in parallel, they can be
-configured once.
+Since some players have multiple such installations in parallel, they can be
+configured in parallel which allows fast switching.
 
-Oolite-Starter needs to know which installation it should actually use. Select
-the one of your choice and press the Activate button. At this time OoliteStarter
+Oolite-Starter needs to know which Oolite installation it should actually use.
+This is especially important if you have multiple installed. Select the one of 
+your choice and press the Activate button. At this time OoliteStarter
 will check if some directory is missing and also offers to create it for you.
+Then it scans the directories for expansions and allows you to switch the tabs.
 
 ## Usage (Quickstart)
 
@@ -80,14 +82,20 @@ will check if some directory is missing and also offers to create it for you.
   chose this may mean to just click an icon, a menu entry or use either 
   run.sh or run.cmd. When going for run.sh you may need to set execute
   permissions (chmod +x run.sh)
+* Once a week there will be an update check, searching for
+  * new versions of OoliteStarter
+  * new versions of Oolite
+  * new versions of installed expansions
+  You will get informed if newer stuff is found.
 * The Starter will present you with the list of your save games. Either press
   the 'New' button to run a new game, or choose the save game and press 'Resume'.
   Either of those buttons will run Oolite the way you chose.
 * Play as usual.
-* If you want to change the installed expansions, switch to the 'OXPs/OXZs' tab,
+* If you want to change the installed expansions, switch to the 'Expansions' tab,
   check the list and choose to install, remove, enable or disable single expansions.
   You can also export your currently active expansions as 'Oolite Expansion Set',
-  and load it later again or share with your friends.
+  and load it later again or share with your friends. Or go for a predefined
+  set of expansions called Flavor.
 
 Happy Flying!
 
@@ -95,13 +103,13 @@ Happy Flying!
 
 In the following you will find detailed description of each of these use cases:
 
-![](https://www.plantuml.com/plantuml/svg/TP5FImCn4CNl-HH3x_q2FKWN6gG75LhqFcmU4ioViZDP1V6xQxIuOul7UUybxvVCLfGdRJcv4uyl_0mwyenRpX1wTqHDCBA0xl5gfWEaPHXXXmI5JI1L3kx3_TwxycydBX9heJikNqf6qHMnq6BOndqHvPIkIlg9dJVoC6gS-SSOlCs3pzOLMCyU_1-yXvgYWfumTHIvX3pZi5vo3Y6OwJXoiMt8TSPtszx8FaJzxmKsrtVH8JUFWcb3w_NDiXuZBZzeHKlit1Obj9m-0G00)
+![](https://www.plantuml.com/plantuml/svg/TPBDQi904CVl-nI3Tr_0Gr4mbe2sO6ZlGtOeI_T3CfCebBvxNHkQMHjlsT_kpF-3h5cmapvuSyBs4py86Xpe6GCnV1c0dgb59dYXipeTYVj02cp9asYmSvVYlKzepRVvKrbKbnD6TYd20UEL18go06IOBhH-7LdGUosPpZ5lpJFRVI4Mqa0P7m__BDvULuMJdSSXTNmJ7xyBwKqhRa2X1_ORklDz1SNyFg5LnznliUerUIS4xzJbwLyVOroK-nwQ5gFsPlNgoZgPBwAUoPClDlMCizKRKxU2vV9f-XaKd99gE3QdaMv4SntEh2dQFlWV)
 
 ### SaveGames
 
 Here is what you can do:
 
-![](https://www.plantuml.com/plantuml/svg/SoWkIImgAStDuIf8JCvEJ4zL24uiItLFp4qjLgZcKb0eBKvDJYnELV1BBKVY1QKMb-Qc8WcufEQabgIYgCZ9JqpXgkNYiWejJYsoKj3LjGCRWk32J468m8n1YC3CuN98pKi1kX80)
+![](https://www.plantuml.com/plantuml/svg/SoWkIImgAStDuIf8JCvEJ4zL24uiItLFp4qjLgZcKb0eBKvDJYnELV1BBKVY1QKMb-Qc8WcufEQabY0Bk6LMeAZFoKzCuQhbuh8ABKujibBGrRK36udWmin4YC0CHOY0JKLmOSOwfEQb07q00000)
 
 This is what it looks like:
 
@@ -134,9 +142,16 @@ Starts Oolite with the selected savegame. The game will be loaded from disk so
 you can continue that game. Requires that you saved the game before from
 within Oolite.
 
+If discrepancies are detected you get a warning message.
+
 #### Delete
 
 Deletes the selected savegame.
+
+#### Fix
+
+The Fix button allows OoliteStarter to recreate the expansions required for the 
+savegame.
 
 #### Reload
 
@@ -148,107 +163,80 @@ have happened. If you still feel the data might be outdated just click here.
 
 Here is what you can do:
 
-![](https://www.plantuml.com/plantuml/svg/LOr1gi9G34NdMKNel1leuDD2t-0Fd1HSG6Y35DEqD7aYY7lNXw9nUC-vkMdDQVUy26mqdkd4MANhHchpgdWWVPA5rIiamw-u0M8s7iaO_zMSH0BfMTYvNFGfu6xq-K8lqQMVFhrLW0FBIbFf3Wdk0CtHU6-mhly-7mFgKqnTJ64-qB8ABUkK5ta0)
+![](https://www.plantuml.com/plantuml/svg/JO-n2i90343tV4NetX_e81tk1i4k1JyWj474krnfhYg8_sugY1dpNl8WlLPQwvOJB3JTwCBOnET2ejSYE90OoIorGLByYnSWRieJAUDHB96I8w4y91MQzvjmScBaNEwyut7m-vouVd68y0RepifhXsrx-CKTigAVBEHTX9vbjdS-)
 
 This is what it looks like:
 
 ![](src/main/resources-ext/images/screenshots/OxXPsOXZs.png)
 
-In this tab on the left you can see the list of known expansions. Usually this
-consists of all the expansions found on your computer plus the list of the
-Expansion Manager that is hosted on the https://oolite.space website - currently
-this is a list of 750 expansions (displayed in the bottom left).
+You can see two lists of expansions: Those available for installation on the
+left, and those already installed on the right.
 
-One of the expansions is selected, and the right hand side gives you additional
-information about the selection. It also allows to change the status using the
-buttons Install, Enable, Disable and Delete.
+One of the expansions is selected, and in the bottom you see additional
+information about the selection. The buttons in the middle allow to Install,
+Download, Remove and Delete.
 
-In the top right you find buttons to manage Expansion Sets and the Reload button.
+You can sort and filter the list of expansions by clicking the button on the
+top right of the lists.
 
-You can sort the list of expansions by clicking the column headers. Filtering
-can be done using the Filter elements in the top of the screen. Note the Status
-dropdown filter and the Status column in the table.
-
-There are several flags that are displayed in a compressed way in the status
-column. While you always have the letters OLERC, a capital letter stands for
-'yes' while a small letter stands for 'no'. The letters themselves mean:
-
- - O the expansion is online available and can be downloaded anytime
-   o the expansion is not available online
- - L the expansion is on the local disk
-   l the expansion is not on the local disk
- - E the expansion is enabled
-   e the expansion is not enabled (=disabled or not installed)
- - R the expansion requires other expansions
-   r the expansion does not require other expansions
- - C the expansion can conflict with other expansions
-   c the expansion has no conflicts
+The color codes in the expansion lists mark up conflicts or missing dependencies
+(red), or a recommendation (yellow). In either case the details field in the
+bottom will deliver more information.
 
 Expansions follow this lifecycle. It should explain why in Oolite Versions 
 Management so many directories need to be configured.
 
 ![](https://www.plantuml.com/plantuml/svg/SoWkIImgAStDuOhMYbNGrRLJy4tCIqnFJN5CISdFAxPIyCm3giZ9uK8HLa2eSqbDJ2x9B4iiGMXnoInEJCf9vSAbGW7J5jSyX0w4Cg0weAki559ISr9BCCt3gP0BOGyUvs5r5vg3S5X0s0aEgNafm5050000)
 
-While OXZs that are listed on the Expansion Manager's manifest can have a full
-lifecycle through install and delete, OXPs that are found in the Addons folder
-cannot be installed. They do not come with a download URL.
+OXZs that are listed on the Expansion Manager's manifest can have a full
+lifecycle through install and remove. Other expansions can be installed by
+giving a Download URL, will be stored in the Addons folder and will get deleted
+afterwards.
 
 #### Install
 
-Installs an OXZ from the Expansion Manager's manifest.
+Installs an OXZ from the Expansion Manager's manifest into the ManagedAddons
+folder.
+
+#### Download
+
+Downloads a zipped OXP from a given URL and expands it into the Addons folder.
+
+#### Remove
+
+Deletes the selected OXZ from the ManagedAddons folder. It returns to the list
+of available addons.
 
 #### Delete
 
-Deletes the selected OXZ or OXP from your disk.
+Deletes the selected OXP from the Addons folder.
 
 #### Activate
 
-Activates an OXZ or OXP. This is done by moving it to the folder that Oolite
-will read on startup (the Addons and ManagedAddons folders).
+Not available in the current version.
 
 #### Deactivate
 
-Deactivates an expansion by moving it to a folder where Oolite will not find it
-(the DeactivatedAddons and ManagedDeactivatedAddons folders).
-The expansion remains in that hidden location until you either delete or enable
-it.
+Not available in the current version.
 
-#### Reload
+### Flavors
 
-Loads data freshly from disk. This is similar to pressing reload in your web 
-browser. OoliteStarter reloads the data automatically when a change is likely to
-have happened. If you still feel the data might be outdated just click here.
+Flavors are predefined sets of expansions. You can install a flavor simply by
+doubleclicking it on the list. OoliteStarter will automatically compute which
+expansions need to be removed or installed and show a list for your approval.
 
-#### Export Expansion Set
+### Expansion Set
 
-With the above use cases you can assemble a bunch of expansions that you may
-want to backup or share with other players. This export function allows you to
-list all the enabled expansions in a file.
+You can save your set of currently installed expansions into a file.
+Keep it somewhere, or share it with others. When loading such a file, 
+OoliteStarter will automatically compute which expansions need to be removed or 
+installed and show a list for your approval.
 
-Keep it as backup information, or send it to others as you like.
-
-#### Activate Expansion Set
-
-If you have an expansion set file - as it was created with the Export function
-- you can recreate that setup by activating it. OoliteStarter will
-disable expansions that should not be there, enable those that are required and
-available locally. Finally it will download and install those that are still 
-missing.
-
-Regardless what you had before, after this function has run your setup should be
-exactly what was defined in the file.
-expansion set file.
-
-#### Validate Expansion Set
-
-This use case checks each of the enabled expansions' requires and conflict lists.
-If something sticks out you will be informed.
-
-### Oolite Versions Management
+### Oolite Versions
 
 Here is what you can do:
 
-![](https://www.plantuml.com/plantuml/svg/JP2_2eD03CRtF4LmzmKSYWuT74f1QVTm5yhHCnOJNKhVlQSk6N_v_doGLeqMMwSC7mflUZ5MzpadOtpoecaMnHj9kKyiLY4fzb8YEPCL4R-0k2e7KiOkHaTZ874uy3HllEU7tfslCPcl29OsiiFNUTz86yCFe7aeBmtMzMMVStZiUHvwH-UE3tlrR8UM9PP7_040)
+![](https://www.plantuml.com/plantuml/svg/JOyn3iCW34LtJc5bpmKoLCdGWQaIKRjRO5Me12hii5IzUocJnsVz_v-yic2LyqZcZVw5JuBfLb8KWWTLZYNp1CXWSy-bXD8ly3409vD79jX2KBHxp0eT7QNHl--iEbz353tX9JQKaTjqRiT6vclCScUg2yppPUWK3fzYPpKDZovRJMDzfHpwypy0)
 
 This is what it looks like:
 
