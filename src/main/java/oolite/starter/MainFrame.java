@@ -460,8 +460,8 @@ public class MainFrame extends javax.swing.JFrame {
         newSplash = new JFrame();
         newSplash.setUndecorated(true);
         newSplash.setIconImage(new ImageIcon(MainFrame.class.getResource("/images/Mr_Gimlet_transparent.png")).getImage());
-        ImageIcon screen = new ImageIcon(MainFrame.class.getResource("/images/Digebiti.png"));
-        String motd = "This is an experimental prerelease. Use the menu to turn on UI elements.";
+        ImageIcon screen = new ImageIcon(MainFrame.class.getResource("/images/OoliteStarter_Splashscreen_800x450.png"));
+        String motd = "";
         SplashPanel sp = new SplashPanel(screen, motd);
         newSplash.add(sp);
         newSplash.pack();
