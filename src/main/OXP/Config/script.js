@@ -4,7 +4,7 @@
 "use strict";
 
 this.name		= "oolite-starter-oxp";
-this.author		= "Hiran Chaudhuri";
+this.author		= "Hiran";
 this.license		= "GPL3";
 this.description	= "Partner of the Oolite Starter";
 this.version		= "0.1";

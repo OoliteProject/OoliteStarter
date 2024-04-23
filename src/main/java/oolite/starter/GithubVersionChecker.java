@@ -32,7 +32,7 @@ import org.json.JSONTokener;
 public class GithubVersionChecker {
     private static final Logger log = LogManager.getLogger();
 
-    private String owner = "HiranChaudhuri";
+    private String owner = "OoliteProject";
     private String repo = "OoliteStarter";
     
     private List<Semver> versions;

@@ -5,6 +5,7 @@ package oolite.starter.ui;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -152,7 +153,18 @@ public class ScanOolitesSwingWorker extends SwingWorker<List<String>, String> {
         }
     }
     
+    /**
+     * Returns true if the file should not be scanned.
+     * 
+     * It boils down to skipping symlinks and the skip patterns.
+     * 
+     * @param f the file to check
+     * @return true if it should be skipped - false otherwise
+     */
     private boolean shouldSkip(File f) {
+        if (Files.isSymbolicLink(f.toPath())) {
+            return true;
+        }
         for (Pattern p: skipPatterns) {
             if (p.matcher(f.getAbsolutePath()).matches()) {
                 return true;

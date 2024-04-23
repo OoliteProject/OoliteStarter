@@ -138,7 +138,7 @@ jobs:
           --name "OoliteStarter" \
           --dest target/appimage \
           --temp target/oolite-starter-tmp \
-          --vendor "hiran" \
+          --vendor "OoliteProject" \
           --verbose \
           --icon oolitestarter/src/main/resources/images/Mr_Gimlet_transparent.png \
           --input OoliteStarter-${{ needs.semver.outputs.GITVERSION_SEMVER }}/dist \
@@ -223,7 +223,7 @@ jobs:
 
     - name: Prepare AppImage for Windows
       run: |
-        jpackage --type app-image --app-version "${{ needs.semver.outputs.GITVERSION_ASSEMBLYSEMVER }}" --copyright Copyright --description "OoliteStarter ${{ needs.semver.outputs.GITVERSION_SEMVER }}" --name "OoliteStarter" --dest target/appimage --temp target/oolite-starter-tmp --vendor "hiran" --verbose --icon oolitestarter/src/main/resources/images/Mr_Gimlet_transparent.ico --input OoliteStarter-${{ needs.semver.outputs.GITVERSION_SEMVER }}/dist --main-jar OoliteStarter-${{ needs.semver.outputs.GITVERSION_SEMVER }}.jar --main-class oolite.starter.MainFrame
+        jpackage --type app-image --app-version "${{ needs.semver.outputs.GITVERSION_ASSEMBLYSEMVER }}" --copyright Copyright --description "OoliteStarter ${{ needs.semver.outputs.GITVERSION_SEMVER }}" --name "OoliteStarter" --dest target/appimage --temp target/oolite-starter-tmp --vendor "OoliteProject" --verbose --icon oolitestarter/src/main/resources/images/Mr_Gimlet_transparent.ico --input OoliteStarter-${{ needs.semver.outputs.GITVERSION_SEMVER }}/dist --main-jar OoliteStarter-${{ needs.semver.outputs.GITVERSION_SEMVER }}.jar --main-class oolite.starter.MainFrame
         # --resource-dir src/jpackage/resources
 
     - name: Check status 2
@@ -302,17 +302,17 @@ jobs:
           --copyright Copyright \
           --description "OoliteStarter ${{ needs.semver.outputs.GITVERSION_SEMVER }}" \
           --name "OoliteStarter" --dest target/appimage \
-          --temp target/oolite-starter-tmp --vendor "hiran" --verbose \
+          --temp target/oolite-starter-tmp --vendor "OoliteProject" --verbose \
           --icon oolitestarter/src/main/resources/oolite_logo.png \
           --input OoliteStarter-${{ needs.semver.outputs.GITVERSION_SEMVER }}/dist \
           --main-jar OoliteStarter-${{ needs.semver.outputs.GITVERSION_SEMVER }}.jar \
           --main-class oolite.starter.MainFrame --mac-package-name "OoliteStarter" \
           --resource-dir oolitestarter/src/jpackage/resources-mac \
-          --vendor hiran
+          --vendor OoliteProject
 
         # --java-options '-splash:$APPDIR/splash.png' \
         #  --mac-sign --mac-package-signing-prefix space.oolite.oolitestarter. \
-        #  --mac-signing-key-user-name "HiranChaudhuri"
+        #  --mac-signing-key-user-name "oocube"
         # --app-version "${{ needs.semver.outputs.GITVERSION_MAJORMINORPATCH }}" \
 
     #- name: Tweak AppImage
@@ -337,7 +337,7 @@ jobs:
           --icon oolitestarter/src/main/resources/oolite_logo.png \
           --dest target \
           --resource-dir oolitestarter/src/jpackage/resources-mac \
-          --vendor hiran
+          --vendor OoliteProject
 
     - name: Create ZIP distribution
       run: |

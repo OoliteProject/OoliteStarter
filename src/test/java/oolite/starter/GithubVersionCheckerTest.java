@@ -4,7 +4,6 @@
 package oolite.starter;
 
 import com.vdurmont.semver4j.Semver;
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.time.Duration;
 import org.junit.jupiter.api.AfterEach;
@@ -80,7 +79,7 @@ public class GithubVersionCheckerTest {
         log.info("getReleasesURL");
 
         GithubVersionChecker instance = new GithubVersionChecker();
-        assertEquals("https://api.github.com/repos/HiranChaudhuri/OoliteStarter/releases", instance.getReleasesURL().toExternalForm());
+        assertEquals("https://api.github.com/repos/OoliteProject/OoliteStarter/releases", instance.getReleasesURL().toExternalForm());
     }
 
     /**
@@ -91,7 +90,7 @@ public class GithubVersionCheckerTest {
         log.info("testGetHtmlReleaseURL");
 
         GithubVersionChecker instance = new GithubVersionChecker();
-        assertEquals("https://github.com/HiranChaudhuri/OoliteStarter/releases/tag/vcoco", instance.getHtmlReleaseURL("coco").toExternalForm());
+        assertEquals("https://github.com/OoliteProject/OoliteStarter/releases/tag/vcoco", instance.getHtmlReleaseURL("coco").toExternalForm());
     }
 
     /**
@@ -117,7 +116,7 @@ public class GithubVersionCheckerTest {
         log.info("getHtmlUserMessage");
 
         GithubVersionChecker instance = new GithubVersionChecker();
-        assertEquals("<html><body><p>All right there. We heard rumors the new version 999.999.999 has been released.</p><p>You need to check <a href=\"https://github.com/HiranChaudhuri/OoliteStarter/releases/tag/v999.999.999\">https://github.com/HiranChaudhuri/OoliteStarter/releases/tag/v999.999.999</a> and report back to me.</p><p>But don't keep me waiting too long, kid!</p></body></html>", instance.getHtmlUserMessage(new Semver("999.999.999")));
+        assertEquals("<html><body><p>All right there. We heard rumors the new version 999.999.999 has been released.</p><p>You need to check <a href=\"https://github.com/OoliteProject/OoliteStarter/releases/tag/v999.999.999\">https://github.com/OoliteProject/OoliteStarter/releases/tag/v999.999.999</a> and report back to me.</p><p>But don't keep me waiting too long, kid!</p></body></html>", instance.getHtmlUserMessage(new Semver("999.999.999")));
     }
 
     /**
@@ -128,7 +127,7 @@ public class GithubVersionCheckerTest {
         log.info("getHtmlUserMessage2");
 
         GithubVersionChecker instance = new GithubVersionChecker();
-        assertEquals("<html><body><p>All right there. We heard rumors the new experimental version 999.999.999-test.1 has been released.</p><p>You need to check <a href=\"https://github.com/HiranChaudhuri/OoliteStarter/releases/tag/v999.999.999-test.1\">https://github.com/HiranChaudhuri/OoliteStarter/releases/tag/v999.999.999-test.1</a> and report back to me.</p><p>But don't keep me waiting too long, kid!</p></body></html>", instance.getHtmlUserMessage(new Semver("999.999.999-test.1")));
+        assertEquals("<html><body><p>All right there. We heard rumors the new experimental version 999.999.999-test.1 has been released.</p><p>You need to check <a href=\"https://github.com/OoliteProject/OoliteStarter/releases/tag/v999.999.999-test.1\">https://github.com/OoliteProject/OoliteStarter/releases/tag/v999.999.999-test.1</a> and report back to me.</p><p>But don't keep me waiting too long, kid!</p></body></html>", instance.getHtmlUserMessage(new Semver("999.999.999-test.1")));
     }
 
     /**
