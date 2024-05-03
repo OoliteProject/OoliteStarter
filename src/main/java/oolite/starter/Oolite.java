@@ -1423,8 +1423,12 @@ public class Oolite implements PropertyChangeListener {
     public void install(Expansion expansion) throws IOException {
         log.debug("install({})", expansion);
         URL url = new URL(expansion.getDownloadUrl());
-        
-        File file = new File(configuration.getManagedAddonsDir(), expansion.getIdentifier() + "@" + expansion.getVersion() + ".oxz");
+
+//      Old naming scheme - supports many different versions installed in parallel        
+//        File file = new File(configuration.getManagedAddonsDir(), expansion.getIdentifier() + "@" + expansion.getVersion() + ".oxz");
+
+//      In-Game Expansion Manager compatible naming scheme
+        File file = new File(configuration.getManagedAddonsDir(), expansion.getIdentifier() + ".oxz");
         HttpUtil.downloadUrl(url, file);
         
         if (!file.isFile())

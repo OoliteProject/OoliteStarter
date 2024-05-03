@@ -326,6 +326,18 @@ public class Oolite2 {
     public Installation getActiveInstallation() {
         return oolite.getActiveInstallation();
     }
+
+    /**
+     * Removes phantom expansions that are neither online nor offline.
+     */
+    void removePhantoms() {
+        List<Expansion> phantoms = expansions.stream()
+            .filter(e -> e.getDownloadUrl()==null && e.getLocalFile()==null)
+            .collect(Collectors.toList());
+        
+        log.warn("Removing phantoms {}", phantoms);
+        expansions.removeAll(phantoms);
+    }
     
     void validateDependencies() {
         log.debug("validateDependencies()");
@@ -395,6 +407,7 @@ public class Oolite2 {
                             .filter(
                                 e -> e.getIdentifier().equals(newExpansion.getIdentifier())
                                     && e.getVersion().matches(newExpansion.getVersion())
+                                    && e.isLocal()
                             )
                             .collect(Collectors.toList());
                     log.trace("Matches {}", matches);
@@ -403,19 +416,26 @@ public class Oolite2 {
                         // we found a new one
                         expansions.add(newExpansion);
                     } else {
-                        // we found an existing one. What's next?
-                        StringBuilder message = new StringBuilder("Problem: Duplicate expansion found. Check files\n");
-                        message.append(matches.get(0).getLocalFile() + "\n");
-                        message.append(newExpansion.getLocalFile() + "\n");
-                        message.append("\nThis seriously needs to be resolved.");
-                        
-                        fireProblemDetected(message.toString());
+                        if (String.valueOf(matches.get(0).getLocalFile()).equals(String.valueOf(newExpansion.getLocalFile()))) {
+                            // we found the very same expansion. This is not a problem.
+                        } else {
+                            // we found an existing one. What's next?
+                            StringBuilder message = new StringBuilder("Problem: Duplicate expansion found. Check files\n");
+                            message.append(matches.get(0).getLocalFile() + "\n");
+                            message.append(newExpansion.getLocalFile() + "\n");
+                            message.append("\nThis seriously needs to be resolved.");
+
+                            fireProblemDetected(message.toString());
+                        }
                     }
                 }
             } catch (Exception e) {
                 log.warn("could not read {}", f, e);
             }
         }
+        
+        // remove invalid entries
+        removePhantoms();
 
         // recompute dependencies
         validateDependencies();
