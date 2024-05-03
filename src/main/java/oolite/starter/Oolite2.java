@@ -10,6 +10,7 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.swing.AbstractListModel;
 import javax.swing.SwingUtilities;
 import javax.xml.parsers.ParserConfigurationException;
@@ -342,7 +343,7 @@ public class Oolite2 {
      * @param f 
      */
     public void rescan(File f) {
-        log.debug("rescan({})", f);
+        log.warn("rescan({})", f);
         
         status = Status.RESCANNING;
         fireStatusChanged(); // notify listeners
@@ -352,21 +353,43 @@ public class Oolite2 {
             // let's find the expansion in our list and mark it up accordingly
             String fstr = f.getAbsolutePath();
             
+            List<Expansion> toBeRemoved = new ArrayList<>();
             for (Expansion e: expansions) {
                 if (e.getLocalFile() != null) {
                     String gstr = e.getLocalFile().getAbsolutePath();
                     if (fstr.equals(gstr)) {
                         log.warn("Need to remove expansion {}", e);
-                        // todo: really remove that expansion, or mark it as not installed
+                        if (e.isOnline()) {
+                            e.setLocalFile(null);
+                        } else {
+                            // todo: really remove that expansion, or mark it as not installed
+                            toBeRemoved.add(e);
+                        }
                     }
                 }
             }
+            expansions.removeAll(toBeRemoved);
         } else {
-            log.trace("File exists!");
+            log.warn("File exists!");
             try {
                 Expansion newExpansion = oolite.getExpansionFrom(f);
                 if (newExpansion != null) {
                     // replace the right one
+                    log.warn("Found {} but need to sort it in", newExpansion);
+                    List<Expansion> matches = expansions.stream()
+                            .filter(
+                                e -> e.getIdentifier().equals(newExpansion.getIdentifier())
+                                    && e.getVersion().matches(newExpansion.getVersion())
+                            )
+                            .collect(Collectors.toList());
+                    log.trace("Matches {}", matches);
+                    
+                    if (matches.isEmpty()) {
+                        // we found a new one
+                        expansions.add(newExpansion);
+                    } else {
+                        // we found an existing one. What's next?
+                    }
                 }
             } catch (Exception e) {
                 log.warn("could not read {}", f, e);

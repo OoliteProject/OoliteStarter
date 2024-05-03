@@ -1401,7 +1401,10 @@ public class Oolite implements PropertyChangeListener {
 
                 if ("manifest.plist".equals(entry.getName())) {
                     InputStream stream = zipFile.getInputStream(entry);
-                    return createExpansionFromManifest(stream, f.getAbsolutePath() + "!" + entry.getName());
+                    Expansion e = createExpansionFromManifest(stream, f.getAbsolutePath() + "!" + entry.getName());
+                    e.setLocalFile(f); // we know it's local
+                    e.setOolite(this);
+                    return e;
                 } else {
                     log.trace("ignoring zipentry {}", entry.getName());
                 }
