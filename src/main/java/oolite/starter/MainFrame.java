@@ -244,6 +244,15 @@ public class MainFrame extends javax.swing.JFrame {
                 updateBackgroundProcessIndicator();
             }
 
+           /**
+            * From Oolite2.OoliteListener.
+            * @param message
+            */
+           @Override
+           public void problemDetected(String message) {
+               JOptionPane.showMessageDialog(MainFrame.this, message, "OoliteStarter", JOptionPane.ERROR_MESSAGE);
+           }
+
             @Override
             public void launched(ProcessData pd) {
                 log.debug("launched({})", pd);

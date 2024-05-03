@@ -53,6 +53,14 @@ public class Oolite2 {
          * @param status the new status
          */
         public void statusChanged(Status status);
+        
+        /**
+         * Invoked whenever the Oolite2 scan revealed a problem with the data
+         * that should be presented to users.
+         * 
+         * @param message 
+         */
+        public void problemDetected(String message);
     }
 
     public class OoliteExpansionListModel extends AbstractListModel<Expansion> {
@@ -191,6 +199,13 @@ public class Oolite2 {
         List<OoliteListener> ls = new ArrayList<>(listeners);
         for (OoliteListener l: ls) {
             l.statusChanged(status);
+        }
+    }
+    
+    protected void fireProblemDetected(String message) {
+        List<OoliteListener> ls = new ArrayList<>(listeners);
+        for (OoliteListener l: ls) {
+            l.problemDetected(message);
         }
     }
     
@@ -389,6 +404,12 @@ public class Oolite2 {
                         expansions.add(newExpansion);
                     } else {
                         // we found an existing one. What's next?
+                        StringBuilder message = new StringBuilder("Problem: Duplicate expansion found. Check files\n");
+                        message.append(matches.get(0).getLocalFile() + "\n");
+                        message.append(newExpansion.getLocalFile() + "\n");
+                        message.append("\nThis seriously needs to be resolved.");
+                        
+                        fireProblemDetected(message.toString());
                     }
                 }
             } catch (Exception e) {

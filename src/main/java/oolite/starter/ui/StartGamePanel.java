@@ -53,6 +53,15 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
             update();
         }
     }
+
+    /**
+     * From Oolite2.OoliteListener.
+     * @param message
+     */
+    @Override
+    public void problemDetected(String message) {
+        // message will be served by MainFrame
+    }
     
     private enum RunState {
         IDLE, RUNNING
