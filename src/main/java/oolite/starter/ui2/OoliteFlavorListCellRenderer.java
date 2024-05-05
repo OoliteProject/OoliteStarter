@@ -121,7 +121,14 @@ public class OoliteFlavorListCellRenderer extends javax.swing.JPanel implements 
                 JOptionPane.showConfirmDialog(this, "We're already there, kiddo.");
             } else  {
                 // have user approve the plan
-                if (JOptionPane.showConfirmDialog(this, Util.createCommandListPanel(plan), "Confirm these actions...", JOptionPane.OK_CANCEL_OPTION)==JOptionPane.OK_OPTION) {
+                String title = null;
+                if (exclusive) {
+                    title = "Confirm to install " + data.getName() + " exclusively...";
+                } else {
+                    title = "Confirm to install " + data.getName() + " additionally...";
+                }
+
+                if (JOptionPane.showConfirmDialog(this, Util.createCommandListPanel(plan), title, JOptionPane.OK_CANCEL_OPTION)==JOptionPane.OK_OPTION) {
                     // execute the plan
                     ExpansionManager.getInstance().addCommands(plan);
                     MrGimlet.showMessage(this, "Working on it...");

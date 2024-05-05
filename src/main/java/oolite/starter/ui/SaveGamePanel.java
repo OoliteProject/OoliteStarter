@@ -210,7 +210,7 @@ public class SaveGamePanel extends javax.swing.JPanel implements ExpansionManage
         if (dlm != null && rowIndex >= 0) {
             ExpansionReference er = dlm.getElementAt(rowIndex);
             if (er.getReasons().isEmpty()) {
-                lsExpansions.setToolTipText(null);
+                lsExpansions.setToolTipText(String.valueOf(er.getStatus()));
             } else {
                 lsExpansions.setToolTipText(String.valueOf(er.getReasons()));
             }
