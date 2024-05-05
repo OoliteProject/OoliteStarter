@@ -1579,7 +1579,7 @@ public class Oolite implements PropertyChangeListener {
      * 
      * @param source the file to read from
      */
-    public NodeList parseExpansionSet(File source) throws ParserConfigurationException, SAXException, IOException, XPathExpressionException {
+    public static NodeList parseExpansionSet(File source) throws ParserConfigurationException, SAXException, IOException, XPathExpressionException {
         log.debug("parseExpansionSet({})", source);
         if (source == null) {
             throw new IllegalArgumentException("source must not be null");
@@ -1596,7 +1596,7 @@ public class Oolite implements PropertyChangeListener {
      * 
      * @param source the URL to read from
      */
-    public NodeList parseExpansionSet(URL source) throws ParserConfigurationException, SAXException, IOException, XPathExpressionException {
+    public static NodeList parseExpansionSet(URL source) throws ParserConfigurationException, SAXException, IOException, XPathExpressionException {
         log.debug("parseExpansionSet({})", source);
         if (source == null) {
             throw new IllegalArgumentException("source must not be null");
