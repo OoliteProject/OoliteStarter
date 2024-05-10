@@ -107,7 +107,17 @@ public class OoliteFlavorListCellRenderer extends javax.swing.JPanel implements 
             NodeList nl = Oolite.parseExpansionSet(data.getExpansionSetUrl());
             log.warn("Parsed expansion set {}", data.getExpansionSetUrl());
                     
+            // get the complete list what needs to be done
             List<Command> plan = oolite.buildCommandList(oolite2.getExpansions(), nl);
+
+            // stuff that we keep is not worth mentioning
+            plan = plan.stream()
+                .filter(cmd -> 
+                        cmd.getAction()!=Command.Action.KEEP
+                )
+                .collect(Collectors.toList());
+            
+            // if not exclusive we do not remove anything
             if (!exclusive) {
                 plan = plan.stream()
                     .filter(cmd -> 
@@ -116,7 +126,7 @@ public class OoliteFlavorListCellRenderer extends javax.swing.JPanel implements 
                     )
                     .collect(Collectors.toList());
             }
-                    
+
             if (plan.isEmpty()) {
                 JOptionPane.showConfirmDialog(this, "We're already there, kiddo.");
             } else  {
