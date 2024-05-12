@@ -103,7 +103,7 @@ Happy Flying!
 
 In the following you will find detailed description of each of these use cases:
 
-![](https://www.plantuml.com/plantuml/svg/TPBDQi904CVl-nI3Tr_0Gr4mbe2sO6ZlGtOeI_T3CfCebBvxNHkQMHjlsT_kpF-3h5cmapvuSyBs4py86Xpe6GCnV1c0dgb59dYXipeTYVj02cp9asYmSvVYlKzepRVvKrbKbnD6TYd20UEL18go06IOBhH-7LdGUosPpZ5lpJFRVI4Mqa0P7m__BDvULuMJdSSXTNmJ7xyBwKqhRa2X1_ORklDz1SNyFg5LnznliUerUIS4xzJbwLyVOroK-nwQ5gFsPlNgoZgPBwAUoPClDlMCizKRKxU2vV9f-XaKd99gE3QdaMv4SntEh2dQFlWV)
+![](https://www.plantuml.com/plantuml/svg/TPBTQi8m5CVlynG7xtq1BuQ2THHq0yjsVqWE8omVfIUjmjYxpsXPJzJUjRyc_uy_NNF2BlNUgHRrDtuHD3ZGAtfY-540FPD69dYZatWx4lUU1DYIeoJ1pfwByowYKR_gtsLHdLiCR6E00uOByHJI0f1X-Y3zwy09dPEMyHIoQhwptHTcFWwKyV7m4F5wkYgIx1mEiUEh-VXSM6-CATHRXvfckZHqL-822h5zHAcMnowatgEpYU2Jkdpx5chiZkb-b4PZc0rQ6PkUhrBBEphP0M-xREedoLOVJDqAbikNwSyGS6eguJYZH78HoMKvjQPWUk_-0000)
 
 ### SaveGames
 
@@ -221,11 +221,18 @@ Not available in the current version.
 
 ### Flavors
 
+![](http://www.plantuml.com/plantuml/svg/SoWkIImgAStDuIf8JCvEJ4zLK7BBIIpBBofMKaWiLe2o5Qgv51HAYrEJ4ujJ5HnJKf1uGQa5EOd9gLorN5nMeSMfHLOAkhfsO3K8BboHGsfU2j0k0000)
+
+Flavors are predefined sets of expansions. You can install a flavor in
+addition to the expansions you have already installed. Or you can install it as a 
+replacement, which means OoliteStarter will remove all expansions that are
+not part of the flavor.
+
 ![](src/main/resources-ext/images/screenshots/Flavors.png)
 
-Flavors are predefined sets of expansions. You can install a flavor simply by
-doubleclicking it on the list. OoliteStarter will automatically compute which
-expansions need to be removed or installed and show a list for your approval.
+Either way, OoliteStarter will automatically compute which
+expansions need to be removed or installed and show a list for your approval
+before getting active.
 
 ### Expansion Set
 
