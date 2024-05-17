@@ -603,6 +603,15 @@ public class ExpansionsPanel2 extends javax.swing.JPanel implements Oolite2.Ooli
 
     /**
      * From Oolite2.OoliteListener.
+     * @param message
+     */
+    @Override
+    public void problemDetected(String message) {
+        // message will be served by MainFrame
+    }
+
+    /**
+     * From Oolite2.OoliteListener.
      * @param status 
      */
     @Override

@@ -53,6 +53,15 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
             update();
         }
     }
+
+    /**
+     * From Oolite2.OoliteListener.
+     * @param message
+     */
+    @Override
+    public void problemDetected(String message) {
+        // message will be served by MainFrame
+    }
     
     private enum RunState {
         IDLE, RUNNING
@@ -466,7 +475,7 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
         sb.append(pd.getCwd().getAbsolutePath());
         sb.append("</tt></p><p>Currently we are waiting for this process to finish.</p>");
         sb.append("<p>If you do not see Oolite showing up, consider taking a look at the <a href=\"file://");
-        sb.append(logfile).append("\">logfiles</a>. More help may be available at <a href=\"http://aegidian.org/bb/viewtopic.php?f=9&t=21405\">the forum</a>.</p>");
+        sb.append(logfile).append("\">logfiles</a>. More help may be available at <a href=\"https://bb.oolite.space/\">the forum</a>.</p>");
         sb.append("</html>");
         
         final String text = sb.toString();

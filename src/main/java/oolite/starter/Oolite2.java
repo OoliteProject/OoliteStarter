@@ -10,6 +10,7 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.swing.AbstractListModel;
 import javax.swing.SwingUtilities;
 import javax.xml.parsers.ParserConfigurationException;
@@ -52,6 +53,14 @@ public class Oolite2 {
          * @param status the new status
          */
         public void statusChanged(Status status);
+        
+        /**
+         * Invoked whenever the Oolite2 scan revealed a problem with the data
+         * that should be presented to users.
+         * 
+         * @param message 
+         */
+        public void problemDetected(String message);
     }
 
     public class OoliteExpansionListModel extends AbstractListModel<Expansion> {
@@ -193,6 +202,13 @@ public class Oolite2 {
         }
     }
     
+    protected void fireProblemDetected(String message) {
+        List<OoliteListener> ls = new ArrayList<>(listeners);
+        for (OoliteListener l: ls) {
+            l.problemDetected(message);
+        }
+    }
+    
     /**
      * Installs filesystem watchers for the currently active installation.
      */
@@ -310,6 +326,18 @@ public class Oolite2 {
     public Installation getActiveInstallation() {
         return oolite.getActiveInstallation();
     }
+
+    /**
+     * Removes phantom expansions that are neither online nor offline.
+     */
+    void removePhantoms() {
+        List<Expansion> phantoms = expansions.stream()
+            .filter(e -> e.getDownloadUrl()==null && e.getLocalFile()==null)
+            .collect(Collectors.toList());
+        
+        log.warn("Removing phantoms {}", phantoms);
+        expansions.removeAll(phantoms);
+    }
     
     void validateDependencies() {
         log.debug("validateDependencies()");
@@ -342,7 +370,7 @@ public class Oolite2 {
      * @param f 
      */
     public void rescan(File f) {
-        log.debug("rescan({})", f);
+        log.warn("rescan({})", f);
         
         status = Status.RESCANNING;
         fireStatusChanged(); // notify listeners
@@ -352,26 +380,62 @@ public class Oolite2 {
             // let's find the expansion in our list and mark it up accordingly
             String fstr = f.getAbsolutePath();
             
+            List<Expansion> toBeRemoved = new ArrayList<>();
             for (Expansion e: expansions) {
                 if (e.getLocalFile() != null) {
                     String gstr = e.getLocalFile().getAbsolutePath();
                     if (fstr.equals(gstr)) {
                         log.warn("Need to remove expansion {}", e);
-                        // todo: really remove that expansion, or mark it as not installed
+                        if (e.isOnline()) {
+                            e.setLocalFile(null);
+                        } else {
+                            // todo: really remove that expansion, or mark it as not installed
+                            toBeRemoved.add(e);
+                        }
                     }
                 }
             }
+            expansions.removeAll(toBeRemoved);
         } else {
-            log.trace("File exists!");
+            log.warn("File exists!");
             try {
                 Expansion newExpansion = oolite.getExpansionFrom(f);
                 if (newExpansion != null) {
                     // replace the right one
+                    log.warn("Found {} but need to sort it in", newExpansion);
+                    List<Expansion> matches = expansions.stream()
+                            .filter(
+                                e -> e.getIdentifier().equals(newExpansion.getIdentifier())
+                                    && e.getVersion().matches(newExpansion.getVersion())
+                                    && e.isLocal()
+                            )
+                            .collect(Collectors.toList());
+                    log.trace("Matches {}", matches);
+                    
+                    if (matches.isEmpty()) {
+                        // we found a new one
+                        expansions.add(newExpansion);
+                    } else {
+                        if (String.valueOf(matches.get(0).getLocalFile()).equals(String.valueOf(newExpansion.getLocalFile()))) {
+                            // we found the very same expansion. This is not a problem.
+                        } else {
+                            // we found an existing one. What's next?
+                            StringBuilder message = new StringBuilder("Problem: Duplicate expansion found. Check files\n");
+                            message.append(matches.get(0).getLocalFile() + "\n");
+                            message.append(newExpansion.getLocalFile() + "\n");
+                            message.append("\nThis seriously needs to be resolved.");
+
+                            fireProblemDetected(message.toString());
+                        }
+                    }
                 }
             } catch (Exception e) {
                 log.warn("could not read {}", f, e);
             }
         }
+        
+        // remove invalid entries
+        removePhantoms();
 
         // recompute dependencies
         validateDependencies();

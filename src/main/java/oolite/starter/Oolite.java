@@ -1401,7 +1401,10 @@ public class Oolite implements PropertyChangeListener {
 
                 if ("manifest.plist".equals(entry.getName())) {
                     InputStream stream = zipFile.getInputStream(entry);
-                    return createExpansionFromManifest(stream, f.getAbsolutePath() + "!" + entry.getName());
+                    Expansion e = createExpansionFromManifest(stream, f.getAbsolutePath() + "!" + entry.getName());
+                    e.setLocalFile(f); // we know it's local
+                    e.setOolite(this);
+                    return e;
                 } else {
                     log.trace("ignoring zipentry {}", entry.getName());
                 }
@@ -1420,8 +1423,12 @@ public class Oolite implements PropertyChangeListener {
     public void install(Expansion expansion) throws IOException {
         log.debug("install({})", expansion);
         URL url = new URL(expansion.getDownloadUrl());
-        
-        File file = new File(configuration.getManagedAddonsDir(), expansion.getIdentifier() + "@" + expansion.getVersion() + ".oxz");
+
+//      Old naming scheme - supports many different versions installed in parallel        
+//        File file = new File(configuration.getManagedAddonsDir(), expansion.getIdentifier() + "@" + expansion.getVersion() + ".oxz");
+
+//      In-Game Expansion Manager compatible naming scheme
+        File file = new File(configuration.getManagedAddonsDir(), expansion.getIdentifier() + ".oxz");
         HttpUtil.downloadUrl(url, file);
         
         if (!file.isFile())
@@ -1572,7 +1579,7 @@ public class Oolite implements PropertyChangeListener {
      * 
      * @param source the file to read from
      */
-    public NodeList parseExpansionSet(File source) throws ParserConfigurationException, SAXException, IOException, XPathExpressionException {
+    public static NodeList parseExpansionSet(File source) throws ParserConfigurationException, SAXException, IOException, XPathExpressionException {
         log.debug("parseExpansionSet({})", source);
         if (source == null) {
             throw new IllegalArgumentException("source must not be null");
@@ -1589,7 +1596,7 @@ public class Oolite implements PropertyChangeListener {
      * 
      * @param source the URL to read from
      */
-    public NodeList parseExpansionSet(URL source) throws ParserConfigurationException, SAXException, IOException, XPathExpressionException {
+    public static NodeList parseExpansionSet(URL source) throws ParserConfigurationException, SAXException, IOException, XPathExpressionException {
         log.debug("parseExpansionSet({})", source);
         if (source == null) {
             throw new IllegalArgumentException("source must not be null");
@@ -1737,6 +1744,12 @@ public class Oolite implements PropertyChangeListener {
         Element root = doc.createElement("ExpansionList");
         root.setAttribute("generatedAt", Instant.now().toString());
         root.setAttribute("generatedBy", getClass().getPackage().getImplementationTitle() + " " + getClass().getPackage().getImplementationVersion());
+        root.setAttribute("OS", System.getProperty("os.name") + "/" + System.getProperty("os.version") + "/" + System.getProperty("os.arch"));
+        try {
+            root.setAttribute("Oolite", getActiveInstallation().getVersion());
+        } catch (Exception e) {
+            log.warn("Could not determine active Oolite installation.");
+        }
         doc.appendChild(root);
         
         for (Expansion expansion: expansions) {

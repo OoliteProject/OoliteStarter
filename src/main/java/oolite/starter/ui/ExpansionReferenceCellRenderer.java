@@ -19,7 +19,7 @@ import org.apache.logging.log4j.Logger;
 public class ExpansionReferenceCellRenderer  extends JLabel implements ListCellRenderer<ExpansionReference> {
     private static final Logger log = LogManager.getLogger();
 
-        private static final ImageIcon iiOk = new ImageIcon(ExpansionReferenceCellRenderer.class.getResource("/icons/check_circle_FILL0_wght400_GRAD0_opsz24.png"));
+        private static final ImageIcon iiOk = new ImageIcon(ExpansionReferenceCellRenderer.class.getResource("/icons/check_circle_FILL0_wght400_GRAD0_opsz24_blue.png"));
         private static final ImageIcon iiMissing = new ImageIcon(ExpansionReferenceCellRenderer.class.getResource("/icons/report_FILL0_wght400_GRAD0_opsz24_red.png"));
         private static final ImageIcon iiSurplus = new ImageIcon(ExpansionReferenceCellRenderer.class.getResource("/icons/warning_FILL0_wght400_GRAD0_opsz24_orange.png"));
 
@@ -36,7 +36,6 @@ public class ExpansionReferenceCellRenderer  extends JLabel implements ListCellR
             switch(value.getStatus()) {
                 case OK:
                     setIcon(iiOk);
-                    setIcon(null);
                     break;
                 case MISSING:
                     setIcon(iiMissing);

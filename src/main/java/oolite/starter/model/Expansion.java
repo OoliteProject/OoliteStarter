@@ -793,6 +793,7 @@ public class Expansion implements Comparable<Expansion> {
         if (isLocal()) {
             sb.append(", local");
         }
+        sb.append(", " + localFile);
         sb.append(")");
         return sb.toString();
     }

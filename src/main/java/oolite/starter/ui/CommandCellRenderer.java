@@ -25,13 +25,13 @@ import org.apache.logging.log4j.Logger;
 public class CommandCellRenderer extends JPanel implements ListCellRenderer<Command> {
     private static final Logger log = LogManager.getLogger();
     
-    private static final ImageIcon iiInstall = new ImageIcon(ExpansionReferenceCellRenderer.class.getResource("/icons/download_FILL0_wght400_GRAD0_opsz24.png"));
+    private static final ImageIcon iiInstall = new ImageIcon(ExpansionReferenceCellRenderer.class.getResource("/icons/download_FILL0_wght400_GRAD0_opsz24_green.png"));
     private static final ImageIcon iiEnable = new ImageIcon(ExpansionReferenceCellRenderer.class.getResource("/icons/switches_enable_FILL0_wght400_GRAD0_opsz24.png"));
     private static final ImageIcon iiDisable = new ImageIcon(ExpansionReferenceCellRenderer.class.getResource("/icons/switches_disable_FILL0_wght400_GRAD0_opsz24.png"));
-    private static final ImageIcon iiDelete = new ImageIcon(ExpansionReferenceCellRenderer.class.getResource("/icons/delete_forever_FILL0_wght400_GRAD0_opsz24.png"));
+    private static final ImageIcon iiDelete = new ImageIcon(ExpansionReferenceCellRenderer.class.getResource("/icons/delete_forever_FILL0_wght400_GRAD0_opsz24_red.png"));
     private static final ImageIcon iiError = new ImageIcon(ExpansionReferenceCellRenderer.class.getResource("/icons/report_FILL0_wght400_GRAD0_opsz24_red.png"));
     private static final ImageIcon iiWarn = new ImageIcon(ExpansionReferenceCellRenderer.class.getResource("/icons/warning_FILL0_wght400_GRAD0_opsz24_orange.png"));
-    private static final ImageIcon iiKeep = new ImageIcon(ExpansionReferenceCellRenderer.class.getResource("/icons/check_circle_FILL0_wght400_GRAD0_opsz24.png"));
+    private static final ImageIcon iiKeep = new ImageIcon(ExpansionReferenceCellRenderer.class.getResource("/icons/check_circle_FILL0_wght400_GRAD0_opsz24_blue.png"));
 
     private static final ImageIcon iiPending = new ImageIcon(ExpansionReferenceCellRenderer.class.getResource("/icons/pending_FILL0_wght400_GRAD0_opsz24.png"));
     private static final ImageIcon iiDownloading = new ImageIcon(ExpansionReferenceCellRenderer.class.getResource("/icons/downloading_FILL0_wght400_GRAD0_opsz24.png"));
@@ -61,7 +61,7 @@ public class CommandCellRenderer extends JPanel implements ListCellRenderer<Comm
         lbTitle.setOpaque(false);
         add(lbTitle, new GridBagConstraints(1, 0, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0,5,0,5), 0, 0));
         
-        lbStatus = new JLabel(iiWarn);
+        lbStatus = new JLabel();
         lbStatus.setOpaque(false);
         add(lbStatus, new GridBagConstraints(2, 0, 1, 1, 0, 0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0,5,0,5), 0, 0));
         
@@ -76,7 +76,7 @@ public class CommandCellRenderer extends JPanel implements ListCellRenderer<Comm
                 lbAction.setIcon(iiInstall);
                 break;
             case INSTALL_ALTERNATIVE:
-                lbAction.setIcon(iiWarn);
+                lbAction.setIcon(iiInstall);
                 break;
             case ENABLE:
                 lbAction.setIcon(iiEnable);
@@ -95,7 +95,7 @@ public class CommandCellRenderer extends JPanel implements ListCellRenderer<Comm
                 lbAction.setIcon(iiDelete);
                 break;
             default:
-                lbAction.setIcon(null);
+                lbAction.setIcon(iiKeep);
         }
         if (command.getState() == SwingWorker.StateValue.DONE) {
             try {
@@ -118,7 +118,7 @@ public class CommandCellRenderer extends JPanel implements ListCellRenderer<Comm
         
         switch (command.getState()) {
             case PENDING:
-                lbStatus.setIcon(iiPending);
+                lbStatus.setIcon(null);
                 break;
             case STARTED:
                 lbStatus.setIcon(iiDownloading);
