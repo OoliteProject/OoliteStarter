@@ -1744,6 +1744,12 @@ public class Oolite implements PropertyChangeListener {
         Element root = doc.createElement("ExpansionList");
         root.setAttribute("generatedAt", Instant.now().toString());
         root.setAttribute("generatedBy", getClass().getPackage().getImplementationTitle() + " " + getClass().getPackage().getImplementationVersion());
+        root.setAttribute("OS", System.getProperty("os.name") + "/" + System.getProperty("os.version") + "/" + System.getProperty("os.arch"));
+        try {
+            root.setAttribute("Oolite", getActiveInstallation().getVersion());
+        } catch (Exception e) {
+            log.warn("Could not determine active Oolite installation.");
+        }
         doc.appendChild(root);
         
         for (Expansion expansion: expansions) {
