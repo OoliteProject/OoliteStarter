@@ -2,8 +2,6 @@
  */
 package oolite.starter.ui;
 
-import java.awt.Desktop;
-import javax.swing.event.HyperlinkEvent;
 import oolite.starter.Oolite;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -26,15 +24,7 @@ public class WaitPanel extends javax.swing.JPanel {
         
         this.oolite = oolite;
         
-        jEditorPane1.addHyperlinkListener(he-> {
-            if (he.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-                try {
-                        Desktop.getDesktop().browse(he.getURL().toURI());
-                } catch (Exception e) {
-                    log.info("Could not open url {}", he.getURL(), e);
-                }
-            }
-        });
+        jEditorPane1.addHyperlinkListener(new HyperLinkListener());
     }
     
     /**
