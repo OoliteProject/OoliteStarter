@@ -52,6 +52,7 @@ public class InstallationForm extends javax.swing.JPanel {
             txtManagedAddOnDir.setText("");
             txtSavegameDir.setText("");
             txtVersion.setText("");
+            cbDCP.setSelected(false);
         } else {
             txtAddOnDir.setText(data.getAddonDir());
             txtDeactivatedAddOnDir.setText(data.getDeactivatedAddonDir());
@@ -61,6 +62,7 @@ public class InstallationForm extends javax.swing.JPanel {
             txtManagedAddOnDir.setText(data.getManagedAddonDir());
             txtSavegameDir.setText(data.getSavegameDir());
             txtVersion.setText(data.getVersion());
+            cbDCP.setSelected(data.isDebugCapable());
         }
     }
 
@@ -78,6 +80,7 @@ public class InstallationForm extends javax.swing.JPanel {
         data.setHomeDir(txtHomeDir.getText());
         data.setSavegameDir(txtSavegameDir.getText());
         data.setVersion(txtVersion.getText());
+        data.setDebugCapable(cbDCP.isSelected());
         return data;
     }
 
@@ -100,6 +103,7 @@ public class InstallationForm extends javax.swing.JPanel {
         txtManagedAddOnDir.setEnabled(enabled);
         txtManagedDeactivatedAddOnDir.setEnabled(enabled);
         txtVersion.setEnabled(enabled);
+        cbDCP.setEnabled(enabled);
     }
 
     /**
@@ -137,6 +141,8 @@ public class InstallationForm extends javax.swing.JPanel {
         txtDeactivatedAddOnDir = new javax.swing.JTextField();
         filler2 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 32767));
         filler3 = new javax.swing.Box.Filler(new java.awt.Dimension(3, 0), new java.awt.Dimension(3, 0), new java.awt.Dimension(32767, 0));
+        jLabel9 = new javax.swing.JLabel();
+        cbDCP = new javax.swing.JCheckBox();
 
         setLayout(new java.awt.GridBagLayout());
 
@@ -371,6 +377,23 @@ public class InstallationForm extends javax.swing.JPanel {
         gridBagConstraints.gridx = 3;
         gridBagConstraints.gridy = 0;
         add(filler3, gridBagConstraints);
+
+        jLabel9.setText("Debug Console Protocol");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 8;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(9, 6, 0, 0);
+        add(jLabel9, gridBagConstraints);
+
+        cbDCP.setText("Debug Capable");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 8;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        gridBagConstraints.insets = new java.awt.Insets(6, 12, 6, 0);
+        add(cbDCP, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
 
     void maybeFillVersion(File homeDir) throws IOException {
@@ -428,18 +451,27 @@ public class InstallationForm extends javax.swing.JPanel {
         }
     }
     
+    void maybeDetectDebugOXP(File homeDir) throws IOException {
+        log.debug("maybeDetectDebugOXP({})", homeDir);
+        
+        File d = new File(Oolite.getAddOnDir(homeDir), "Basic-debug.oxp");
+        cbDCP.setSelected(d.isDirectory());
+    }
+    
     /**
      * After a homeDir set, check which other fields we want to populate.
      * 
      * @param homeDir the home directory
      */
     void tryToFillOtherFields(File homeDir) {
+        log.warn("tryToFillOtherFields({})", homeDir);
         try {
             maybeFillVersion(homeDir);
             maybeFillExecutable(homeDir);
             maybeFillSavegameDir(homeDir);
             maybeFillAddonDir(homeDir);
             maybeFillManagedAddonDir(homeDir);
+            maybeDetectDebugOXP(homeDir);
         } catch (Exception e) {
             log.warn("Could not fill in other fields", e);
             JOptionPane.showMessageDialog(this, "Could not guess other values automatically. See logfile for more information.", INSTALLATIONFORM_WARNING, JOptionPane.WARNING_MESSAGE);
@@ -603,6 +635,7 @@ public class InstallationForm extends javax.swing.JPanel {
     private javax.swing.JButton btManagedAddOnDir;
     private javax.swing.JButton btManagedDeactivatedAddOnDir;
     private javax.swing.JButton btSavegameDir;
+    private javax.swing.JCheckBox cbDCP;
     private javax.swing.Box.Filler filler2;
     private javax.swing.Box.Filler filler3;
     private javax.swing.JLabel jLabel1;
@@ -613,6 +646,7 @@ public class InstallationForm extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JTextField txtAddOnDir;
     private javax.swing.JTextField txtDeactivatedAddOnDir;
     private javax.swing.JTextField txtExecutable;

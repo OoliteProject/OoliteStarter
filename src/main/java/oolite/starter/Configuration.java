@@ -145,6 +145,7 @@ public class Configuration {
             inst.setDeactivatedAddonDir(xpath.evaluate("DeactivatedAddonDir", eInstallation));
             inst.setManagedAddonDir(xpath.evaluate("ManagedAddonDir", eInstallation));
             inst.setManagedDeactivatedAddonDir(xpath.evaluate("ManagedDeactivatedAddonDir", eInstallation));
+            inst.setDebugCapable(Boolean.parseBoolean(xpath.evaluate("DebugCapable", eInstallation)));
             insts.add(inst);
             
             if ("true".equals(eInstallation.getAttribute("active"))) {
@@ -221,6 +222,10 @@ public class Configuration {
             
             e = doc.createElement("ManagedDeactivatedAddonDir");
             e.setTextContent(installation.getManagedDeactivatedAddonDir());
+            eInstallation.appendChild(e);
+
+            e = doc.createElement("DebugCapable");
+            e.setTextContent(String.valueOf(installation.isDebugCapable()));
             eInstallation.appendChild(e);
             
             eInstallations.appendChild(eInstallation);

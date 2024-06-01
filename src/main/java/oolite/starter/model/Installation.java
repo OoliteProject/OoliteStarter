@@ -4,6 +4,9 @@
 package oolite.starter.model;
 
 /**
+ * An installation of Oolite.
+ * This entity mainly contains paths but also version number and presence of
+ * debug oxp.
  *
  * @author hiran
  */
@@ -17,6 +20,7 @@ public class Installation {
     private String deactivatedAddonDir;
     private String managedAddonDir;
     private String managedDeactivatedAddonDir;
+    private boolean debugCapable;
     
     /**
      * Creates a new Installation.
@@ -169,6 +173,24 @@ public class Installation {
         this.managedDeactivatedAddonDir = managedDeactivatedAddonDir;
     }
 
+    /**
+     * Returns whether this installation can speak debug console protocol.
+     * 
+     * @return true if and only if it can
+     */
+    public boolean isDebugCapable() {
+        return debugCapable;
+    }
+
+    /**
+     * Set to true if this installation can speak debug console protocol.
+     * 
+     * @param debugCapable true if and only if it can, false otherwise
+     */
+    public void setDebugCapable(boolean debugCapable) {
+        this.debugCapable = debugCapable;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -181,6 +203,7 @@ public class Installation {
         sb.append(", deactivatedAddonDir=").append(deactivatedAddonDir);
         sb.append(", managedAddonDir=").append(managedAddonDir);
         sb.append(", managedDeactivatedAddonDir=").append(managedDeactivatedAddonDir);
+        sb.append(", debugCapable=").append(debugCapable);
         sb.append('}');
         return sb.toString();
     }

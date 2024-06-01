@@ -174,13 +174,13 @@ public class Util {
      * @throws IOException something went wrong
      */
     public static void unzip(InputStream src, File destDir) throws IOException {
-        log.warn("unzip({}, {})", src, destDir);
+        log.debug("unzip({}, {})", src, destDir);
         try (ZipInputStream zis = new ZipInputStream(src)) {
             ZipEntry zEntry = null;
             
             while ( (zEntry = zis.getNextEntry()) != null ) {
                 File dest = new File(destDir, zEntry.getName());
-                log.warn("ZipEntry {} -> {}", zEntry.getName(), dest);
+                log.trace("ZipEntry {} -> {}", zEntry.getName(), dest);
                 if (zEntry.isDirectory()) {
                     dest.mkdirs();
                 } else {

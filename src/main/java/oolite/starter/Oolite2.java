@@ -335,7 +335,7 @@ public class Oolite2 {
             .filter(e -> e.getDownloadUrl()==null && e.getLocalFile()==null)
             .collect(Collectors.toList());
         
-        log.warn("Removing phantoms {}", phantoms);
+        log.info("Removing phantoms {}", phantoms);
         expansions.removeAll(phantoms);
     }
     
@@ -370,7 +370,7 @@ public class Oolite2 {
      * @param f 
      */
     public void rescan(File f) {
-        log.warn("rescan({})", f);
+        log.debug("rescan({})", f);
         
         status = Status.RESCANNING;
         fireStatusChanged(); // notify listeners
@@ -397,12 +397,12 @@ public class Oolite2 {
             }
             expansions.removeAll(toBeRemoved);
         } else {
-            log.warn("File exists!");
+            log.trace("File exists!");
             try {
                 Expansion newExpansion = oolite.getExpansionFrom(f);
                 if (newExpansion != null) {
                     // replace the right one
-                    log.warn("Found {} but need to sort it in", newExpansion);
+                    log.trace("Found {} but need to sort it in", newExpansion);
                     List<Expansion> matches = expansions.stream()
                             .filter(
                                 e -> e.getIdentifier().equals(newExpansion.getIdentifier())

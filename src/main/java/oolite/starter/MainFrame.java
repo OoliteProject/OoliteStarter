@@ -99,7 +99,7 @@ public class MainFrame extends javax.swing.JFrame {
         }
 
         private boolean maybeAnnounceExpansionUpdate(MainFrame mf) {
-            log.warn("maybeAnnounceExpansionUpdate(...)");
+            log.debug("maybeAnnounceExpansionUpdate(...)");
             List<Expansion> updates = mf.oolite2.getUpdates();
 
             if (!updates.isEmpty()) {

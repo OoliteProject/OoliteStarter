@@ -52,6 +52,7 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
+import oolite.starter.dcp.TCPServer;
 import oolite.starter.model.Command;
 import oolite.starter.model.Expansion;
 import oolite.starter.model.ExpansionReference;
@@ -59,6 +60,7 @@ import oolite.starter.model.Installation;
 import oolite.starter.model.OoliteFlavor;
 import oolite.starter.model.ProcessData;
 import oolite.starter.model.SaveGame;
+import oolite.starter.mqtt.MQTTAdapter;
 import oolite.starter.util.HttpUtil;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.apache.commons.io.FileUtils;
@@ -90,6 +92,11 @@ public class Oolite implements PropertyChangeListener {
 
     private boolean terminate = false;
     private int running = 0;
+    
+    /**
+     * The server for the debug console protocol.
+     */
+    private TCPServer tcpserver;
     
     /**
      * Compares the given expansion with the given oolite version.
@@ -580,7 +587,7 @@ public class Oolite implements PropertyChangeListener {
      */
     protected void checkSurplusExpansions(List<ExpansionReference> references) {
         StackTraceElement ste = Thread.currentThread().getStackTrace()[2];
-        log.warn("checkSurplusExpansions({}) called by {} {} ({}:{})", references, ste.getClassName(), ste.getMethodName(), ste.getFileName(), ste.getLineNumber());
+        log.debug("checkSurplusExpansions({}) called by {} {} ({}:{})", references, ste.getClassName(), ste.getMethodName(), ste.getFileName(), ste.getLineNumber());
         if (references == null) {
             throw new IllegalArgumentException("references must not be null");
         }
@@ -759,6 +766,10 @@ public class Oolite implements PropertyChangeListener {
             injectExpansion();
         }
         
+        if (! isDebugConsoleRunning()) {
+            startDebugConsole();
+        }
+        
         try {
             log.info("executing {} in {}", command, dir);
 
@@ -798,6 +809,10 @@ public class Oolite implements PropertyChangeListener {
             }
             
         } finally {
+            if (isDebugConsoleRunning()) {
+                stopDebugConsole();
+            }
+
             running--;
             if (configuration != null) {
                 try {
@@ -1167,7 +1182,7 @@ public class Oolite implements PropertyChangeListener {
      */
     public List<Expansion> getAllExpansions() throws IOException {
         StackTraceElement ste = Thread.currentThread().getStackTrace()[2];
-        log.warn("getAllExpansions() called by {} {} ({}:{})", ste.getClassName(), ste.getMethodName(), ste.getFileName(), ste.getLineNumber());
+        log.debug("getAllExpansions() called by {} {} ({}:{})", ste.getClassName(), ste.getMethodName(), ste.getFileName(), ste.getLineNumber());
         Instant start = Instant.now();
         
         List<Expansion> resultList = new ArrayList<>();
@@ -1315,7 +1330,7 @@ public class Oolite implements PropertyChangeListener {
      */
     public List<Expansion> getLocalExpansions() {
         StackTraceElement ste = Thread.currentThread().getStackTrace()[2];
-        log.warn("getLocalExpansions() called by {} {} ({}:{})", ste.getClassName(), ste.getMethodName(), ste.getFileName(), ste.getLineNumber());
+        log.debug("getLocalExpansions() called by {} {} ({}:{})", ste.getClassName(), ste.getMethodName(), ste.getFileName(), ste.getLineNumber());
 
         if (configuration == null) {
             throw new IllegalStateException(OOLITE_CONFIGURATION_MUST_NOT_BE_NULL);
@@ -1711,7 +1726,7 @@ public class Oolite implements PropertyChangeListener {
      * @return the list of commands to get there
      */
     public List<Command> buildUpdateCommandList(List<Expansion> expansions, List<Expansion> updates) {
-        log.warn("buildUpdateCommandList({}, {})", expansions, updates);
+        log.debug("buildUpdateCommandList({}, {})", expansions, updates);
         List<Command> result = new ArrayList<>();
         
         for (Expansion u: updates) {
@@ -2426,6 +2441,9 @@ public class Oolite implements PropertyChangeListener {
             File a = Oolite.getAddOnDir(homeDir);
             if (a != null) {
                 i.setAddonDir(a.getCanonicalPath());
+                
+                File debugOxp = new File(a, "Basic-debug.oxp");
+                i.setDebugCapable(debugOxp.isDirectory());
             }
         } catch (IOException e) {
             log.warn("Cannot get AddOns dir for {}", homeDir, e);
@@ -2567,5 +2585,61 @@ public class Oolite implements PropertyChangeListener {
             throw new IOException("Could not load flavor list from " + url, e);
         }
         
+    }
+    
+    protected boolean isDebugConsoleRunning() {
+        log.warn("isDebugConsoleRunning()");
+        
+        if (tcpserver == null) {
+            return false;
+        }
+
+        switch(tcpserver.getStatus()) {
+            case connected:
+            case connecting:
+            case listening:
+                return true;
+            case error:
+            case passive:
+            default:
+                return false;
+        }
+    }
+    
+    protected void startDebugConsole() {
+        log.warn("startDebugConsole()");
+
+        if (configuration == null) {
+            log.warn("No configuration loaded. Not starting console server.");
+            return;
+        }
+        if (configuration.getActiveInstallation() == null) {
+            log.warn("No active Oolite installation. Not starting console server.");
+            return;
+        }
+        if (!configuration.getActiveInstallation().isDebugCapable()) {
+            log.warn("No Debug OXP detected. Not starting console server.");
+            return;
+        }
+        
+        tcpserver = new TCPServer();
+        try {
+            MQTTAdapter ma = new MQTTAdapter();
+            ma.init(tcpserver);
+            tcpserver.startup(ma);
+        } catch (Exception e) {
+            log.error("Could not start tcp server", e);
+            tcpserver.shutdown();
+            tcpserver = null;
+        }
+    }
+    
+    protected void stopDebugConsole() {
+        log.warn("stopDebugConsole()");
+        
+        if (tcpserver != null) {
+            tcpserver.shutdown();
+            tcpserver = null;
+        }
     }
 }
