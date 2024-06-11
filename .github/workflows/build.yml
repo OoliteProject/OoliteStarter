@@ -65,10 +65,10 @@ jobs:
       with:
         fetch-depth: 0
 
-    - name: Set up JDK 17
+    - name: Set up JDK 21
       uses: actions/setup-java@v4
       with:
-        java-version: '17'
+        java-version: '21'
         distribution: 'adopt'
 
     - name: Build with Maven
@@ -92,10 +92,10 @@ jobs:
     needs: [semver,build]
     runs-on: ubuntu-latest
     steps:
-    - name: Set up JDK 17
+    - name: Set up JDK 21
       uses: actions/setup-java@v4
       with:
-        java-version: '17'
+        java-version: '21'
         distribution: 'adopt'
 
     - name: Checkout project
@@ -191,10 +191,10 @@ jobs:
     needs: [semver,build]
     runs-on: windows-latest
     steps:
-    - name: Set up JDK 17
+    - name: Set up JDK 21
       uses: actions/setup-java@v4
       with:
-        java-version: '17'
+        java-version: '21'
         distribution: 'adopt'
 
     - name: Checkout project
@@ -258,10 +258,10 @@ jobs:
     runs-on: macos-latest
 
     steps:
-    - name: Set up JDK 17
+    - name: Set up JDK 21
       uses: actions/setup-java@v4
       with:
-        java-version: '17'
+        java-version: '21'
         distribution: 'adopt'
 
     - name: Checkout project

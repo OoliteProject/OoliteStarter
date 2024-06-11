@@ -6,7 +6,7 @@ and manage save games.
 
 ## Requirements (generic package only)
 
-* You need to have Java SDK 17 or newer installed. 
+* You need to have Java SDK 21 or newer installed. 
   If you are unfamiliar with installing Java on Linux, follow
   https://www.youtube.com/watch?v=7lzIP-PvHoY
   If you are unfamiliar with installing Java on MacOS, follow
@@ -28,7 +28,7 @@ To remove the software, just delete the directory you have created.
 
 If, directly at startup, you see error messages like
 java.lang.UnsupportedClassVersionError: oolite/starter/MainFrame has been compiled by a more recent version of the Java Runtime (class file version 61.0), this version of the Java Runtime only recognizes class file versions up to...
-you are running a too old JVM. Not only check whether Java 17+ is installed, also
+you are running a too old JVM. Not only check whether Java 21+ is installed, also
 make sure it is used (there may be multiple Java installations on your system).
 
 ### Linux (.deb)
