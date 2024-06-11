@@ -211,6 +211,7 @@ jobs:
 
     - name: Check status 0
       run: |
+        gci env:* | sort-object name
         get-childitem . -Recurse | where {!$_.PSIsContainer} | select-object FullName
 
     - name: Extract project
@@ -242,7 +243,10 @@ jobs:
 
     - name: Rename result (target\OoliteStarter-0.1.16.0.exe)
       run: |
-        ren "target\OoliteStarter-${{ needs.semver.outputs.GITVERSION_ASSEMBLYSEMVER }}.exe" OoliteStarter-${{ needs.semver.outputs.GITVERSION_SEMVER }}-Windows.exe
+        gci env:* | sort-object name
+        $SRC = "target\OoliteStarter-${{ needs.semver.outputs.GITVERSION_ASSEMBLYSEMVER }}.exe"
+        $DST = "OoliteStarter-${{ needs.semver.outputs.GITVERSION_SEMVER }}-Windows-%PROCESSOR_ARCHITECTURE%.exe"
+        ren $SRC $DST
 
     - name: Check status 4
       run: |
