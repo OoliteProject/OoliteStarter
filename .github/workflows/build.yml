@@ -342,7 +342,7 @@ jobs:
     - name: Create ZIP distribution
       run: |
         cd target/appimage
-        zip -r ../OoliteStarter-${{ needs.semver.outputs.GITVERSION_SEMVER }}-MacOS.zip  *
+        zip -r ../OoliteStarter-${{ needs.semver.outputs.GITVERSION_SEMVER }}-MacOS-${HOSTTYPE}.zip  *
 
     - name: Check status 3
       run: |
@@ -353,7 +353,7 @@ jobs:
 
     - name: Rename result
       run: |
-        mv ./target/OoliteStarter-${{ needs.semver.outputs.MACOS_MAJORMINORPATCH }}.pkg ./target/OoliteStarter-${{ needs.semver.outputs.GITVERSION_SEMVER }}-MacOS.pkg
+        mv ./target/OoliteStarter-${{ needs.semver.outputs.MACOS_MAJORMINORPATCH }}.pkg ./target/OoliteStarter-${{ needs.semver.outputs.GITVERSION_SEMVER }}-MacOS-${HOSTTYPE}.pkg
 
     - name: Check status 4
       run: |
