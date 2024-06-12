@@ -12,7 +12,7 @@ this.version		= "0.1";
 this.pushdata = false;
 
 // brought in via https://github.com/maikschulz/oolite-mqtt-bridge/blob/master/oolite-mqtt-bridge.oxp/Config/script.js
-this.startUp = function()
+this.startUpComplete = function()
 {
     var callbackCounter = 0.0;
     var prevMsg = {
