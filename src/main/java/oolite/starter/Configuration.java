@@ -62,6 +62,10 @@ public class Configuration {
     
     private Duration updateCheckInterval;
     
+    private String mqttBrokerUrl;
+    private String mqttUser;
+    private char[] mqttPassword;
+    
     /**
      * Flag to indicate if after load/save the configuration was changed.
      */
@@ -101,6 +105,14 @@ public class Configuration {
     
     /**
      * Loads the configuration from the given configuration file.
+     * New: MQTT settings, which would look like this:
+     * <pre>
+     * &lt;Mqtt&gt;
+     *   &lt;BrokerUrl&gt;tcp://localhost:1883&lt;/BrokerUrl&gt;
+     *   &lt;User&gt;user&lt;/User&gt;
+     *   &lt;Password&gt;password&lt;/Password&gt;
+     * &lt;/Mqtt&gt;
+     * </pre>
      * 
      * @param f the file to load
      */
@@ -129,6 +141,26 @@ public class Configuration {
             } else {
                 log.info("Still using default udpate interval: {}", e.getMessage());
             }
+        }
+
+        Element m = (Element)xpath.evaluate("/OoliteStarter/Mqtt/BrokerUrl", doc, XPathConstants.NODE);
+        if (m == null) {
+            mqttBrokerUrl = null;
+        } else {
+            mqttBrokerUrl = m.getTextContent();
+        }
+        m = (Element)xpath.evaluate("/OoliteStarter/Mqtt/User", doc, XPathConstants.NODE);
+        if (m == null) {
+            mqttUser = null;
+        } else {
+            mqttUser = m.getTextContent();
+        }
+        m = (Element)xpath.evaluate("/OoliteStarter/Mqtt/Password", doc, XPathConstants.NODE);
+        if (m == null) {
+            mqttPassword = null;
+        } else {
+            String s = m.getTextContent();
+            mqttPassword = s.toCharArray();
         }
         
         // load installations
@@ -231,6 +263,26 @@ public class Configuration {
             eInstallations.appendChild(eInstallation);
         }
         root.appendChild(eInstallations);
+        
+        if (mqttBrokerUrl != null) {
+            Element eMqtt = doc.createElement("Mqtt");
+            Element e = doc.createElement("BrokerUrl");
+            e.setTextContent(mqttBrokerUrl);
+            eMqtt.appendChild(e);
+            
+            if (mqttUser != null) {
+                e = doc.createElement("User");
+                e.setTextContent(mqttUser);
+                eMqtt.appendChild(e);
+            }
+            if (mqttPassword != null) {
+                e = doc.createElement("Password");
+                e.setTextContent(new String(mqttPassword));
+                eMqtt.appendChild(e);
+            }
+            
+            root.appendChild(eMqtt);
+        }
         
         TransformerFactory tf = TransformerFactory.newDefaultInstance();
         tf.setAttribute("indent-number", 4);
@@ -471,5 +523,66 @@ public class Configuration {
      */
     public File getDefaultConfigFile() {
         return new File(System.getProperty("user.home") + File.separator + ".oolite-starter.conf");
+    }
+
+    /**
+     * Returns the MqttBrokerUrl.
+     * 
+     * @return the url
+     */
+    public String getMqttBrokerUrl() {
+        return mqttBrokerUrl;
+    }
+
+    /**
+     * Sets the Mqtt BrokerUrl.
+     * 
+     * @param mqttBrokerUrl the url
+     */
+    public void setMqttBrokerUrl(String mqttBrokerUrl) {
+        this.mqttBrokerUrl = mqttBrokerUrl;
+    }
+
+    /**
+     * Returns the Mqtt Username.
+     * @return the username
+     */
+    public String getMqttUser() {
+        return mqttUser;
+    }
+
+    /**
+     * Sets the Mqtt Username.
+     * @param mqttUser the username
+     */
+    public void setMqttUser(String mqttUser) {
+        this.mqttUser = mqttUser;
+    }
+
+    /**
+     * Returns the Mqtt password.
+     * 
+     * @return the password
+     */
+    public char[] getMqttPassword() {
+        return mqttPassword;
+    }
+
+    /**
+     * Sets the Mqtt password.
+     * 
+     * @param mqttPassword the password
+     */
+    public void setMqttPassword(char[] mqttPassword) {
+        this.mqttPassword = mqttPassword;
+    }
+    
+    /**
+     * Returns true if mqtt data allows to connect to a broker.
+     * 
+     * @return true if we have enough data, false otherwise
+     */
+    public boolean hasMqttData() {
+        return mqttBrokerUrl != null;
     }
 }

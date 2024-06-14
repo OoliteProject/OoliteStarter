@@ -312,6 +312,37 @@ next time run OoliteStarter.
 
 The configuration data is stored in $HOME/.oolite-starter.conf.
 
+## MQTT Configuration
+
+OoliteStarter can push Oolite into the world of IoT. Events from the game get
+published via MQTT. Feel free to connect any amount and type of MQTT clients to
+react to the published messages.
+
+The current implementation will send messages as specified in
+https://github.com/maikschulz/oolite-mqtt-bridge
+which means the same NodeRed client setup can be used to visualize the data.
+
+There are prerequisites that must be met for such messages to be published:
+- You need to have an Oolite version that contains the DebugOXP (that is either
+a test or development version)
+- OoliteStarter must have detected the DebugOXP (a checkmark in the installation
+settings)
+- You must have configured MQTT broker details. This currently requires editing
+the $HOME/.oolite-starter.conf file manually.
+
+Add a section like this into your configuration file, then start up OoliteStarter:
+
+    <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+    <OoliteStarter>
+        ...
+        <Mqtt>
+            <BrokerUrl>tcp://localhost:1883</BrokerUrl>
+            <User>user</User>
+            <Password>secret</Password>
+        </Mqtt>
+    </OoliteStarter>
+
+
 ## Tuning
 
 You can modify OoliteStarter's appearance as much as FlatLAF allows. This is done

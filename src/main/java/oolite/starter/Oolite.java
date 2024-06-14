@@ -2621,11 +2621,15 @@ public class Oolite implements PropertyChangeListener {
             log.warn("No Debug OXP detected. Not starting console server.");
             return;
         }
+        if (!configuration.hasMqttData()) {
+            log.warn("No Mqtt data. Not starting console server.");
+            return;
+        }
         
         tcpserver = new TCPServer();
         try {
             MQTTAdapter ma = new MQTTAdapter();
-            ma.init(tcpserver);
+            ma.init(tcpserver, configuration.getMqttBrokerUrl(), configuration.getMqttUser(), configuration.getMqttPassword());
             tcpserver.startup(ma);
         } catch (Exception e) {
             log.error("Could not start tcp server", e);

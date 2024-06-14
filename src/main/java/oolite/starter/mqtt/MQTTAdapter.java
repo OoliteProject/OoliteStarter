@@ -39,7 +39,7 @@ public class MQTTAdapter implements PlistListener {
     /**
      * Initializes - which means it connects to the MQTT broker.
      */
-    public void init(TCPServer tcpServer) {
+    public void init(TCPServer tcpServer, String brokerUrl, String user, char[] password) {
         log.debug("init({})", tcpServer);
         
         this.tcpServer = tcpServer;
@@ -55,18 +55,25 @@ public class MQTTAdapter implements PlistListener {
         });
         
         String publisherId = getClass().getPackage().getImplementationTitle() + "-" + getClass().getPackage().getImplementationVersion() + "-mqtt-" + UUID.randomUUID().toString();
-        String url = "tcp://192.168.178.51:1883";
         try {
             MemoryPersistence persistence = new MemoryPersistence();
-            mqttClient = new MqttClient(url, publisherId, persistence);
+            mqttClient = new MqttClient(brokerUrl, publisherId, persistence);
 
             MqttConnectOptions options = new MqttConnectOptions();
             options.setAutomaticReconnect(true);
             options.setCleanSession(true);
             options.setConnectionTimeout(10);
-            options.setUserName("artemis");
-            options.setPassword("artemis".toCharArray());
+            if (user != null) {
+                options.setUserName(user);
+            }
+            if (password != null) {
+                options.setPassword(password);
+            }
             mqttClient.connect(options);
+            
+            if (mqttClient.isConnected()) {
+                log.info("Connected to {} as {}", brokerUrl, user);
+            }
             
             mqttClient.subscribe("oolite/input", new IMqttMessageListener() {
                 @Override
@@ -80,7 +87,7 @@ public class MQTTAdapter implements PlistListener {
             MqttMessage mm = new MqttMessage("Oolite started".getBytes());
             mqttClient.publish("test/topic", mm);
         } catch (Exception e) {
-            log.error("Could not connect to MQTT server on {}", url, e);
+            log.error("Could not connect to MQTT server on {}", brokerUrl, e);
         }
     }
 
