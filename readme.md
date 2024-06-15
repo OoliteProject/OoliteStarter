@@ -342,6 +342,18 @@ Add a section like this into your configuration file, then start up OoliteStarte
         </Mqtt>
     </OoliteStarter>
 
+These events will be happening:
+
+![](https://cdn-0.plantuml.com/plantuml/png/ZLDBRi8m4Dtx52FsgAgwGImGKjTLgKeFO9mXZ9hOgJ-WthuUGzfOiL4N8Db-p-yppjPvQNteEo6LDnO-75enn2rID4ZjuTLqvF6TKSMJR6jdh0VfOB5_tbqNZwlLqqBmvNIM7k7bRRyNBBBSP3Ul8Hdv0-QwehKc3FacE7IEZ1O0nGkLqKTgWyNHQGtOoQ3LwS6Y2pr2A_i4dIfEf20tiTnmeYIcKVaIW7kunOEEd4TDkat0tx0CAL6loz5XifOJhu09TPIh-2calqZoG1eEKdroPjqaKeELKG3aDQvXwEGtDpPsnkiOSLhQp9z3tKIDGsYXZp3PehlX-7ncqg92EcEPKJLQdTRHs8kqPGFtaqVReb31Lo1Vc493RZw8MRZurvEM7il5Yth6VupNdSpbtgiqG_OeCtt6r9vy5gxCuwxuL_xUKsNLhiKsCaFV_G00)
+
+If OoliteStarter cannot grab the TCP Port it will not complain. But at the same
+time it will not be able to receive events to be forwarded to MQTT.
+
+### OoliteStarter and Oolite Debug Console
+
+As only one application can listen for connections on the TCP port 1883, you have
+to choose which one gets the port. As long as you start the Oolite Debug Console
+prior to launching the Oolite session you are good to go.
 
 ## Tuning
 
