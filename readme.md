@@ -349,6 +349,21 @@ These events will be happening:
 If OoliteStarter cannot grab the TCP Port it will not complain. But at the same
 time it will not be able to receive events to be forwarded to MQTT.
 
+### Feedback Channel
+
+OoliteStarter not only allows Oolite to publish messages to MQTT. It also allows
+MQTT devices to respond and feeds these messages back into Oolite. All a client
+has to do is to publish a JSON message on the oolite/input topic that looks like
+this:
+
+    {
+      'command': "somestring"
+    }
+
+Make sure 'somestring' is a valid Oolite command - or expect some Oolite complaints
+and ranting in one of the other topics.
+
+
 ### OoliteStarter and Oolite Debug Console
 
 As only one application can listen for connections on the TCP port 1883, you have

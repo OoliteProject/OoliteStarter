@@ -76,16 +76,29 @@ public class MQTTAdapter implements PlistListener {
             }
             
             mqttClient.subscribe("oolite/input", new IMqttMessageListener() {
+                
+                /**
+                 * Expect JSON messages so we can extend them in the future.
+                 * Only the command part will be transmitted to Oolite.
+                 * <p>
+                 * With that a message can look like this:
+                 * <pre>
+                 *   { 'command'="player.ship.speed=4800" }
+                 * </pre>
+                 */
                 @Override
                 public void messageArrived(String topic, MqttMessage mm) throws Exception {
                     log.warn("messageArrived({}, {})", topic, mm);
                     
-                    tcpServer.sendCommand("player.ship.speed = 20");
+                    JSONObject jo = new JSONObject(new String(mm.getPayload()));
+                    if (jo.has("command")) {
+                        tcpServer.sendCommand(jo.getString("command"));
+                    }
                 }
             });
             
             MqttMessage mm = new MqttMessage("Oolite started".getBytes());
-            mqttClient.publish("test/topic", mm);
+            mqttClient.publish("oolite/starter", mm);
         } catch (Exception e) {
             log.error("Could not connect to MQTT server on {}", brokerUrl, e);
         }
@@ -95,22 +108,14 @@ public class MQTTAdapter implements PlistListener {
     public void receivedConfiguration(NSObject data) {
         log.trace("receivedConfiguration({})", data);
         MqttMessage mm = new MqttMessage(data.toXMLPropertyList().getBytes());
-        try {
-            mqttClient.publish("oolite/configuration", mm);
-        } catch (Exception e) {
-            log.warn("Could not publish", e);
-        }
+        sendMqtt("oolite/configuration", mm.toString());
     }
 
     @Override
     public void receivedConsoleOutput(NSObject data) {
         log.info("receivedConsoleOutput({})", data);
         MqttMessage mm = new MqttMessage(data.toXMLPropertyList().getBytes());
-        try {
-            mqttClient.publish("test/topic", mm);
-        } catch (Exception e) {
-            log.warn("Could not publish", e);
-        }
+        sendMqtt("oolite/console", mm.toString());
     }
     
     protected void sendMqtt(String topic, String message) {
@@ -151,8 +156,15 @@ public class MQTTAdapter implements PlistListener {
                     case "alert":
                         sendMqtt("oolite/alert", message.toString());
                         break;
+                    default:
+                        sendMqtt("oolite/unknown", message.toString());
+                        break;
                 }
+            } else {
+                sendMqtt("oolite/unknown", messageO.toString());
             }
+        } else {
+            sendMqtt("oolite/unknown", dataO.toString());
         }
     }
 
@@ -160,44 +172,28 @@ public class MQTTAdapter implements PlistListener {
     public void receivedCommandAcknowledge(NSObject data) {
         log.warn("receivedCommandAcknowledge({})", data);
         MqttMessage mm = new MqttMessage(data.toXMLPropertyList().getBytes());
-        try {
-            mqttClient.publish("test/topic", mm);
-        } catch (Exception e) {
-            log.warn("Could not publish", e);
-        }
+        sendMqtt("oolite/commandAcknowledge", mm.toString());
     }
 
     @Override
     public void receivedLogMessage(NSObject data) {
         log.trace("receivedLogMessage({})", data);
         MqttMessage mm = new MqttMessage(data.toXMLPropertyList().getBytes());
-        try {
-            mqttClient.publish("test/topic", mm);
-        } catch (Exception e) {
-            log.warn("Could not publish", e);
-        }
+        sendMqtt("oolite/log", mm.toString());
     }
 
     @Override
     public void receivedWorldEvent(NSObject data) {
         log.warn("receivedWorldEvent({})", data);
         MqttMessage mm = new MqttMessage(data.toXMLPropertyList().getBytes());
-        try {
-            mqttClient.publish("test/topic", mm);
-        } catch (Exception e) {
-            log.warn("Could not publish", e);
-        }
+        sendMqtt("oolite/worldEvent", mm.toString());
     }
 
     @Override
     public void showConsole() {
         log.trace("showConsole()");
         MqttMessage mm = new MqttMessage("showConsole".getBytes());
-        try {
-            mqttClient.publish("test/topic", mm);
-        } catch (Exception e) {
-            log.warn("Could not publish", e);
-        }
+        sendMqtt("oolite/showConsole", mm.toString());
     }
 
 }
