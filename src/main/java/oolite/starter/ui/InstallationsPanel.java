@@ -248,7 +248,7 @@ public class InstallationsPanel extends javax.swing.JPanel {
         setName("Oolite Versions"); // NOI18N
         setLayout(new java.awt.BorderLayout());
 
-        btAdd.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/add_FILL0_wght400_GRAD0_opsz24.png"))); // NOI18N
+        btAdd.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/note_add_24dp_FILL0_wght400_GRAD0_opsz24.png"))); // NOI18N
         btAdd.setText("Add...");
         btAdd.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -264,8 +264,8 @@ public class InstallationsPanel extends javax.swing.JPanel {
             }
         });
 
-        btRemove.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/delete_forever_FILL0_wght400_GRAD0_opsz24.png"))); // NOI18N
-        btRemove.setText("Delete");
+        btRemove.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/scan_delete_24dp_FILL0_wght400_GRAD0_opsz24.png"))); // NOI18N
+        btRemove.setText("Remove");
         btRemove.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btRemoveActionPerformed(evt);
