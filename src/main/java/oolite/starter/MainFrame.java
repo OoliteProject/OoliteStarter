@@ -145,6 +145,16 @@ public class MainFrame extends javax.swing.JFrame {
                     message.append("</html>");
 
                     MrGimlet.showMessage(mf.getRootPane(), message.toString(), 0);
+                } else if (!mf.isInstallationsValid()) {
+                    mf.jTabbedPane1.setSelectedIndex(4);
+
+                    StringBuilder message = new StringBuilder("<html>");
+                    message.append("<p>Hmmm. Something's fishy here.</p>");
+                    message.append("<p>Is it possible some Oolite version changed meanwhile?<br>");
+                    message.append("Better check.</p>");
+                    message.append("</html>");
+
+                    MrGimlet.showMessage(mf.getRootPane(), message.toString(), 0);
                 } else if (mf.configuration.getActiveInstallation() == null) {
                     // point user to creating an active installation
                     mf.jTabbedPane1.setEnabledAt(0, false);
@@ -369,6 +379,40 @@ public class MainFrame extends javax.swing.JFrame {
                 }
             }
         });
+    }
+    
+    /**
+     * Checks if the configured installations still match the setup on disk.
+     * 
+     * @return true if good, false otherwise
+     */
+    protected boolean isInstallationsValid() {
+        log.debug("isInstallationsValid()");
+
+        for (Installation i: configuration.getInstallations()) {
+            File f = new File(i.getExcecutable());
+            if (!f.isFile()) {
+                log.warn("File {} not found.", f);
+                return false;
+            }
+
+            f = new File(i.getHomeDir());
+            if (!f.isDirectory()) {
+                log.warn("File {} not found.", f);
+                return false;
+            }
+            
+            try {
+                String v = oolite.getVersionFromHomeDir(f);
+                if (!i.getVersion().equals(v)) {
+                    return false;
+                }
+            } catch (IOException e) {
+                log.warn("Could not get version for {}", f, e);
+            }
+        }
+        
+        return true;
     }
     
     private void updateBackgroundProcessIndicator() {

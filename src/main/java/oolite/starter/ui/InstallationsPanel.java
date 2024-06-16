@@ -463,7 +463,7 @@ public class InstallationsPanel extends javax.swing.JPanel {
     private void btRemoveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btRemoveActionPerformed
         log.debug("btRemoveActionPerformed({})", evt);
         
-        if (JOptionPane.showConfirmDialog(btRemove, "Kiddo! Are you really sure that you want to do this?", "Remove...", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+        if (JOptionPane.showConfirmDialog(btRemove, "Kiddo! This will remove all our knowledge about this installation on disk.\nAre you sure you want to do this?", "Remove...", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
             try {
                 int rowIndex = jTable1.getSelectedRow();
                 if (rowIndex == -1) {
