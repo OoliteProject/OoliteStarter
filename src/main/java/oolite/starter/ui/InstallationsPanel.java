@@ -280,7 +280,7 @@ public class InstallationsPanel extends javax.swing.JPanel {
             }
         });
 
-        btSave.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/save_FILL0_wght400_GRAD0_opsz24.png"))); // NOI18N
+        btSave.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/download_FILL0_wght400_GRAD0_opsz24.png"))); // NOI18N
         btSave.setText("Save");
         btSave.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {

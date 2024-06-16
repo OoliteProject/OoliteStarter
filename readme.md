@@ -337,14 +337,14 @@ Add a section like this into your configuration file, then start up OoliteStarte
         ...
         <Mqtt>
             <BrokerUrl>tcp://localhost:1883</BrokerUrl>
-            <User>user</User>
-            <Password>secret</Password>
+            <User>user</User>           <!-- If you do not need to authenticate you can omit this element -->
+            <Password>secret</Password> <!-- If you do not need to authenticate you can omit this element -->
         </Mqtt>
     </OoliteStarter>
 
 These events will be happening:
 
-![](https://cdn-0.plantuml.com/plantuml/png/ZLDBRi8m4Dtx52FsgAgwGImGKjTLgKeFO9mXZ9hOgJ-WthuUGzfOiL4N8Db-p-yppjPvQNteEo6LDnO-75enn2rID4ZjuTLqvF6TKSMJR6jdh0VfOB5_tbqNZwlLqqBmvNIM7k7bRRyNBBBSP3Ul8Hdv0-QwehKc3FacE7IEZ1O0nGkLqKTgWyNHQGtOoQ3LwS6Y2pr2A_i4dIfEf20tiTnmeYIcKVaIW7kunOEEd4TDkat0tx0CAL6loz5XifOJhu09TPIh-2calqZoG1eEKdroPjqaKeELKG3aDQvXwEGtDpPsnkiOSLhQp9z3tKIDGsYXZp3PehlX-7ncqg92EcEPKJLQdTRHs8kqPGFtaqVReb31Lo1Vc493RZw8MRZurvEM7il5Yth6VupNdSpbtgiqG_OeCtt6r9vy5gxCuwxuL_xUKsNLhiKsCaFV_G00)
+![](http://cdn-0.plantuml.com/plantuml/png/ZLFDJiCm3BxdAQpT4K9SfXtG9Cw88SO3PAdNMRH9oSyctfuutLX3aubBfSIV_VquNJilhGzz9wJoniA7Gok6U4MA1gazl9gEFBupgbZ9hZR6Uf0E5jldpNXuM2uV5uA7qr5wX9UtxVPwIcpykNlAU5QGP5s1kGhHMXE6_18SEaT62u3YG6NqdjfWyQAx1knaqEfmRz657g6LVO9E6ITKa8c8mzXV8jEeV0d0gPpjGKVEeoRT9k2lMOQKMiVZHM6IbZUEW4dhI5VLKt1_akI1DEoa-cJFkabD3LPM0P37k8AXaz-Ss2KpFaUBMMX_zJdKJUJOXHRw29CjkZEEwpEH5XNI4SiTLQ7LRUsDFKbR5d3RESPu2X5y1VA5BJJavekOcOkVddJaAmSlwXx_iLvtCATRhz8CsQFC-1bJVVAvkK8VPrNzvr9Wiy4CpVAeBqEawTNoEfP3t_q0)
 
 If OoliteStarter cannot grab the TCP Port it will not complain. But at the same
 time it will not be able to receive events to be forwarded to MQTT.
@@ -356,9 +356,9 @@ MQTT devices to respond and feeds these messages back into Oolite. All a client
 has to do is to publish a JSON message on the oolite/input topic that looks like
 this:
 
-    {
-      'command': "somestring"
-    }
+    { 'command': "somestring" }
+
+While this may look like overhead it allows future extension of the messages.
 
 Make sure 'somestring' is a valid Oolite command - or expect some Oolite complaints
 and ranting in one of the other topics.
