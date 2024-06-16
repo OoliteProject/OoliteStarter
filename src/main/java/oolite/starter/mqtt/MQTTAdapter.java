@@ -71,6 +71,8 @@ public class MQTTAdapter implements PlistListener {
             }
             mqttClient.connect(options);
             
+            mqttClient.publish("oolite/starter", new MqttMessage("started".getBytes()));
+            
             if (mqttClient.isConnected()) {
                 log.info("Connected to {} as {}", brokerUrl, user);
             }
@@ -90,9 +92,13 @@ public class MQTTAdapter implements PlistListener {
                 public void messageArrived(String topic, MqttMessage mm) throws Exception {
                     log.warn("messageArrived({}, {})", topic, mm);
                     
-                    JSONObject jo = new JSONObject(new String(mm.getPayload()));
-                    if (jo.has("command")) {
-                        tcpServer.sendCommand(jo.getString("command"));
+                    try {
+                        JSONObject jo = new JSONObject(new String(mm.getPayload()));
+                        if (jo.has("command")) {
+                            tcpServer.sendCommand(jo.getString("command"));
+                        }
+                    } catch (Exception e) {
+                        log.error("Could not consume message {}", mm);
                     }
                 }
             });
@@ -123,7 +129,7 @@ public class MQTTAdapter implements PlistListener {
             MqttMessage mm = new MqttMessage(message.getBytes());
             mqttClient.publish(topic, mm);
         } catch (Exception e) {
-            log.warn("Could not publish", e);
+            log.warn("Could not publish to {}/{}", mqttClient.getServerURI(), topic, e);
         }
     }
 
