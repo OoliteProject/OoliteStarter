@@ -62,10 +62,6 @@ public class Configuration {
     
     private Duration updateCheckInterval;
     
-    private String mqttBrokerUrl;
-    private String mqttUser;
-    private char[] mqttPassword;
-    
     /**
      * Flag to indicate if after load/save the configuration was changed.
      */
@@ -143,26 +139,6 @@ public class Configuration {
             }
         }
 
-        Element m = (Element)xpath.evaluate("/OoliteStarter/Mqtt/BrokerUrl", doc, XPathConstants.NODE);
-        if (m == null) {
-            mqttBrokerUrl = null;
-        } else {
-            mqttBrokerUrl = m.getTextContent();
-        }
-        m = (Element)xpath.evaluate("/OoliteStarter/Mqtt/User", doc, XPathConstants.NODE);
-        if (m == null) {
-            mqttUser = null;
-        } else {
-            mqttUser = m.getTextContent();
-        }
-        m = (Element)xpath.evaluate("/OoliteStarter/Mqtt/Password", doc, XPathConstants.NODE);
-        if (m == null) {
-            mqttPassword = null;
-        } else {
-            String s = m.getTextContent();
-            mqttPassword = s.toCharArray();
-        }
-        
         // load installations
         nl = (NodeList)xpath.evaluate("/OoliteStarter/Installations/Installation", doc, XPathConstants.NODESET);
         ArrayList<Installation> insts = new ArrayList<>();
@@ -178,6 +154,32 @@ public class Configuration {
             inst.setManagedAddonDir(xpath.evaluate("ManagedAddonDir", eInstallation));
             inst.setManagedDeactivatedAddonDir(xpath.evaluate("ManagedDeactivatedAddonDir", eInstallation));
             inst.setDebugCapable(Boolean.parseBoolean(xpath.evaluate("DebugCapable", eInstallation)));
+            
+            Element m = (Element)xpath.evaluate("Mqtt", eInstallation, XPathConstants.NODE);
+            if (m != null) {
+                // parse mqtt data
+                Installation.Mqtt mqtt = new Installation.Mqtt();
+                
+                Element e = (Element)xpath.evaluate("BrokerUrl", m, XPathConstants.NODE);
+                if (e != null) {
+                    mqtt.setBrokerUrl(e.getTextContent());
+                }
+                e = (Element)xpath.evaluate("User", m, XPathConstants.NODE);
+                if (e != null) {
+                    mqtt.setUser(e.getTextContent());
+                }
+                e = (Element)xpath.evaluate("Password", m, XPathConstants.NODE);
+                if (e != null) {
+                    String s = e.getTextContent();
+                    mqtt.setPassword(s.toCharArray());
+                }
+                e = (Element)xpath.evaluate("Prefix", m, XPathConstants.NODE);
+                if (e != null) {
+                    mqtt.setPrefix(e.getTextContent());
+                }
+                inst.setMqtt(mqtt);
+            }
+            
             insts.add(inst);
             
             if ("true".equals(eInstallation.getAttribute("active"))) {
@@ -259,31 +261,38 @@ public class Configuration {
             e = doc.createElement("DebugCapable");
             e.setTextContent(String.valueOf(installation.isDebugCapable()));
             eInstallation.appendChild(e);
+
+            if (installation.getMqtt()!= null) {
+                Element eMqtt = doc.createElement("Mqtt");
+                if (installation.getMqtt().getBrokerUrl()!=null) {
+                    e = doc.createElement("BrokerUrl");
+                    e.setTextContent(installation.getMqtt().getBrokerUrl());
+                    eMqtt.appendChild(e);
+                }
+                if (installation.getMqtt().getUser() != null) {
+                    e = doc.createElement("User");
+                    e.setTextContent(installation.getMqtt().getUser());
+                    eMqtt.appendChild(e);
+                }
+                if (installation.getMqtt().getPassword() != null) {
+                    e = doc.createElement("Password");
+                    e.setTextContent(new String(installation.getMqtt().getPassword()));
+                    eMqtt.appendChild(e);
+                }
+                if (installation.getMqtt().getPrefix() != null) {
+                    e = doc.createElement("Prefix");
+                    e.setTextContent(installation.getMqtt().getPrefix());
+                    eMqtt.appendChild(e);
+                }
+            
+                eInstallation.appendChild(eMqtt);
+            }
+            
             
             eInstallations.appendChild(eInstallation);
         }
         root.appendChild(eInstallations);
-        
-        if (mqttBrokerUrl != null) {
-            Element eMqtt = doc.createElement("Mqtt");
-            Element e = doc.createElement("BrokerUrl");
-            e.setTextContent(mqttBrokerUrl);
-            eMqtt.appendChild(e);
-            
-            if (mqttUser != null) {
-                e = doc.createElement("User");
-                e.setTextContent(mqttUser);
-                eMqtt.appendChild(e);
-            }
-            if (mqttPassword != null) {
-                e = doc.createElement("Password");
-                e.setTextContent(new String(mqttPassword));
-                eMqtt.appendChild(e);
-            }
-            
-            root.appendChild(eMqtt);
-        }
-        
+                
         TransformerFactory tf = TransformerFactory.newDefaultInstance();
         tf.setAttribute("indent-number", 4);
         Transformer t = tf.newTransformer();
@@ -525,64 +534,4 @@ public class Configuration {
         return new File(System.getProperty("user.home") + File.separator + ".oolite-starter.conf");
     }
 
-    /**
-     * Returns the MqttBrokerUrl.
-     * 
-     * @return the url
-     */
-    public String getMqttBrokerUrl() {
-        return mqttBrokerUrl;
-    }
-
-    /**
-     * Sets the Mqtt BrokerUrl.
-     * 
-     * @param mqttBrokerUrl the url
-     */
-    public void setMqttBrokerUrl(String mqttBrokerUrl) {
-        this.mqttBrokerUrl = mqttBrokerUrl;
-    }
-
-    /**
-     * Returns the Mqtt Username.
-     * @return the username
-     */
-    public String getMqttUser() {
-        return mqttUser;
-    }
-
-    /**
-     * Sets the Mqtt Username.
-     * @param mqttUser the username
-     */
-    public void setMqttUser(String mqttUser) {
-        this.mqttUser = mqttUser;
-    }
-
-    /**
-     * Returns the Mqtt password.
-     * 
-     * @return the password
-     */
-    public char[] getMqttPassword() {
-        return mqttPassword;
-    }
-
-    /**
-     * Sets the Mqtt password.
-     * 
-     * @param mqttPassword the password
-     */
-    public void setMqttPassword(char[] mqttPassword) {
-        this.mqttPassword = mqttPassword;
-    }
-    
-    /**
-     * Returns true if mqtt data allows to connect to a broker.
-     * 
-     * @return true if we have enough data, false otherwise
-     */
-    public boolean hasMqttData() {
-        return mqttBrokerUrl != null;
-    }
 }

@@ -335,11 +335,15 @@ Add a section like this into your configuration file, then start up OoliteStarte
     <?xml version="1.0" encoding="UTF-8" standalone="no"?>
     <OoliteStarter>
         ...
-        <Mqtt>
-            <BrokerUrl>tcp://localhost:1883</BrokerUrl>
-            <User>user</User>           <!-- If you do not need to authenticate you can omit this element -->
-            <Password>secret</Password> <!-- If you do not need to authenticate you can omit this element -->
-        </Mqtt>
+        <Installation ...>
+            ...
+            <Mqtt>
+                <BrokerUrl>tcp://192.168.178.51:1883</BrokerUrl>
+                <User>artemis</User>
+                <Password>artemis</Password>
+                <Prefix>prefix</Prefix>
+            </Mqtt>
+        </Installation>
     </OoliteStarter>
 
 These events will be happening:

@@ -6,8 +6,11 @@ import java.io.File;
 import java.io.IOException;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import oolite.starter.Oolite;
 import oolite.starter.model.Installation;
+import oolite.starter.mqtt.MqttUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -21,17 +24,36 @@ public class InstallationForm extends javax.swing.JPanel {
 
     private static final String INSTALLATIONFORM_USER_HOME = "user.home";
     private static final String INSTALLATIONFORM_SELECT = "Select";
+    private static final String INSTALLATIONFORM_SUCCESS = "Success";
     private static final String INSTALLATIONFORM_ERROR = "Error";
     private static final String INSTALLATIONFORM_WARNING = "Warning";
     private static final String INSTALLATIONFORM_BROWSE = "Browse";
 
     private transient Installation data;
+    private transient boolean passwordDirty = false;
 
     /**
      * Creates new InstallationForm.
      */
     public InstallationForm() {
         initComponents();
+        
+        pfMqttPassword.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent de) {
+                passwordDirty = true;
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent de) {
+                passwordDirty = true;
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent de) {
+                passwordDirty = true;
+            }
+        });
         this.setData(new Installation());
     }
 
@@ -43,6 +65,8 @@ public class InstallationForm extends javax.swing.JPanel {
     public void setData(Installation data) {
         this.data = data;
 
+        passwordDirty = false;
+        
         if (data == null) {
             txtAddOnDir.setText("");
             txtDeactivatedAddOnDir.setText("");
@@ -53,6 +77,11 @@ public class InstallationForm extends javax.swing.JPanel {
             txtSavegameDir.setText("");
             txtVersion.setText("");
             cbDCP.setSelected(false);
+
+            cbUseMqtt.setSelected(false);
+            txtMqttBrokerUrl.setText("");
+            txtMqttUsername.setText("");
+            txtMqttPrefix.setText("");
         } else {
             txtAddOnDir.setText(data.getAddonDir());
             txtDeactivatedAddOnDir.setText(data.getDeactivatedAddonDir());
@@ -63,7 +92,20 @@ public class InstallationForm extends javax.swing.JPanel {
             txtSavegameDir.setText(data.getSavegameDir());
             txtVersion.setText(data.getVersion());
             cbDCP.setSelected(data.isDebugCapable());
+            
+            if (data.getMqtt() == null) {
+                cbUseMqtt.setSelected(false);
+                txtMqttBrokerUrl.setText("");
+                txtMqttUsername.setText("");
+                txtMqttPrefix.setText("");
+            } else {
+                cbUseMqtt.setSelected(true);
+                txtMqttBrokerUrl.setText(data.getMqtt().getBrokerUrl());
+                txtMqttUsername.setText(data.getMqtt().getUser());
+                txtMqttPrefix.setText(data.getMqtt().getPrefix());
+            }
         }
+        
     }
 
     /**
@@ -81,6 +123,20 @@ public class InstallationForm extends javax.swing.JPanel {
         data.setSavegameDir(txtSavegameDir.getText());
         data.setVersion(txtVersion.getText());
         data.setDebugCapable(cbDCP.isSelected());
+        
+        if (cbUseMqtt.isSelected()) {
+            if (data.getMqtt() == null) {
+                data.setMqtt(new Installation.Mqtt());
+            }
+            data.getMqtt().setBrokerUrl(txtMqttBrokerUrl.getText());
+            data.getMqtt().setUser(txtMqttUsername.getText());
+            if (passwordDirty) {
+                data.getMqtt().setPassword(pfMqttPassword.getPassword());
+                passwordDirty = false;
+            }
+            data.getMqtt().setPrefix(txtMqttPrefix.getText());
+        }
+        
         return data;
     }
 
@@ -104,6 +160,12 @@ public class InstallationForm extends javax.swing.JPanel {
         txtManagedDeactivatedAddOnDir.setEnabled(enabled);
         txtVersion.setEnabled(enabled);
         cbDCP.setEnabled(enabled);
+        
+        cbUseMqtt.setEnabled(enabled);
+        txtMqttBrokerUrl.setEnabled(enabled);
+        txtMqttUsername.setEnabled(enabled);
+        pfMqttPassword.setEnabled(enabled);
+        txtMqttPrefix.setEnabled(enabled);
     }
 
     /**
@@ -143,6 +205,17 @@ public class InstallationForm extends javax.swing.JPanel {
         filler3 = new javax.swing.Box.Filler(new java.awt.Dimension(3, 0), new java.awt.Dimension(3, 0), new java.awt.Dimension(32767, 0));
         jLabel9 = new javax.swing.JLabel();
         cbDCP = new javax.swing.JCheckBox();
+        jLabel10 = new javax.swing.JLabel();
+        cbUseMqtt = new javax.swing.JCheckBox();
+        jLabel11 = new javax.swing.JLabel();
+        jLabel12 = new javax.swing.JLabel();
+        jLabel13 = new javax.swing.JLabel();
+        jLabel14 = new javax.swing.JLabel();
+        txtMqttBrokerUrl = new javax.swing.JTextField();
+        txtMqttUsername = new javax.swing.JTextField();
+        pfMqttPassword = new javax.swing.JPasswordField();
+        txtMqttPrefix = new javax.swing.JTextField();
+        btTest = new javax.swing.JButton();
 
         setLayout(new java.awt.GridBagLayout());
 
@@ -369,7 +442,7 @@ public class InstallationForm extends javax.swing.JPanel {
         add(txtDeactivatedAddOnDir, gridBagConstraints);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 8;
+        gridBagConstraints.gridy = 14;
         gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
         gridBagConstraints.weighty = 1.0;
         add(filler2, gridBagConstraints);
@@ -394,6 +467,94 @@ public class InstallationForm extends javax.swing.JPanel {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gridBagConstraints.insets = new java.awt.Insets(6, 12, 6, 0);
         add(cbDCP, gridBagConstraints);
+
+        jLabel10.setText("MQTT");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 9;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(9, 6, 0, 0);
+        add(jLabel10, gridBagConstraints);
+
+        cbUseMqtt.setText("use MQTT");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 9;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        gridBagConstraints.insets = new java.awt.Insets(6, 12, 6, 0);
+        add(cbUseMqtt, gridBagConstraints);
+
+        jLabel11.setText("Broker URL");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 10;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(9, 18, 0, 0);
+        add(jLabel11, gridBagConstraints);
+
+        jLabel12.setText("Username");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 11;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(9, 18, 0, 0);
+        add(jLabel12, gridBagConstraints);
+
+        jLabel13.setText("Password");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 12;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(9, 18, 0, 0);
+        add(jLabel13, gridBagConstraints);
+
+        jLabel14.setText("Prefix");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 13;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(9, 18, 0, 0);
+        add(jLabel14, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 10;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(6, 12, 6, 0);
+        add(txtMqttBrokerUrl, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 11;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(6, 12, 6, 0);
+        add(txtMqttUsername, gridBagConstraints);
+
+        pfMqttPassword.setText("jPasswordField1");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 12;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(6, 12, 6, 0);
+        add(pfMqttPassword, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 13;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(6, 12, 6, 0);
+        add(txtMqttPrefix, gridBagConstraints);
+
+        btTest.setText("Test");
+        btTest.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btTestActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 9;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
+        gridBagConstraints.insets = new java.awt.Insets(6, 9, 6, 6);
+        add(btTest, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
 
     void maybeFillVersion(File homeDir) throws IOException {
@@ -626,6 +787,30 @@ public class InstallationForm extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_btDeactivatedAddOnDirActionPerformed
 
+    private void btTestActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btTestActionPerformed
+
+        try {
+            char[] password = null;
+            if (passwordDirty) {
+                password = pfMqttPassword.getPassword();
+            } else {
+                password = data.getMqtt().getPassword();
+            }
+        
+            MqttUtil.testConnection(
+                txtMqttBrokerUrl.getText(),
+                txtMqttUsername.getText(),
+                password,
+                txtMqttPrefix.getText()
+            );
+            
+            JOptionPane.showMessageDialog(this, "Sent MQTT test message.", INSTALLATIONFORM_SUCCESS, JOptionPane.INFORMATION_MESSAGE);
+        } catch (Exception e) {
+            log.error("Could not send test message", e);
+            JOptionPane.showMessageDialog(this, "Could not send test message.", INSTALLATIONFORM_ERROR, JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_btTestActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btAddOnDir;
@@ -635,10 +820,17 @@ public class InstallationForm extends javax.swing.JPanel {
     private javax.swing.JButton btManagedAddOnDir;
     private javax.swing.JButton btManagedDeactivatedAddOnDir;
     private javax.swing.JButton btSavegameDir;
+    private javax.swing.JButton btTest;
     private javax.swing.JCheckBox cbDCP;
+    private javax.swing.JCheckBox cbUseMqtt;
     private javax.swing.Box.Filler filler2;
     private javax.swing.Box.Filler filler3;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
+    private javax.swing.JLabel jLabel13;
+    private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -647,12 +839,16 @@ public class InstallationForm extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
+    private javax.swing.JPasswordField pfMqttPassword;
     private javax.swing.JTextField txtAddOnDir;
     private javax.swing.JTextField txtDeactivatedAddOnDir;
     private javax.swing.JTextField txtExecutable;
     private javax.swing.JTextField txtHomeDir;
     private javax.swing.JTextField txtManagedAddOnDir;
     private javax.swing.JTextField txtManagedDeactivatedAddOnDir;
+    private javax.swing.JTextField txtMqttBrokerUrl;
+    private javax.swing.JTextField txtMqttPrefix;
+    private javax.swing.JTextField txtMqttUsername;
     private javax.swing.JTextField txtSavegameDir;
     private javax.swing.JTextField txtVersion;
     // End of variables declaration//GEN-END:variables

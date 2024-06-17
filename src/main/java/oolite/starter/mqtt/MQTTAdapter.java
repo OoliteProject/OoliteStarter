@@ -5,10 +5,10 @@ package oolite.starter.mqtt;
 import com.dd.plist.NSDictionary;
 import com.dd.plist.NSObject;
 import com.dd.plist.NSString;
-import java.util.UUID;
 import oolite.starter.dcp.Connector;
 import oolite.starter.dcp.PlistListener;
 import oolite.starter.dcp.TCPServer;
+import oolite.starter.model.Installation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.eclipse.paho.client.mqttv3.IMqttClient;
@@ -29,6 +29,19 @@ public class MQTTAdapter implements PlistListener {
     private IMqttClient mqttClient;
     private TCPServer tcpServer;
     
+    private String TOPIC_OOLITE_STARTER = "oolite/starter";
+    private String TOPIC_OOLITE_INPUT = "oolite/input";
+    private String TOPIC_OOLITE_CONFIGURATION = "oolite/configuration";
+    private String TOPIC_OOLITE_CONSOLE = "oolite/console";
+    private String TOPIC_OOLITE_COMMS = "oolite/comms";
+    private String TOPIC_OOLITE_CONTROLS = "oolite/controls";
+    private String TOPIC_OOLITE_ALERT = "oolite/alert";
+    private String TOPIC_OOLITE_UNKNOWN = "oolite/unknown";
+    private String TOPIC_OOLITE_COMMANDACKNOWLEDGE = "oolite/commandAcknowledge";
+    private String TOPIC_OOLITE_LOG = "oolite/log";
+    private String TOPIC_OOLITE_WORLDEVENT = "oolite/worldEvent";
+    private String TOPIC_OOLITE_SHOWCONSOLE = "oolite/showConsole";
+    
     /**
      * Creates a new instance.
      */
@@ -39,8 +52,23 @@ public class MQTTAdapter implements PlistListener {
     /**
      * Initializes - which means it connects to the MQTT broker.
      */
-    public void init(TCPServer tcpServer, String brokerUrl, String user, char[] password) {
-        log.debug("init({})", tcpServer);
+    public void init(TCPServer tcpServer, Installation.Mqtt mqtt) {
+        log.debug("init({}, {})", tcpServer, mqtt);
+        
+        
+        String prefix = mqtt.getPrefix();
+        TOPIC_OOLITE_STARTER = prefix + "oolite/starter";
+        TOPIC_OOLITE_INPUT = prefix + "oolite/input";
+        TOPIC_OOLITE_CONFIGURATION = prefix + "oolite/configuration";
+        TOPIC_OOLITE_CONSOLE = prefix + "oolite/console";
+        TOPIC_OOLITE_COMMS = prefix + "oolite/comms";
+        TOPIC_OOLITE_CONTROLS = prefix + "oolite/controls";
+        TOPIC_OOLITE_ALERT = prefix + "oolite/alert";
+        TOPIC_OOLITE_UNKNOWN = prefix + "oolite/unknown";
+        TOPIC_OOLITE_COMMANDACKNOWLEDGE = prefix + "oolite/commandAcknowledge";
+        TOPIC_OOLITE_LOG = prefix + "oolite/log";
+        TOPIC_OOLITE_WORLDEVENT = prefix + "oolite/worldEvent";
+        TOPIC_OOLITE_SHOWCONSOLE = prefix + "oolite/showConsole";
         
         this.tcpServer = tcpServer;
         tcpServer.addConnectorStatusListener(new Connector.ConnectorStatusListener() {
@@ -54,30 +82,30 @@ public class MQTTAdapter implements PlistListener {
             }
         });
         
-        String publisherId = getClass().getPackage().getImplementationTitle() + "-" + getClass().getPackage().getImplementationVersion() + "-mqtt-" + UUID.randomUUID().toString();
+        String publisherId = MqttUtil.getPublisherId();
         try {
             MemoryPersistence persistence = new MemoryPersistence();
-            mqttClient = new MqttClient(brokerUrl, publisherId, persistence);
+            mqttClient = new MqttClient(mqtt.getBrokerUrl(), publisherId, persistence);
 
             MqttConnectOptions options = new MqttConnectOptions();
             options.setAutomaticReconnect(true);
             options.setCleanSession(true);
             options.setConnectionTimeout(10);
-            if (user != null) {
-                options.setUserName(user);
+            if (mqtt.getUser() != null) {
+                options.setUserName(mqtt.getUser());
             }
-            if (password != null) {
-                options.setPassword(password);
+            if (mqtt.getPassword() != null) {
+                options.setPassword(mqtt.getPassword());
             }
             mqttClient.connect(options);
             
-            mqttClient.publish("oolite/starter", new MqttMessage("started".getBytes()));
+            mqttClient.publish(TOPIC_OOLITE_STARTER, new MqttMessage("started".getBytes()));
             
             if (mqttClient.isConnected()) {
-                log.info("Connected to {} as {}", brokerUrl, user);
+                log.info("Connected to {} as {}", mqtt.getBrokerUrl(), mqtt.getUser());
             }
             
-            mqttClient.subscribe("oolite/input", new IMqttMessageListener() {
+            mqttClient.subscribe(TOPIC_OOLITE_INPUT, new IMqttMessageListener() {
                 
                 /**
                  * Expect JSON messages so we can extend them in the future.
@@ -90,7 +118,7 @@ public class MQTTAdapter implements PlistListener {
                  */
                 @Override
                 public void messageArrived(String topic, MqttMessage mm) throws Exception {
-                    log.warn("messageArrived({}, {})", topic, mm);
+                    log.debug("messageArrived({}, {})", topic, mm);
                     
                     try {
                         JSONObject jo = new JSONObject(new String(mm.getPayload()));
@@ -104,9 +132,21 @@ public class MQTTAdapter implements PlistListener {
             });
             
             MqttMessage mm = new MqttMessage("Oolite started".getBytes());
-            mqttClient.publish("oolite/starter", mm);
+            mqttClient.publish(TOPIC_OOLITE_STARTER, mm);
         } catch (Exception e) {
-            log.error("Could not connect to MQTT server on {}", brokerUrl, e);
+            log.error("Could not connect to MQTT server on {} as {}", mqtt.getBrokerUrl(), mqtt.getUser(), e);
+        }
+    }
+    
+    /**
+     * Disconnects this MQTT client.
+     */
+    public void shutdown()  {
+        try {
+            mqttClient.publish(TOPIC_OOLITE_STARTER, new MqttMessage("Oolite stopped".getBytes()));
+            mqttClient.disconnect();
+        } catch (Exception e) {
+            log.error("could not post shutdown message");
         }
     }
 
@@ -114,14 +154,14 @@ public class MQTTAdapter implements PlistListener {
     public void receivedConfiguration(NSObject data) {
         log.trace("receivedConfiguration({})", data);
         MqttMessage mm = new MqttMessage(data.toXMLPropertyList().getBytes());
-        sendMqtt("oolite/configuration", mm.toString());
+        sendMqtt(TOPIC_OOLITE_CONFIGURATION, mm.toString());
     }
 
     @Override
     public void receivedConsoleOutput(NSObject data) {
         log.info("receivedConsoleOutput({})", data);
         MqttMessage mm = new MqttMessage(data.toXMLPropertyList().getBytes());
-        sendMqtt("oolite/console", mm.toString());
+        sendMqtt(TOPIC_OOLITE_CONSOLE, mm.toString());
     }
     
     protected void sendMqtt(String topic, String message) {
@@ -135,7 +175,7 @@ public class MQTTAdapter implements PlistListener {
 
     @Override
     public void receivedCommandResult(NSObject dataO) {
-        log.warn("receivedCommandResult({})", dataO);
+        log.debug("receivedCommandResult({})", dataO);
 
         if (dataO instanceof NSDictionary data) {
             NSObject messageO = (NSObject)data.get("message");
@@ -154,52 +194,52 @@ public class MQTTAdapter implements PlistListener {
                 
                 switch(msgType) {
                     case "comms":
-                        sendMqtt("oolite/comms", message.toString());
+                        sendMqtt(TOPIC_OOLITE_COMMS, message.toString());
                         break;
                     case "controls":
-                        sendMqtt("oolite/controls", message.toString());
+                        sendMqtt(TOPIC_OOLITE_CONTROLS, message.toString());
                         break;
                     case "alert":
-                        sendMqtt("oolite/alert", message.toString());
+                        sendMqtt(TOPIC_OOLITE_ALERT, message.toString());
                         break;
                     default:
-                        sendMqtt("oolite/unknown", message.toString());
+                        sendMqtt(TOPIC_OOLITE_UNKNOWN, message.toString());
                         break;
                 }
             } else {
-                sendMqtt("oolite/unknown", messageO.toString());
+                sendMqtt(TOPIC_OOLITE_UNKNOWN, messageO.toString());
             }
         } else {
-            sendMqtt("oolite/unknown", dataO.toString());
+            sendMqtt(TOPIC_OOLITE_UNKNOWN, dataO.toString());
         }
     }
 
     @Override
     public void receivedCommandAcknowledge(NSObject data) {
-        log.warn("receivedCommandAcknowledge({})", data);
+        log.debug("receivedCommandAcknowledge({})", data);
         MqttMessage mm = new MqttMessage(data.toXMLPropertyList().getBytes());
-        sendMqtt("oolite/commandAcknowledge", mm.toString());
+        sendMqtt(TOPIC_OOLITE_COMMANDACKNOWLEDGE, mm.toString());
     }
 
     @Override
     public void receivedLogMessage(NSObject data) {
         log.trace("receivedLogMessage({})", data);
         MqttMessage mm = new MqttMessage(data.toXMLPropertyList().getBytes());
-        sendMqtt("oolite/log", mm.toString());
+        sendMqtt(TOPIC_OOLITE_LOG, mm.toString());
     }
 
     @Override
     public void receivedWorldEvent(NSObject data) {
-        log.warn("receivedWorldEvent({})", data);
+        log.debug("receivedWorldEvent({})", data);
         MqttMessage mm = new MqttMessage(data.toXMLPropertyList().getBytes());
-        sendMqtt("oolite/worldEvent", mm.toString());
+        sendMqtt(TOPIC_OOLITE_WORLDEVENT, mm.toString());
     }
 
     @Override
     public void showConsole() {
         log.trace("showConsole()");
         MqttMessage mm = new MqttMessage("showConsole".getBytes());
-        sendMqtt("oolite/showConsole", mm.toString());
+        sendMqtt(TOPIC_OOLITE_SHOWCONSOLE, mm.toString());
     }
 
 }

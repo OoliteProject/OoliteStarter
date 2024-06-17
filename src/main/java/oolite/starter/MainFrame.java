@@ -31,7 +31,6 @@ import oolite.starter.model.ProcessData;
 import oolite.starter.ui.AboutPanel;
 import oolite.starter.ui2.FlavorsPanel;
 import oolite.starter.ui.InstallationsPanel;
-import oolite.starter.ui.MqttPanel;
 import oolite.starter.ui.MrGimlet;
 import oolite.starter.ui.SplashPanel;
 import oolite.starter.ui.StartGamePanel;
@@ -333,10 +332,6 @@ public class MainFrame extends javax.swing.JFrame {
         ip = new InstallationsPanel();
         ip.setConfiguration(configuration);
         jTabbedPane1.add(ip);
-        
-        MqttPanel mp = new MqttPanel();
-        mp.setConfiguration(configuration);
-        jTabbedPane1.add(mp, "IoT");
 
         AboutPanel ap = new AboutPanel("text/html", getClass().getResource("/about.html"));
         jTabbedPane1.add("About", ap);

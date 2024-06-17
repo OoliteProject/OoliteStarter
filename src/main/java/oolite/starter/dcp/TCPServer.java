@@ -188,6 +188,13 @@ public class TCPServer extends AbstractConnector {
                     listener.showConsole();
                 }
             }
+
+            @Override
+            public void shutdown() {
+                for (PlistListener listener: plistListeners) {
+                    listener.shutdown();
+                }
+            }
         });
         dch.addStatusListener(new DebugConsoleHandler.StatusListener() {
             
@@ -225,6 +232,9 @@ public class TCPServer extends AbstractConnector {
      * Shuts down all the connections and stops listening on the port.
      */
     public void shutdown() {
+        for (PlistListener listener: plistListeners) {
+            listener.shutdown();
+        }
         acceptor.setCloseOnDeactivation(true);
         acceptor.unbind();
     }

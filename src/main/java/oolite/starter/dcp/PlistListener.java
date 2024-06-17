@@ -59,4 +59,9 @@ public interface PlistListener {
      * @param data the packet
      */
     public void showConsole();
+    
+    /**
+     * Called when this listener is no longer needed.
+     */
+    public void shutdown();
 }
