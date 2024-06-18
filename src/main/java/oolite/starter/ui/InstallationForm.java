@@ -166,6 +166,8 @@ public class InstallationForm extends javax.swing.JPanel {
         txtMqttUsername.setEnabled(enabled);
         pfMqttPassword.setEnabled(enabled);
         txtMqttPrefix.setEnabled(enabled);
+        
+        btTest.setVisible(enabled);
     }
 
     /**
