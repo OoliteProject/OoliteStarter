@@ -31,13 +31,52 @@ public class InstallationForm extends javax.swing.JPanel {
 
     private transient Installation data;
     private transient boolean passwordDirty = false;
-
+    
     /**
      * Creates new InstallationForm.
      */
     public InstallationForm() {
         initComponents();
-        
+
+        txtMqttPrefix.getDocument().addDocumentListener(new DocumentListener() {
+            private void updateText() {
+                log.warn("updateText()");
+                String prefix = "    " + txtMqttPrefix.getText();
+                StringBuilder msg = new StringBuilder("<html>");
+                msg.append("<p>Oolite will use these MQTT topics:<br/><pre>");
+                msg.append(MqttUtil.getTopic(prefix, "oolite/starter")).append("<br/>");
+                msg.append(MqttUtil.getTopic(prefix, "oolite/configuration")).append("<br/>");
+                msg.append(MqttUtil.getTopic(prefix, "oolite/console")).append("<br/>");
+                msg.append(MqttUtil.getTopic(prefix, "oolite/comms")).append("<br/>");
+                msg.append(MqttUtil.getTopic(prefix, "oolite/controls")).append("<br/>");
+                msg.append(MqttUtil.getTopic(prefix, "oolite/alert")).append("<br/>");
+                msg.append(MqttUtil.getTopic(prefix, "oolite/unknown")).append("<br/>");
+                msg.append(MqttUtil.getTopic(prefix, "oolite/commandAcknowledge")).append("<br/>");
+                msg.append(MqttUtil.getTopic(prefix, "oolite/log")).append("<br/>");
+                msg.append(MqttUtil.getTopic(prefix, "oolite/worldEvent")).append("<br/>");
+                msg.append(MqttUtil.getTopic(prefix, "oolite/showConsole")).append("</pre></p>");
+                
+                msg.append("<p>And it will listen on this topic:<br/><pre>");
+                msg.append(MqttUtil.getTopic(prefix, "oolite/input")).append("<br/>");
+                msg.append("</pre></p></html>");
+                jlPrompt.setText(msg.toString());
+            }
+            
+            @Override
+            public void insertUpdate(DocumentEvent de) {
+                updateText();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent de) {
+                updateText();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent de) {
+                updateText();
+            }
+        });
         pfMqttPassword.getDocument().addDocumentListener(new DocumentListener() {
             @Override
             public void insertUpdate(DocumentEvent de) {
@@ -54,6 +93,12 @@ public class InstallationForm extends javax.swing.JPanel {
                 passwordDirty = true;
             }
         });
+        
+        cbUseMqtt.addChangeListener((ce) -> {
+            jlPrompt.setVisible(cbUseMqtt.isSelected());
+        });
+        
+        jlPrompt.setVisible(false);
         this.setData(new Installation());
     }
 
@@ -79,6 +124,7 @@ public class InstallationForm extends javax.swing.JPanel {
             cbDCP.setSelected(false);
 
             cbUseMqtt.setSelected(false);
+            jlPrompt.setVisible(false);
             txtMqttBrokerUrl.setText("");
             txtMqttUsername.setText("");
             txtMqttPrefix.setText("");
@@ -95,15 +141,18 @@ public class InstallationForm extends javax.swing.JPanel {
             
             if (data.getMqtt() == null) {
                 cbUseMqtt.setSelected(false);
-                txtMqttBrokerUrl.setText("");
+                jlPrompt.setVisible(false);
+                txtMqttBrokerUrl.setText("tcp://localhost:1883");
                 txtMqttUsername.setText("");
                 txtMqttPrefix.setText("");
             } else {
                 cbUseMqtt.setSelected(true);
+                jlPrompt.setVisible(true);
                 txtMqttBrokerUrl.setText(data.getMqtt().getBrokerUrl());
                 txtMqttUsername.setText(data.getMqtt().getUser());
                 txtMqttPrefix.setText(data.getMqtt().getPrefix());
             }
+            
         }
         
     }
@@ -218,6 +267,9 @@ public class InstallationForm extends javax.swing.JPanel {
         pfMqttPassword = new javax.swing.JPasswordField();
         txtMqttPrefix = new javax.swing.JTextField();
         btTest = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTextArea1 = new javax.swing.JTextArea();
+        jlPrompt = new javax.swing.JLabel();
 
         setLayout(new java.awt.GridBagLayout());
 
@@ -444,7 +496,7 @@ public class InstallationForm extends javax.swing.JPanel {
         add(txtDeactivatedAddOnDir, gridBagConstraints);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 14;
+        gridBagConstraints.gridy = 15;
         gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
         gridBagConstraints.weighty = 1.0;
         add(filler2, gridBagConstraints);
@@ -557,6 +609,21 @@ public class InstallationForm extends javax.swing.JPanel {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
         gridBagConstraints.insets = new java.awt.Insets(6, 9, 6, 6);
         add(btTest, gridBagConstraints);
+
+        jTextArea1.setColumns(20);
+        jTextArea1.setRows(5);
+        jScrollPane1.setViewportView(jTextArea1);
+
+        add(jScrollPane1, new java.awt.GridBagConstraints());
+
+        jlPrompt.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 14;
+        gridBagConstraints.gridwidth = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(9, 18, 0, 0);
+        add(jlPrompt, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
 
     void maybeFillVersion(File homeDir) throws IOException {
@@ -628,6 +695,11 @@ public class InstallationForm extends javax.swing.JPanel {
      */
     void tryToFillOtherFields(File homeDir) {
         log.warn("tryToFillOtherFields({})", homeDir);
+        
+        if (!"oolite.app".equalsIgnoreCase(homeDir.getName())) {
+            MrGimlet.showMessage(this, "You sure this is the right directory for Oolite? Usually it's named Oolite.app...", 3000);
+        }
+        
         try {
             maybeFillVersion(homeDir);
             maybeFillExecutable(homeDir);
@@ -799,14 +871,14 @@ public class InstallationForm extends javax.swing.JPanel {
                 password = data.getMqtt().getPassword();
             }
         
-            MqttUtil.testConnection(
+            String msg = MqttUtil.testConnection(
                 txtMqttBrokerUrl.getText(),
                 txtMqttUsername.getText(),
                 password,
                 txtMqttPrefix.getText()
             );
             
-            JOptionPane.showMessageDialog(this, "Sent MQTT test message.", INSTALLATIONFORM_SUCCESS, JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(this, msg, INSTALLATIONFORM_SUCCESS, JOptionPane.INFORMATION_MESSAGE);
         } catch (Exception e) {
             log.error("Could not send test message", e);
             JOptionPane.showMessageDialog(this, "Could not send test message.", INSTALLATIONFORM_ERROR, JOptionPane.ERROR_MESSAGE);
@@ -841,6 +913,9 @@ public class InstallationForm extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTextArea jTextArea1;
+    private javax.swing.JLabel jlPrompt;
     private javax.swing.JPasswordField pfMqttPassword;
     private javax.swing.JTextField txtAddOnDir;
     private javax.swing.JTextField txtDeactivatedAddOnDir;

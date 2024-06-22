@@ -34,9 +34,30 @@ public class MqttUtil {
     }
     
     /**
+     * Returns the topic OoliteStarter will use for testing MQTT functionality.
+     * 
+     * @param prefix the user-defined prefix
+     * @return the full topic name
+     */
+    public static String getTestTopic(String prefix) {
+        return getTopic(prefix, "oolite/starter");
+    }
+    
+    /**
+     * Returns the prefixed topic.
+     * 
+     * @param prefix the user-defined prefix
+     * @param bareTopic the topic name
+     * @return the prefixed topic
+     */
+    public static String getTopic(String prefix, String bareTopic) {
+        return prefix + bareTopic;
+    }
+    
+    /**
      * Sends a test MQTT message or throws an exception.
      */
-    public static void testConnection(String brokerUrl, String user, char[] password, String prefix) throws MqttException { 
+    public static String testConnection(String brokerUrl, String user, char[] password, String prefix) throws MqttException { 
         log.warn("testConnection({}, {}, ..., {})", brokerUrl, user, prefix);
         
         MemoryPersistence persistence = new MemoryPersistence();
@@ -52,14 +73,18 @@ public class MqttUtil {
         if (password != null) {
             options.setPassword(password);
         }
-            mqttClient.connect(options);
+        
+        mqttClient.connect(options);
             
-            mqttClient.publish(prefix + "oolite/starter", new MqttMessage("connection test".getBytes()));
+        String topic = getTestTopic(prefix);
+        mqttClient.publish(topic, new MqttMessage("connection test".getBytes()));
             
-            if (mqttClient.isConnected()) {
-                log.info("Connected to {} as {}", brokerUrl, user);
-            }
-            
-            mqttClient.disconnect();
+        if (mqttClient.isConnected()) {
+            log.info("Connected to {} as {}", brokerUrl, user);
+        }
+
+        mqttClient.disconnect();
+        
+        return "Sent test message to broker " + brokerUrl + " topic " + topic;
     }
 }

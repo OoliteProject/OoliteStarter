@@ -57,18 +57,18 @@ public class MQTTAdapter implements PlistListener {
         
         
         String prefix = mqtt.getPrefix();
-        TOPIC_OOLITE_STARTER = prefix + "oolite/starter";
-        TOPIC_OOLITE_INPUT = prefix + "oolite/input";
-        TOPIC_OOLITE_CONFIGURATION = prefix + "oolite/configuration";
-        TOPIC_OOLITE_CONSOLE = prefix + "oolite/console";
-        TOPIC_OOLITE_COMMS = prefix + "oolite/comms";
-        TOPIC_OOLITE_CONTROLS = prefix + "oolite/controls";
-        TOPIC_OOLITE_ALERT = prefix + "oolite/alert";
-        TOPIC_OOLITE_UNKNOWN = prefix + "oolite/unknown";
-        TOPIC_OOLITE_COMMANDACKNOWLEDGE = prefix + "oolite/commandAcknowledge";
-        TOPIC_OOLITE_LOG = prefix + "oolite/log";
-        TOPIC_OOLITE_WORLDEVENT = prefix + "oolite/worldEvent";
-        TOPIC_OOLITE_SHOWCONSOLE = prefix + "oolite/showConsole";
+        TOPIC_OOLITE_STARTER = MqttUtil.getTopic(prefix,  "oolite/starter");
+        TOPIC_OOLITE_INPUT = MqttUtil.getTopic(prefix, "oolite/input");
+        TOPIC_OOLITE_CONFIGURATION = MqttUtil.getTopic(prefix, "oolite/configuration");
+        TOPIC_OOLITE_CONSOLE = MqttUtil.getTopic(prefix, "oolite/console");
+        TOPIC_OOLITE_COMMS = MqttUtil.getTopic(prefix, "oolite/comms");
+        TOPIC_OOLITE_CONTROLS = MqttUtil.getTopic(prefix, "oolite/controls");
+        TOPIC_OOLITE_ALERT = MqttUtil.getTopic(prefix, "oolite/alert");
+        TOPIC_OOLITE_UNKNOWN = MqttUtil.getTopic(prefix, "oolite/unknown");
+        TOPIC_OOLITE_COMMANDACKNOWLEDGE = MqttUtil.getTopic(prefix, "oolite/commandAcknowledge");
+        TOPIC_OOLITE_LOG = MqttUtil.getTopic(prefix, "oolite/log");
+        TOPIC_OOLITE_WORLDEVENT = MqttUtil.getTopic(prefix, "oolite/worldEvent");
+        TOPIC_OOLITE_SHOWCONSOLE = MqttUtil.getTopic(prefix, "oolite/showConsole");
         
         this.tcpServer = tcpServer;
         tcpServer.addConnectorStatusListener(new Connector.ConnectorStatusListener() {
