@@ -59,7 +59,7 @@ public class InstallationForm extends javax.swing.JPanel {
                 msg.append("<p>And it will listen on this topic:<br/><pre>");
                 msg.append(MqttUtil.getTopic(prefix, "oolite/input")).append("<br/>");
                 msg.append("</pre></p></html>");
-                jlPrompt.setText(msg.toString());
+                epPrompt.setText(msg.toString());
             }
             
             @Override
@@ -95,10 +95,10 @@ public class InstallationForm extends javax.swing.JPanel {
         });
         
         cbUseMqtt.addChangeListener((ce) -> {
-            jlPrompt.setVisible(cbUseMqtt.isSelected());
+            //jScrollPane2.setVisible(cbUseMqtt.isSelected());
         });
         
-        jlPrompt.setVisible(false);
+        //jScrollPane2.setVisible(false);
         this.setData(new Installation());
     }
 
@@ -124,7 +124,7 @@ public class InstallationForm extends javax.swing.JPanel {
             cbDCP.setSelected(false);
 
             cbUseMqtt.setSelected(false);
-            jlPrompt.setVisible(false);
+            //jScrollPane2.setVisible(false);
             txtMqttBrokerUrl.setText("");
             txtMqttUsername.setText("");
             txtMqttPrefix.setText("");
@@ -141,18 +141,17 @@ public class InstallationForm extends javax.swing.JPanel {
             
             if (data.getMqtt() == null) {
                 cbUseMqtt.setSelected(false);
-                jlPrompt.setVisible(false);
+                //jScrollPane2.setVisible(false);
                 txtMqttBrokerUrl.setText("tcp://localhost:1883");
                 txtMqttUsername.setText("");
                 txtMqttPrefix.setText("");
             } else {
                 cbUseMqtt.setSelected(true);
-                jlPrompt.setVisible(true);
                 txtMqttBrokerUrl.setText(data.getMqtt().getBrokerUrl());
                 txtMqttUsername.setText(data.getMqtt().getUser());
                 txtMqttPrefix.setText(data.getMqtt().getPrefix());
             }
-            
+            //jScrollPane2.setVisible(true);
         }
         
     }
@@ -252,7 +251,6 @@ public class InstallationForm extends javax.swing.JPanel {
         jLabel8 = new javax.swing.JLabel();
         btDeactivatedAddOnDir = new javax.swing.JButton();
         txtDeactivatedAddOnDir = new javax.swing.JTextField();
-        filler2 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 32767));
         filler3 = new javax.swing.Box.Filler(new java.awt.Dimension(3, 0), new java.awt.Dimension(3, 0), new java.awt.Dimension(32767, 0));
         jLabel9 = new javax.swing.JLabel();
         cbDCP = new javax.swing.JCheckBox();
@@ -267,9 +265,9 @@ public class InstallationForm extends javax.swing.JPanel {
         pfMqttPassword = new javax.swing.JPasswordField();
         txtMqttPrefix = new javax.swing.JTextField();
         btTest = new javax.swing.JButton();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jTextArea1 = new javax.swing.JTextArea();
-        jlPrompt = new javax.swing.JLabel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        epPrompt = new javax.swing.JEditorPane();
+        filler1 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 32767));
 
         setLayout(new java.awt.GridBagLayout());
 
@@ -495,12 +493,6 @@ public class InstallationForm extends javax.swing.JPanel {
         gridBagConstraints.insets = new java.awt.Insets(6, 12, 0, 0);
         add(txtDeactivatedAddOnDir, gridBagConstraints);
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 15;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
-        gridBagConstraints.weighty = 1.0;
-        add(filler2, gridBagConstraints);
-        gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 3;
         gridBagConstraints.gridy = 0;
         add(filler3, gridBagConstraints);
@@ -610,20 +602,29 @@ public class InstallationForm extends javax.swing.JPanel {
         gridBagConstraints.insets = new java.awt.Insets(6, 9, 6, 6);
         add(btTest, gridBagConstraints);
 
-        jTextArea1.setColumns(20);
-        jTextArea1.setRows(5);
-        jScrollPane1.setViewportView(jTextArea1);
+        jScrollPane2.setMinimumSize(new java.awt.Dimension(64, 104));
+        jScrollPane2.setPreferredSize(new java.awt.Dimension(64, 128));
 
-        add(jScrollPane1, new java.awt.GridBagConstraints());
+        epPrompt.setEditable(false);
+        epPrompt.setContentType("text/html"); // NOI18N
+        epPrompt.setMinimumSize(null);
+        jScrollPane2.setViewportView(epPrompt);
 
-        jlPrompt.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 14;
         gridBagConstraints.gridwidth = 3;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(9, 18, 0, 0);
-        add(jlPrompt, gridBagConstraints);
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 0.1;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(9, 18, 6, 0);
+        add(jScrollPane2, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 14;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
+        gridBagConstraints.weighty = 0.1;
+        add(filler1, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
 
     void maybeFillVersion(File homeDir) throws IOException {
@@ -897,7 +898,8 @@ public class InstallationForm extends javax.swing.JPanel {
     private javax.swing.JButton btTest;
     private javax.swing.JCheckBox cbDCP;
     private javax.swing.JCheckBox cbUseMqtt;
-    private javax.swing.Box.Filler filler2;
+    private javax.swing.JEditorPane epPrompt;
+    private javax.swing.Box.Filler filler1;
     private javax.swing.Box.Filler filler3;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
@@ -913,9 +915,7 @@ public class InstallationForm extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTextArea jTextArea1;
-    private javax.swing.JLabel jlPrompt;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JPasswordField pfMqttPassword;
     private javax.swing.JTextField txtAddOnDir;
     private javax.swing.JTextField txtDeactivatedAddOnDir;
