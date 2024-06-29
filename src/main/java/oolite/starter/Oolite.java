@@ -1186,8 +1186,20 @@ public class Oolite implements PropertyChangeListener {
         Instant start = Instant.now();
         
         List<Expansion> resultList = new ArrayList<>();
-        List<Expansion> localList = getLocalExpansions();
-        List<Expansion> remoteList = getOnlineExpansions();
+        List<Expansion> localList = null;
+        try {
+            localList = getLocalExpansions();
+        } catch (Exception e) {
+            log.error("Could not load local expansions", e);
+            localList = new ArrayList<>();
+        }
+        List<Expansion> remoteList = null;
+        try {
+            remoteList = getOnlineExpansions();
+        } catch (Exception e) {
+            log.error("Could not load remote expansions", e);
+            remoteList = new ArrayList<>();
+        }
         
         localList.addAll(remoteList);
         for (Expansion current: localList) {
