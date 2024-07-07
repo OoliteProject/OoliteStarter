@@ -5,6 +5,7 @@ package oolite.starter;
 
 import com.vdurmont.semver4j.Semver;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.time.Duration;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.AfterAll;
@@ -112,7 +113,7 @@ public class GithubVersionCheckerTest {
      * Test of getHtmlUserMessage method, of class GithubVersionChecker.
      */
     @Test
-    public void testGetHtmlUserMessage() throws MalformedURLException {
+    public void testGetHtmlUserMessage() throws MalformedURLException, URISyntaxException {
         log.info("getHtmlUserMessage");
 
         GithubVersionChecker instance = new GithubVersionChecker();
@@ -123,7 +124,7 @@ public class GithubVersionCheckerTest {
      * Test of getHtmlUserMessage method, of class GithubVersionChecker.
      */
     @Test
-    public void testGetHtmlUserMessage2() throws MalformedURLException {
+    public void testGetHtmlUserMessage2() throws MalformedURLException, URISyntaxException {
         log.info("getHtmlUserMessage2");
 
         GithubVersionChecker instance = new GithubVersionChecker();

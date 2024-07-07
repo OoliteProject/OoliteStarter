@@ -7,6 +7,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -406,7 +407,7 @@ public class ExpansionTest {
     }
     
     @Test
-    public void testInstall() throws IOException {
+    public void testInstall() throws IOException, URISyntaxException {
         log.info("testInstall");
         
         Expansion expansion = new Expansion();
@@ -420,7 +421,7 @@ public class ExpansionTest {
     }
     
     @Test
-    public void testInstall2() throws IOException {
+    public void testInstall2() throws IOException, URISyntaxException {
         log.info("testInstall2");
         
         Expansion expansion = new Expansion();

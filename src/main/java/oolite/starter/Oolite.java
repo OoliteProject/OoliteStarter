@@ -18,8 +18,11 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.module.ModuleDescriptor;
 import java.net.HttpURLConnection;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.UnknownHostException;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -1238,7 +1241,7 @@ public class Oolite implements PropertyChangeListener {
      * 
      * @return the list
      */
-    public List<Expansion> getOnlineExpansions() throws IOException {
+    public List<Expansion> getOnlineExpansions() throws IOException, URISyntaxException {
         log.debug("getOnlineExpansion()");
         if (configuration == null) {
             throw new IllegalStateException(OOLITE_CONFIGURATION_MUST_NOT_BE_NULL);
@@ -1260,7 +1263,7 @@ public class Oolite implements PropertyChangeListener {
                     redirectCount--;
                     String newUrl = conn.getHeaderField("Location");
                     log.info("Follow redirect to '{}'", newUrl);
-                    conn = (HttpURLConnection)new URL(newUrl).openConnection();
+                    conn = (HttpURLConnection)new URI(newUrl).toURL().openConnection();
                     conn.setReadTimeout(5000);
                     status = conn.getResponseCode();
                     log.info("HTTP status for {}: {}", newUrl, status);
@@ -1447,9 +1450,9 @@ public class Oolite implements PropertyChangeListener {
      * 
      * @param expansion the expansion
      */
-    public void install(Expansion expansion) throws IOException {
+    public void install(Expansion expansion) throws IOException, URISyntaxException {
         log.debug("install({})", expansion);
-        URL url = new URL(expansion.getDownloadUrl());
+        URL url = new URI(expansion.getDownloadUrl()).toURL();
 
 //      Old naming scheme - supports many different versions installed in parallel        
 //        File file = new File(configuration.getManagedAddonsDir(), expansion.getIdentifier() + "@" + expansion.getVersion() + ".oxz");
@@ -2498,7 +2501,7 @@ public class Oolite implements PropertyChangeListener {
      * @return 
      */
     public List<ExpansionReference> diff(List<ExpansionReference> want, List<ExpansionReference> have) {
-        log.info("diff({}, {})", want, have);
+        log.debug("diff({}, {})", want, have);
         if (want == null) {
             throw new IllegalArgumentException("want must not be null");
         }
@@ -2573,8 +2576,8 @@ public class Oolite implements PropertyChangeListener {
      * @return the list of flavors
      * @throws Exception something went wrong
      */
-    public List<OoliteFlavor> getFlavorList() throws IOException {
-        URL url = new URL("https://addons.oolite.space/api/1.0/flavors/");
+    public List<OoliteFlavor> getFlavorList() throws IOException, URISyntaxException {
+        URL url = new URI("https://addons.oolite.space/api/1.0/flavors/").toURL();
         List<OoliteFlavor> result = new ArrayList<>();
         
         try (InputStream in = url.openStream()) {
@@ -2592,6 +2595,9 @@ public class Oolite implements PropertyChangeListener {
                 result.add(OoliteFlavor.buildFrom(url, (Element)nl.item(i)));
             }
             
+            return result;
+        } catch (UnknownHostException e) {
+            log.warn("Could not download flavor list - are we offline? Returning empty list");
             return result;
         } catch (Exception e) {
             throw new IOException("Could not load flavor list from " + url, e);
