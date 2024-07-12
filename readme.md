@@ -6,7 +6,7 @@ and manage save games.
 
 ## Requirements (generic package only)
 
-* You need to have Java SDK 17 or newer installed. 
+* You need to have Java SDK 21 or newer installed. 
   If you are unfamiliar with installing Java on Linux, follow
   https://www.youtube.com/watch?v=7lzIP-PvHoY
   If you are unfamiliar with installing Java on MacOS, follow
@@ -28,7 +28,7 @@ To remove the software, just delete the directory you have created.
 
 If, directly at startup, you see error messages like
 java.lang.UnsupportedClassVersionError: oolite/starter/MainFrame has been compiled by a more recent version of the Java Runtime (class file version 61.0), this version of the Java Runtime only recognizes class file versions up to...
-you are running a too old JVM. Not only check whether Java 17+ is installed, also
+you are running a too old JVM. Not only check whether Java 21+ is installed, also
 make sure it is used (there may be multiple Java installations on your system).
 
 ### Linux (.deb)
@@ -311,6 +311,68 @@ OoliteStarter. Press Save if you want these settings to be available when you
 next time run OoliteStarter.
 
 The configuration data is stored in $HOME/.oolite-starter.conf.
+
+## MQTT Configuration
+
+OoliteStarter can push Oolite into the world of IoT. Events from the game get
+published via MQTT. Feel free to connect any amount and type of MQTT clients to
+react to the published messages.
+
+The current implementation will send messages as specified in
+https://github.com/maikschulz/oolite-mqtt-bridge
+which means the same NodeRed client setup can be used to visualize the data.
+
+There are prerequisites that must be met for such messages to be published:
+- You need to have an Oolite version that contains the DebugOXP (that is either
+a test or development version)
+- OoliteStarter must have detected the DebugOXP (a checkmark in the installation
+settings)
+- You must have configured MQTT broker details. This currently requires editing
+the $HOME/.oolite-starter.conf file manually.
+
+Add a section like this into your configuration file, then start up OoliteStarter:
+
+    <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+    <OoliteStarter>
+        ...
+        <Installation ...>
+            ...
+            <Mqtt>
+                <BrokerUrl>tcp://192.168.178.51:1883</BrokerUrl>
+                <User>artemis</User>
+                <Password>artemis</Password>
+                <Prefix>prefix</Prefix>
+            </Mqtt>
+        </Installation>
+    </OoliteStarter>
+
+These events will be happening:
+
+![](http://cdn-0.plantuml.com/plantuml/png/ZLFDJiCm3BxdAQpT4K9SfXtG9Cw88SO3PAdNMRH9oSyctfuutLX3aubBfSIV_VquNJilhGzz9wJoniA7Gok6U4MA1gazl9gEFBupgbZ9hZR6Uf0E5jldpNXuM2uV5uA7qr5wX9UtxVPwIcpykNlAU5QGP5s1kGhHMXE6_18SEaT62u3YG6NqdjfWyQAx1knaqEfmRz657g6LVO9E6ITKa8c8mzXV8jEeV0d0gPpjGKVEeoRT9k2lMOQKMiVZHM6IbZUEW4dhI5VLKt1_akI1DEoa-cJFkabD3LPM0P37k8AXaz-Ss2KpFaUBMMX_zJdKJUJOXHRw29CjkZEEwpEH5XNI4SiTLQ7LRUsDFKbR5d3RESPu2X5y1VA5BJJavekOcOkVddJaAmSlwXx_iLvtCATRhz8CsQFC-1bJVVAvkK8VPrNzvr9Wiy4CpVAeBqEawTNoEfP3t_q0)
+
+If OoliteStarter cannot grab the TCP Port it will not complain. But at the same
+time it will not be able to receive events to be forwarded to MQTT.
+
+### Feedback Channel
+
+OoliteStarter not only allows Oolite to publish messages to MQTT. It also allows
+MQTT devices to respond and feeds these messages back into Oolite. All a client
+has to do is to publish a JSON message on the oolite/input topic that looks like
+this:
+
+    { 'command': "somestring" }
+
+While this may look like overhead it allows future extension of the messages.
+
+Make sure 'somestring' is a valid Oolite command - or expect some Oolite complaints
+and ranting in one of the other topics.
+
+
+### OoliteStarter and Oolite Debug Console
+
+As only one application can listen for connections on the TCP port 1883, you have
+to choose which one gets the port. As long as you start the Oolite Debug Console
+prior to launching the Oolite session you are good to go.
 
 ## Tuning
 

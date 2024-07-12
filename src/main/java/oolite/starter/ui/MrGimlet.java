@@ -5,7 +5,6 @@ package oolite.starter.ui;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Desktop;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
@@ -19,7 +18,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRootPane;
 import javax.swing.SwingUtilities;
-import javax.swing.event.HyperlinkEvent;
 import net.java.balloontip.BalloonTip;
 import net.java.balloontip.positioners.RightBelowPositioner;
 import net.java.balloontip.styles.EdgedBalloonStyle;
@@ -95,15 +93,7 @@ public class MrGimlet {
     public static void showMessage(Component parentComponent, String message, int fadeMillis, Icon image) {
         JEditorPane jep = new JEditorPane("text/html", message);
         jep.setEditable(false);
-        jep.addHyperlinkListener(he-> {
-            if (he.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-                try {
-                    Desktop.getDesktop().browse(he.getURL().toURI());
-                } catch (Exception e) {
-                    log.info("Could not open url {}", he.getURL(), e);
-                }
-            }
-        });
+        jep.addHyperlinkListener(new HyperLinkListener());
         jep.setBackground(new Color(0,0,0, 0));
 
         if (parentComponent instanceof JComponent jc) {
@@ -153,15 +143,7 @@ public class MrGimlet {
         log.debug("showConfirmation({}, {})", parent, message);
         JEditorPane jep = new JEditorPane("text/html", message);
         jep.setEditable(false);
-        jep.addHyperlinkListener(he-> {
-            if (he.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-                try {
-                    Desktop.getDesktop().browse(he.getURL().toURI());
-                } catch (Exception e) {
-                    log.info("Could not open url {}", he.getURL(), e);
-                }
-            }
-        });
+        jep.addHyperlinkListener(new HyperLinkListener());
         jep.setBackground(new Color(0,0,0, 0));
 
         JPanel payload = new JPanel();

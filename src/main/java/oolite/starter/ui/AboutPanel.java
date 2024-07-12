@@ -2,11 +2,9 @@
  */
 package oolite.starter.ui;
 
-import java.awt.Desktop;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import javax.swing.event.HyperlinkEvent;
 import javax.swing.text.html.HTMLDocument;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
@@ -35,15 +33,7 @@ public class AboutPanel extends javax.swing.JPanel {
         jEditorPane1.setContentType(contentType);
         jEditorPane1.setText(content);
 
-        jEditorPane1.addHyperlinkListener(he-> {
-            if (he.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-                try {
-                    Desktop.getDesktop().browse(he.getURL().toURI());
-                } catch (Exception e) {
-                    log.info("Could not open url {}", he.getURL(), e);
-                }
-            }
-        });
+        jEditorPane1.addHyperlinkListener(new HyperLinkListener());
         jEditorPane1.setCaretPosition(0);
     }
 
@@ -61,15 +51,7 @@ public class AboutPanel extends javax.swing.JPanel {
             doc.setBase(url);
         }
 
-        jEditorPane1.addHyperlinkListener(he-> {
-            if (he.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-                try {
-                    Desktop.getDesktop().browse(he.getURL().toURI());
-                } catch (Exception e) {
-                    log.info("Could not open url {}", he.getURL(), e);
-                }
-            }
-        });
+        jEditorPane1.addHyperlinkListener(new HyperLinkListener());
         jEditorPane1.setCaretPosition(0);
     }
 

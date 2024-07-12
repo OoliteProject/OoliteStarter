@@ -6,8 +6,11 @@ import java.io.File;
 import java.io.IOException;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import oolite.starter.Oolite;
 import oolite.starter.model.Installation;
+import oolite.starter.mqtt.MqttUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -21,17 +24,81 @@ public class InstallationForm extends javax.swing.JPanel {
 
     private static final String INSTALLATIONFORM_USER_HOME = "user.home";
     private static final String INSTALLATIONFORM_SELECT = "Select";
+    private static final String INSTALLATIONFORM_SUCCESS = "Success";
     private static final String INSTALLATIONFORM_ERROR = "Error";
     private static final String INSTALLATIONFORM_WARNING = "Warning";
     private static final String INSTALLATIONFORM_BROWSE = "Browse";
 
     private transient Installation data;
-
+    private transient boolean passwordDirty = false;
+    
     /**
      * Creates new InstallationForm.
      */
     public InstallationForm() {
         initComponents();
+
+        txtMqttPrefix.getDocument().addDocumentListener(new DocumentListener() {
+            private void updateText() {
+                log.warn("updateText()");
+                String prefix = "    " + txtMqttPrefix.getText();
+                StringBuilder msg = new StringBuilder("<html>");
+                msg.append("<p>Oolite will use these MQTT topics:<br/><pre>");
+                msg.append(MqttUtil.getTopic(prefix, "oolite/starter")).append("<br/>");
+                msg.append(MqttUtil.getTopic(prefix, "oolite/configuration")).append("<br/>");
+                msg.append(MqttUtil.getTopic(prefix, "oolite/console")).append("<br/>");
+                msg.append(MqttUtil.getTopic(prefix, "oolite/comms")).append("<br/>");
+                msg.append(MqttUtil.getTopic(prefix, "oolite/controls")).append("<br/>");
+                msg.append(MqttUtil.getTopic(prefix, "oolite/alert")).append("<br/>");
+                msg.append(MqttUtil.getTopic(prefix, "oolite/unknown")).append("<br/>");
+                msg.append(MqttUtil.getTopic(prefix, "oolite/commandAcknowledge")).append("<br/>");
+                msg.append(MqttUtil.getTopic(prefix, "oolite/log")).append("<br/>");
+                msg.append(MqttUtil.getTopic(prefix, "oolite/worldEvent")).append("<br/>");
+                msg.append(MqttUtil.getTopic(prefix, "oolite/showConsole")).append("</pre></p>");
+                
+                msg.append("<p>And it will listen on this topic:<br/><pre>");
+                msg.append(MqttUtil.getTopic(prefix, "oolite/input")).append("<br/>");
+                msg.append("</pre></p></html>");
+                epPrompt.setText(msg.toString());
+            }
+            
+            @Override
+            public void insertUpdate(DocumentEvent de) {
+                updateText();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent de) {
+                updateText();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent de) {
+                updateText();
+            }
+        });
+        pfMqttPassword.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent de) {
+                passwordDirty = true;
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent de) {
+                passwordDirty = true;
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent de) {
+                passwordDirty = true;
+            }
+        });
+        
+        cbUseMqtt.addChangeListener((ce) -> {
+            //jScrollPane2.setVisible(cbUseMqtt.isSelected());
+        });
+        
+        //jScrollPane2.setVisible(false);
         this.setData(new Installation());
     }
 
@@ -43,6 +110,8 @@ public class InstallationForm extends javax.swing.JPanel {
     public void setData(Installation data) {
         this.data = data;
 
+        passwordDirty = false;
+        
         if (data == null) {
             txtAddOnDir.setText("");
             txtDeactivatedAddOnDir.setText("");
@@ -52,6 +121,13 @@ public class InstallationForm extends javax.swing.JPanel {
             txtManagedAddOnDir.setText("");
             txtSavegameDir.setText("");
             txtVersion.setText("");
+            cbDCP.setSelected(false);
+
+            cbUseMqtt.setSelected(false);
+            //jScrollPane2.setVisible(false);
+            txtMqttBrokerUrl.setText("");
+            txtMqttUsername.setText("");
+            txtMqttPrefix.setText("");
         } else {
             txtAddOnDir.setText(data.getAddonDir());
             txtDeactivatedAddOnDir.setText(data.getDeactivatedAddonDir());
@@ -61,7 +137,23 @@ public class InstallationForm extends javax.swing.JPanel {
             txtManagedAddOnDir.setText(data.getManagedAddonDir());
             txtSavegameDir.setText(data.getSavegameDir());
             txtVersion.setText(data.getVersion());
+            cbDCP.setSelected(data.isDebugCapable());
+            
+            if (data.getMqtt() == null) {
+                cbUseMqtt.setSelected(false);
+                //jScrollPane2.setVisible(false);
+                txtMqttBrokerUrl.setText("tcp://localhost:1883");
+                txtMqttUsername.setText("");
+                txtMqttPrefix.setText("");
+            } else {
+                cbUseMqtt.setSelected(true);
+                txtMqttBrokerUrl.setText(data.getMqtt().getBrokerUrl());
+                txtMqttUsername.setText(data.getMqtt().getUser());
+                txtMqttPrefix.setText(data.getMqtt().getPrefix());
+            }
+            //jScrollPane2.setVisible(true);
         }
+        
     }
 
     /**
@@ -78,6 +170,21 @@ public class InstallationForm extends javax.swing.JPanel {
         data.setHomeDir(txtHomeDir.getText());
         data.setSavegameDir(txtSavegameDir.getText());
         data.setVersion(txtVersion.getText());
+        data.setDebugCapable(cbDCP.isSelected());
+        
+        if (cbUseMqtt.isSelected()) {
+            if (data.getMqtt() == null) {
+                data.setMqtt(new Installation.Mqtt());
+            }
+            data.getMqtt().setBrokerUrl(txtMqttBrokerUrl.getText());
+            data.getMqtt().setUser(txtMqttUsername.getText());
+            if (passwordDirty) {
+                data.getMqtt().setPassword(pfMqttPassword.getPassword());
+                passwordDirty = false;
+            }
+            data.getMqtt().setPrefix(txtMqttPrefix.getText());
+        }
+        
         return data;
     }
 
@@ -100,6 +207,15 @@ public class InstallationForm extends javax.swing.JPanel {
         txtManagedAddOnDir.setEnabled(enabled);
         txtManagedDeactivatedAddOnDir.setEnabled(enabled);
         txtVersion.setEnabled(enabled);
+        cbDCP.setEnabled(enabled);
+        
+        cbUseMqtt.setEnabled(enabled);
+        txtMqttBrokerUrl.setEnabled(enabled);
+        txtMqttUsername.setEnabled(enabled);
+        pfMqttPassword.setEnabled(enabled);
+        txtMqttPrefix.setEnabled(enabled);
+        
+        btTest.setVisible(enabled);
     }
 
     /**
@@ -135,8 +251,23 @@ public class InstallationForm extends javax.swing.JPanel {
         jLabel8 = new javax.swing.JLabel();
         btDeactivatedAddOnDir = new javax.swing.JButton();
         txtDeactivatedAddOnDir = new javax.swing.JTextField();
-        filler2 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 32767));
         filler3 = new javax.swing.Box.Filler(new java.awt.Dimension(3, 0), new java.awt.Dimension(3, 0), new java.awt.Dimension(32767, 0));
+        jLabel9 = new javax.swing.JLabel();
+        cbDCP = new javax.swing.JCheckBox();
+        jLabel10 = new javax.swing.JLabel();
+        cbUseMqtt = new javax.swing.JCheckBox();
+        jLabel11 = new javax.swing.JLabel();
+        jLabel12 = new javax.swing.JLabel();
+        jLabel13 = new javax.swing.JLabel();
+        jLabel14 = new javax.swing.JLabel();
+        txtMqttBrokerUrl = new javax.swing.JTextField();
+        txtMqttUsername = new javax.swing.JTextField();
+        pfMqttPassword = new javax.swing.JPasswordField();
+        txtMqttPrefix = new javax.swing.JTextField();
+        btTest = new javax.swing.JButton();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        epPrompt = new javax.swing.JEditorPane();
+        filler1 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 32767));
 
         setLayout(new java.awt.GridBagLayout());
 
@@ -362,15 +493,138 @@ public class InstallationForm extends javax.swing.JPanel {
         gridBagConstraints.insets = new java.awt.Insets(6, 12, 0, 0);
         add(txtDeactivatedAddOnDir, gridBagConstraints);
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 8;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
-        gridBagConstraints.weighty = 1.0;
-        add(filler2, gridBagConstraints);
-        gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 3;
         gridBagConstraints.gridy = 0;
         add(filler3, gridBagConstraints);
+
+        jLabel9.setText("Debug Console Protocol");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 8;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(9, 6, 0, 0);
+        add(jLabel9, gridBagConstraints);
+
+        cbDCP.setText("Debug Capable");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 8;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        gridBagConstraints.insets = new java.awt.Insets(6, 12, 6, 0);
+        add(cbDCP, gridBagConstraints);
+
+        jLabel10.setText("MQTT");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 9;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(9, 6, 0, 0);
+        add(jLabel10, gridBagConstraints);
+
+        cbUseMqtt.setText("use MQTT");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 9;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        gridBagConstraints.insets = new java.awt.Insets(6, 12, 6, 0);
+        add(cbUseMqtt, gridBagConstraints);
+
+        jLabel11.setText("Broker URL");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 10;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(9, 18, 0, 0);
+        add(jLabel11, gridBagConstraints);
+
+        jLabel12.setText("Username");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 11;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(9, 18, 0, 0);
+        add(jLabel12, gridBagConstraints);
+
+        jLabel13.setText("Password");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 12;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(9, 18, 0, 0);
+        add(jLabel13, gridBagConstraints);
+
+        jLabel14.setText("Prefix");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 13;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(9, 18, 0, 0);
+        add(jLabel14, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 10;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(6, 12, 6, 0);
+        add(txtMqttBrokerUrl, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 11;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(6, 12, 6, 0);
+        add(txtMqttUsername, gridBagConstraints);
+
+        pfMqttPassword.setText("jPasswordField1");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 12;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(6, 12, 6, 0);
+        add(pfMqttPassword, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 13;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(6, 12, 6, 0);
+        add(txtMqttPrefix, gridBagConstraints);
+
+        btTest.setText("Test");
+        btTest.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btTestActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 9;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
+        gridBagConstraints.insets = new java.awt.Insets(6, 9, 6, 6);
+        add(btTest, gridBagConstraints);
+
+        jScrollPane2.setMinimumSize(new java.awt.Dimension(64, 104));
+        jScrollPane2.setPreferredSize(new java.awt.Dimension(64, 128));
+
+        epPrompt.setEditable(false);
+        epPrompt.setContentType("text/html"); // NOI18N
+        epPrompt.setMinimumSize(null);
+        jScrollPane2.setViewportView(epPrompt);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 14;
+        gridBagConstraints.gridwidth = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 0.1;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(9, 18, 6, 0);
+        add(jScrollPane2, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 14;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
+        gridBagConstraints.weighty = 0.1;
+        add(filler1, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
 
     void maybeFillVersion(File homeDir) throws IOException {
@@ -428,18 +682,32 @@ public class InstallationForm extends javax.swing.JPanel {
         }
     }
     
+    void maybeDetectDebugOXP(File homeDir) throws IOException {
+        log.debug("maybeDetectDebugOXP({})", homeDir);
+        
+        File d = new File(Oolite.getAddOnDir(homeDir), "Basic-debug.oxp");
+        cbDCP.setSelected(d.isDirectory());
+    }
+    
     /**
      * After a homeDir set, check which other fields we want to populate.
      * 
      * @param homeDir the home directory
      */
     void tryToFillOtherFields(File homeDir) {
+        log.warn("tryToFillOtherFields({})", homeDir);
+        
+        if (!"oolite.app".equalsIgnoreCase(homeDir.getName())) {
+            MrGimlet.showMessage(this, "You sure this is the right directory for Oolite? Usually it's named Oolite.app...", 3000);
+        }
+        
         try {
             maybeFillVersion(homeDir);
             maybeFillExecutable(homeDir);
             maybeFillSavegameDir(homeDir);
             maybeFillAddonDir(homeDir);
             maybeFillManagedAddonDir(homeDir);
+            maybeDetectDebugOXP(homeDir);
         } catch (Exception e) {
             log.warn("Could not fill in other fields", e);
             JOptionPane.showMessageDialog(this, "Could not guess other values automatically. See logfile for more information.", INSTALLATIONFORM_WARNING, JOptionPane.WARNING_MESSAGE);
@@ -594,6 +862,30 @@ public class InstallationForm extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_btDeactivatedAddOnDirActionPerformed
 
+    private void btTestActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btTestActionPerformed
+
+        try {
+            char[] password = null;
+            if (passwordDirty) {
+                password = pfMqttPassword.getPassword();
+            } else {
+                password = data.getMqtt().getPassword();
+            }
+        
+            String msg = MqttUtil.testConnection(
+                txtMqttBrokerUrl.getText(),
+                txtMqttUsername.getText(),
+                password,
+                txtMqttPrefix.getText()
+            );
+            
+            JOptionPane.showMessageDialog(this, msg, INSTALLATIONFORM_SUCCESS, JOptionPane.INFORMATION_MESSAGE);
+        } catch (Exception e) {
+            log.error("Could not send test message", e);
+            JOptionPane.showMessageDialog(this, "Could not send test message.", INSTALLATIONFORM_ERROR, JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_btTestActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btAddOnDir;
@@ -603,9 +895,18 @@ public class InstallationForm extends javax.swing.JPanel {
     private javax.swing.JButton btManagedAddOnDir;
     private javax.swing.JButton btManagedDeactivatedAddOnDir;
     private javax.swing.JButton btSavegameDir;
-    private javax.swing.Box.Filler filler2;
+    private javax.swing.JButton btTest;
+    private javax.swing.JCheckBox cbDCP;
+    private javax.swing.JCheckBox cbUseMqtt;
+    private javax.swing.JEditorPane epPrompt;
+    private javax.swing.Box.Filler filler1;
     private javax.swing.Box.Filler filler3;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
+    private javax.swing.JLabel jLabel13;
+    private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -613,12 +914,18 @@ public class InstallationForm extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JPasswordField pfMqttPassword;
     private javax.swing.JTextField txtAddOnDir;
     private javax.swing.JTextField txtDeactivatedAddOnDir;
     private javax.swing.JTextField txtExecutable;
     private javax.swing.JTextField txtHomeDir;
     private javax.swing.JTextField txtManagedAddOnDir;
     private javax.swing.JTextField txtManagedDeactivatedAddOnDir;
+    private javax.swing.JTextField txtMqttBrokerUrl;
+    private javax.swing.JTextField txtMqttPrefix;
+    private javax.swing.JTextField txtMqttUsername;
     private javax.swing.JTextField txtSavegameDir;
     private javax.swing.JTextField txtVersion;
     // End of variables declaration//GEN-END:variables

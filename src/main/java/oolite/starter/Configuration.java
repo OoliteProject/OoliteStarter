@@ -101,6 +101,14 @@ public class Configuration {
     
     /**
      * Loads the configuration from the given configuration file.
+     * New: MQTT settings, which would look like this:
+     * <pre>
+     * &lt;Mqtt&gt;
+     *   &lt;BrokerUrl&gt;tcp://localhost:1883&lt;/BrokerUrl&gt;
+     *   &lt;User&gt;user&lt;/User&gt;
+     *   &lt;Password&gt;password&lt;/Password&gt;
+     * &lt;/Mqtt&gt;
+     * </pre>
      * 
      * @param f the file to load
      */
@@ -130,7 +138,7 @@ public class Configuration {
                 log.info("Still using default udpate interval: {}", e.getMessage());
             }
         }
-        
+
         // load installations
         nl = (NodeList)xpath.evaluate("/OoliteStarter/Installations/Installation", doc, XPathConstants.NODESET);
         ArrayList<Installation> insts = new ArrayList<>();
@@ -145,6 +153,33 @@ public class Configuration {
             inst.setDeactivatedAddonDir(xpath.evaluate("DeactivatedAddonDir", eInstallation));
             inst.setManagedAddonDir(xpath.evaluate("ManagedAddonDir", eInstallation));
             inst.setManagedDeactivatedAddonDir(xpath.evaluate("ManagedDeactivatedAddonDir", eInstallation));
+            inst.setDebugCapable(Boolean.parseBoolean(xpath.evaluate("DebugCapable", eInstallation)));
+            
+            Element m = (Element)xpath.evaluate("Mqtt", eInstallation, XPathConstants.NODE);
+            if (m != null) {
+                // parse mqtt data
+                Installation.Mqtt mqtt = new Installation.Mqtt();
+                
+                Element e = (Element)xpath.evaluate("BrokerUrl", m, XPathConstants.NODE);
+                if (e != null) {
+                    mqtt.setBrokerUrl(e.getTextContent());
+                }
+                e = (Element)xpath.evaluate("User", m, XPathConstants.NODE);
+                if (e != null) {
+                    mqtt.setUser(e.getTextContent());
+                }
+                e = (Element)xpath.evaluate("Password", m, XPathConstants.NODE);
+                if (e != null) {
+                    String s = e.getTextContent();
+                    mqtt.setPassword(s.toCharArray());
+                }
+                e = (Element)xpath.evaluate("Prefix", m, XPathConstants.NODE);
+                if (e != null) {
+                    mqtt.setPrefix(e.getTextContent());
+                }
+                inst.setMqtt(mqtt);
+            }
+            
             insts.add(inst);
             
             if ("true".equals(eInstallation.getAttribute("active"))) {
@@ -222,11 +257,42 @@ public class Configuration {
             e = doc.createElement("ManagedDeactivatedAddonDir");
             e.setTextContent(installation.getManagedDeactivatedAddonDir());
             eInstallation.appendChild(e);
+
+            e = doc.createElement("DebugCapable");
+            e.setTextContent(String.valueOf(installation.isDebugCapable()));
+            eInstallation.appendChild(e);
+
+            if (installation.getMqtt()!= null) {
+                Element eMqtt = doc.createElement("Mqtt");
+                if (installation.getMqtt().getBrokerUrl()!=null) {
+                    e = doc.createElement("BrokerUrl");
+                    e.setTextContent(installation.getMqtt().getBrokerUrl());
+                    eMqtt.appendChild(e);
+                }
+                if (installation.getMqtt().getUser() != null) {
+                    e = doc.createElement("User");
+                    e.setTextContent(installation.getMqtt().getUser());
+                    eMqtt.appendChild(e);
+                }
+                if (installation.getMqtt().getPassword() != null) {
+                    e = doc.createElement("Password");
+                    e.setTextContent(new String(installation.getMqtt().getPassword()));
+                    eMqtt.appendChild(e);
+                }
+                if (installation.getMqtt().getPrefix() != null) {
+                    e = doc.createElement("Prefix");
+                    e.setTextContent(installation.getMqtt().getPrefix());
+                    eMqtt.appendChild(e);
+                }
+            
+                eInstallation.appendChild(eMqtt);
+            }
+            
             
             eInstallations.appendChild(eInstallation);
         }
         root.appendChild(eInstallations);
-        
+                
         TransformerFactory tf = TransformerFactory.newDefaultInstance();
         tf.setAttribute("indent-number", 4);
         Transformer t = tf.newTransformer();
@@ -467,4 +533,5 @@ public class Configuration {
     public File getDefaultConfigFile() {
         return new File(System.getProperty("user.home") + File.separator + ".oolite-starter.conf");
     }
+
 }

@@ -24,6 +24,10 @@
         <AppenderRef ref="SysOutStream"/>
     </Logger>
     <Logger level="info"  name="oolite.starter.Configuration"/>
+    <Logger level="info"  name="oolite.starter.dcp.DebugConsoleHandler"/>
+    <Logger level="info"  name="oolite.starter.dcp.PlistProtocolDecoder"/>
+    <Logger level="info"  name="oolite.starter.dcp.PlistProtocolEncoder"/>
+    <Logger level="warn"  name="oolite.starter.dcp.TCPServer-filter"/>
     <Logger level="info"  name="oolite.starter.ExpansionFolderAlterationListener"/>
     <Logger level="debug" name="oolite.starter.ExpansionManager"/>
     <Logger level="info"  name="oolite.starter.generic.FilteredListModel"/>
@@ -34,6 +38,8 @@
     <Logger level="info"  name="oolite.starter.MainFrame$1"/>
     <Logger level="info"  name="oolite.starter.model.Command"/>
     <Logger level="info"  name="oolite.starter.model.OoliteFlavor"/>
+    <Logger level="info"  name="oolite.starter.model.ProcessData"/>
+    <Logger level="debug" name="oolite.starter.mqtt.MQTTAdapter"/>
     <Logger level="info"  name="oolite.starter.Oolite"/>
     <Logger level="info"  name="oolite.starter.Oolite2"/>
     <Logger level="info"  name="oolite.starter.Oolite2.OoliteExpansionListModel"/>
@@ -42,6 +48,7 @@
     <Logger level="info"  name="oolite.starter.ui.DeferredDocumentChangeListener"/>
     <Logger level="warn"  name="oolite.starter.ui.ExpansionReferenceCellRenderer"/>
     <Logger level="info"  name="oolite.starter.ui.ExpansionsPanel"/>
+    <Logger level="info"  name="oolite.starter.ui.DimAroundCenteredPanel"/>
     <Logger level="info"  name="oolite.starter.ui.InstallationPicker"/>
     <Logger level="info"  name="oolite.starter.ui.InstallationsPanel"/>
     <Logger level="warn"  name="oolite.starter.ui.InstallationTableModel"/>
@@ -57,6 +64,7 @@
     <Logger level="warn"  name="oolite.starter.util.HttpUtil"/>
     <Logger level="info"  name="oolite.starter.ui2.ExpansionCellRenderer"/>
     <Logger level="info"  name="oolite.starter.ui2.ExpansionPanel"/>
+    <Logger level="info"  name="oolite.starter.ui2.ExpansionSetPanel"/>
     <Logger level="info"  name="oolite.starter.ui2.ExpansionsPanel2"/>
     <Logger level="info"  name="oolite.starter.ui2.ExpansionsPanel2$1"/>
     <Logger level="info"  name="oolite.starter.ui2.ExpansionsPanel2$2"/>
@@ -67,20 +75,11 @@
     <Logger level="info"  name="oolite.starter.ui2.SaveGameCellRenderer"/>
     <Logger level="info"  name="oolite.starter.ui2.StartGamePanel2"/>
     <Logger level="info"  name="oolite.starter.util.HttpUtil"/>
-    
-    <!--
-    <Logger level="info"  name="oolite.starter.model.Command"/>
-    <Logger level="warn"  name="oolite.starter.model.ProcessData"/>
-    <Logger level="warn"  name="oolite.starter.ui.InstallationForm"/>
-    <Logger level="info"  name="oolite.starter.ui.OoliteFileChooserAccessory"/>
-    -->
-    <!--
-    <Logger level="info"  name="oolite.starter.ui.Tag"/>
-    -->
     <Logger level="warn"  name="oolite.starter.util.PlistUtil"/>
     <Logger level="info"  name="oolite.starter.util.Util"/>
     <Logger level="info"  name="oolite.starter.util.XmlUtil"/>
     <Logger level="warn"  name="oolite.starter.XmlUtil"/>
+    <Logger level="info"  name="org.apache.mina.filter.codec.ProtocolCodecFilter"/>
 
     <Root level="TRACE">
       <AppenderRef ref="Console"/>

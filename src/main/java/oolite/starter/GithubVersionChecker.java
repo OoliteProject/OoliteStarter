@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.time.Duration;
 import java.time.Instant;
@@ -144,8 +146,8 @@ public class GithubVersionChecker {
      * @return the URL
      * @throws MalformedURLException something went wrong
      */
-    public URL getReleasesURL() throws MalformedURLException {
-        return new URL("https://api.github.com/repos/" + owner + "/" + repo + "/releases");
+    public URL getReleasesURL() throws MalformedURLException, URISyntaxException {
+        return new URI("https://api.github.com/repos/" + owner + "/" + repo + "/releases").toURL();
     }
     
     /**
@@ -155,11 +157,11 @@ public class GithubVersionChecker {
      * @return the URL
      * @throws MalformedURLException something went wrong
      */
-    public URL getHtmlReleaseURL(String releaseTag) throws MalformedURLException {
+    public URL getHtmlReleaseURL(String releaseTag) throws MalformedURLException, URISyntaxException {
         if (!releaseTag.startsWith("v")) {
             releaseTag = "v" + releaseTag;
         }
-        return new URL("https://github.com/" + owner + "/" + repo + "/releases/tag/" + releaseTag);
+        return new URI("https://github.com/" + owner + "/" + repo + "/releases/tag/" + releaseTag).toURL();
     }
     
     /**
@@ -210,7 +212,7 @@ public class GithubVersionChecker {
      * @param version the latest version
      * @return the html message
      */
-    public String getHtmlUserMessage(Semver version) throws MalformedURLException {
+    public String getHtmlUserMessage(Semver version) throws MalformedURLException, URISyntaxException {
         URL url = getHtmlReleaseURL(version.toString());
         
         StringBuilder html = new StringBuilder("<html><body>");
@@ -239,7 +241,7 @@ public class GithubVersionChecker {
                 EventQueue.invokeLater(() -> MrGimlet.showMessage(parentComponent, message, 10000) );
                 return true;
             }
-        } catch (IOException e) {
+        } catch (IOException | URISyntaxException e) {
             log.info("Could not check for update", e);
         }
         return false;

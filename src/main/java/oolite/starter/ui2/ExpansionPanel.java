@@ -3,7 +3,9 @@
 package oolite.starter.ui2;
 
 import java.util.List;
+import oolite.starter.Oolite;
 import oolite.starter.model.Expansion;
+import oolite.starter.ui.HyperLinkListener;
 import oolite.starter.util.Util;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -21,6 +23,7 @@ public class ExpansionPanel extends javax.swing.JPanel implements ExpansionsPane
      */
     public ExpansionPanel() {
         initComponents();
+        jEditorPane1.addHyperlinkListener(new HyperLinkListener());
     }
     
     /**
@@ -90,6 +93,16 @@ public class ExpansionPanel extends javax.swing.JPanel implements ExpansionsPane
             sb.append("<td>Local File</td><td colspan=\"3\">").append(expansion.getLocalFile()).append("</td>");
             sb.append("</tr><tr>");
             sb.append("<td>Download&nbsp;URL</td><td colspan=\"3\">").append(expansion.getDownloadUrl()).append("</td>");
+            sb.append("</tr><tr>");
+            sb.append("<td></td><td>");
+
+            String urlstr = Oolite.getOoliteWikiPageUrl(expansion.getTitle());
+            sb.append(" <a href=\"" + urlstr + "\">Wiki Page</a> ");
+
+            if (!urlstr.equals(expansion.getInformationUrl())) {
+                sb.append(" <a href=\"" + expansion.getInformationUrl() + "\">Information</a> ");
+            }
+            sb.append("</td>");
             sb.append("</tr></table>");
 
             if (expansion.getEMStatus().isConflicting()) {

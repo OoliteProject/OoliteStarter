@@ -7,6 +7,7 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -801,7 +802,7 @@ public class Expansion implements Comparable<Expansion> {
     /**
      * Installs this expansion.
      */
-    public void install() throws IOException {
+    public void install() throws IOException, URISyntaxException {
         if (oolite == null) {
             throw new IllegalStateException(EXPANSION_OOLITE_MUST_BE_SET);
         }

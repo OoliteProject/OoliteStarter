@@ -156,7 +156,7 @@ public class InstallationTest {
     public void testToString() {
         log.info("toString");
         Installation instance = new Installation();
-        assertEquals("Installation{excecutable=null, version=null, homeDir=null, savegameDir=null, addonDirs=null, deactivatedAddonDir=null, managedAddonDir=null, managedDeactivatedAddonDir=null}", instance.toString());
+        assertEquals("Installation{excecutable=null, version=null, homeDir=null, savegameDir=null, addonDirs=null, deactivatedAddonDir=null, managedAddonDir=null, managedDeactivatedAddonDir=null, debugCapable=false, mqtt=null}", instance.toString());
     }
 
 }

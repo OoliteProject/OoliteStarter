@@ -2,7 +2,8 @@
  */
 package oolite.starter.ui2;
 
-import java.awt.BorderLayout;
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
 import javax.swing.DefaultListModel;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
@@ -105,7 +106,7 @@ public class FlavorsPanel extends javax.swing.JPanel {
             model = null;
             
             remove(jScrollPane1);
-            add(new JLabel("Could not load flavors.", SwingConstants.CENTER), BorderLayout.CENTER);
+            add(new JLabel("Could not load flavors.", SwingConstants.CENTER), new GridBagConstraints(0, 0, 1, 1, 1.0d, 1.0d, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0,0,0,0), 0, 0));
         }
     }
 

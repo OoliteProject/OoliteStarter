@@ -248,7 +248,7 @@ public class InstallationsPanel extends javax.swing.JPanel {
         setName("Oolite Versions"); // NOI18N
         setLayout(new java.awt.BorderLayout());
 
-        btAdd.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/add_FILL0_wght400_GRAD0_opsz24.png"))); // NOI18N
+        btAdd.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/note_add_24dp_FILL0_wght400_GRAD0_opsz24.png"))); // NOI18N
         btAdd.setText("Add...");
         btAdd.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -264,8 +264,8 @@ public class InstallationsPanel extends javax.swing.JPanel {
             }
         });
 
-        btRemove.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/delete_forever_FILL0_wght400_GRAD0_opsz24.png"))); // NOI18N
-        btRemove.setText("Delete");
+        btRemove.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/scan_delete_24dp_FILL0_wght400_GRAD0_opsz24.png"))); // NOI18N
+        btRemove.setText("Remove");
         btRemove.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btRemoveActionPerformed(evt);
@@ -280,7 +280,7 @@ public class InstallationsPanel extends javax.swing.JPanel {
             }
         });
 
-        btSave.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/save_FILL0_wght400_GRAD0_opsz24.png"))); // NOI18N
+        btSave.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/download_FILL0_wght400_GRAD0_opsz24.png"))); // NOI18N
         btSave.setText("Save");
         btSave.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -463,7 +463,7 @@ public class InstallationsPanel extends javax.swing.JPanel {
     private void btRemoveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btRemoveActionPerformed
         log.debug("btRemoveActionPerformed({})", evt);
         
-        if (JOptionPane.showConfirmDialog(btRemove, "Kiddo! Are you really sure that you want to do this?", "Remove...", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+        if (JOptionPane.showConfirmDialog(btRemove, "Kiddo! This will remove all our knowledge about this installation on disk.\nAre you sure you want to do this?", "Remove...", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
             try {
                 int rowIndex = jTable1.getSelectedRow();
                 if (rowIndex == -1) {

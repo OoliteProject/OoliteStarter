@@ -99,7 +99,7 @@ public class MainFrame extends javax.swing.JFrame {
         }
 
         private boolean maybeAnnounceExpansionUpdate(MainFrame mf) {
-            log.warn("maybeAnnounceExpansionUpdate(...)");
+            log.debug("maybeAnnounceExpansionUpdate(...)");
             List<Expansion> updates = mf.oolite2.getUpdates();
 
             if (!updates.isEmpty()) {
@@ -142,6 +142,16 @@ public class MainFrame extends javax.swing.JFrame {
                     message.append("<p>I see a lot of blanks on this here board... Kid, you gotta do something about it.</p>");
                     message.append("<p>Have at least one active Oolite version. You need one. It's pretty much compulsory.<br/>");
                     message.append("Hit the Scan or Add button and fill in the form, at least once to add Oolite versions.");
+                    message.append("</html>");
+
+                    MrGimlet.showMessage(mf.getRootPane(), message.toString(), 0);
+                } else if (!mf.isInstallationsValid()) {
+                    mf.jTabbedPane1.setSelectedIndex(4);
+
+                    StringBuilder message = new StringBuilder("<html>");
+                    message.append("<p>Hmmm. Something's fishy here.</p>");
+                    message.append("<p>Is it possible some Oolite version changed meanwhile?<br>");
+                    message.append("Better check.</p>");
                     message.append("</html>");
 
                     MrGimlet.showMessage(mf.getRootPane(), message.toString(), 0);
@@ -369,6 +379,40 @@ public class MainFrame extends javax.swing.JFrame {
                 }
             }
         });
+    }
+    
+    /**
+     * Checks if the configured installations still match the setup on disk.
+     * 
+     * @return true if good, false otherwise
+     */
+    protected boolean isInstallationsValid() {
+        log.debug("isInstallationsValid()");
+
+        for (Installation i: configuration.getInstallations()) {
+            File f = new File(i.getExcecutable());
+            if (!f.isFile()) {
+                log.warn("File {} not found.", f);
+                return false;
+            }
+
+            f = new File(i.getHomeDir());
+            if (!f.isDirectory()) {
+                log.warn("File {} not found.", f);
+                return false;
+            }
+            
+            try {
+                String v = oolite.getVersionFromHomeDir(f);
+                if (!i.getVersion().equals(v)) {
+                    return false;
+                }
+            } catch (IOException e) {
+                log.warn("Could not get version for {}", f, e);
+            }
+        }
+        
+        return true;
     }
     
     private void updateBackgroundProcessIndicator() {

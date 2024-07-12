@@ -72,6 +72,10 @@ public class ProcessData {
     public List<String> getCommand() {
         return command;
     }
-    
+
+    @Override
+    public String toString() {
+        return "ProcessData{" + "cwd=" + cwd + ", command=" + command + ", pid=" + pid + '}';
+    }
     
 }
