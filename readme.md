@@ -353,6 +353,11 @@ These events will be happening:
 If OoliteStarter cannot grab the TCP Port it will not complain. But at the same
 time it will not be able to receive events to be forwarded to MQTT.
 
+To debug you can use e.g. Mosquitto as broker and the command line client to show
+incoming messages. Run something like this command:
+
+    mosquitto_sub -h 192.168.178.51 -p 1883 -t "#" -v -u <user> -P <password>
+
 ### Feedback Channel
 
 OoliteStarter not only allows Oolite to publish messages to MQTT. It also allows
@@ -366,6 +371,11 @@ While this may look like overhead it allows future extension of the messages.
 
 Make sure 'somestring' is a valid Oolite command - or expect some Oolite complaints
 and ranting in one of the other topics.
+
+As a test you can run e.g. Mosquitto client like this:
+
+    mosquitto_pub -h 192.168.178.51 -p 1883 -t "oolite/input" -u <user> -P <password> -m "{'command': 'somestring'}"
+
 
 
 ### OoliteStarter and Oolite Debug Console

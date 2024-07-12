@@ -80,3 +80,562 @@ this.playerWillSaveGame = function(reason)
 
     missionVariables["ooliteStarter_oxpList"] = oolite.resourcePaths;
 }
+
+///// Ship Script Events
+
+this.shipWillDockWithStation = function(station)
+{
+   log(this.name, "shipWillDockWithStation(" + station + ")");
+
+    var msg = {
+        'msgType': "shipWillDockWithStation",
+        'station': station,
+        //'sender': sender.displayName
+        'sender': sender
+    }
+    debugConsole.consoleMessage(JSON.stringify(msg));
+}
+
+this.shipDockedWithStation = function(station)
+{
+   log(this.name, "shipWillDockWithStation(" + station + ")");
+
+    var msg = {
+        'msgType': "shipDockedWithStation",
+        'station': station,
+        //'sender': sender.displayName
+        'sender': sender
+    }
+    debugConsole.consoleMessage(JSON.stringify(msg));
+}
+
+this.shipWillLaunchFromStation = function(station)
+{
+   log(this.name, "shipWillLaunchFromStation(" + station + ")");
+
+    var msg = {
+        'msgType': "shipWillLaunchFromStation",
+        'station': station,
+        //'sender': sender.displayName
+        'sender': sender
+    }
+    debugConsole.consoleMessage(JSON.stringify(msg));
+}
+
+this.shipLaunchedFromStation = function(station)
+{
+   log(this.name, "shipLaunchedFromStation(" + station + ")");
+
+    var msg = {
+        'msgType': "shipLaunchedFromStation",
+        'station': station,
+        //'sender': sender.displayName
+        'sender': sender
+    }
+    debugConsole.consoleMessage(JSON.stringify(msg));
+}
+
+this.stationWithdrewDockingClearance = function(station)
+{
+   log(this.name, "stationWithdrewDockingClearance()");
+
+    var msg = {
+        'msgType': "stationWithdrewDockingClearance",
+        //'sender': sender.displayName
+        'sender': sender
+    }
+    debugConsole.consoleMessage(JSON.stringify(msg));
+}
+
+this.playerWillEnterWitchspace = function()
+{
+   log(this.name, "playerWillEnterWitchspace()");
+
+    var msg = {
+        'msgType': "playerWillEnterWitchspace",
+        //'sender': sender.displayName
+        'sender': sender
+    }
+    debugConsole.consoleMessage(JSON.stringify(msg));
+}
+
+this.shipExitedWormhole = function()
+{
+   log(this.name, "shipExitedWormhole()");
+
+    var msg = {
+        'msgType': "shipExitedWormhole",
+        //'sender': sender.displayName
+        'sender': sender
+    }
+    debugConsole.consoleMessage(JSON.stringify(msg));
+}
+
+this.shipWitchspaceBlocked = function()
+{
+   log(this.name, "shipWitchspaceBlocked()");
+
+    var msg = {
+        'msgType': "shipWitchspaceBlocked",
+        //'sender': sender.displayName
+        'sender': sender
+    }
+    debugConsole.consoleMessage(JSON.stringify(msg));
+}
+
+this.wormholeSuggested = function(wormhole)
+{
+   log(this.name, "wormholeSuggested(" + wormhole + ")");
+
+    var msg = {
+        'msgType': "wormholeSuggested",
+        'wormhole': wormhole,
+        //'sender': sender.displayName
+        'sender': sender
+    }
+    debugConsole.consoleMessage(JSON.stringify(msg));
+}
+
+this.shipEnteredStationAegis = function(station)
+{
+   log(this.name, "shipEnteredStationAegis(" + station + ")");
+
+    var msg = {
+        'msgType': "shipEnteredStationAegis",
+        'station': station,
+        //'sender': sender.displayName
+        'sender': sender
+    }
+    debugConsole.consoleMessage(JSON.stringify(msg));
+}
+
+this.shipExitedStationAegis = function(station)
+{
+   log(this.name, "shipExitedStationAegis(" + station + ")");
+
+    var msg = {
+        'msgType': "shipExitedStationAegis",
+        'station': station,
+        //'sender': sender.displayName
+        'sender': sender
+    }
+    debugConsole.consoleMessage(JSON.stringify(msg));
+}
+
+this.shipEnteredPlanetaryVicinity = function(planet)
+{
+   log(this.name, "shipEnteredPlanetaryVicinity(" + planet + ")");
+
+    var msg = {
+        'msgType': "shipEnteredPlanetaryVicinity",
+        'planet': planet,
+        //'sender': sender.displayName
+        'sender': sender
+    }
+    debugConsole.consoleMessage(JSON.stringify(msg));
+}
+
+this.shipExitedPlanetaryVicinity = function(planet)
+{
+   log(this.name, "shipExitedPlanetaryVicinity(" + planet + ")");
+
+    var msg = {
+        'msgType': "shipExitedPlanetaryVicinity",
+        'planet': planet,
+        //'sender': sender.displayName
+        'sender': sender
+    }
+    debugConsole.consoleMessage(JSON.stringify(msg));
+}
+
+this.shipApproachingPlanetSurface = function(planet)
+{
+   log(this.name, "shipApproachingPlanetSurface(" + planet + ")");
+
+    var msg = {
+        'msgType': "shipApproachingPlanetSurface",
+        'planet': planet,
+        //'sender': sender.displayName
+        'sender': sender
+    }
+    debugConsole.consoleMessage(JSON.stringify(msg));
+}
+
+this.shipLeavingPlanetSurface = function(planet)
+{
+   log(this.name, "shipLeavingPlanetSurface(" + planet + ")");
+
+    var msg = {
+        'msgType': "shipLeavingPlanetSurface",
+        'planet': planet,
+        //'sender': sender.displayName
+        'sender': sender
+    }
+    debugConsole.consoleMessage(JSON.stringify(msg));
+}
+
+this.cascadeWeaponDetected = function(weapon)
+{
+   log(this.name, "cascadeWeaponDetected(" + weapon + ")");
+
+    var msg = {
+        'msgType': "cascadeWeaponDetected",
+        'weapon': weapon,
+        //'sender': sender.displayName
+        'sender': sender
+    }
+    debugConsole.consoleMessage(JSON.stringify(msg));
+}
+
+this.defenseTargetDestroyed = function(target)
+{
+   log(this.name, "defenseTargetDestroyed(" + target + ")");
+
+    var msg = {
+        'msgType': "defenseTargetDestroyed",
+        'target': target,
+        //'sender': sender.displayName
+        'sender': sender
+    }
+    debugConsole.consoleMessage(JSON.stringify(msg));
+}
+
+this.escortAttack = function(target)
+{
+   log(this.name, "escortAttack(" + target + ")");
+
+    var msg = {
+        'msgType': "escortAttack",
+        'target': target,
+        //'sender': sender.displayName
+        'sender': sender
+    }
+    debugConsole.consoleMessage(JSON.stringify(msg));
+}
+
+this.helpRequestReceived = function(ally, enemy)
+{
+   log(this.name, "helpRequestReceived(" + ally + ", " + enemy + ")");
+
+    var msg = {
+        'msgType': "helpRequestReceived",
+        'ally': ally,
+        'enemy': enemy,
+        //'sender': sender.displayName
+        'sender': sender
+    }
+    debugConsole.consoleMessage(JSON.stringify(msg));
+}
+
+this.shipAttackedOther = function(other)
+{
+   log(this.name, "shipAttackedOther(" + other + ")");
+
+    var msg = {
+        'msgType': "shipAttackedOther",
+        'other': other,
+        //'sender': sender.displayName
+        'sender': sender
+    }
+    debugConsole.consoleMessage(JSON.stringify(msg));
+}
+
+this.shipAttackedWithMissile = function(missile, whom)
+{
+   log(this.name, "shipAttackedWithMissile(" + missile + ", " + whom + ")");
+
+    var msg = {
+        'msgType': "shipAttackedWithMissile",
+        'missile': missile,
+        'whom': whom,
+        //'sender': sender.displayName
+        'sender': sender
+    }
+    debugConsole.consoleMessage(JSON.stringify(msg));
+}
+
+this.shipAttackerDistracted = function(whom)
+{
+   log(this.name, "shipAttackerDistracted(" + whom + ")");
+
+    var msg = {
+        'msgType': "shipAttackerDistracted",
+        'whom': whom,
+        //'sender': sender.displayName
+        'sender': sender
+    }
+    debugConsole.consoleMessage(JSON.stringify(msg));
+}
+
+this.shipBeingAttacked = function(whom)
+{
+   log(this.name, "shipBeingAttacked(" + whom + ")");
+
+    var msg = {
+        'msgType': "shipBeingAttacked",
+        'whom': whom,
+        //'sender': sender.displayName
+        'sender': sender
+    }
+    debugConsole.consoleMessage(JSON.stringify(msg));
+}
+
+this.shipBeingAttackedByCloaked = function()
+{
+     // Your code here
+}
+
+this.shipBeingAttackedUnsuccessfully = function(whom)
+{
+   log(this.name, "shipBeingAttackedUnsuccessfully(" + whom + ")");
+
+    var msg = {
+        'msgType': "shipBeingAttackedUnsuccessfully",
+        'whom': whom,
+        //'sender': sender.displayName
+        'sender': sender
+    }
+    debugConsole.consoleMessage(JSON.stringify(msg));
+}
+
+ this.shipCloakActivated = function()
+ {
+    // Your code here
+ }
+ 
+  this.shipCloakDeactivated = function()
+ {
+    // Your code here
+ }
+ 
+ this.shipTargetDestroyed = function(target)
+{
+   log(this.name, "shipTargetDestroyed(" + target + ")");
+
+    var msg = {
+        'msgType': "shipTargetDestroyed",
+        'target': target,
+        //'sender': sender.displayName
+        'sender': sender
+    }
+    debugConsole.consoleMessage(JSON.stringify(msg));
+}
+
+this.shipDied = function(whom, why)
+{
+     // Your code here
+}
+
+this.shipEnergyBecameFull = function()
+{
+     // Your code here
+}
+
+this.shipEnergyIsLow = function()
+{
+     // Your code here
+}
+
+this.shipHitByECM = function(pulsesRemaining)
+{
+   log(this.name, "shipHitByECM(" + pulsesRemaining + ")");
+
+    var msg = {
+        'msgType': "shipHitByECM",
+        'pulsesRemaining': pulsesRemaining,
+        //'sender': sender.displayName
+        'sender': sender
+    }
+    debugConsole.consoleMessage(JSON.stringify(msg));
+}
+
+this.shipFiredMissile = function(missile, target)
+{
+     // Your code here
+}
+
+this.shipKilledOther = function(whom,damageType)
+{
+     // Your code here
+}
+
+this.shipReleasedEquipment = function(mine)
+{
+   log(this.name, "shipReleasedEquipment(" + mine + ")");
+
+    var msg = {
+        'msgType': "shipReleasedEquipment",
+        'mine': mine,
+        //'sender': sender.displayName
+        'sender': sender
+    }
+    debugConsole.consoleMessage(JSON.stringify(msg));
+}
+
+this.shipTargetAcquired = function(target)
+{
+   log(this.name, "shipTargetAcquired(" + target + ")");
+
+    var msg = {
+        'msgType': "shipTargetAcquired",
+        'target': target,
+        //'sender': sender.displayName
+        'sender': sender
+    }
+    debugConsole.consoleMessage(JSON.stringify(msg));
+}
+
+this.shipTargetCloaked = function()
+{
+     // Your code here
+}
+
+this.shipTargetLost = function(target)
+{
+   log(this.name, "shipTargetLost(" + target + ")");
+
+    var msg = {
+        'msgType': "shipTargetLost",
+        'target': target,
+        //'sender': sender.displayName
+        'sender': sender
+    }
+    debugConsole.consoleMessage(JSON.stringify(msg));
+}
+
+this.shipTakingDamage = function(amount, whom, type)
+{
+     // Your code here
+}
+
+this.cargoDumpedNearby = function(cargo: ship, releasedBy: ship)
+{
+     // Your code here
+}
+
+this.commsMessageReceived = function(message: string, sender: ship)
+{
+     // Your code here
+}
+
+this.distressMessageReceived = function(aggressor: ship, sender: ship)
+{
+     // Your code here
+}
+
+this.equipmentAdded = function(equipmentKey)
+{
+   log(this.name, "equipmentAdded(" + equipmentKey + ")");
+
+    var msg = {
+        'msgType': "equipmentAdded",
+        'equipmentKey': equipmentKey,
+        //'sender': sender.displayName
+        'sender': sender
+    }
+    debugConsole.consoleMessage(JSON.stringify(msg));
+}
+
+this.equipmentRemoved = function(equipmentKey)
+{
+   log(this.name, "equipmentRemoved(" + equipmentKey + ")");
+
+    var msg = {
+        'msgType': "equipmentRemoved",
+        'equipmentKey': equipmentKey,
+        //'sender': sender.displayName
+        'sender': sender
+    }
+    debugConsole.consoleMessage(JSON.stringify(msg));
+}
+
+this.shipAchievedDesiredRange = function()
+{
+     // Your code here
+}
+
+this.shipAIFrustrated = function(context)
+{
+   log(this.name, "shipAIFrustrated(" + context + ")");
+
+    var msg = {
+        'msgType': "shipAIFrustrated",
+        'context': context,
+        //'sender': sender.displayName
+        'sender': sender
+    }
+    debugConsole.consoleMessage(JSON.stringify(msg));
+}
+
+this.shipBountyChanged = function(delta,reason)
+{
+     // Your code here
+}
+
+this.shipCloseContact = function(otherShip)
+{
+   log(this.name, "shipCloseContact(" + otherShip + ")");
+
+    var msg = {
+        'msgType': "shipCloseContact",
+        'otherShip': otherShip,
+        //'sender': sender.displayName
+        'sender': sender
+    }
+    debugConsole.consoleMessage(JSON.stringify(msg));
+}
+
+this.shipDumpedCargo = function(cargo)
+{
+   log(this.name, "shipDumpedCargo(" + cargo + ")");
+
+    var msg = {
+        'msgType': "shipDumpedCargo",
+        'cargo': cargo,
+        //'sender': sender.displayName
+        'sender': sender
+    }
+    debugConsole.consoleMessage(JSON.stringify(msg));
+}
+
+this.shipNowFacingDestination = function()
+{
+     // Your code here
+}
+
+shipReachedEndPoint = function()
+{
+     // Your code here
+}
+
+this.shipReachedNavPoint = function()
+{
+     // Your code here
+}
+
+this.shipScoopedOther = function(whom)
+{
+   log(this.name, "shipScoopedOther(" + whom + ")");
+
+    var msg = {
+        'msgType': "shipScoopedOther",
+        'whom': whom,
+        //'sender': sender.displayName
+        'sender': sender
+    }
+    debugConsole.consoleMessage(JSON.stringify(msg));
+}
+
+this.shipLaunchedEscapePod = function(escapepod, passengers)
+{
+   log(this.name, "shipLaunchedEscapePod(" + escapepod + ", " + passengers + ")");
+
+    var msg = {
+        'msgType': "shipLaunchedEscapePod",
+        'escapepod': escapepod,
+        'passengers': passengers,
+        //'sender': sender.displayName
+        'sender': sender
+    }
+    debugConsole.consoleMessage(JSON.stringify(msg));
+}
