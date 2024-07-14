@@ -2606,7 +2606,7 @@ public class Oolite implements PropertyChangeListener {
     }
     
     protected boolean isDebugConsoleRunning() {
-        log.warn("isDebugConsoleRunning()");
+        log.debug("isDebugConsoleRunning()");
         
         if (tcpserver == null) {
             return false;
@@ -2625,7 +2625,7 @@ public class Oolite implements PropertyChangeListener {
     }
     
     protected void startDebugConsole() {
-        log.warn("startDebugConsole()");
+        log.debug("startDebugConsole()");
 
         if (configuration == null) {
             log.warn("No configuration loaded. Not starting console server.");
@@ -2657,7 +2657,7 @@ public class Oolite implements PropertyChangeListener {
     }
     
     protected void stopDebugConsole() {
-        log.warn("stopDebugConsole()");
+        log.debug("stopDebugConsole()");
         
         if (tcpserver != null) {
             tcpserver.shutdown();

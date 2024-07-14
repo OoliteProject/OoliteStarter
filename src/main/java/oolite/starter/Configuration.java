@@ -327,7 +327,7 @@ public class Configuration {
      * @param installation the installation to activate. Null if no installation is chosen
      */
     public void activateInstallation(Installation installation) {
-        log.warn("activateInstallation({})", installation);
+        log.debug("activateInstallation({})", installation);
         
         if (installation == null) {
             Installation oldInstallation = activeInstallation;
