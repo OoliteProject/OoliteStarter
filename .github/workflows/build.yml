@@ -275,7 +275,7 @@ jobs:
         $SRC = "target\OoliteStarter${{ needs.semver.outputs.FLAVOR }}-${{ needs.semver.outputs.GITVERSION_ASSEMBLYSEMVER }}.exe"
         $DST = "OoliteStarter-${{ needs.semver.outputs.GITVERSION_SEMVER }}-Windows-$PROCESSOR_ARCHITECTURE.exe"
         ren $SRC $DST
-      with:
+      env:
         PROCESSOR_ARCHITECTURE: ${PROCESSOR_ARCHITECTURE}
 
     - name: Check status 4
@@ -335,7 +335,7 @@ jobs:
           --app-version "${{ needs.semver.outputs.MACOS_MAJORMINORPATCH }}" \
           --copyright Copyright \
           --description "OoliteStarter ${{ needs.semver.outputs.GITVERSION_SEMVER }}" \
-          --name "OoliteStarter" --dest target/appimage \
+          --name "OoliteStarter${{ needs.semver.outputs.FLAVOR }}" --dest target/appimage \
           --temp target/oolite-starter-tmp --vendor "OoliteProject" --verbose \
           --icon oolitestarter/src/main/resources/oolite_logo.png \
           --input OoliteStarter-${{ needs.semver.outputs.GITVERSION_SEMVER }}/dist \
@@ -366,8 +366,8 @@ jobs:
           --type pkg \
           --verbose \
           --app-version "${{ needs.semver.outputs.MACOS_MAJORMINORPATCH }}" \
-          --app-image target/appimage/OoliteStarter.app \
-          --name "OoliteStarter" \
+          --app-image target/appimage/OoliteStarter${{ needs.semver.outputs.FLAVOR }}.app \
+          --name "OoliteStarter${{ needs.semver.outputs.FLAVOR }}" \
           --icon oolitestarter/src/main/resources/oolite_logo.png \
           --dest target \
           --resource-dir oolitestarter/src/jpackage/resources-mac \
@@ -387,7 +387,7 @@ jobs:
 
     - name: Rename result
       run: |
-        mv ./target/OoliteStarter-${{ needs.semver.outputs.MACOS_MAJORMINORPATCH }}.pkg ./target/OoliteStarter-${{ needs.semver.outputs.GITVERSION_SEMVER }}-MacOS-${HOSTTYPE}.pkg
+        mv ./target/OoliteStarter${{ needs.semver.outputs.FLAVOR }}-${{ needs.semver.outputs.MACOS_MAJORMINORPATCH }}.pkg ./target/OoliteStarter-${{ needs.semver.outputs.GITVERSION_SEMVER }}-MacOS-${HOSTTYPE}.pkg
 
     - name: Check status 4
       run: |
