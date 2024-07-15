@@ -22,6 +22,7 @@ jobs:
       GITVERSION_PATCH: ${{ steps.gitversion.outputs.GITVERSION_PATCH }}
       MACOS_MAJORMINORPATCH: ${{ steps.output1.outputs.MACOS_MAJORMINORPATCH }}
       DEBIAN_PKGVERSION: ${{ steps.output1.outputs.DEBIAN_PKGVERSION }}
+      FLAVOR: ${{ steps.output1.outputs.FLAVOR }}
     steps:
     - name: Checkout project
       uses: actions/checkout@v4
@@ -53,6 +54,10 @@ jobs:
           echo "MACOS_MAJORMINORPATCH=1.${GitVersion_Minor}.${GitVersion_Patch}" >> "$GITHUB_OUTPUT"
         else
           echo "MACOS_MAJORMINORPATCH=${GitVersion_MajorMinorPatch}" >> "$GITHUB_OUTPUT"
+        fi
+        if [ "$GITHUB_REF_NAME" != "master" ]
+        then
+          echo "FLAVOR=_${GITHUB_REF_NAME}" >> "$GITHUB_OUTPUT"
         fi
 
   build:
@@ -135,7 +140,7 @@ jobs:
           --app-version "${{ needs.semver.outputs.DEBIAN_PKGVERSION }}" \
           --copyright Copyright \
           --description "OoliteStarter ${{ needs.semver.outputs.GITVERSION_SEMVER }}" \
-          --name "OoliteStarter" \
+          --name "OoliteStarter${{ needs.semver.outputs.FLAVOR }}" \
           --dest target/appimage \
           --temp target/oolite-starter-tmp \
           --vendor "OoliteProject" \
@@ -150,7 +155,7 @@ jobs:
 
     - name: Tweak AppImage
       run: |
-        cp -v "oolitestarter/src/jpackage/resources-linux/OoliteStarter.desktop" "target/appimage/OoliteStarter/lib/oolitestarter-OoliteStarter.desktop"
+        cp -v "oolitestarter/src/jpackage/resources-linux/OoliteStarter.desktop" "target/appimage/OoliteStarter${{ needs.semver.outputs.FLAVOR }}/lib/oolitestarter-OoliteStarter.desktop"
       # cp -v "oolitestarter/src/main/resources/images/OoliteStarter_Splashscreen_640x360.png" "target/appimage/OoliteStarter/lib/app/splash.png"
 
     - name: Check status 2
@@ -164,8 +169,8 @@ jobs:
       run: |
         jpackage \
           --verbose \
-          --app-image target/appimage/OoliteStarter \
-          --name "OoliteStarter" \
+          --app-image target/appimage/OoliteStarter${{ needs.semver.outputs.FLAVOR }} \
+          --name "OoliteStarter${{ needs.semver.outputs.FLAVOR }}" \
           --app-version "${{ needs.semver.outputs.DEBIAN_PKGVERSION }}" \
           --dest target \
           --license-file oolitestarter/LICENSE \
@@ -224,7 +229,20 @@ jobs:
 
     - name: Prepare AppImage for Windows
       run: |
-        jpackage --type app-image --app-version "${{ needs.semver.outputs.GITVERSION_ASSEMBLYSEMVER }}" --copyright Copyright --description "OoliteStarter ${{ needs.semver.outputs.GITVERSION_SEMVER }}" --name "OoliteStarter" --dest target/appimage --temp target/oolite-starter-tmp --vendor "OoliteProject" --verbose --icon oolitestarter/src/main/resources/images/Mr_Gimlet_transparent.ico --input OoliteStarter-${{ needs.semver.outputs.GITVERSION_SEMVER }}/dist --main-jar OoliteStarter-${{ needs.semver.outputs.GITVERSION_SEMVER }}.jar --main-class oolite.starter.MainFrame
+        jpackage --type app-image `
+        --app-version "${{ needs.semver.outputs.GITVERSION_ASSEMBLYSEMVER }}" `
+        --copyright Copyright `
+        --description "OoliteStarter ${{ needs.semver.outputs.GITVERSION_SEMVER }}" `
+        --name "OoliteStarter${{ needs.semver.outputs.FLAVOR }}" `
+        --dest target/appimage `
+        --temp target/oolite-starter-tmp `
+        --vendor "OoliteProject" `
+        --verbose `
+        --icon oolitestarter/src/main/resources/images/Mr_Gimlet_transparent.ico `
+        --input OoliteStarter-${{ needs.semver.outputs.GITVERSION_SEMVER }}/dist `
+        --main-jar OoliteStarter-${{ needs.semver.outputs.GITVERSION_SEMVER }}.jar `
+        --main-class oolite.starter.MainFrame
+
         # --resource-dir src/jpackage/resources
 
     - name: Check status 2
@@ -234,7 +252,17 @@ jobs:
     # for upgrades, it seems we need a UUID - see https://stackoverflow.com/a/67442754/4222206
     - name: Finish AppImage for Windows
       run: |
-        jpackage --verbose --app-image target/appimage/OoliteStarter --app-version "${{ needs.semver.outputs.GITVERSION_ASSEMBLYSEMVER }}" --name "OoliteStarter" --dest target --win-shortcut --icon oolitestarter/src/main/resources/images/Mr_Gimlet_transparent.ico --win-shortcut --win-menu --win-menu-group Oolite --win-dir-chooser --win-upgrade-uuid 0a18c6bc-0418-47dc-9526-3a48030f6af6
+        jpackage `
+        --verbose `
+        --app-image target/appimage/OoliteStarter${{ needs.semver.outputs.FLAVOR }} `
+        --app-version "${{ needs.semver.outputs.GITVERSION_ASSEMBLYSEMVER }}" `
+        --name "OoliteStarter${{ needs.semver.outputs.FLAVOR }}" `
+        --dest target `
+        --win-shortcut `
+        --icon oolitestarter/src/main/resources/images/Mr_Gimlet_transparent.ico `
+        --win-shortcut --win-menu --win-menu-group Oolite `
+        --win-dir-chooser --win-upgrade-uuid 0a18c6bc-0418-47dc-9526-3a48030f6af6
+
         #--resource-dir src/jpackage/resources
 
     - name: Check status 3
@@ -244,9 +272,11 @@ jobs:
     - name: Rename result (target\OoliteStarter-0.1.16.0.exe)
       run: |
         gci env:* | sort-object name
-        $SRC = "target\OoliteStarter-${{ needs.semver.outputs.GITVERSION_ASSEMBLYSEMVER }}.exe"
-        $DST = "OoliteStarter-${{ needs.semver.outputs.GITVERSION_SEMVER }}-Windows-%PROCESSOR_ARCHITECTURE%.exe"
+        $SRC = "target\OoliteStarter${{ needs.semver.outputs.FLAVOR }}-${{ needs.semver.outputs.GITVERSION_ASSEMBLYSEMVER }}.exe"
+        $DST = "OoliteStarter-${{ needs.semver.outputs.GITVERSION_SEMVER }}-Windows-$PROCESSOR_ARCHITECTURE.exe"
         ren $SRC $DST
+      with:
+        PROCESSOR_ARCHITECTURE: ${PROCESSOR_ARCHITECTURE}
 
     - name: Check status 4
       run: |
