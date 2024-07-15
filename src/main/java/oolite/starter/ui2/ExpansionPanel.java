@@ -64,7 +64,7 @@ public class ExpansionPanel extends javax.swing.JPanel implements ExpansionsPane
 
     void addCurrentlyRequired(Expansion expansion, StringBuilder sb) {
         sb.append("<h2><font color=\"ffc800\">■</font> Required by</h2>");
-        sb.append("<p>Do not remove. Otherwise the following other expantions will not work correctly due to missing dependencies:</p>");
+        sb.append("<p>Do not remove. Otherwise the following other expansions will not work correctly due to missing dependencies:</p>");
         sb.append("<table>");
         for (Expansion e: expansion.getEMStatus().getRequiredBy()) {
             if (e.isEnabled()) {
