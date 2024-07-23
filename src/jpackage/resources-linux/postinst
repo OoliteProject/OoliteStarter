@@ -24,7 +24,7 @@ LAUNCHER_AS_SERVICE_SCRIPTS
 
 case "$1" in
     configure)
-        xdg-desktop-menu install /opt/APPLICATION_PACKAGE/lib/APPLICATION_PACKAGE-APPLICATION_PACKAGE.desktop
+        xdg-desktop-menu install /opt/APPLICATION_PACKAGE/lib/APPLICATION_PACKAGE-*.desktop
         DESKTOP_COMMANDS_INSTALL
         LAUNCHER_AS_SERVICE_COMMANDS_INSTALL
     ;;
