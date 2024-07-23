@@ -36,9 +36,24 @@ this.startUpComplete = function()
         var msg = {
             'msgType': "controls",
             'speed': player.ship.speed,
-            'maxSpeed': player.ship.maxSpeed
+            'maxSpeed': player.ship.maxSpeed,
+            'serviceLevel': player.ship.serviceLevel,
+            'targetSystem': player.ship.targetSystem,
+            'nextSystem': player.ship.nextSystem,
+            'previousSystem': player.ship.previousSystem,
+            'legalStatus': player.legalStatus,
+            'score': player.score,
+            'rank': player.rank,
+            'credits': player.credits,
+            'escapePodRescueTime': player.escapePodRescueTime
         }
-        if (msg.speed !== prevMsg.speed || msg.maxSpeed !== prevMsg.maxSpeed) {
+        if (msg.speed !== prevMsg.speed || msg.maxSpeed !== prevMsg.maxSpeed
+                || msg.serviceLevel !== prevMsg.serviceLevel || msg.targetSystem !== prevMsg.targetSystem
+                || msg.nextSystem !== prevMsg.nextSystem || msg.previousSystem !== prevMsg.previousSystem
+                || msg.legalStatus !== prevMsg.legalStatus || msg.score !== prevMsg.score
+                || msg.rank !== prevMsg.rank || msg.credits !== prevMsg.credits
+                || msg.escapePodRescueTime !== prevMsg.escapePodRescueTime
+                ) {
             debugConsole.consoleMessage(JSON.stringify(msg));
             prevMsg = msg;
         }
@@ -115,10 +130,11 @@ this.shipWillLaunchFromStation = function(station)
 
     var msg = {
         'msgType': "shipWillLaunchFromStation",
-        'station': station,
-        //'sender': sender.displayName
-        'sender': sender
+        'station': station
     }
+    // ,
+    // 'sender': sender.displayName
+    // 'sender': sender
     debugConsole.consoleMessage(JSON.stringify(msg));
 }
 
@@ -128,9 +144,10 @@ this.shipLaunchedFromStation = function(station)
 
     var msg = {
         'msgType': "shipLaunchedFromStation",
-        'station': station,
+        'station': station
+        //,
         //'sender': sender.displayName
-        'sender': sender
+        //'sender': sender
     }
     debugConsole.consoleMessage(JSON.stringify(msg));
 }
@@ -478,10 +495,11 @@ this.shipTargetAcquired = function(target)
 
     var msg = {
         'msgType': "shipTargetAcquired",
-        'target': target,
-        //'sender': sender.displayName
-        'sender': sender
+        'target': target
     }
+    //,
+    //'sender': sender.displayName
+    //'sender': sender
     debugConsole.consoleMessage(JSON.stringify(msg));
 }
 
@@ -508,17 +526,20 @@ this.shipTakingDamage = function(amount, whom, type)
      // Your code here
 }
 
-this.cargoDumpedNearby = function(cargo: ship, releasedBy: ship)
+//this.cargoDumpedNearby = function(cargo: ship, releasedBy: ship)
+this.cargoDumpedNearby = function(cargo, releasedBy)
 {
      // Your code here
 }
 
-this.commsMessageReceived = function(message: string, sender: ship)
+//this.commsMessageReceived = function(message: string, sender: ship)
+this.commsMessageReceived = function(message, sender)
 {
      // Your code here
 }
 
-this.distressMessageReceived = function(aggressor: ship, sender: ship)
+//this.distressMessageReceived = function(aggressor: ship, sender: ship)
+this.distressMessageReceived = function(aggressor, sender)
 {
      // Your code here
 }
@@ -529,10 +550,11 @@ this.equipmentAdded = function(equipmentKey)
 
     var msg = {
         'msgType': "equipmentAdded",
-        'equipmentKey': equipmentKey,
-        //'sender': sender.displayName
-        'sender': sender
+        'equipmentKey': equipmentKey
     }
+    // ,
+    // 'sender': sender.displayName
+    // 'sender': sender
     debugConsole.consoleMessage(JSON.stringify(msg));
 }
 
@@ -542,10 +564,11 @@ this.equipmentRemoved = function(equipmentKey)
 
     var msg = {
         'msgType': "equipmentRemoved",
-        'equipmentKey': equipmentKey,
-        //'sender': sender.displayName
-        'sender': sender
+        'equipmentKey': equipmentKey
     }
+    // ,
+    // 'sender': sender.displayName
+    // 'sender': sender
     debugConsole.consoleMessage(JSON.stringify(msg));
 }
 
@@ -603,7 +626,7 @@ this.shipNowFacingDestination = function()
      // Your code here
 }
 
-shipReachedEndPoint = function()
+this.shipReachedEndPoint = function()
 {
      // Your code here
 }
