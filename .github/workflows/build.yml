@@ -23,6 +23,7 @@ jobs:
       MACOS_MAJORMINORPATCH: ${{ steps.output1.outputs.MACOS_MAJORMINORPATCH }}
       DEBIAN_PKGVERSION: ${{ steps.output1.outputs.DEBIAN_PKGVERSION }}
       FLAVOR: ${{ steps.output1.outputs.FLAVOR }}
+      FLAVOR2: ${{ steps.output1.outputs.FLAVOR2 }}
     steps:
     - name: Checkout project
       uses: actions/checkout@v4
@@ -58,6 +59,7 @@ jobs:
         if [ "$GITHUB_REF_NAME" != "master" ]
         then
           echo "FLAVOR=_${GITHUB_REF_NAME}" >> "$GITHUB_OUTPUT"
+          echo "FLAVOR2=-${GITHUB_REF_NAME}" >> "$GITHUB_OUTPUT"
         fi
 
   build:
@@ -155,8 +157,7 @@ jobs:
 
     - name: Tweak AppImage
       run: |
-        cp -v "oolitestarter/src/jpackage/resources-linux/OoliteStarter.desktop" "target/appimage/OoliteStarter${{ needs.semver.outputs.FLAVOR }}/lib/oolitestarter-OoliteStarter.desktop"
-      # cp -v "oolitestarter/src/main/resources/images/OoliteStarter_Splashscreen_640x360.png" "target/appimage/OoliteStarter/lib/app/splash.png"
+        cp -v "oolitestarter/src/jpackage/resources-linux/OoliteStarter.desktop" "target/appimage/OoliteStarter${{ needs.semver.outputs.FLAVOR }}/lib/oolitestarter${{ needs.semver.outputs.FLAVOR2 }}-oolitestarter${{ needs.semver.outputs.FLAVOR2 }}.desktop"
 
     - name: Check status 2
       run: |
