@@ -18,6 +18,8 @@ set -e
 # the debian-policy package
 
 echo $0 called with $*
+printenv | sort
+pwd
 
 package_type=deb
 LAUNCHER_AS_SERVICE_SCRIPTS

@@ -41,6 +41,7 @@ public class MQTTAdapter implements PlistListener {
     private String TOPIC_OOLITE_LOG = "oolite/log";
     private String TOPIC_OOLITE_WORLDEVENT = "oolite/worldEvent";
     private String TOPIC_OOLITE_SHOWCONSOLE = "oolite/showConsole";
+    private String TOPIC_OOLITE_ERROR = "oolite/starter";
     
     /**
      * Creates a new instance.
@@ -69,6 +70,7 @@ public class MQTTAdapter implements PlistListener {
         TOPIC_OOLITE_LOG = MqttUtil.getTopic(prefix, "oolite/log");
         TOPIC_OOLITE_WORLDEVENT = MqttUtil.getTopic(prefix, "oolite/worldEvent");
         TOPIC_OOLITE_SHOWCONSOLE = MqttUtil.getTopic(prefix, "oolite/showConsole");
+        TOPIC_OOLITE_ERROR = MqttUtil.getTopic(prefix, "oolite/starter");
         
         this.tcpServer = tcpServer;
         tcpServer.addConnectorStatusListener(new Connector.ConnectorStatusListener() {
@@ -127,6 +129,7 @@ public class MQTTAdapter implements PlistListener {
                         }
                     } catch (Exception e) {
                         log.error("Could not consume message {}", mm);
+                        sendMqtt(TOPIC_OOLITE_ERROR, String.format("Could not consume message %s", String.valueOf(mm)));
                     }
                 }
             });

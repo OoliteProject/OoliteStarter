@@ -18,6 +18,8 @@ set -e
 
 
 echo $0 called with $*
+printenv | sort
+pwd
 
 package_type=deb
 #COMMON_SCRIPTS
