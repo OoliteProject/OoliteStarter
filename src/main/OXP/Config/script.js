@@ -516,6 +516,8 @@ this.shipTargetAcquired = function(target)
     //,
     //'sender': sender.displayName
     //'sender': sender
+    log(this.name, "shipTargetAcquired: " + msg);
+    
     debugConsole.consoleMessage(JSON.stringify(msg));
 }
 
