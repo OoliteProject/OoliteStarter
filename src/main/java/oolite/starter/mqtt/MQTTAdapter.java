@@ -210,9 +210,11 @@ public class MQTTAdapter implements PlistListener {
                         break;
                 }
             } else {
+                log.info("unparseable commandResult({})", dataO);
                 sendMqtt(TOPIC_OOLITE_UNKNOWN, messageO.toString());
             }
         } else {
+            log.info("did not understand commandResult({})", dataO);
             sendMqtt(TOPIC_OOLITE_UNKNOWN, dataO.toString());
         }
     }

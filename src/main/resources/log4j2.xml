@@ -39,7 +39,7 @@
     <Logger level="info"  name="oolite.starter.model.Command"/>
     <Logger level="info"  name="oolite.starter.model.OoliteFlavor"/>
     <Logger level="info"  name="oolite.starter.model.ProcessData"/>
-    <Logger level="debug" name="oolite.starter.mqtt.MQTTAdapter"/>
+    <Logger level="info" name="oolite.starter.mqtt.MQTTAdapter"/>
     <Logger level="info"  name="oolite.starter.Oolite"/>
     <Logger level="info"  name="oolite.starter.Oolite2"/>
     <Logger level="info"  name="oolite.starter.Oolite2.OoliteExpansionListModel"/>
