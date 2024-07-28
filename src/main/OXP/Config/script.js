@@ -83,9 +83,9 @@ this.commsMessageReceived = function(message, sender)
     var msg = {
         'msgType': "comms",
         'message': message,
-        //'sender': sender.displayName
-        'sender': sender
     }
+    //'sender': sender.displayName
+    //'sender': sender
     debugConsole.consoleMessage(JSON.stringify(msg));
 }
 
@@ -105,9 +105,9 @@ this.shipWillDockWithStation = function(station)
     var msg = {
         'msgType': "shipWillDockWithStation",
         'station': station,
-        //'sender': sender.displayName
-        'sender': sender
     }
+    //'sender': sender.displayName
+    //'sender': sender
     debugConsole.consoleMessage(JSON.stringify(msg));
 }
 
@@ -118,9 +118,9 @@ this.shipDockedWithStation = function(station)
     var msg = {
         'msgType': "shipDockedWithStation",
         'station': station,
-        //'sender': sender.displayName
-        'sender': sender
     }
+    //'sender': sender.displayName
+    //'sender': sender
     debugConsole.consoleMessage(JSON.stringify(msg));
 }
 
@@ -132,7 +132,6 @@ this.shipWillLaunchFromStation = function(station)
         'msgType': "shipWillLaunchFromStation",
         'station': station
     }
-    // ,
     // 'sender': sender.displayName
     // 'sender': sender
     debugConsole.consoleMessage(JSON.stringify(msg));
@@ -158,9 +157,10 @@ this.stationWithdrewDockingClearance = function(station)
 
     var msg = {
         'msgType': "stationWithdrewDockingClearance",
-        //'sender': sender.displayName
-        'sender': sender
     }
+        //,
+        //'sender': sender.displayName
+        //'sender': sender
     debugConsole.consoleMessage(JSON.stringify(msg));
 }
 
@@ -170,9 +170,10 @@ this.playerWillEnterWitchspace = function()
 
     var msg = {
         'msgType': "playerWillEnterWitchspace",
-        //'sender': sender.displayName
-        'sender': sender
     }
+        //,
+        //'sender': sender.displayName
+        //'sender': sender
     debugConsole.consoleMessage(JSON.stringify(msg));
 }
 
@@ -182,9 +183,10 @@ this.shipExitedWormhole = function()
 
     var msg = {
         'msgType': "shipExitedWormhole",
-        //'sender': sender.displayName
-        'sender': sender
     }
+        //,
+        //'sender': sender.displayName
+        //'sender': sender
     debugConsole.consoleMessage(JSON.stringify(msg));
 }
 
@@ -194,9 +196,10 @@ this.shipWitchspaceBlocked = function()
 
     var msg = {
         'msgType': "shipWitchspaceBlocked",
-        //'sender': sender.displayName
-        'sender': sender
     }
+        //,
+        //'sender': sender.displayName
+        //'sender': sender
     debugConsole.consoleMessage(JSON.stringify(msg));
 }
 
@@ -207,9 +210,10 @@ this.wormholeSuggested = function(wormhole)
     var msg = {
         'msgType': "wormholeSuggested",
         'wormhole': wormhole,
-        //'sender': sender.displayName
-        'sender': sender
     }
+        //,
+        //'sender': sender.displayName
+        //'sender': sender
     debugConsole.consoleMessage(JSON.stringify(msg));
 }
 
@@ -220,9 +224,10 @@ this.shipEnteredStationAegis = function(station)
     var msg = {
         'msgType': "shipEnteredStationAegis",
         'station': station,
-        //'sender': sender.displayName
-        'sender': sender
     }
+        //,
+        //'sender': sender.displayName
+        //'sender': sender
     debugConsole.consoleMessage(JSON.stringify(msg));
 }
 
@@ -233,9 +238,10 @@ this.shipExitedStationAegis = function(station)
     var msg = {
         'msgType': "shipExitedStationAegis",
         'station': station,
-        //'sender': sender.displayName
-        'sender': sender
     }
+        //,
+        //'sender': sender.displayName
+        //'sender': sender
     debugConsole.consoleMessage(JSON.stringify(msg));
 }
 
@@ -246,9 +252,10 @@ this.shipEnteredPlanetaryVicinity = function(planet)
     var msg = {
         'msgType': "shipEnteredPlanetaryVicinity",
         'planet': planet,
-        //'sender': sender.displayName
-        'sender': sender
     }
+        //,
+        //'sender': sender.displayName
+        //'sender': sender
     debugConsole.consoleMessage(JSON.stringify(msg));
 }
 
@@ -259,9 +266,10 @@ this.shipExitedPlanetaryVicinity = function(planet)
     var msg = {
         'msgType': "shipExitedPlanetaryVicinity",
         'planet': planet,
-        //'sender': sender.displayName
-        'sender': sender
     }
+        //,
+        //'sender': sender.displayName
+        //'sender': sender
     debugConsole.consoleMessage(JSON.stringify(msg));
 }
 
@@ -272,9 +280,10 @@ this.shipApproachingPlanetSurface = function(planet)
     var msg = {
         'msgType': "shipApproachingPlanetSurface",
         'planet': planet,
-        //'sender': sender.displayName
-        'sender': sender
     }
+        //,
+        //'sender': sender.displayName
+        //'sender': sender
     debugConsole.consoleMessage(JSON.stringify(msg));
 }
 
@@ -285,9 +294,10 @@ this.shipLeavingPlanetSurface = function(planet)
     var msg = {
         'msgType': "shipLeavingPlanetSurface",
         'planet': planet,
-        //'sender': sender.displayName
-        'sender': sender
     }
+        //,
+        //'sender': sender.displayName
+        //'sender': sender
     debugConsole.consoleMessage(JSON.stringify(msg));
 }
 
@@ -298,9 +308,9 @@ this.cascadeWeaponDetected = function(weapon)
     var msg = {
         'msgType': "cascadeWeaponDetected",
         'weapon': weapon,
-        //'sender': sender.displayName
-        'sender': sender
     }
+    //'sender': sender.displayName
+    //'sender': sender
     debugConsole.consoleMessage(JSON.stringify(msg));
 }
 
@@ -311,9 +321,9 @@ this.defenseTargetDestroyed = function(target)
     var msg = {
         'msgType': "defenseTargetDestroyed",
         'target': target,
-        //'sender': sender.displayName
-        'sender': sender
     }
+    //'sender': sender.displayName
+    //'sender': sender
     debugConsole.consoleMessage(JSON.stringify(msg));
 }
 
@@ -324,9 +334,9 @@ this.escortAttack = function(target)
     var msg = {
         'msgType': "escortAttack",
         'target': target,
-        //'sender': sender.displayName
-        'sender': sender
     }
+    //'sender': sender.displayName
+    //'sender': sender
     debugConsole.consoleMessage(JSON.stringify(msg));
 }
 
@@ -338,9 +348,9 @@ this.helpRequestReceived = function(ally, enemy)
         'msgType': "helpRequestReceived",
         'ally': ally,
         'enemy': enemy,
-        //'sender': sender.displayName
-        'sender': sender
     }
+    //'sender': sender.displayName
+    //'sender': sender
     debugConsole.consoleMessage(JSON.stringify(msg));
 }
 
@@ -351,9 +361,9 @@ this.shipAttackedOther = function(other)
     var msg = {
         'msgType': "shipAttackedOther",
         'other': other,
-        //'sender': sender.displayName
-        'sender': sender
     }
+    //'sender': sender.displayName
+    //'sender': sender
     debugConsole.consoleMessage(JSON.stringify(msg));
 }
 
@@ -364,10 +374,10 @@ this.shipAttackedWithMissile = function(missile, whom)
     var msg = {
         'msgType': "shipAttackedWithMissile",
         'missile': missile,
-        'whom': whom,
-        //'sender': sender.displayName
-        'sender': sender
+        'whom': whom
     }
+    //'sender': sender.displayName
+    //'sender': sender
     debugConsole.consoleMessage(JSON.stringify(msg));
 }
 
@@ -377,10 +387,11 @@ this.shipAttackerDistracted = function(whom)
 
     var msg = {
         'msgType': "shipAttackerDistracted",
-        'whom': whom,
-        //'sender': sender.displayName
-        'sender': sender
+        'whom': whom
     }
+        //,
+        //'sender': sender.displayName
+        //'sender': sender
     debugConsole.consoleMessage(JSON.stringify(msg));
 }
 
@@ -390,10 +401,11 @@ this.shipBeingAttacked = function(whom)
 
     var msg = {
         'msgType': "shipBeingAttacked",
-        'whom': whom,
-        //'sender': sender.displayName
-        'sender': sender
+        'whom': whom
     }
+        //,
+        //'sender': sender.displayName
+        //'sender': sender
     debugConsole.consoleMessage(JSON.stringify(msg));
 }
 
@@ -408,10 +420,11 @@ this.shipBeingAttackedUnsuccessfully = function(whom)
 
     var msg = {
         'msgType': "shipBeingAttackedUnsuccessfully",
-        'whom': whom,
-        //'sender': sender.displayName
-        'sender': sender
+        'whom': whom
     }
+        //,
+        //'sender': sender.displayName
+        //'sender': sender
     debugConsole.consoleMessage(JSON.stringify(msg));
 }
 
@@ -432,9 +445,10 @@ this.shipBeingAttackedUnsuccessfully = function(whom)
     var msg = {
         'msgType': "shipTargetDestroyed",
         'target': target,
-        //'sender': sender.displayName
-        'sender': sender
     }
+        //,
+        //'sender': sender.displayName
+        //'sender': sender
     debugConsole.consoleMessage(JSON.stringify(msg));
 }
 
@@ -460,9 +474,10 @@ this.shipHitByECM = function(pulsesRemaining)
     var msg = {
         'msgType': "shipHitByECM",
         'pulsesRemaining': pulsesRemaining,
-        //'sender': sender.displayName
-        'sender': sender
     }
+        //,
+        //'sender': sender.displayName
+        //'sender': sender
     debugConsole.consoleMessage(JSON.stringify(msg));
 }
 
@@ -483,9 +498,10 @@ this.shipReleasedEquipment = function(mine)
     var msg = {
         'msgType': "shipReleasedEquipment",
         'mine': mine,
-        //'sender': sender.displayName
-        'sender': sender
     }
+        //,
+        //'sender': sender.displayName
+        //'sender': sender
     debugConsole.consoleMessage(JSON.stringify(msg));
 }
 
@@ -515,9 +531,10 @@ this.shipTargetLost = function(target)
     var msg = {
         'msgType': "shipTargetLost",
         'target': target,
-        //'sender': sender.displayName
-        'sender': sender
     }
+        //,
+        //'sender': sender.displayName
+        //'sender': sender
     debugConsole.consoleMessage(JSON.stringify(msg));
 }
 
@@ -584,9 +601,10 @@ this.shipAIFrustrated = function(context)
     var msg = {
         'msgType': "shipAIFrustrated",
         'context': context,
-        //'sender': sender.displayName
-        'sender': sender
     }
+        //,
+        //'sender': sender.displayName
+        //'sender': sender
     debugConsole.consoleMessage(JSON.stringify(msg));
 }
 
@@ -602,9 +620,10 @@ this.shipCloseContact = function(otherShip)
     var msg = {
         'msgType': "shipCloseContact",
         'otherShip': otherShip,
-        //'sender': sender.displayName
-        'sender': sender
     }
+        //,
+        //'sender': sender.displayName
+        //'sender': sender
     debugConsole.consoleMessage(JSON.stringify(msg));
 }
 
@@ -615,9 +634,10 @@ this.shipDumpedCargo = function(cargo)
     var msg = {
         'msgType': "shipDumpedCargo",
         'cargo': cargo,
-        //'sender': sender.displayName
-        'sender': sender
     }
+        //,
+        //'sender': sender.displayName
+        //'sender': sender
     debugConsole.consoleMessage(JSON.stringify(msg));
 }
 
@@ -642,10 +662,11 @@ this.shipScoopedOther = function(whom)
 
     var msg = {
         'msgType': "shipScoopedOther",
-        'whom': whom,
-        //'sender': sender.displayName
-        'sender': sender
+        'whom': whom
     }
+        //,
+        //'sender': sender.displayName
+        //'sender': sender
     debugConsole.consoleMessage(JSON.stringify(msg));
 }
 
@@ -656,9 +677,10 @@ this.shipLaunchedEscapePod = function(escapepod, passengers)
     var msg = {
         'msgType': "shipLaunchedEscapePod",
         'escapepod': escapepod,
-        'passengers': passengers,
-        //'sender': sender.displayName
-        'sender': sender
+        'passengers': passengers
     }
+        //,
+        //'sender': sender.displayName
+        //'sender': sender
     debugConsole.consoleMessage(JSON.stringify(msg));
 }
