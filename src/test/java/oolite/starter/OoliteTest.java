@@ -1586,7 +1586,7 @@ public class OoliteTest {
             if (list.size() == 6) {
                 assertEquals(6, list.size());
                 assertEquals("Vanilla", list.get(0).getName());
-                assertEquals("Play Oolite as close as possible to the original Elite.", list.get(0).getDescription());
+                assertEquals("The original unmodified \"strict Oolite\" designed to closely replicate the original 1984 Elite.", list.get(0).getDescription());
                 assertEquals("https://addons.oolite.space/api/1.0/flavors/Vanilla.oolite-es", list.get(0).getExpansionSetUrl().toString());
             } else {
                 log.warn("Found no flavors. Are we offline?");
