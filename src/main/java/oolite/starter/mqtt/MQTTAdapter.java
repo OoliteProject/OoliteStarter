@@ -25,8 +25,15 @@ import org.json.JSONObject;
  */
 public class MQTTAdapter implements PlistListener {
     private static final Logger log = LogManager.getLogger();
-    
+
+    /**
+     * MQTT client to send and receive MQTT messages.
+     */
     private IMqttClient mqttClient;
+    
+    /**
+     * TCP Server where Oolite is connected to.
+     */
     private TCPServer tcpServer;
     
     private String TOPIC_OOLITE_STARTER = "oolite/starter";
@@ -81,6 +88,62 @@ public class MQTTAdapter implements PlistListener {
                     TCPServer t = (TCPServer)connector;
                     t.sendCommand("worldScripts[\"oolite-starter-oxp\"].pushdata = true");
                 }
+            }
+        });
+        this.tcpServer.addPlistListenerListener(new PlistListener() {
+            private static final Logger log = LogManager.getLogger();
+            
+            @Override
+            public void receivedConfiguration(NSObject data) {
+                //log.debug("receivedConfiguration({})", data);
+            }
+
+            @Override
+            public void receivedConsoleOutput(NSObject data) {
+                //log.debug("receivedConsoleOutput({})", data);
+            }
+
+            @Override
+            public void receivedCommandResult(NSObject data) {
+                try {
+                    NSDictionary dict = (NSDictionary)data;
+                    //log.debug("receivedCommandResult({})", dict);
+                    if (dict.containsKey("message")) {
+                        JSONObject jo = new JSONObject(dict.get("message"));
+                        if (jo.has("msgType")) {
+                            if ("alert".equals(jo.get("msgType"))) {
+                                log.info("message {}", jo);
+                            }
+                        }
+                    }
+                } catch (Exception e) {
+                    log.error("parsing error?", e);
+                }
+            }
+
+            @Override
+            public void receivedCommandAcknowledge(NSObject data) {
+                //log.debug("receivedCommandAcknowledge({})", data);
+            }
+
+            @Override
+            public void receivedLogMessage(NSObject data) {
+                //log.debug("receivedLogMessage({})", data);
+            }
+
+            @Override
+            public void receivedWorldEvent(NSObject data) {
+                //log.debug("receivedWorldEvent({})", data);
+            }
+
+            @Override
+            public void showConsole() {
+                //log.debug("receivedShowConsole()");
+            }
+
+            @Override
+            public void shutdown() {
+                //log.debug("shutdown()");
             }
         });
         
