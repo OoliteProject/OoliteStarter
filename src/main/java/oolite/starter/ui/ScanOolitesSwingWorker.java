@@ -285,6 +285,7 @@ public class ScanOolitesSwingWorker extends SwingWorker<List<String>, String> {
         preferredLocations.add(new File(System.getProperty("user.home")));
         preferredLocations.addAll(Arrays.asList(File.listRoots()));
 
+        log.info("Scanning for Oolite in {}", preferredLocations);
         try {
             result = new ArrayList<>();
 
