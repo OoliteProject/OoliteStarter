@@ -1687,7 +1687,7 @@ public class Oolite implements PropertyChangeListener {
         List<Command> result = new ArrayList<>();
 
         TreeMap<String, String> enabledAddons = prepareEnabledAddonsList(target);
-
+        // check what needs to be uninstalled
         result.addAll(prepareDisableCommands(enabledAddons, expansions));
 
         // now INSTALL what may be MISSING
@@ -1706,11 +1706,12 @@ public class Oolite implements PropertyChangeListener {
                 expansion = expansionMap.get(i2);
             }
             if (expansion == null) {
+                // we are trying to install something that is not part of the catalog?
                 Expansion e = new Expansion();
                 e.setOolite(this);
                 e.setTitle(i);
                 e.setDownloadUrl(enabledAddons.get(i));
-                result.add(new Command(Command.Action.UNKNOWN, e));
+                result.add(new Command(Command.Action.INSTALL, e));
                 log.info("Trying expansionset download {}", e);
             } else if (expansion.isLocal() && expansion.isEnabled()) {
                 // already here - do nothing
@@ -2606,7 +2607,7 @@ public class Oolite implements PropertyChangeListener {
     }
     
     protected boolean isDebugConsoleRunning() {
-        log.warn("isDebugConsoleRunning()");
+        log.debug("isDebugConsoleRunning()");
         
         if (tcpserver == null) {
             return false;
@@ -2625,7 +2626,7 @@ public class Oolite implements PropertyChangeListener {
     }
     
     protected void startDebugConsole() {
-        log.warn("startDebugConsole()");
+        log.debug("startDebugConsole()");
 
         if (configuration == null) {
             log.warn("No configuration loaded. Not starting console server.");
@@ -2645,6 +2646,7 @@ public class Oolite implements PropertyChangeListener {
         }
         
         tcpserver = new TCPServer();
+        
         try {
             MQTTAdapter ma = new MQTTAdapter();
             ma.init(tcpserver, configuration.getActiveInstallation().getMqtt());
@@ -2657,7 +2659,7 @@ public class Oolite implements PropertyChangeListener {
     }
     
     protected void stopDebugConsole() {
-        log.warn("stopDebugConsole()");
+        log.debug("stopDebugConsole()");
         
         if (tcpserver != null) {
             tcpserver.shutdown();

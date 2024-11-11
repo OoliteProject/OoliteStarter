@@ -465,6 +465,8 @@ public class Oolite2 {
         if (idx >= 0) {
             id = id.substring(0, idx);
             versionStr = versionStr.substring(idx+1);
+        } else {
+            versionStr = "0";
         }
         
         for (Expansion e: expansions) {
@@ -479,8 +481,19 @@ public class Oolite2 {
                 log.warn("Expansion {} needed in {} but found {}", id, versionStr, e.getVersion());
 
                 // else we need to check if we found a newer version
-                ModuleDescriptor.Version erv = ModuleDescriptor.Version.parse(versionStr);
-                ModuleDescriptor.Version ev = ModuleDescriptor.Version.parse(e.getVersion());
+                ModuleDescriptor.Version erv = null;
+                try {
+                    erv = ModuleDescriptor.Version.parse(versionStr);
+                } catch (IllegalArgumentException ex) {
+                    throw new IllegalArgumentException("Cannot parse version number " + versionStr, ex);
+                }
+                ModuleDescriptor.Version ev = null;
+                try {
+                    ev = ModuleDescriptor.Version.parse(e.getVersion());
+                } catch (IllegalArgumentException ex) {
+                    throw new IllegalArgumentException("Cannot parse version number " + e.getVersion(), ex);
+                }
+                
                 if (ev.compareTo(erv) >= 0) {
                     // found greater or equal - let's use it
                     return e;

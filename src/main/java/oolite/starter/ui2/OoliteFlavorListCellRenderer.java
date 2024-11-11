@@ -4,6 +4,7 @@ package oolite.starter.ui2;
 
 import java.awt.Component;
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.swing.AbstractAction;
@@ -18,6 +19,7 @@ import oolite.starter.ExpansionManager;
 import oolite.starter.Oolite;
 import oolite.starter.Oolite2;
 import oolite.starter.model.Command;
+import oolite.starter.model.Expansion;
 import oolite.starter.model.OoliteFlavor;
 import oolite.starter.ui.MrGimlet;
 import oolite.starter.ui.Util;
@@ -47,6 +49,17 @@ public class OoliteFlavorListCellRenderer extends javax.swing.JPanel implements 
     public OoliteFlavorListCellRenderer() {
         initComponents();
         setBorder(new CompoundBorder(new LineBorder(getBackground(), 8), new BevelBorder(BevelBorder.RAISED)));
+
+        AbstractAction showAction = new AbstractAction("List Expansions...") {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                log.debug("actionPerformed(...)");
+                log.warn("List expansions of flavor {} from {}...", data.getName(), data.getExpansionSetUrl());
+                
+                showList();
+            }
+        };
+        btShow.setAction(showAction);
 
         AbstractAction addAction = new AbstractAction("Add...") {
             @Override
@@ -88,6 +101,35 @@ public class OoliteFlavorListCellRenderer extends javax.swing.JPanel implements 
         this.oolite = oolite;
         this.oolite2 = oolite2;
     }
+
+    void showList() {
+        if (oolite == null) {
+            throw new IllegalStateException("oolite must not be null");
+        }
+        if (oolite2 == null) {
+            throw new IllegalStateException("oolite2 must not be null");
+        }
+        
+        try {
+            NodeList nl = Oolite.parseExpansionSet(data.getExpansionSetUrl());
+            log.warn("Parsed expansion set {}", data.getExpansionSetUrl());
+                    
+            // get the complete list what needs to be done if nothing were installed
+            List<Command> plan = oolite.buildCommandList(new ArrayList<Expansion>(), nl);
+            
+            if (plan.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "This flavor is empty.");
+            } else  {
+                // have user approve the plan
+                String title = "Expansions in " + data.getName();
+
+                JOptionPane.showMessageDialog(this, Util.createCommandListPanel(plan), title, JOptionPane.INFORMATION_MESSAGE);
+            }
+        } catch (Exception e) {
+            log.error("Could not install expansion set");
+        }
+    }
+    
     
     /**
      * Produces a list of necessary actions and allows the user to confirm
@@ -183,6 +225,7 @@ public class OoliteFlavorListCellRenderer extends javax.swing.JPanel implements 
         txtDescription = new javax.swing.JTextArea();
         btAdd = new javax.swing.JButton();
         btPruneAdd = new javax.swing.JButton();
+        btShow = new javax.swing.JButton();
 
         setLayout(new java.awt.GridBagLayout());
 
@@ -225,25 +268,34 @@ public class OoliteFlavorListCellRenderer extends javax.swing.JPanel implements 
         btAdd.setToolTipText("Installs missing. Other expansions are not touched.");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridy = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 5);
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         add(btAdd, gridBagConstraints);
 
         btPruneAdd.setText("Replace...");
         btPruneAdd.setToolTipText("Installs missing, but uninstalls not needed expansions.");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridy = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 5);
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         add(btPruneAdd, gridBagConstraints);
+
+        btShow.setText("Show...");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        add(btShow, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
 
     @Override
     public Component getListCellRendererComponent(JList<? extends OoliteFlavor> list, OoliteFlavor data, int i, boolean isSelected, boolean isFocused) {
         setData(data);
-        
+
+        btShow.setVisible(isSelected);
         btAdd.setVisible(isSelected);
         btPruneAdd.setVisible(isSelected);
         if (isSelected) {
@@ -262,6 +314,7 @@ public class OoliteFlavorListCellRenderer extends javax.swing.JPanel implements 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btAdd;
     private javax.swing.JButton btPruneAdd;
+    private javax.swing.JButton btShow;
     private javax.swing.JLabel lbIcon;
     private javax.swing.JTextArea txtDescription;
     private javax.swing.JLabel txtTitle;

@@ -25,8 +25,15 @@ import org.json.JSONObject;
  */
 public class MQTTAdapter implements PlistListener {
     private static final Logger log = LogManager.getLogger();
-    
+
+    /**
+     * MQTT client to send and receive MQTT messages.
+     */
     private IMqttClient mqttClient;
+    
+    /**
+     * TCP Server where Oolite is connected to.
+     */
     private TCPServer tcpServer;
     
     private String TOPIC_OOLITE_STARTER = "oolite/starter";
@@ -41,6 +48,7 @@ public class MQTTAdapter implements PlistListener {
     private String TOPIC_OOLITE_LOG = "oolite/log";
     private String TOPIC_OOLITE_WORLDEVENT = "oolite/worldEvent";
     private String TOPIC_OOLITE_SHOWCONSOLE = "oolite/showConsole";
+    private String TOPIC_OOLITE_ERROR = "oolite/starter";
     
     /**
      * Creates a new instance.
@@ -69,6 +77,7 @@ public class MQTTAdapter implements PlistListener {
         TOPIC_OOLITE_LOG = MqttUtil.getTopic(prefix, "oolite/log");
         TOPIC_OOLITE_WORLDEVENT = MqttUtil.getTopic(prefix, "oolite/worldEvent");
         TOPIC_OOLITE_SHOWCONSOLE = MqttUtil.getTopic(prefix, "oolite/showConsole");
+        TOPIC_OOLITE_ERROR = MqttUtil.getTopic(prefix, "oolite/starter");
         
         this.tcpServer = tcpServer;
         tcpServer.addConnectorStatusListener(new Connector.ConnectorStatusListener() {
@@ -79,6 +88,62 @@ public class MQTTAdapter implements PlistListener {
                     TCPServer t = (TCPServer)connector;
                     t.sendCommand("worldScripts[\"oolite-starter-oxp\"].pushdata = true");
                 }
+            }
+        });
+        this.tcpServer.addPlistListenerListener(new PlistListener() {
+            private static final Logger log = LogManager.getLogger();
+            
+            @Override
+            public void receivedConfiguration(NSObject data) {
+                //log.debug("receivedConfiguration({})", data);
+            }
+
+            @Override
+            public void receivedConsoleOutput(NSObject data) {
+                //log.debug("receivedConsoleOutput({})", data);
+            }
+
+            @Override
+            public void receivedCommandResult(NSObject data) {
+                try {
+                    NSDictionary dict = (NSDictionary)data;
+                    //log.debug("receivedCommandResult({})", dict);
+                    if (dict.containsKey("message")) {
+                        JSONObject jo = new JSONObject(dict.get("message"));
+                        if (jo.has("msgType")) {
+                            if ("alert".equals(jo.get("msgType"))) {
+                                log.info("message {}", jo);
+                            }
+                        }
+                    }
+                } catch (Exception e) {
+                    log.error("parsing error?", e);
+                }
+            }
+
+            @Override
+            public void receivedCommandAcknowledge(NSObject data) {
+                //log.debug("receivedCommandAcknowledge({})", data);
+            }
+
+            @Override
+            public void receivedLogMessage(NSObject data) {
+                //log.debug("receivedLogMessage({})", data);
+            }
+
+            @Override
+            public void receivedWorldEvent(NSObject data) {
+                //log.debug("receivedWorldEvent({})", data);
+            }
+
+            @Override
+            public void showConsole() {
+                //log.debug("receivedShowConsole()");
+            }
+
+            @Override
+            public void shutdown() {
+                //log.debug("shutdown()");
             }
         });
         
@@ -127,6 +192,7 @@ public class MQTTAdapter implements PlistListener {
                         }
                     } catch (Exception e) {
                         log.error("Could not consume message {}", mm);
+                        sendMqtt(TOPIC_OOLITE_ERROR, String.format("Could not consume message %s", String.valueOf(mm)));
                     }
                 }
             });
@@ -207,9 +273,11 @@ public class MQTTAdapter implements PlistListener {
                         break;
                 }
             } else {
+                log.info("unparseable commandResult({})", dataO);
                 sendMqtt(TOPIC_OOLITE_UNKNOWN, messageO.toString());
             }
         } else {
+            log.info("did not understand commandResult({})", dataO);
             sendMqtt(TOPIC_OOLITE_UNKNOWN, dataO.toString());
         }
     }

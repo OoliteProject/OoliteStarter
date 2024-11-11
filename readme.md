@@ -4,8 +4,25 @@ The Oolite Starter allows users to more comfortably preconfigure Oolite
 for various missions. It's main purpose is to ease OXP management, Oolite versions
 and manage save games.
 
+So obviously it allows you to install and remove OXPs. It shows conflicts and
+dependencies so you can avoid problems as early as possible. If you ever tried
+to remember which list of OXPs you had installed, OoliteStarter allows to save
+and reconstruct them. You can also share the list of OXPs with others if you like.
+
+Also OoliteStarter remembers which OXPs were in use when you saved the game, and
+you can restore that state with just the click of a button.
+
+While you create savegames in Oolite, OoliteStarter allows to browse the savegames
+and choose which one to launch. But you can also delete no longer needed files.
+
+There are more goodies like auto update checks for OoliteStarter, OXPs and
+Oolite itself. Or MQTT functionality that allow adding more cockpit gauges or
+input controls to be connected to Oolite.
+
 ## Requirements (generic package only)
 
+* Be aware this is a manual install. If you feel unsure what to do you are likely
+  better off with the installer packages.
 * You need to have Java SDK 21 or newer installed. 
   If you are unfamiliar with installing Java on Linux, follow
   https://www.youtube.com/watch?v=7lzIP-PvHoY
@@ -21,10 +38,14 @@ and manage save games.
 
 ### Generic Package
 
-Download the .tar.gz or the .zip file and extract in a directory of your choice.
-You likely want to create a shortcut to run.sh or run.cmd.
+Be aware this is a manual install. If you feel unsure what to do you are likely
+better off with the installer packages.
 
-To remove the software, just delete the directory you have created.
+Download the .tar.gz or the .zip file and extract in a directory of your choice.
+You might want to create a shortcut to run.sh or run.cmd.
+
+To remove the software, just delete the directory you have created and the 
+shortcut in case you created it.
 
 If, directly at startup, you see error messages like
 java.lang.UnsupportedClassVersionError: oolite/starter/MainFrame has been compiled by a more recent version of the Java Runtime (class file version 61.0), this version of the Java Runtime only recognizes class file versions up to...
@@ -64,7 +85,8 @@ $HOME/.oolite-starter.conf
 
 If this file is not present, do not worry. A warning will be displayed and 
 OoliteStarter will run. Switch to the `Oolite Versions` tab and add at least one
-Oolite installation. Then press Save and the missing file will be created.
+Oolite installation (there are Add and Scan options). Then press Save and the 
+missing file will be created.
 
 For each Oolite installation you can define a number of places in the filesystem.
 Since some players have multiple such installations in parallel, they can be
@@ -353,6 +375,11 @@ These events will be happening:
 If OoliteStarter cannot grab the TCP Port it will not complain. But at the same
 time it will not be able to receive events to be forwarded to MQTT.
 
+To debug you can use e.g. Mosquitto as broker and the command line client to show
+incoming messages. Run something like this command:
+
+    mosquitto_sub -h 192.168.178.51 -p 1883 -t "#" -v -u <user> -P <password>
+
 ### Feedback Channel
 
 OoliteStarter not only allows Oolite to publish messages to MQTT. It also allows
@@ -366,6 +393,11 @@ While this may look like overhead it allows future extension of the messages.
 
 Make sure 'somestring' is a valid Oolite command - or expect some Oolite complaints
 and ranting in one of the other topics.
+
+As a test you can run e.g. Mosquitto client like this:
+
+    mosquitto_pub -h 192.168.178.51 -p 1883 -t "oolite/input" -u <user> -P <password> -m "{'command': 'somestring'}"
+
 
 
 ### OoliteStarter and Oolite Debug Console
