@@ -1643,6 +1643,10 @@ public class Oolite implements PropertyChangeListener {
      * @return a map with identifier:version -> downloadurl
      */
     private TreeMap<String, String> prepareEnabledAddonsList(NodeList target) {
+        if (target == null) {
+            throw new IllegalArgumentException("target must not be null");
+        }
+        
         TreeMap<String, String> result = new TreeMap<>();
         for (int i = 0; i < target.getLength(); i++) {
             Element e = (Element)target.item(i);
@@ -1659,6 +1663,10 @@ public class Oolite implements PropertyChangeListener {
      * @return 
      */
     private List<Command> prepareDisableCommands(TreeMap<String, String> enabledAddons, List<Expansion> expansions) {
+        if (expansions == null) {
+            throw new IllegalArgumentException("expansions must not be null");
+        }
+        
         List<Command> result = new ArrayList<>();
 
         for (Expansion expansion: expansions) {
@@ -1683,6 +1691,12 @@ public class Oolite implements PropertyChangeListener {
      */
     public List<Command> buildCommandList(List<Expansion> expansions, NodeList target) {
         log.debug("buildCommandList({}, {})", expansions, target);
+        if (expansions == null) {
+            throw new IllegalArgumentException("expansions must not be null");
+        }
+        if (target == null) {
+            throw new IllegalArgumentException("target must not be null");
+        }
         
         List<Command> result = new ArrayList<>();
 

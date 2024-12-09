@@ -26,6 +26,34 @@ public class Expansion implements Comparable<Expansion> {
     
     private static final String EXPANSION_OOLITE_MUST_BE_SET = "oolite must be set before";
     
+    public static class Builder {
+        
+        private String identifier;
+        
+        /**
+         * Sets the identifier for the expansion.
+         * 
+         * @param identifier the identifier
+         * @return the builder
+         */
+        public Builder identifier(String identifier) {
+            this.identifier = identifier;
+            return this;
+        }
+        
+        /**
+         * Builds the expansion according to current builder status.
+         * 
+         * @return the expansion
+         */
+        public Expansion build() {
+            Expansion result = new Expansion();
+            result.setIdentifier(identifier);
+            return result;
+        }
+        
+    }
+    
     /**
      * Expansion Manager status fields.
      * See https://wiki.alioth.net/index.php/Expansions_Manager

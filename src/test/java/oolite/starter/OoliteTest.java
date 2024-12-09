@@ -1604,5 +1604,71 @@ public class OoliteTest {
             log.warn("Could not test loading flavors list - are we offline?", e);
         }
     }
+    
+    @Test
+    public void testBuildCommandList() {
+        log.info("testBuildCommandList");
+        
+        Oolite instance = new Oolite();
+        
+        try {
+            instance.buildCommandList(null, null);
+            fail("exception expected");
+        } catch (IllegalArgumentException e) {
+            assertEquals("expansions must not be null", e.getMessage());
+            log.debug("caught expected exception");
+        }
+    }
+    
+    @Test
+    public void testBuildCommandList2() throws ParserConfigurationException {
+        log.info("testBuildCommandList2");
+
+        Oolite instance = new Oolite();
+        List<Expansion> expansions = new ArrayList<>();
+        
+        try {
+            instance.buildCommandList(expansions, null);
+            fail("exception expected");
+        } catch (IllegalArgumentException e) {
+            assertEquals("target must not be null", e.getMessage());
+            log.debug("caught expected exception");
+        }
+    }
+    
+    @Test
+    public void testBuildCommandList3() throws ParserConfigurationException {
+        log.info("testBuildCommandList3");
+
+        List<Expansion> expansions = new ArrayList<>();
+
+        DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+        Document doc = db.newDocument();
+        NodeList target = doc.getChildNodes();
+        
+        Oolite instance = new Oolite();
+        
+        List<Command> result = instance.buildCommandList(expansions, target);
+        assertNotNull(result);
+        assertEquals(0, result.size());
+    }
+    
+    @Test
+    public void testBuildCommandList4() throws ParserConfigurationException {
+        log.info("testBuildCommandList4");
+
+        List<Expansion> expansions = new ArrayList<>();
+        expansions.add(new Expansion.Builder().identifier("meeh").build());
+
+        DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+        Document doc = db.newDocument();
+        NodeList target = doc.getChildNodes();
+        
+        Oolite instance = new Oolite();
+        
+        List<Command> result = instance.buildCommandList(expansions, target);
+        assertNotNull(result);
+        assertEquals(0, result.size());
+    }
 
 }

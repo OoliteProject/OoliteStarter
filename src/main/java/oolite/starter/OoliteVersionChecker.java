@@ -182,7 +182,7 @@ public class OoliteVersionChecker {
             Collections.sort(versions);
             log.debug("versions {}", versions);
             ModuleDescriptor.Version latest = versions.get(versions.size()-1);
-            log.debug("version me={} latest={}", currentVersion, latest);
+            log.info("version me={} latest={}", currentVersion, latest);
             
             if (latest.compareTo(currentVersion)>0) {
                 log.debug("latest is greater!");
@@ -222,6 +222,7 @@ public class OoliteVersionChecker {
         try {
             ModuleDescriptor.Version latest = getLatestVersion(myVersion);
             if (latest != null) {
+                log.info("Oolite {} found while we have {}. MrGimlet to suggest update.", latest);
                 String message = getHtmlUserMessage(latest);
                 EventQueue.invokeLater(() -> MrGimlet.showMessage(parentComponent, message, 10000, image) );
                 return true;
