@@ -8,7 +8,9 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.io.File;
 import java.nio.file.Files;
+import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -131,6 +133,7 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
             model = new SaveGameTableModel(ooliteDriver.getSaveGames());
             jTable1.clearSelection();
             jTable1.setAutoCreateColumnsFromModel(true);
+            jTable1.setDefaultRenderer(Date.class, new DateCellRenderer(DateFormat.getDateTimeInstance()));
             jTable1.setModel(model);
             Util.setColumnWidths(jTable1);
             

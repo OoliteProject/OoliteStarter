@@ -131,6 +131,14 @@ public class ExpansionPanel extends javax.swing.JPanel implements ExpansionsPane
                     sb.append("<tr><td>").append(e.getTitle()).append(" ").append(e.getVersion()).append("</td></tr>");
                 }
                 sb.append("</table>");
+            } else if (expansion.getRequiresOxps() != null && !expansion.getRequiresOxps().isEmpty()) {
+                sb.append("<h2>Required Dependencies</h2>");
+                sb.append("<p>This expansion will not work properly if one of these dependencies is missing:</p>");
+                sb.append("<table>");
+                for (Expansion.Dependency d: expansion.getRequiresOxps()) {
+                    sb.append("<tr><td>").append(d.getIdentifier()).append(" ").append(d.getVersion()).append("</td></tr>");
+                }
+                sb.append("</table>");
             }
             if (expansion.getEMStatus().isCurrentlyRequired()) {
                 addCurrentlyRequired(expansion, sb);

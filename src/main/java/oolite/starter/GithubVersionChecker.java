@@ -237,6 +237,7 @@ public class GithubVersionChecker {
         try {
             Semver latest = getLatestVersion(getMyVersion());
             if (latest != null) {
+                log.info("OoliteStarter {} found. MrGimlet to suggest update.", latest);
                 String message = getHtmlUserMessage(latest);
                 EventQueue.invokeLater(() -> MrGimlet.showMessage(parentComponent, message, 10000) );
                 return true;

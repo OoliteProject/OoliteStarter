@@ -157,8 +157,11 @@ jobs:
 
     - name: Tweak AppImage
       run: |
-        mv "oolitestarter/src/jpackage/resources-linux/OoliteStarter.desktop" "oolitestarter/src/jpackage/resources-linux/OoliteStarter${{ needs.semver.outputs.FLAVOR }}.desktop"
-        #cp -v "oolitestarter/src/jpackage/resources-linux/OoliteStarter.desktop" "target/appimage/OoliteStarter${{ needs.semver.outputs.FLAVOR }}/lib/oolitestarter${{ needs.semver.outputs.FLAVOR2 }}-oolitestarter${{ needs.semver.outputs.FLAVOR2 }}.desktop"
+        if [ "${{ needs.semver.outputs.FLAVOR }}" != "" ]
+        then
+            mv "oolitestarter/src/jpackage/resources-linux/OoliteStarter.desktop" "oolitestarter/src/jpackage/resources-linux/OoliteStarter${{ needs.semver.outputs.FLAVOR }}.desktop"
+            #cp -v "oolitestarter/src/jpackage/resources-linux/OoliteStarter.desktop" "target/appimage/OoliteStarter${{ needs.semver.outputs.FLAVOR }}/lib/oolitestarter${{ needs.semver.outputs.FLAVOR2 }}-oolitestarter${{ needs.semver.outputs.FLAVOR2 }}.desktop"
+        fi
 
     - name: Check status 2
       run: |

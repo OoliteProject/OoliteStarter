@@ -362,11 +362,12 @@ public class OoliteTest {
         oolite.setConfiguration(configuration);
         
         List<Expansion> expansions = oolite.getLocalExpansions();
-        assertEquals(4, expansions.size());
+        assertEquals(5, expansions.size());
         assertTrue(String.valueOf(expansions.get(0).getIdentifier()).endsWith("Asteroids3D1.2.oxp"));
         assertTrue(String.valueOf(expansions.get(1).getIdentifier()).endsWith("Galactic_Navy 5.4.3.oxp"));
         assertEquals("oolite.oxp.Norby.Addons_for_Beginners", expansions.get(2).getIdentifier());
-        assertEquals("oolite.oxp.UK_Eliter.Ferdelance_3G", expansions.get(3).getIdentifier());
+        assertEquals("oolite.oxp.Svengali.Vector", expansions.get(3).getIdentifier());
+        assertEquals("oolite.oxp.UK_Eliter.Ferdelance_3G", expansions.get(4).getIdentifier());
     }
     
     @Test
@@ -998,12 +999,13 @@ public class OoliteTest {
         List<Expansion> expansions = instance.getAllExpansions();
         
         assertNotNull(expansions);
-        assertEquals(4, expansions.size());
+        assertEquals(5, expansions.size());
         
         instance.validateConflicts(expansions);
         
-        assertEquals(4, expansions.size());
-        assertEquals("oolite.oxp.UK_Eliter.Ferdelance_3G", expansions.get(3).getIdentifier());
+        assertEquals(5, expansions.size());
+        assertEquals("oolite.oxp.Svengali.Vector", expansions.get(3).getIdentifier());
+        assertEquals("oolite.oxp.UK_Eliter.Ferdelance_3G", expansions.get(4).getIdentifier());
         
         Expansion exp = expansions.get(3);
         assertEquals(0, exp.getEMStatus().getConflicting().size());
@@ -1100,12 +1102,13 @@ public class OoliteTest {
         
         instance.checkSurplusExpansions(references);
         
-        assertEquals(5, references.size());
+        assertEquals(6, references.size());
         assertEquals("oolite.oxp.Norby.Addons_for_Beginners:1.5", references.get(0).getName());
         assertTrue(references.get(1).getName().endsWith("Asteroids3D1.2.oxp@0"));
         assertTrue(references.get(2).getName().endsWith("Galactic_Navy 5.4.3.oxp@0"));
         assertEquals("oolite.oxp.Norby.Addons_for_Beginners@1.5", references.get(3).getName());
-        assertEquals("oolite.oxp.UK_Eliter.Ferdelance_3G@6.63", references.get(4).getName());
+        assertEquals("oolite.oxp.Svengali.Vector@1.7.2", references.get(4).getName());
+        assertEquals("oolite.oxp.UK_Eliter.Ferdelance_3G@6.63", references.get(5).getName());
     }
     
     @Test
@@ -1154,13 +1157,19 @@ public class OoliteTest {
         List<Expansion> result = instance.getAllExpansions();
         
         assertNotNull(result);
-        assertEquals(4, result.size());
+        assertEquals(5, result.size());
         assertTrue(String.valueOf(result.get(0).getIdentifier()).endsWith("/PHKB_Folder.oxp/Asteroids3D1.2.oxp"));
         assertTrue(String.valueOf(result.get(1).getIdentifier()).endsWith("/PHKB_Folder.oxp/Galactic_Navy 5.4.3.oxp"));
         assertEquals("oolite.oxp.Norby.Addons_for_Beginners", result.get(2).getIdentifier());
-        assertEquals("oolite.oxp.UK_Eliter.Ferdelance_3G", result.get(3).getIdentifier());
+        assertEquals("oolite.oxp.Svengali.Vector", result.get(3).getIdentifier());
+        assertEquals("oolite.oxp.UK_Eliter.Ferdelance_3G", result.get(4).getIdentifier());
         
         Expansion e = result.get(3);
+        assertEquals(2, e.getRequiresOxps().size());
+        assertEquals("oolite.oxp.Svengali.CCL", e.getRequiresOxps().get(0).getIdentifier());
+        assertEquals("oolite.oxp.Svengali.Snoopers", e.getRequiresOxps().get(1).getIdentifier());
+        
+        e = result.get(4);
         assertEquals(2, e.getConflictOxps().size());
         assertEquals("oolite.oxp.UK_Eliter.Ferdelance_3G", e.getConflictOxps().get(0).getIdentifier());
         assertEquals("oolite.oxp.Ferdelance_3G", e.getConflictOxps().get(1).getIdentifier());
@@ -1594,6 +1603,72 @@ public class OoliteTest {
         } catch (UnknownHostException e) {
             log.warn("Could not test loading flavors list - are we offline?", e);
         }
+    }
+    
+    @Test
+    public void testBuildCommandList() {
+        log.info("testBuildCommandList");
+        
+        Oolite instance = new Oolite();
+        
+        try {
+            instance.buildCommandList(null, null);
+            fail("exception expected");
+        } catch (IllegalArgumentException e) {
+            assertEquals("expansions must not be null", e.getMessage());
+            log.debug("caught expected exception");
+        }
+    }
+    
+    @Test
+    public void testBuildCommandList2() throws ParserConfigurationException {
+        log.info("testBuildCommandList2");
+
+        Oolite instance = new Oolite();
+        List<Expansion> expansions = new ArrayList<>();
+        
+        try {
+            instance.buildCommandList(expansions, null);
+            fail("exception expected");
+        } catch (IllegalArgumentException e) {
+            assertEquals("target must not be null", e.getMessage());
+            log.debug("caught expected exception");
+        }
+    }
+    
+    @Test
+    public void testBuildCommandList3() throws ParserConfigurationException {
+        log.info("testBuildCommandList3");
+
+        List<Expansion> expansions = new ArrayList<>();
+
+        DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+        Document doc = db.newDocument();
+        NodeList target = doc.getChildNodes();
+        
+        Oolite instance = new Oolite();
+        
+        List<Command> result = instance.buildCommandList(expansions, target);
+        assertNotNull(result);
+        assertEquals(0, result.size());
+    }
+    
+    @Test
+    public void testBuildCommandList4() throws ParserConfigurationException {
+        log.info("testBuildCommandList4");
+
+        List<Expansion> expansions = new ArrayList<>();
+        expansions.add(new Expansion.Builder().identifier("meeh").build());
+
+        DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+        Document doc = db.newDocument();
+        NodeList target = doc.getChildNodes();
+        
+        Oolite instance = new Oolite();
+        
+        List<Command> result = instance.buildCommandList(expansions, target);
+        assertNotNull(result);
+        assertEquals(0, result.size());
     }
 
 }

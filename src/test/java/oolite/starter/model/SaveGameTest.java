@@ -3,6 +3,8 @@
 package oolite.starter.model;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.AfterEach;
@@ -178,4 +180,100 @@ public class SaveGameTest {
         assertEquals("SaveGame{file=null, playerName=null, credits=0, currentSystemName=null, ooliteVersion=null, shipKills=0, shipClassName=null, shipName=shipName}", sg.toString());
     }
     
+    @Test
+    public void testHasMissingExpansions() {
+        log.info("testHasMissingExpansions");
+
+        SaveGame sg = new SaveGame();
+        assertFalse(sg.hasMissingExpansions());
+    }
+    
+    @Test
+    public void testHasMissingExpansions2() {
+        log.info("testHasMissingExpansions2");
+
+        SaveGame sg = new SaveGame();
+        sg.setExpansions(new ArrayList<>());
+        assertFalse(sg.hasMissingExpansions());
+    }
+    
+    @Test
+    public void testHasMissingExpansions3() {
+        log.info("testHasMissingExpansions3");
+        
+        List<ExpansionReference> expansions = new ArrayList<>();
+        expansions.add(new ExpansionReference("nameOk", ExpansionReference.Status.OK));
+        expansions.add(new ExpansionReference("nameConflict", ExpansionReference.Status.CONFLICT));
+        expansions.add(new ExpansionReference("nameRequiredMissing", ExpansionReference.Status.REQUIRED_MISSING));
+        expansions.add(new ExpansionReference("nameSurplus", ExpansionReference.Status.SURPLUS));
+
+        SaveGame sg = new SaveGame();
+        sg.setExpansions(expansions);
+        assertFalse(sg.hasMissingExpansions());
+    }
+    
+    @Test
+    public void testHasMissingExpansions4() {
+        log.info("testHasMissingExpansions4");
+        
+        List<ExpansionReference> expansions = new ArrayList<>();
+        expansions.add(new ExpansionReference("nameOk", ExpansionReference.Status.OK));
+        expansions.add(new ExpansionReference("nameConflict", ExpansionReference.Status.CONFLICT));
+        expansions.add(new ExpansionReference("nameMissing", ExpansionReference.Status.MISSING));
+        expansions.add(new ExpansionReference("nameRequiredMissing", ExpansionReference.Status.REQUIRED_MISSING));
+        expansions.add(new ExpansionReference("nameSurplus", ExpansionReference.Status.SURPLUS));
+
+        SaveGame sg = new SaveGame();
+        sg.setExpansions(expansions);
+        assertTrue(sg.hasMissingExpansions());
+    }
+
+    
+    @Test
+    public void testHasTooManyExpansions() {
+        log.info("testHasTooManyExpansions");
+
+        SaveGame sg = new SaveGame();
+        assertFalse(sg.hasTooManyExpansions());
+    }
+    
+    @Test
+    public void testHasTooManyExpansions2() {
+        log.info("testHasTooManyExpansions2");
+
+        SaveGame sg = new SaveGame();
+        sg.setExpansions(new ArrayList<>());
+        assertFalse(sg.hasTooManyExpansions());
+    }
+    
+    @Test
+    public void testHasTooManyExpansions3() {
+        log.info("testHasTooManyExpansions3");
+        
+        List<ExpansionReference> expansions = new ArrayList<>();
+        expansions.add(new ExpansionReference("nameOk", ExpansionReference.Status.OK));
+        expansions.add(new ExpansionReference("nameConflict", ExpansionReference.Status.CONFLICT));
+        expansions.add(new ExpansionReference("nameMissing", ExpansionReference.Status.MISSING));
+        expansions.add(new ExpansionReference("nameRequiredMissing", ExpansionReference.Status.REQUIRED_MISSING));
+
+        SaveGame sg = new SaveGame();
+        sg.setExpansions(expansions);
+        assertFalse(sg.hasTooManyExpansions());
+    }
+    
+    @Test
+    public void testHasTooManyExpansions4() {
+        log.info("testHasTooManyExpansions4");
+        
+        List<ExpansionReference> expansions = new ArrayList<>();
+        expansions.add(new ExpansionReference("nameOk", ExpansionReference.Status.OK));
+        expansions.add(new ExpansionReference("nameConflict", ExpansionReference.Status.CONFLICT));
+        expansions.add(new ExpansionReference("nameMissing", ExpansionReference.Status.MISSING));
+        expansions.add(new ExpansionReference("nameRequiredMissing", ExpansionReference.Status.REQUIRED_MISSING));
+        expansions.add(new ExpansionReference("nameSurplus", ExpansionReference.Status.SURPLUS));
+
+        SaveGame sg = new SaveGame();
+        sg.setExpansions(expansions);
+        assertTrue(sg.hasTooManyExpansions());
+    }
 }

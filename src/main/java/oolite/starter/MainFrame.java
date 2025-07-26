@@ -131,6 +131,8 @@ public class MainFrame extends javax.swing.JFrame {
                 }
 
                 if (mf.configuration.getInstallations().isEmpty()) {
+                    log.info("No installation. MrGimlet point to installations");
+                    
                     // point user to creating an active installation
                     mf.jTabbedPane1.setEnabledAt(0, false);
                     mf.jTabbedPane1.setEnabledAt(1, false);
@@ -146,6 +148,8 @@ public class MainFrame extends javax.swing.JFrame {
 
                     MrGimlet.showMessage(mf.getRootPane(), message.toString(), 0);
                 } else if (!mf.isInstallationsValid()) {
+                    log.info("Fishy installation. MrGimlet point to installations");
+
                     mf.jTabbedPane1.setSelectedIndex(4);
 
                     StringBuilder message = new StringBuilder("<html>");
@@ -156,6 +160,8 @@ public class MainFrame extends javax.swing.JFrame {
 
                     MrGimlet.showMessage(mf.getRootPane(), message.toString(), 0);
                 } else if (mf.configuration.getActiveInstallation() == null) {
+                    log.info("No active installation. MrGimlet point to installations");
+
                     // point user to creating an active installation
                     mf.jTabbedPane1.setEnabledAt(0, false);
                     mf.jTabbedPane1.setEnabledAt(1, false);
@@ -405,6 +411,7 @@ public class MainFrame extends javax.swing.JFrame {
             try {
                 String v = oolite.getVersionFromHomeDir(f);
                 if (!i.getVersion().equals(v)) {
+                    log.warn("Oolite declared as {} but found {}", i.getVersion(), v);
                     return false;
                 }
             } catch (IOException e) {
