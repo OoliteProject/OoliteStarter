@@ -1459,6 +1459,11 @@ public class Oolite implements PropertyChangeListener {
 
 //      In-Game Expansion Manager compatible naming scheme
         File file = new File(configuration.getManagedAddonsDir(), expansion.getIdentifier() + ".oxz");
+        
+        if (file.exists()) {
+            log.warn("Overwriting {}", file);
+        }
+        
         HttpUtil.downloadUrl(url, file);
         
         if (!file.isFile())

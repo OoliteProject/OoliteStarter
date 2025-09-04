@@ -398,6 +398,7 @@ public class Oolite2 {
             expansions.removeAll(toBeRemoved);
         } else {
             log.trace("File exists!");
+            // looks like something was installed or updated
             try {
                 Expansion newExpansion = oolite.getExpansionFrom(f);
                 if (newExpansion != null) {
@@ -405,19 +406,22 @@ public class Oolite2 {
                     log.trace("Found {} but need to sort it in", newExpansion);
                     List<Expansion> matches = expansions.stream()
                             .filter(
-                                e -> e.getIdentifier().equals(newExpansion.getIdentifier())
+                                e -> (e.getIdentifier().equals(newExpansion.getIdentifier())
                                     && e.getVersion().matches(newExpansion.getVersion())
-                                    && e.isLocal()
+                                    && e.isLocal())
+                                    || String.valueOf(newExpansion.getLocalFile()).equals(String.valueOf(e.getLocalFile()))
                             )
                             .collect(Collectors.toList());
                     log.trace("Matches {}", matches);
                     
-                    if (matches.isEmpty()) {
-                        // we found a new one
-                        expansions.add(newExpansion);
-                    } else {
-                        if (String.valueOf(matches.get(0).getLocalFile()).equals(String.valueOf(newExpansion.getLocalFile()))) {
-                            // we found the very same expansion. This is not a problem.
+                    for (Expansion expansion: matches) {
+                        // likely an update was installed
+                        if (String.valueOf(expansion.getLocalFile()).equals(String.valueOf(newExpansion.getLocalFile()))) {
+                            // we found the very same expansion? check the version and remove the old one
+                            if (expansion != newExpansion) {
+                                expansions.remove(expansion);
+                            }
+                            fire();
                         } else {
                             // we found an existing one. What's next?
                             StringBuilder message = new StringBuilder("Problem: Duplicate expansion found. Check files\n");
@@ -428,6 +432,8 @@ public class Oolite2 {
                             fireProblemDetected(message.toString());
                         }
                     }
+                    expansions.add(newExpansion);
+
                 }
             } catch (Exception e) {
                 log.warn("could not read {}", f, e);
