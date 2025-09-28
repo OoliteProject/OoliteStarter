@@ -281,7 +281,7 @@ jobs:
         $DST = "OoliteStarter-${{ needs.semver.outputs.GITVERSION_SEMVER }}-Windows-${env:PROCESSOR_ARCHITECTURE}.exe"
         ren $SRC $DST
       env:
-        PROCESSOR_ARCHITECTURE: ${PROCESSOR_ARCHITECTURE}
+        PROCESSOR_ARCHITECTURE: ${env:PROCESSOR_ARCHITECTURE}
 
     - name: Check status 4
       run: |
