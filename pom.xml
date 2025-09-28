@@ -333,6 +333,14 @@
             <version>4.3.0</version>
             <scope>test</scope>
         </dependency>
+        
+        <!-- unit test http server -->
+        <dependency>
+          <groupId>org.wiremock</groupId>
+          <artifactId>wiremock</artifactId>
+          <version>3.13.1</version>
+          <scope>test</scope>
+        </dependency>
                 
         <dependency>
             <groupId>com.formdev</groupId>

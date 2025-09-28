@@ -95,6 +95,7 @@ public class Oolite implements PropertyChangeListener {
 
     private boolean terminate = false;
     private int running = 0;
+    private String flavorsUrlStr = "https://addons.oolite.space/api/1.0/flavors/";
     
     /**
      * The server for the debug console protocol.
@@ -2597,7 +2598,7 @@ public class Oolite implements PropertyChangeListener {
      * @throws Exception something went wrong
      */
     public List<OoliteFlavor> getFlavorList() throws IOException, URISyntaxException {
-        URL url = new URI("https://addons.oolite.space/api/1.0/flavors/").toURL();
+        URL url = new URI(flavorsUrlStr).toURL();
         List<OoliteFlavor> result = new ArrayList<>();
         
         try (InputStream in = url.openStream()) {
@@ -2685,4 +2686,13 @@ public class Oolite implements PropertyChangeListener {
             tcpserver = null;
         }
     }
+
+    /**
+     * Sets the url for downloading flavors.
+     * @param flavorsUrlStr the url
+     */
+    public void setFlavorsUrlStr(String flavorsUrlStr) {
+        this.flavorsUrlStr = flavorsUrlStr;
+    }
+    
 }

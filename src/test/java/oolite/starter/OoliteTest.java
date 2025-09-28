@@ -4,6 +4,12 @@ package oolite.starter;
 
 import oolite.starter.util.PlistUtil;
 import com.chaudhuri.plist.PlistParser;
+import com.github.tomakehurst.wiremock.client.WireMock;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.ok;
+import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
+import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
+import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import java.io.File;
 import java.io.IOException;
 import java.net.ConnectException;
@@ -43,6 +49,7 @@ import org.xml.sax.SAXException;
  *
  * @author hiran
  */
+@WireMockTest
 public class OoliteTest {
     private final static Logger log = LogManager.getLogger();
     
@@ -1584,25 +1591,30 @@ public class OoliteTest {
     }
     
     @Test
-    public void testGetFlavorsList() throws Exception {
+    public void testGetFlavorsList(WireMockRuntimeInfo wmRuntimeInfo) throws Exception {
         log.info("testGetFlavorsList()");
         
+        stubFor(get("/api/1.0/flavors/").willReturn(ok("""
+<?xml version="1.0"?>
+<flavors>
+    <flavor>
+        <name>Vanilla</name>
+        <description>The original unmodified strict Oolite</description>
+        <icon>https://addons.oolite.space/i/flavor_FILL0_wght400_GRAD0_opsz48.png</icon>
+        <expansion-set>Vanilla.oolite-es</expansion-set>
+    </flavor>
+</flavors>
+        """)));
         Oolite instance = new Oolite();
-        try {
-            List<OoliteFlavor> list = instance.getFlavorList();
-            assertNotNull(list);
-            log.info("Received list: {}", list);
-            if (list.size() == 6) {
-                assertEquals(6, list.size());
-                assertEquals("Vanilla", list.get(0).getName());
-                assertEquals("The original unmodified \"strict Oolite\" designed to closely replicate the original 1984 Elite.", list.get(0).getDescription());
-                assertEquals("https://addons.oolite.space/api/1.0/flavors/Vanilla.oolite-es", list.get(0).getExpansionSetUrl().toString());
-            } else {
-                log.warn("Found no flavors. Are we offline?");
-            }
-        } catch (UnknownHostException e) {
-            log.warn("Could not test loading flavors list - are we offline?", e);
-        }
+        instance.setFlavorsUrlStr(wmRuntimeInfo.getHttpBaseUrl() + "/api/1.0/flavors/");
+
+        List<OoliteFlavor> list = instance.getFlavorList();
+        assertNotNull(list);
+        log.info("Received list: {}", list);
+        assertEquals(1, list.size());
+        assertEquals("Vanilla", list.get(0).getName(), "Flavor has wrong name");
+        assertEquals("The original unmodified strict Oolite", list.get(0).getDescription(), "Flavor has wrong description");
+        assertEquals(wmRuntimeInfo.getHttpBaseUrl() + "/api/1.0/flavors/Vanilla.oolite-es", list.get(0).getExpansionSetUrl().toString());
     }
     
     @Test
