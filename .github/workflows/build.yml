@@ -277,11 +277,10 @@ jobs:
     - name: Rename result (target\OoliteStarter-0.1.16.0.exe)
       run: |
         gci env:* | sort-object name
+        echo $env:PROCESSOR_ARCHITECTURE
         $SRC = "target\OoliteStarter${{ needs.semver.outputs.FLAVOR }}-${{ needs.semver.outputs.GITVERSION_ASSEMBLYSEMVER }}.exe"
-        $DST = "OoliteStarter-${{ needs.semver.outputs.GITVERSION_SEMVER }}-Windows-${env:PROCESSOR_ARCHITECTURE}.exe"
+        $DST = "OoliteStarter-${{ needs.semver.outputs.GITVERSION_SEMVER }}-Windows-$env:PROCESSOR_ARCHITECTURE.exe"
         ren $SRC $DST
-      env:
-        PROCESSOR_ARCHITECTURE: ${PROCESSOR_ARCHITECTURE}
 
     - name: Check status 4
       run: |

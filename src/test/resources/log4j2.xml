@@ -19,7 +19,7 @@
     <Logger level="warn"  name="oolite.starter.ConfigurationTest"/>
     <Logger level="warn"  name="oolite.starter.ExpansionManager"/>
     <Logger level="warn"  name="oolite.starter.ExpansionManagerTest"/>
-    <Logger level="info" name="oolite.starter.GithubVersionChecker"/>
+    <Logger level="info"  name="oolite.starter.GithubVersionChecker"/>
     <Logger level="error" name="oolite.starter.model.Command"/>
     <Logger level="error" name="oolite.starter.model.CommandTest"/>
     <Logger level="warn"  name="oolite.starter.model.ExpansionTest"/>
@@ -41,6 +41,7 @@
     <Logger level="warn"  name="oolite.starter.util.UtilTest"/>
     <Logger level="warn"  name="oolite.starter.util.XmlUtil"/>
     <Logger level="warn"  name="oolite.starter.util.XmlUtilTest"/>
+    <Logger level="info"  name="org.eclipse.jetty"/>
     
     <Root level="TRACE">
       <AppenderRef ref="Console"/>
