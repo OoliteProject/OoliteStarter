@@ -40,7 +40,7 @@ public class Util {
      */
     public static String getHostname() {
         try {
-            return execReadToString("hostname");
+            return execReadToString(new String[]{"hostname"});
         } catch (Exception e) {
             log.info("Could not get hostname", e);
         }
@@ -54,16 +54,43 @@ public class Util {
      * @return the stdout output of the executed command
      * @throws IOException something went wrong
      */
-    public static String execReadToString(String execCommand) throws IOException {
+    public static String execReadToString(String[] execCommand) throws IOException {
         log.debug("execReadToString({})", execCommand);
         if (execCommand == null) {
             throw new IllegalArgumentException("execCommand must not be null");
         }
-        if (execCommand.isBlank()) {
+        if (execCommand.length == 0) {
+            throw new IllegalArgumentException("execCommand must contain something");
+        }
+        if (execCommand[0].isBlank()) {
             throw new IllegalArgumentException("execCommand must contain something");
         }
         
         try (Scanner s = new Scanner(Runtime.getRuntime().exec(execCommand).getInputStream()).useDelimiter("\\A")) {
+            return s.hasNext() ? s.next() : "";
+        }
+    }
+
+    /**
+     * Executes a command and returns it's stdout.
+     * 
+     * @param execCommand the command to execute
+     * @return the stdout output of the executed command
+     * @throws IOException something went wrong
+     */
+    public static String execReadToString(String[] execCommand, String[] envp, File dir) throws IOException {
+        log.debug("execReadToString({})", execCommand);
+        if (execCommand == null) {
+            throw new IllegalArgumentException("execCommand must not be null");
+        }
+        if (execCommand.length == 0) {
+            throw new IllegalArgumentException("execCommand must contain something");
+        }
+        if (execCommand[0].isBlank()) {
+            throw new IllegalArgumentException("execCommand must contain something");
+        }
+        
+        try (Scanner s = new Scanner(Runtime.getRuntime().exec(execCommand, envp, dir).getInputStream()).useDelimiter("\\A")) {
             return s.hasNext() ? s.next() : "";
         }
     }

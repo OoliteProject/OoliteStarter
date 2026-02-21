@@ -22,6 +22,7 @@ import oolite.starter.model.Expansion;
 import oolite.starter.model.ExpansionReference;
 import oolite.starter.model.Installation;
 import oolite.starter.util.Util;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.monitor.FileAlterationMonitor;
 import org.apache.commons.io.monitor.FileAlterationObserver;
 import org.apache.logging.log4j.LogManager;
@@ -584,15 +585,23 @@ public class Oolite2 {
      * @return 
      */
     protected static String getFlatPakVersion() throws IOException {
-        String manifest = Util.execReadToString("flatpak run --command=cat space.oolite.Oolite /app/bin/Resources/manifest.plist");
+        String manifest = Util.execReadToString(new String[]{"flatpak", "run", "--command=cat", "space.oolite.Oolite", "/app/bin/Resources/manifest.plist"});
         String version = Oolite.getVersionFromManifestInputStream(new ByteArrayInputStream(manifest.getBytes()), "flatpak's manifest");
         return version;
     }
     
-//    protected static String getAppImageVersion() {
-//        String manifest = Util.execReadToString("./appimage-name.AppImage --appimage-extract\n" +
-//"cat squashfs-root/usr/bin/Resources/manifest.plist");
-//    }
+    protected static String getAppImageVersion(File appimage) throws IOException {
+        File tempdir = File.createTempFile("OoliteStarter-appimage", ".tmp");
+        try {
+            tempdir.delete();
+            tempdir.mkdirs();
+            Util.execReadToString(new String[]{appimage.getAbsolutePath(), "--appimage-extract"}, null, tempdir);
+            File manifest = new File(tempdir, "squashfs-root/usr/bin/Resources/manifest.plist");
+            return Oolite.getVersionFromManifest(manifest);
+        } finally {
+            FileUtils.deleteQuietly(tempdir);
+        }
+    }
     
     /**
      * Returns an installation based on the given path.
@@ -611,6 +620,7 @@ public class Oolite2 {
                 String version = getFlatPakVersion();
                 i.setVersion(version);
             } catch (Exception e) {
+                log.warn("Could not read version from flatpak", e);
                 i.setVersion(components[2]);
             }
             
@@ -627,7 +637,14 @@ public class Oolite2 {
             File appimage = new File(path);
             Installation i = new Installation();
             i.setHomeDir(appimage.getParent());
-            i.setVersion("n/a");
+            
+            try {
+                String version = getAppImageVersion(appimage);
+                i.setVersion(version);
+            } catch (Exception e) {
+                log.warn("Could not read version from appimage", e);
+            }
+            
             i.setExecutable(path);
 
             String baseData = i.getHomeDir() + "/GameData";

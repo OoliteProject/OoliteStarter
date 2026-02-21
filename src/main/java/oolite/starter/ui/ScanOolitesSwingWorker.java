@@ -244,7 +244,7 @@ public class ScanOolitesSwingWorker extends SwingWorker<List<String>, String> {
         log.warn("getFlatPaks()");
         try {
             // execute 'flatpak list'
-            String list = oolite.starter.util.Util.execReadToString("flatpak list --app --columns=application,version");
+            String list = oolite.starter.util.Util.execReadToString(new String[]{"flatpak", "list", "--app", "--columns=application,version"});
 
             // parse result
             List<String> result = new ArrayList<>();
