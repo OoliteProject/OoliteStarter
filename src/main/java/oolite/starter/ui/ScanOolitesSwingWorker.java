@@ -18,6 +18,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
+ * Scans the systemm for Oolite installations.
  *
  * @author hiran
  */
@@ -172,7 +173,13 @@ public class ScanOolitesSwingWorker extends SwingWorker<List<String>, String> {
         }
         return false;
     }
-    
+
+    /**
+     * Checks whether the passed file matches the good patterns.
+     * If yes it is added to the result and published.
+     * 
+     * @param f 
+     */
     private void checkMatch(File f) {
         for (Pattern p: goodPatterns) {
             Matcher m = p.matcher(f.getAbsolutePath());
@@ -227,6 +234,38 @@ public class ScanOolitesSwingWorker extends SwingWorker<List<String>, String> {
             }
         }
     }
+    
+    /**
+     * On Linux Systems use FlatPak to check for Oolite installations.
+     * 
+     * @return a list of found Oolite packages
+     */
+    protected List<String> getFlatPaks() {
+        log.warn("getFlatPaks()");
+        try {
+            // execute 'flatpak list'
+            String list = oolite.starter.util.Util.execReadToString("flatpak list --app --columns=application,version");
+
+            // parse result
+            List<String> result = new ArrayList<>();
+            
+            String[] lines = list.split("\\r?\\n");
+            for (String line: lines) {
+                if (line.contains("space.oolite.Oolite")) {
+                    String l = "flatpak: " + line;
+                    result.add(l);
+
+                    fireAddInstallation(l);
+                    publish(l);
+                }
+            }
+
+            return result;
+        } catch (Exception e) {
+            log.error("Could not scan for flatpaks", e);
+            return null;
+        }
+    }
             
     /**
      * Entry point for this SwingWorker.
@@ -255,11 +294,21 @@ public class ScanOolitesSwingWorker extends SwingWorker<List<String>, String> {
         skipPatterns.add(Pattern.compile(".*/sys/block/.*"));
         skipPatterns.add(Pattern.compile(".*/sys/module/.*"));
 
+        result = new ArrayList<>();
+        
         List<File> preferredLocations = new ArrayList<>();
         switch (oolite.starter.util.Util.getOperatingSystemType()) {
             case LINUX: // Linux version
+                goodPatterns.add(Pattern.compile("(.*/Oolite[^/]*\\.AppImage)"));
                 goodPatterns.add(Pattern.compile("(.*/oolite.app)/oolite-wrapper"));
                 preferredLocations.add(new File(new File(System.getProperty("user.home")), "GNUstep/Applications"));
+
+                publish("FlatPak...");
+                List<String> fps = getFlatPaks();
+                if (fps != null) {
+                    result.addAll(fps);
+                }
+                log.warn("Found flatpaks: " + result);
                 break;
             case MACOS: // Mac OS version
                 goodPatterns.add(Pattern.compile("(.*\\.app)/Contents/MacOS/Oolite"));
@@ -287,7 +336,6 @@ public class ScanOolitesSwingWorker extends SwingWorker<List<String>, String> {
 
         log.info("Scanning for Oolite in {}", preferredLocations);
         try {
-            result = new ArrayList<>();
 
             totalFiles += File.listRoots().length + 1;
 

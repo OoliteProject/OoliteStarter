@@ -11,6 +11,7 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
 import java.lang.module.ModuleDescriptor;
+import java.net.URISyntaxException;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
@@ -227,7 +228,7 @@ public class MainFrame extends javax.swing.JFrame {
     /**
      * Creates new form MainFrame.
      */
-    public MainFrame() throws IOException, SAXException, ParserConfigurationException, XPathExpressionException {
+    public MainFrame() throws IOException, SAXException, ParserConfigurationException, XPathExpressionException, URISyntaxException {
         initComponents();
         setInstallationTitle(null);
         setIconImage(new ImageIcon(getClass().getResource("/images/Mr_Gimlet_transparent.png")).getImage());
@@ -396,7 +397,7 @@ public class MainFrame extends javax.swing.JFrame {
         log.debug("isInstallationsValid()");
 
         for (Installation i: configuration.getInstallations()) {
-            File f = new File(i.getExcecutable());
+            File f = new File(i.getExecutable());
             if (!f.isFile()) {
                 log.warn("File {} not found.", f);
                 return false;

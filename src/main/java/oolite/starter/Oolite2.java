@@ -4,7 +4,9 @@
 package oolite.starter;
 
 import java.beans.PropertyChangeListener;
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.IOException;
 import java.lang.module.ModuleDescriptor;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -19,6 +21,7 @@ import oolite.starter.model.Command;
 import oolite.starter.model.Expansion;
 import oolite.starter.model.ExpansionReference;
 import oolite.starter.model.Installation;
+import oolite.starter.util.Util;
 import org.apache.commons.io.monitor.FileAlterationMonitor;
 import org.apache.commons.io.monitor.FileAlterationObserver;
 import org.apache.logging.log4j.LogManager;
@@ -574,6 +577,70 @@ public class Oolite2 {
      */
     public List<Expansion> getExpansions() {
         return new ArrayList<>(expansions);
+    }
+    
+    /**
+     * Checks the FlatPak Oolite version by reading the internal manifest.plist.
+     * @return 
+     */
+    protected static String getFlatPakVersion() throws IOException {
+        String manifest = Util.execReadToString("flatpak run --command=cat space.oolite.Oolite /app/bin/Resources/manifest.plist");
+        String version = Oolite.getVersionFromManifestInputStream(new ByteArrayInputStream(manifest.getBytes()), "flatpak's manifest");
+        return version;
+    }
+    
+//    protected static String getAppImageVersion() {
+//        String manifest = Util.execReadToString("./appimage-name.AppImage --appimage-extract\n" +
+//"cat squashfs-root/usr/bin/Resources/manifest.plist");
+//    }
+    
+    /**
+     * Returns an installation based on the given path.
+     * It detects classic, flatpak and appimage installations.
+     * 
+     * @param path the path to Oolite
+     * @return the populated installation
+     */
+    public static Installation populateInstallation(String path) {
+        if (path.startsWith("flatpak: ")) {
+            String[] components = path.split("\\s+");
+            Installation i = new Installation();
+            i.setHomeDir(System.getProperty("user.home"));
+
+            try {
+                String version = getFlatPakVersion();
+                i.setVersion(version);
+            } catch (Exception e) {
+                i.setVersion(components[2]);
+            }
+            
+            i.setExecutable("flatpak run space.oolite.Oolite");
+            
+            String baseData = System.getProperty("user.home") + "/.var/app/space.oolite.Oolite";
+            i.setAddonDir(baseData + "/AddOns");
+            i.setDeactivatedAddonDir(baseData + "/.DeactivatedAddOns");
+            i.setManagedAddonDir(baseData + "/.ManagedAddOns");
+            i.setManagedDeactivatedAddonDir(baseData + "/.ManagedDeactivatedAddOns");
+            i.setSavegameDir(baseData + "/SavedGames");
+            return i;
+        } else if (path.endsWith(".AppImage")) {
+            File appimage = new File(path);
+            Installation i = new Installation();
+            i.setHomeDir(appimage.getParent());
+            i.setVersion("n/a");
+            i.setExecutable(path);
+
+            String baseData = i.getHomeDir() + "/GameData";
+            i.setAddonDir(baseData + "/AddOns");
+            i.setDeactivatedAddonDir(baseData + "/.DeactivatedAddOns");
+            i.setManagedAddonDir(baseData + "/.ManagedAddOns");
+            i.setManagedDeactivatedAddonDir(baseData + "/.ManagedDeactivatedAddOns");
+            i.setSavegameDir(baseData + "/SavedGames");
+            return i;
+        } else {
+            File homeDir = new File(path);
+            return Oolite.populateFromHomeDir(homeDir);
+        }
     }
     
 }

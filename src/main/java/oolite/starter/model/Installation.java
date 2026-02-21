@@ -104,7 +104,7 @@ public class Installation {
     
     private String homeDir;
     private String version;
-    private String excecutable;
+    private String executable;
     private String savegameDir;
     private String addonDir;
     private String deactivatedAddonDir;
@@ -125,8 +125,8 @@ public class Installation {
      * 
      * @return the full path 
      */
-    public String getExcecutable() {
-        return excecutable;
+    public String getExecutable() {
+        return executable;
     }
 
     /**
@@ -134,8 +134,8 @@ public class Installation {
      * 
      * @param excecutable the full path 
      */
-    public void setExcecutable(String excecutable) {
-        this.excecutable = excecutable;
+    public void setExecutable(String executable) {
+        this.executable = executable;
     }
 
     /**
@@ -304,7 +304,7 @@ public class Installation {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("Installation{");
-        sb.append("excecutable=").append(excecutable);
+        sb.append("executable=").append(executable);
         sb.append(", version=").append(version);
         sb.append(", homeDir=").append(homeDir);
         sb.append(", savegameDir=").append(savegameDir);

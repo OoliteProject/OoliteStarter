@@ -132,7 +132,7 @@ public class InstallationForm extends javax.swing.JPanel {
             txtAddOnDir.setText(data.getAddonDir());
             txtDeactivatedAddOnDir.setText(data.getDeactivatedAddonDir());
             txtManagedDeactivatedAddOnDir.setText(data.getManagedDeactivatedAddonDir());
-            txtExecutable.setText(data.getExcecutable());
+            txtExecutable.setText(data.getExecutable());
             txtHomeDir.setText(data.getHomeDir());
             txtManagedAddOnDir.setText(data.getManagedAddonDir());
             txtSavegameDir.setText(data.getSavegameDir());
@@ -166,7 +166,7 @@ public class InstallationForm extends javax.swing.JPanel {
         data.setDeactivatedAddonDir(txtDeactivatedAddOnDir.getText());
         data.setManagedAddonDir(txtManagedAddOnDir.getText());
         data.setManagedDeactivatedAddonDir(txtManagedDeactivatedAddOnDir.getText());
-        data.setExcecutable(txtExecutable.getText());
+        data.setExecutable(txtExecutable.getText());
         data.setHomeDir(txtHomeDir.getText());
         data.setSavegameDir(txtSavegameDir.getText());
         data.setVersion(txtVersion.getText());

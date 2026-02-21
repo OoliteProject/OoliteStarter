@@ -645,15 +645,15 @@ public class Oolite implements PropertyChangeListener {
     public void run() throws IOException, InterruptedException, ProcessRunException {
         log.debug("run()");
 
-        String executable = configuration.getOoliteCommand();
-        if (executable == null) {
+        List<String> baseCommand = configuration.getOoliteCommand();
+        if (baseCommand == null) {
             throw new IllegalStateException("active installation has no executable");
         }
 
         List<String> command = new ArrayList<>();
-        command.add(executable);
+        command.addAll(baseCommand);
         command.add("-nosplash");
-        File dir = new File(executable).getParentFile();
+        File dir = new File(configuration.getActiveInstallation().getHomeDir());
         
         run(command, dir);
     }
@@ -669,11 +669,11 @@ public class Oolite implements PropertyChangeListener {
         log.debug("run({})", savegame);
 
         List<String> command = new ArrayList<>();
-        command.add(configuration.getOoliteCommand());
+        command.addAll(configuration.getOoliteCommand());
+        command.add("-nosplash");
         command.add("-load");
         command.add(savegame.getFile().getAbsolutePath());
-        command.add("-nosplash");
-        File dir = new File(configuration.getOoliteCommand()).getParentFile();
+        File dir = new File(configuration.getActiveInstallation().getHomeDir());
 
         run(command, dir);
     }
@@ -2252,20 +2252,36 @@ public class Oolite implements PropertyChangeListener {
         log.debug("getVersionFromManifest({})", f);
         
         try (InputStream in = new FileInputStream(f)) {
-            PlistParser.DictionaryContext dc = PlistUtil.parsePListDict(in, f.getAbsolutePath());
-
-            for (PlistParser.KeyvaluepairContext kvc: dc.keyvaluepair()) {
-                String key = kvc.STRING().getText();
-                String value = kvc.value().getText();
-                
-                log.trace("looking at key {} value {}", key, value);
-                if (OOLITE_VERSION.equals(key)) {
-                    return value;
-                }
-            }
-
-            return null;
+            return getVersionFromManifestInputStream(in, f.getAbsolutePath());
         }
+    }
+
+    /**
+     * Extracts the Oolite version from the given inputstream 
+     * (expects manifest.plist format).
+     * 
+     * @param in the plist stream to read
+     * @param sourceName the path of the sourcefile, to put in error messages
+     * @return the version number found
+     * @throws ParserConfigurationException something went wrong
+     * @throws SAXException something went wrong
+     * @throws IOException something went wrong
+     * @throws XPathExpressionException something went wrong
+     */
+    public static String getVersionFromManifestInputStream(InputStream in, String sourceName) throws IOException {
+        PlistParser.DictionaryContext dc = PlistUtil.parsePListDict(in, sourceName);
+
+        for (PlistParser.KeyvaluepairContext kvc: dc.keyvaluepair()) {
+            String key = kvc.STRING().getText();
+            String value = kvc.value().getText();
+
+            log.trace("looking at key {} value {}", key, value);
+            if (OOLITE_VERSION.equals(key)) {
+                return value;
+            }
+        }
+
+        return null;
     }
     
     /**
@@ -2459,7 +2475,7 @@ public class Oolite implements PropertyChangeListener {
         }
         log.info("executable");
         try {
-            i.setExcecutable(Oolite.getExecutable(homeDir).getCanonicalPath());
+            i.setExecutable(Oolite.getExecutable(homeDir).getCanonicalPath());
         } catch (IOException e) {
             log.warn("Cannot get executable for {}", homeDir, e);
         }

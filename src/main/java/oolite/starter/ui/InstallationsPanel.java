@@ -26,7 +26,7 @@ import javax.swing.UIManager;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableRowSorter;
 import oolite.starter.Configuration;
-import oolite.starter.Oolite;
+import oolite.starter.Oolite2;
 import oolite.starter.model.Installation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -372,8 +372,7 @@ public class InstallationsPanel extends javax.swing.JPanel {
 
                 log.info("something was selected - we want this value {}", ip.getSelectedInstallation());
 
-                File homeDir = new File(ip.getSelectedInstallation());
-                Installation i = Oolite.populateFromHomeDir(homeDir);
+                Installation i = Oolite2.populateInstallation(ip.getSelectedInstallation());
 
                 log.info("offering for edit {}", i);
                 InstallationForm installationForm = new InstallationForm();
