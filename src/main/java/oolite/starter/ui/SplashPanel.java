@@ -66,6 +66,7 @@ public class SplashPanel extends JPanel implements MouseListener, MouseMotionLis
         log.debug("SplashPanel(..., {})", motd);
         
         setLayout(new BorderLayout());
+        setBackground(Color.black);
         add(new JLabel(background));
 
         text = SplashPanel.class.getPackage().getImplementationTitle()
