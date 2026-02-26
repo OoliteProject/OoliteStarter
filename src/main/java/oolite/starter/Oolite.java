@@ -2283,6 +2283,34 @@ public class Oolite implements PropertyChangeListener {
 
         return null;
     }
+
+    /**
+     * Extracts the Oolite debug_functionality_support flag from the given inputstream 
+     * (expects manifest.plist format).
+     * 
+     * @param in the plist stream to read
+     * @param sourceName the path of the sourcefile, to put in error messages
+     * @return the version number found
+     * @throws ParserConfigurationException something went wrong
+     * @throws SAXException something went wrong
+     * @throws IOException something went wrong
+     * @throws XPathExpressionException something went wrong
+     */
+    public static String getDebugSupportFromManifestInputStream(InputStream in, String sourceName) throws IOException {
+        PlistParser.DictionaryContext dc = PlistUtil.parsePListDict(in, sourceName);
+
+        for (PlistParser.KeyvaluepairContext kvc: dc.keyvaluepair()) {
+            String key = kvc.STRING().getText();
+            String value = kvc.value().getText();
+
+            log.trace("looking at key {} value {}", key, value);
+            if ("debug_functionality_support".equals(key)) {
+                return value;
+            }
+        }
+
+        return null;
+    }
     
     /**
      * Extracts the Oolite version for this installation.

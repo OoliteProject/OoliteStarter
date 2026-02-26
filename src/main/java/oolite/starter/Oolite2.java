@@ -6,6 +6,7 @@ package oolite.starter;
 import java.beans.PropertyChangeListener;
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.module.ModuleDescriptor;
 import java.lang.ref.WeakReference;
@@ -590,6 +591,16 @@ public class Oolite2 {
         return version;
     }
     
+    /**
+     * Checks the FlatPak Oolite version by reading the internal manifest.plist.
+     * @return 
+     */
+    protected static String getFlatPakDebugSupport() throws IOException {
+        String manifest = Util.execReadToString(new String[]{"flatpak", "run", "--command=cat", "space.oolite.Oolite", "/app/bin/Resources/manifest.plist"});
+        String version = Oolite.getDebugSupportFromManifestInputStream(new ByteArrayInputStream(manifest.getBytes()), "flatpak's manifest");
+        return version;
+    }
+    
     protected static String getAppImageVersion(File appimage) throws IOException {
         File tempdir = File.createTempFile("OoliteStarter-appimage", ".tmp");
         try {
@@ -598,6 +609,19 @@ public class Oolite2 {
             Util.execReadToString(new String[]{appimage.getAbsolutePath(), "--appimage-extract"}, null, tempdir);
             File manifest = new File(tempdir, "squashfs-root/usr/bin/Resources/manifest.plist");
             return Oolite.getVersionFromManifest(manifest);
+        } finally {
+            FileUtils.deleteQuietly(tempdir);
+        }
+    }
+    
+    protected static String getAppImageDebugSupport(File appimage) throws IOException {
+        File tempdir = File.createTempFile("OoliteStarter-appimage", ".tmp");
+        try {
+            tempdir.delete();
+            tempdir.mkdirs();
+            Util.execReadToString(new String[]{appimage.getAbsolutePath(), "--appimage-extract"}, null, tempdir);
+            File manifest = new File(tempdir, "squashfs-root/usr/bin/Resources/manifest.plist");
+            return Oolite.getDebugSupportFromManifestInputStream(new FileInputStream(manifest), "squashfs-root/usr/bin/Resources/manifest.plist");
         } finally {
             FileUtils.deleteQuietly(tempdir);
         }
@@ -623,6 +647,13 @@ public class Oolite2 {
                 log.warn("Could not read version from flatpak", e);
                 i.setVersion(components[2]);
             }
+
+            try {
+                String debugsupport = getFlatPakDebugSupport();
+                i.setDebugCapable("yes".equals(debugsupport));
+            } catch (Exception e) {
+                log.warn("Could not read debug_support_capable from appimage", e);
+            }
             
             i.setExecutable("flatpak run space.oolite.Oolite");
             
@@ -643,6 +674,13 @@ public class Oolite2 {
                 i.setVersion(version);
             } catch (Exception e) {
                 log.warn("Could not read version from appimage", e);
+            }
+            
+            try {
+                String debugsupport = getAppImageDebugSupport(appimage);
+                i.setDebugCapable("yes".equals(debugsupport));
+            } catch (Exception e) {
+                log.warn("Could not read debug_support_capable from appimage", e);
             }
             
             i.setExecutable(path);

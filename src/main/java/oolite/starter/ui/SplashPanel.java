@@ -92,8 +92,9 @@ public class SplashPanel extends JPanel implements MouseListener, MouseMotionLis
         
         Graphics2D g2d = (Graphics2D)g;
         
-        int x = getWidth() - logo.getWidth(null) - 50;
-        int y = getHeight() - logo.getHeight(null) - 30;
+        int x = getWidth() - logo.getWidth(null) - 30;
+        // int y = getHeight() - logo.getHeight(null) - 30;
+        int y = 30;
         g2d.drawImage(logo, x, y, null);
 
         g2d.setFont(g.getFont().deriveFont(Font.BOLD, 22.0f));
