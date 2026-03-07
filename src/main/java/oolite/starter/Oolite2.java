@@ -582,12 +582,39 @@ public class Oolite2 {
     }
     
     /**
+     * Parses Oolite's -help output for the version string.
+     * 
+     * @param helpMenu
+     * @return the version string
+     */
+    protected static String getVersionFromHelpMenu(String helpMenu) {
+        log.debug("getVersionFromHelpMenu({})", helpMenu);
+        if (helpMenu == null) {
+            throw new IllegalArgumentException("helpMenu must not be null");
+        }
+        
+        for (String line: helpMenu.split("\r?\n")) {
+            if (line.startsWith("Version ")) {
+                log.trace("found line {}", line);
+                String version = line.split("\\s")[1];
+                return version;
+            }
+        }
+        // still here? then we did not find the version line
+        return null;
+    }
+    
+    /**
      * Checks the FlatPak Oolite version by reading the internal manifest.plist.
      * @return 
      */
     protected static String getFlatPakVersion() throws IOException {
-        String manifest = Util.execReadToString(new String[]{"flatpak", "run", "--command=cat", "space.oolite.Oolite", "/app/bin/Resources/manifest.plist"});
-        String version = Oolite.getVersionFromManifestInputStream(new ByteArrayInputStream(manifest.getBytes()), "flatpak's manifest");
+//        String manifest = Util.execReadToString(new String[]{"flatpak", "run", "--command=cat", "space.oolite.Oolite", "/app/bin/Resources/manifest.plist"});
+//        String version = Oolite.getVersionFromManifestInputStream(new ByteArrayInputStream(manifest.getBytes()), "flatpak's manifest");
+//        return version;
+
+        String helpMenu = Util.execReadToString(new String[]{"flatpak", "run", "space.oolite.Oolite", "--help"});
+        String version = getVersionFromHelpMenu(helpMenu);
         return version;
     }
     
@@ -602,16 +629,20 @@ public class Oolite2 {
     }
     
     protected static String getAppImageVersion(File appimage) throws IOException {
-        File tempdir = File.createTempFile("OoliteStarter-appimage", ".tmp");
-        try {
-            tempdir.delete();
-            tempdir.mkdirs();
-            Util.execReadToString(new String[]{appimage.getAbsolutePath(), "--appimage-extract"}, null, tempdir);
-            File manifest = new File(tempdir, "squashfs-root/usr/bin/Resources/manifest.plist");
-            return Oolite.getVersionFromManifest(manifest);
-        } finally {
-            FileUtils.deleteQuietly(tempdir);
-        }
+//        File tempdir = File.createTempFile("OoliteStarter-appimage", ".tmp");
+//        try {
+//            tempdir.delete();
+//            tempdir.mkdirs();
+//            Util.execReadToString(new String[]{appimage.getAbsolutePath(), "--appimage-extract"}, null, tempdir);
+//            File manifest = new File(tempdir, "squashfs-root/usr/bin/Resources/manifest.plist");
+//            return Oolite.getVersionFromManifest(manifest);
+//        } finally {
+//            FileUtils.deleteQuietly(tempdir);
+//        }
+
+        String helpMenu = Util.execReadToString(new String[]{appimage.getAbsolutePath(), "--help"});
+        String version = getVersionFromHelpMenu(helpMenu);
+        return version;
     }
     
     protected static String getAppImageDebugSupport(File appimage) throws IOException {

@@ -397,7 +397,14 @@ public class MainFrame extends javax.swing.JFrame {
         log.debug("isInstallationsValid()");
 
         for (Installation i: configuration.getInstallations()) {
-            File f = new File(i.getExecutable());
+            // todo: move all this checking into the Installation class
+            // then it is easier to distinguish bare, flatpak and appimage installations
+            
+            String executable = i.getExecutable();
+            if (executable == null) {
+                return false;
+            }
+            File f = new File(executable);
             if (!f.isFile()) {
                 log.warn("File {} not found.", f);
                 return false;
