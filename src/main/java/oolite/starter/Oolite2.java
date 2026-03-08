@@ -4,9 +4,7 @@
 package oolite.starter;
 
 import java.beans.PropertyChangeListener;
-import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.module.ModuleDescriptor;
 import java.lang.ref.WeakReference;
@@ -23,7 +21,6 @@ import oolite.starter.model.Expansion;
 import oolite.starter.model.ExpansionReference;
 import oolite.starter.model.Installation;
 import oolite.starter.util.Util;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.monitor.FileAlterationMonitor;
 import org.apache.commons.io.monitor.FileAlterationObserver;
 import org.apache.logging.log4j.LogManager;
@@ -605,6 +602,29 @@ public class Oolite2 {
     }
     
     /**
+     * Parses Oolite's -help output for debug support.
+     * 
+     * @param helpMenu
+     * @return the debug support setting ("yes" or "no" or null)
+     */
+    protected static String getDebugSupportFromHelpMenu(String helpMenu) {
+        log.debug("getDebugSupportFromHelpMenu({})", helpMenu);
+        if (helpMenu == null) {
+            throw new IllegalArgumentException("helpMenu must not be null");
+        }
+        
+        for (String line: helpMenu.split("\r?\n")) {
+            if (line.startsWith("Debug functionality enabled (Test Release): ")) {
+                log.trace("found line {}", line);
+                String version = line.split(":\\s*")[1];
+                return version;
+            }
+        }
+        // still here? then we did not find the debug support line
+        return null;
+    }
+    
+    /**
      * Checks the FlatPak Oolite version by reading the internal manifest.plist.
      * @return 
      */
@@ -623,9 +643,9 @@ public class Oolite2 {
      * @return 
      */
     protected static String getFlatPakDebugSupport() throws IOException {
-        String manifest = Util.execReadToString(new String[]{"flatpak", "run", "--command=cat", "space.oolite.Oolite", "/app/bin/Resources/manifest.plist"});
-        String version = Oolite.getDebugSupportFromManifestInputStream(new ByteArrayInputStream(manifest.getBytes()), "flatpak's manifest");
-        return version;
+        String helpMenu = Util.execReadToString(new String[]{"flatpak", "run", "space.oolite.Oolite", "--help"});
+        String debugSupport = getDebugSupportFromHelpMenu(helpMenu);
+        return debugSupport;
     }
     
     protected static String getAppImageVersion(File appimage) throws IOException {
@@ -646,16 +666,20 @@ public class Oolite2 {
     }
     
     protected static String getAppImageDebugSupport(File appimage) throws IOException {
-        File tempdir = File.createTempFile("OoliteStarter-appimage", ".tmp");
-        try {
-            tempdir.delete();
-            tempdir.mkdirs();
-            Util.execReadToString(new String[]{appimage.getAbsolutePath(), "--appimage-extract"}, null, tempdir);
-            File manifest = new File(tempdir, "squashfs-root/usr/bin/Resources/manifest.plist");
-            return Oolite.getDebugSupportFromManifestInputStream(new FileInputStream(manifest), "squashfs-root/usr/bin/Resources/manifest.plist");
-        } finally {
-            FileUtils.deleteQuietly(tempdir);
-        }
+//        File tempdir = File.createTempFile("OoliteStarter-appimage", ".tmp");
+//        try {
+//            tempdir.delete();
+//            tempdir.mkdirs();
+//            Util.execReadToString(new String[]{appimage.getAbsolutePath(), "--appimage-extract"}, null, tempdir);
+//            File manifest = new File(tempdir, "squashfs-root/usr/bin/Resources/manifest.plist");
+//            return Oolite.getDebugSupportFromManifestInputStream(new FileInputStream(manifest), "squashfs-root/usr/bin/Resources/manifest.plist");
+//        } finally {
+//            FileUtils.deleteQuietly(tempdir);
+//        }
+
+        String helpMenu = Util.execReadToString(new String[]{appimage.getAbsolutePath(), "--help"});
+        String debugSupport = getDebugSupportFromHelpMenu(helpMenu);
+        return debugSupport;
     }
     
     /**
