@@ -86,6 +86,7 @@ public class Oolite implements PropertyChangeListener {
     private static final String OOLITE_CONFIGURATION_MUST_NOT_BE_NULL = "configuration must not be null";
     private static final String OOLITE_DOWNLOAD_URL = "downloadUrl";
     private static final String OOLITE_STARTER_EXPANSION_FQN = "org.oolite.hiran.OoliteStarter.oxp";
+    private static final String OOLITE_STARTER_EXPANSION_FQN_PATTERN = ".*org\\.oolite\\.\\S+\\.OoliteStarter\\.oxp";
     private static final String OOLITE_EXPANSIONS_MUST_NOT_BE_NULL = "expansions must not be null";
     private static final String OOLITE_EXPANSION_MUST_NOT_BE_NULL = "expansion must not be null";
     private static final String OOLITE_IDENTIFIER = "identifier";
@@ -536,7 +537,7 @@ public class Oolite implements PropertyChangeListener {
                 String token = st.nextToken();
                 if (token.equals(debugAddOn)) {
                     // do nothing for Oolite's debug OXP
-                } else if (token.equals(myAddOn) || token.endsWith(OOLITE_STARTER_EXPANSION_FQN)) {
+                } else if (token.equals(myAddOn) || token.matches(OOLITE_STARTER_EXPANSION_FQN_PATTERN)) {
                     // do nothing for OoliteStarter's companion
                 } else if (token.startsWith(managedAddOnDir)) {
                     // get the last path component
