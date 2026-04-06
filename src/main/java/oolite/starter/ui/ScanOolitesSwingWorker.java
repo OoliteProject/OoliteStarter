@@ -302,6 +302,7 @@ public class ScanOolitesSwingWorker extends SwingWorker<List<String>, String> {
                 goodPatterns.add(Pattern.compile("(.*/Oolite[^/]*\\.AppImage)"));
                 goodPatterns.add(Pattern.compile("(.*/oolite.app)/oolite-wrapper"));
                 preferredLocations.add(new File(new File(System.getProperty("user.home")), "GNUstep/Applications"));
+                preferredLocations.add(new File(System.getProperty("user.home")));
 
                 publish("FlatPak...");
                 List<String> fps = getFlatPaks();
