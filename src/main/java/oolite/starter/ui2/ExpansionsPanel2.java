@@ -184,7 +184,7 @@ public class ExpansionsPanel2 extends javax.swing.JPanel implements Oolite2.Ooli
 
                 String input = JOptionPane.showInputDialog(
                         ExpansionsPanel2.this, 
-                        "Please enter download URL.\nYou can find download URLs at https://wiki.alioth.net/index.php/Guide_to_Unlisted_OXPs",
+                        "Please enter a URL pointing to an OXP zip file.\nYou can find download URLs at https://wiki.alioth.net/index.php/Guide_to_Unlisted_OXPs",
                         "Download OXP...",
                         JOptionPane.QUESTION_MESSAGE
                 );
