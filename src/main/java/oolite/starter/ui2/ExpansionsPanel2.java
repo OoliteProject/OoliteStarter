@@ -436,7 +436,7 @@ public class ExpansionsPanel2 extends javax.swing.JPanel implements Oolite2.Ooli
 
         btDownload.setAction(downloadAction);
         btDownload.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/download_FILL0_wght400_GRAD0_opsz48.png"))); // NOI18N
-        btDownload.setToolTipText("Download...");
+        btDownload.setToolTipText("Download OXP...");
 
         btDelete.setAction(deleteAction);
         btDelete.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/delete_forever_FILL0_wght400_GRAD0_opsz48.png"))); // NOI18N
