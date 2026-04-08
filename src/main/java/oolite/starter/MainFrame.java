@@ -59,6 +59,12 @@ public class MainFrame extends javax.swing.JFrame {
 
     private static transient JFrame newSplash;
     
+    /**
+     * This SwingWorker will initialize OoliteStarter by reading configuration,
+     * scanning the disk for savegames and installed expansions and downloading
+     * the expansion catalog.
+     * Finally it displays the main screen.
+     */
     private static class InitFrameSwingWorker extends SwingWorker<MainFrame, Object> {
             
         private GithubVersionChecker gvc;
@@ -587,6 +593,10 @@ public class MainFrame extends javax.swing.JFrame {
         //</editor-fold>
     }
     
+    /**
+     * Starts the UI by showing a splash screen and triggering the background
+     * swing worker to do the needful.
+     */
     private static void startupUI() {
         log.info("{} {}  starting up...", MainFrame.class.getPackage().getImplementationTitle(), MainFrame.class.getPackage().getImplementationVersion());
         
