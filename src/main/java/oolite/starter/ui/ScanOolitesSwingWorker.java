@@ -299,7 +299,7 @@ public class ScanOolitesSwingWorker extends SwingWorker<List<String>, String> {
         List<File> preferredLocations = new ArrayList<>();
         switch (oolite.starter.util.Util.getOperatingSystemType()) {
             case LINUX: // Linux version
-                goodPatterns.add(Pattern.compile("(.*/Oolite[^/]*\\.AppImage)"));
+                goodPatterns.add(Pattern.compile("(.*/[Oo]olite[^/]*\\.AppImage)"));
                 goodPatterns.add(Pattern.compile("(.*/oolite.app)/oolite-wrapper"));
                 preferredLocations.add(new File(new File(System.getProperty("user.home")), "GNUstep/Applications"));
                 preferredLocations.add(new File(System.getProperty("user.home")));
