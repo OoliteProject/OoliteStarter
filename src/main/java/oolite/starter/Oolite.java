@@ -183,7 +183,7 @@ public class Oolite implements PropertyChangeListener {
             // only if both min and max match this one counts
             return minOk && maxOk;
         } catch (Exception e) {
-            throw new IllegalStateException("Could not compare versions min={}, current={}, max={}", e);
+            throw new IllegalStateException(String.format("Could not compare versions min=%s, current=%s, max=%s", minVersion, current, maxVersion), e);
         }
     }
     
