@@ -158,29 +158,33 @@ public class Oolite implements PropertyChangeListener {
     boolean versionMatches(ModuleDescriptor.Version minVersion, String current, ModuleDescriptor.Version maxVersion) {
         log.debug("versionMatches({}, {}, {})", minVersion, current, maxVersion);
         
-        ModuleDescriptor.Version expVersion = parseVersion(current);
-        boolean minOk = false;
-        boolean maxOk = false;
+        try {
+            ModuleDescriptor.Version expVersion = parseVersion(current);
+            boolean minOk = false;
+            boolean maxOk = false;
 
-        log.trace("expVersion {}", expVersion);
-        if (minVersion == null) {
-            // we have not even a minimum version? Then all versions match
-            minOk = true;
-        } else if (minVersion.compareTo(expVersion) <= 0 || "0".equals(minVersion.toString())) {
-            log.trace("minVersion matched");
-            minOk = true;
+            log.trace("expVersion {}", expVersion);
+            if (minVersion == null) {
+                // we have not even a minimum version? Then all versions match
+                minOk = true;
+            } else if (minVersion.compareTo(expVersion) <= 0 || "0".equals(minVersion.toString())) {
+                log.trace("minVersion matched");
+                minOk = true;
+            }
+
+            // we have a minVersion that matches. What about the maxversion?
+            if (maxVersion == null) {
+                maxOk = true;
+            } else if (expVersion.compareTo(maxVersion) <= 0) {
+                log.trace("maxVersion matched");
+                maxOk = true;
+            }
+
+            // only if both min and max match this one counts
+            return minOk && maxOk;
+        } catch (Exception e) {
+            throw new IllegalStateException("Could not compare versions min={}, current={}, max={}", e);
         }
-
-        // we have a minVersion that matches. What about the maxversion?
-        if (maxVersion == null) {
-            maxOk = true;
-        } else if (expVersion.compareTo(maxVersion) <= 0) {
-            log.trace("maxVersion matched");
-            maxOk = true;
-        }
-
-        // only if both min and max match this one counts
-        return minOk && maxOk;
     }
     
     /**
@@ -194,7 +198,6 @@ public class Oolite implements PropertyChangeListener {
      */
     List<Expansion> getExpansionByReference(Expansion.Dependency reference, List<Expansion> expansions, boolean checkEnabled) {
         log.debug("getExpansionByReference({}, {}, {})", reference, expansions, checkEnabled);
-        
         if (reference == null) {
             throw new IllegalArgumentException("reference must not be null");
         }
@@ -204,34 +207,38 @@ public class Oolite implements PropertyChangeListener {
         if (reference.getIdentifier() == null) {
             throw new IllegalArgumentException("reference must have a non-null identifier");
         }
-        
-        List<Expansion> result = new ArrayList<>();
-        
-        ModuleDescriptor.Version minVersion = parseVersion(reference.getVersion());
-        ModuleDescriptor.Version maxVersion = parseVersion(reference.getMaximumVersion());
-        
-        log.trace("minVersion {}", minVersion);
-        log.trace("maxVersion {}", maxVersion);
-        
-        for (Expansion expansion: expansions) {
-            log.trace("checking expansion {}", expansion);
-            
-            if (checkEnabled && !expansion.isEnabled()) {
-                // we need to check that the expansion is enabled.
-                // this one is not - so continue
-                continue;
-            }
-            
-            if (reference.getIdentifier().equals(expansion.getIdentifier())) {
-                log.trace("identifier matched");
 
-                if (versionMatches(minVersion, expansion.getVersion(), maxVersion)) {
-                    result.add(expansion);
+        try {
+            List<Expansion> result = new ArrayList<>();
+
+            ModuleDescriptor.Version minVersion = parseVersion(reference.getVersion());
+            ModuleDescriptor.Version maxVersion = parseVersion(reference.getMaximumVersion());
+
+            log.trace("minVersion {}", minVersion);
+            log.trace("maxVersion {}", maxVersion);
+
+            for (Expansion expansion: expansions) {
+                log.trace("checking expansion {}", expansion);
+
+                if (checkEnabled && !expansion.isEnabled()) {
+                    // we need to check that the expansion is enabled.
+                    // this one is not - so continue
+                    continue;
+                }
+
+                if (reference.getIdentifier().equals(expansion.getIdentifier())) {
+                    log.trace("identifier matched");
+
+                    if (versionMatches(minVersion, expansion.getVersion(), maxVersion)) {
+                        result.add(expansion);
+                    }
                 }
             }
+
+            return result;
+        } catch (Exception e) {
+            throw new IllegalStateException(String.format("Could not match reference %s", reference), e);
         }
-        
-        return result;
     }
     
     /**
@@ -1928,13 +1935,13 @@ public class Oolite implements PropertyChangeListener {
                 .filter(Expansion::isEnabled)
                 .forEach(expansion -> {
 
-            List<Expansion> ds = getExpansionByReference(new Expansion.Dependency(expansion.getIdentifier()), expansions, false);
-            // filter out those that are incompatible
-            ds = ds.stream()
-                    .filter(exp -> !exp.getEMStatus().isIncompatible())
-                    .collect(Collectors.toList());
-            
             try {
+                List<Expansion> ds = getExpansionByReference(new Expansion.Dependency(expansion.getIdentifier()), expansions, false);
+                // filter out those that are incompatible
+                ds = ds.stream()
+                        .filter(exp -> !exp.getEMStatus().isIncompatible())
+                        .collect(Collectors.toList());
+
                 if (ds.size() > 1) {
                     // sort backwards (latest is first)
                     Collections.sort(ds, (t, t1) -> {
