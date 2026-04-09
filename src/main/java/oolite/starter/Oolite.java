@@ -1957,7 +1957,7 @@ public class Oolite implements PropertyChangeListener {
                     ds.get(0).getEMStatus().setUpdate(true);
                 }
             } catch (Exception ex) {
-                log.warn("Could not check updates for {}", expansion.getIdentifier(), ex);
+                log.warn("Could not check updates for {} ({})", expansion.getIdentifier(), expansion.getLocalFile(), ex);
             }
 
         });
