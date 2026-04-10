@@ -19,6 +19,10 @@ import org.apache.logging.log4j.Logger;
 
 /**
  * Scans the systemm for Oolite installations.
+ * It can detect
+ * - classic installations on windows, linux and mac
+ * - flatpak
+ * - AppImage
  *
  * @author hiran
  */
@@ -168,6 +172,7 @@ public class ScanOolitesSwingWorker extends SwingWorker<List<String>, String> {
         }
         for (Pattern p: skipPatterns) {
             if (p.matcher(f.getAbsolutePath()).matches()) {
+                log.trace("File {} matches skip pattern {} -> skipping", f.getAbsolutePath(), p.pattern());
                 return true;
             }
         }
@@ -184,6 +189,7 @@ public class ScanOolitesSwingWorker extends SwingWorker<List<String>, String> {
         for (Pattern p: goodPatterns) {
             Matcher m = p.matcher(f.getAbsolutePath());
             if (m.matches()) {
+                log.trace("File {} matches good pattern {} -> add to results", f.getAbsolutePath(), p.pattern());
                 String s = m.group(1);
                 result.add(s);
 
