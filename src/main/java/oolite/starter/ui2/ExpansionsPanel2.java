@@ -424,7 +424,7 @@ public class ExpansionsPanel2 extends javax.swing.JPanel implements Oolite2.Ooli
 
         btInstall.setAction(installAction);
         btInstall.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/line_end_arrow_FILL0_wght400_GRAD0_opsz48.png"))); // NOI18N
-        btInstall.setToolTipText("Install");
+        btInstall.setToolTipText("Install/Update");
 
         btRemove.setAction(removeAction);
         btRemove.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/line_start_arrow_FILL0_wght400_GRAD0_opsz48.png"))); // NOI18N
