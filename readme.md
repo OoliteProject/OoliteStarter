@@ -196,7 +196,8 @@ left, and those already installed on the right.
 
 One of the expansions is selected, and in the bottom you see additional
 information about the selection. The buttons in the middle allow to Install,
-Download, Remove and Delete.
+Download, Remove and Delete. Installation of a newer expansion over an older one
+will result in an update.
 
 You can sort and filter the list of expansions by clicking the button on the
 top right of the lists.
@@ -215,10 +216,12 @@ lifecycle through install and remove. Other expansions can be installed by
 giving a Download URL, will be stored in the Addons folder and will get deleted
 afterwards.
 
-#### Install
+#### Install/Update
 
 Installs an OXZ from the Expansion Manager's manifest into the ManagedAddons
-folder.
+folder. If a previous version of this expansion is already installed, it will be 
+overwritten. In this case the action performs an update. You can but do not have
+to remove the old version first.
 
 #### Download
 
