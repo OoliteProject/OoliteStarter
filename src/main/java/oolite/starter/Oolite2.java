@@ -643,7 +643,7 @@ public class Oolite2 {
      * @return 
      */
     protected static String getFlatPakDebugSupport() throws IOException {
-        String helpMenu = Util.execReadToString(new String[]{"flatpak", "run", "space.oolite.Oolite", "--help"});
+        String helpMenu = Util.execReadToString(new String[]{"flatpak", "run", "space.oolite.Oolite", "--nosplash", "--help"});
         String debugSupport = getDebugSupportFromHelpMenu(helpMenu);
         return debugSupport;
     }
@@ -660,7 +660,7 @@ public class Oolite2 {
 //            FileUtils.deleteQuietly(tempdir);
 //        }
 
-        String helpMenu = Util.execReadToString(new String[]{appimage.getAbsolutePath(), "--nosplash --help"});
+        String helpMenu = Util.execReadToString(new String[]{appimage.getAbsolutePath(), "--nosplash", "--help"});
         String version = getVersionFromHelpMenu(helpMenu);
         return version;
     }
