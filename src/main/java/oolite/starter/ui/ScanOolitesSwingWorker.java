@@ -216,6 +216,7 @@ public class ScanOolitesSwingWorker extends SwingWorker<List<String>, String> {
         publish (f.getAbsolutePath());
                 
         if (scannedFiles.contains(f.getCanonicalPath())) {
+            log.trace("File points to {} which we have scanned already -> skip", f.getCanonicalPath());
             return;
         }
         scannedFiles.add(f.getCanonicalPath());
