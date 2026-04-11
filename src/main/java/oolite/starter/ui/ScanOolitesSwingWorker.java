@@ -216,7 +216,7 @@ public class ScanOolitesSwingWorker extends SwingWorker<List<String>, String> {
         publish (f.getAbsolutePath());
                 
         if (scannedFiles.contains(f.getCanonicalPath())) {
-            log.trace("File points to {} which we have scanned already -> skip", f.getCanonicalPath());
+            log.warn("File points to {} which we have scanned already (does the filesystem contain links?) -> skip", f.getCanonicalPath());
             return;
         }
         scannedFiles.add(f.getCanonicalPath());
@@ -300,6 +300,7 @@ public class ScanOolitesSwingWorker extends SwingWorker<List<String>, String> {
         skipPatterns.add(Pattern.compile(".*/sys/bus/.*"));
         skipPatterns.add(Pattern.compile(".*/sys/block/.*"));
         skipPatterns.add(Pattern.compile(".*/sys/module/.*"));
+        skipPatterns.add(Pattern.compile(".*/.local/share/Trash(/.*)?"));
 
         result = new ArrayList<>();
         
