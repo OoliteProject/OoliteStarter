@@ -168,6 +168,7 @@ public class ScanOolitesSwingWorker extends SwingWorker<List<String>, String> {
      */
     private boolean shouldSkip(File f) {
         if (Files.isSymbolicLink(f.toPath())) {
+            log.warn("File {} is symlink -> skipping", f.getAbsolutePath());
             return true;
         }
         for (Pattern p: skipPatterns) {
@@ -214,19 +215,23 @@ public class ScanOolitesSwingWorker extends SwingWorker<List<String>, String> {
         log.trace("already scanned {}/{} files", scannedFiles.size(), totalFiles);
 
         publish (f.getAbsolutePath());
-                
-        if (scannedFiles.contains(f.getCanonicalPath())) {
-            log.warn("File points to {} which we have scanned already (does the filesystem contain links?) -> skip", f.getCanonicalPath());
-            return;
-        }
-        scannedFiles.add(f.getCanonicalPath());
-
+        
         if (shouldSkip(f)) {
             return;
         }
           
+        // remember if we already scanned this path
+        if (scannedFiles.contains(f.getCanonicalPath())) {
+            log.warn("File points to {} which we have scanned already (does the filesystem contain links?) -> skip", f.getCanonicalPath());
+            return;
+        } else {
+            scannedFiles.add(f.getCanonicalPath());
+        }
+
+        // maybe add this file to result list
         checkMatch(f);
-                        
+
+        // if we have a directory, recurse
         if (f.isDirectory()) {
             File[] entries = f.listFiles();
             if (entries != null) {
