@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.RandomAccessFile;
+import java.util.Arrays;
 import java.util.Locale;
 import java.util.Scanner;
 import java.util.zip.ZipEntry;
@@ -66,6 +67,7 @@ public class Util {
             throw new IllegalArgumentException("execCommand must contain something");
         }
         
+        log.info("executing {}", Arrays.toString(execCommand));
         try (Scanner s = new Scanner(Runtime.getRuntime().exec(execCommand).getInputStream()).useDelimiter("\\A")) {
             return s.hasNext() ? s.next() : "";
         }

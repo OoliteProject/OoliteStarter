@@ -677,7 +677,7 @@ public class Oolite2 {
 //            FileUtils.deleteQuietly(tempdir);
 //        }
 
-        String helpMenu = Util.execReadToString(new String[]{appimage.getAbsolutePath(), "--help"});
+        String helpMenu = Util.execReadToString(new String[]{appimage.getAbsolutePath(), "--nosplash", "--help"});
         String debugSupport = getDebugSupportFromHelpMenu(helpMenu);
         return debugSupport;
     }
