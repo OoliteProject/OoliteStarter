@@ -108,6 +108,7 @@
       <SubComponents>
         <Component class="javax.swing.JList" name="jlAvailable">
           <Properties>
+            <Property name="selectionMode" type="int" value="0"/>
             <Property name="name" type="java.lang.String" value="AvailableJList" noResource="true"/>
           </Properties>
           <AuxValues>
@@ -127,6 +128,7 @@
       <SubComponents>
         <Component class="javax.swing.JList" name="jlInstalled">
           <Properties>
+            <Property name="selectionMode" type="int" value="0"/>
             <Property name="name" type="java.lang.String" value="InstalledJList" noResource="true"/>
           </Properties>
           <AuxValues>

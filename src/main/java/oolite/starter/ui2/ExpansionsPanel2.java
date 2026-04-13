@@ -414,11 +414,13 @@ public class ExpansionsPanel2 extends javax.swing.JPanel implements Oolite2.Ooli
 
         spAvailable.setPreferredSize(new java.awt.Dimension(250, 130));
 
+        jlAvailable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jlAvailable.setName("AvailableJList"); // NOI18N
         spAvailable.setViewportView(jlAvailable);
 
         spInstalled.setPreferredSize(new java.awt.Dimension(250, 130));
 
+        jlInstalled.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jlInstalled.setName("InstalledJList"); // NOI18N
         spInstalled.setViewportView(jlInstalled);
 
