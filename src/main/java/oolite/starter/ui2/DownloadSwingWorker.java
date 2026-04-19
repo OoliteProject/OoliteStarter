@@ -9,6 +9,7 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -47,7 +48,7 @@ public class DownloadSwingWorker extends SwingWorker<Void, Void> {
     protected Void doInBackground() throws Exception {
         log.debug("doInBackground()");
 
-        URL url = new URL(downloadUrl);
+        URL url = new URI(downloadUrl).toURL();
         File tempFile = File.createTempFile("OoliteStarter-", ".OXP");
         Path outpath = tempFile.toPath();
         

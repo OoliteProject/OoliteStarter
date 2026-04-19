@@ -7,6 +7,7 @@ import com.vdurmont.semver4j.Semver;
 import java.io.IOException;
 import java.lang.module.ModuleDescriptor;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.time.Duration;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.AfterAll;
@@ -114,7 +115,7 @@ public class OoliteVersionCheckerTest {
      * Test of getHtmlUserMessage method, of class OoliteVersionChecker.
      */
     @Test
-    public void testGetHtmlUserMessage() throws MalformedURLException {
+    public void testGetHtmlUserMessage() throws MalformedURLException, URISyntaxException {
         log.info("getHtmlUserMessage");
 
         OoliteVersionChecker instance = new OoliteVersionChecker();

@@ -145,8 +145,8 @@ public class ExpansionPanel extends javax.swing.JPanel implements ExpansionsPane
             }
             if (!expansion.getEMStatus().isLatest()) {
                 Expansion exp = expansion.getEMStatus().getLatest();
-                sb.append("<h2><font color=\"0000ff\">■</font> Update to</h2>");
-                sb.append("<p>There is an updated version available that you likely want to install.</p>");
+                sb.append("<h2><font color=\"0000ff\">■</font> Update available</h2>");
+                sb.append("<p>There is an updated version available. Select it in the list of available expansions and click the install button.</p>");
                 sb.append("<h3>").append(exp.getTitle()).append(" ").append(exp.getVersion()).append("</h3>");
                 sb.append("<table border=\"0\"><tr>");
                 sb.append("<td>Title</td><td colspan=\"4\">").append(exp.getTitle()).append("</td>");

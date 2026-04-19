@@ -108,6 +108,7 @@
       <SubComponents>
         <Component class="javax.swing.JList" name="jlAvailable">
           <Properties>
+            <Property name="selectionMode" type="int" value="0"/>
             <Property name="name" type="java.lang.String" value="AvailableJList" noResource="true"/>
           </Properties>
           <AuxValues>
@@ -127,6 +128,7 @@
       <SubComponents>
         <Component class="javax.swing.JList" name="jlInstalled">
           <Properties>
+            <Property name="selectionMode" type="int" value="0"/>
             <Property name="name" type="java.lang.String" value="InstalledJList" noResource="true"/>
           </Properties>
           <AuxValues>
@@ -143,7 +145,7 @@
         <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
           <Image iconType="3" name="/icons/line_end_arrow_FILL0_wght400_GRAD0_opsz48.png"/>
         </Property>
-        <Property name="toolTipText" type="java.lang.String" value="Install"/>
+        <Property name="toolTipText" type="java.lang.String" value="Install/Update"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JButton" name="btRemove">
@@ -175,7 +177,7 @@
         <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
           <Image iconType="3" name="/icons/download_FILL0_wght400_GRAD0_opsz48.png"/>
         </Property>
-        <Property name="toolTipText" type="java.lang.String" value="Download..."/>
+        <Property name="toolTipText" type="java.lang.String" value="Download OXP..."/>
       </Properties>
     </Component>
     <Component class="javax.swing.JButton" name="btDelete">

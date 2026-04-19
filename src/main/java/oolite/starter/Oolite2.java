@@ -5,6 +5,7 @@ package oolite.starter;
 
 import java.beans.PropertyChangeListener;
 import java.io.File;
+import java.io.IOException;
 import java.lang.module.ModuleDescriptor;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -19,6 +20,7 @@ import oolite.starter.model.Command;
 import oolite.starter.model.Expansion;
 import oolite.starter.model.ExpansionReference;
 import oolite.starter.model.Installation;
+import oolite.starter.util.Util;
 import org.apache.commons.io.monitor.FileAlterationMonitor;
 import org.apache.commons.io.monitor.FileAlterationObserver;
 import org.apache.logging.log4j.LogManager;
@@ -574,6 +576,181 @@ public class Oolite2 {
      */
     public List<Expansion> getExpansions() {
         return new ArrayList<>(expansions);
+    }
+    
+    /**
+     * Parses Oolite's -help output for the version string.
+     * 
+     * @param helpMenu
+     * @return the version string
+     */
+    protected static String getVersionFromHelpMenu(String helpMenu) {
+        log.debug("getVersionFromHelpMenu({})", helpMenu);
+        if (helpMenu == null) {
+            throw new IllegalArgumentException("helpMenu must not be null");
+        }
+        
+        for (String line: helpMenu.split("\r?\n")) {
+            if (line.startsWith("Version ")) {
+                log.trace("found line {}", line);
+                String version = line.split("\\s")[1];
+                return version;
+            }
+        }
+        // still here? then we did not find the version line
+        return null;
+    }
+    
+    /**
+     * Parses Oolite's -help output for debug support.
+     * 
+     * @param helpMenu
+     * @return the debug support setting ("yes" or "no" or null)
+     */
+    protected static String getDebugSupportFromHelpMenu(String helpMenu) {
+        log.debug("getDebugSupportFromHelpMenu({})", helpMenu);
+        if (helpMenu == null) {
+            throw new IllegalArgumentException("helpMenu must not be null");
+        }
+        
+        for (String line: helpMenu.split("\r?\n")) {
+            if (line.startsWith("Debug functionality enabled (Test Release): ")) {
+                log.trace("found line {}", line);
+                String version = line.split(":\\s*")[1];
+                return version;
+            }
+        }
+        // still here? then we did not find the debug support line
+        return null;
+    }
+    
+    /**
+     * Checks the FlatPak Oolite version by reading the internal manifest.plist.
+     * @return 
+     */
+    protected static String getFlatPakVersion() throws IOException {
+//        String manifest = Util.execReadToString(new String[]{"flatpak", "run", "--command=cat", "space.oolite.Oolite", "/app/bin/Resources/manifest.plist"});
+//        String version = Oolite.getVersionFromManifestInputStream(new ByteArrayInputStream(manifest.getBytes()), "flatpak's manifest");
+//        return version;
+
+        String helpMenu = Util.execReadToString(new String[]{"flatpak", "run", "space.oolite.Oolite", "--help"});
+        String version = getVersionFromHelpMenu(helpMenu);
+        return version;
+    }
+    
+    /**
+     * Checks the FlatPak Oolite version by reading the internal manifest.plist.
+     * @return 
+     */
+    protected static String getFlatPakDebugSupport() throws IOException {
+        String helpMenu = Util.execReadToString(new String[]{"flatpak", "run", "space.oolite.Oolite", "--nosplash", "--help"});
+        String debugSupport = getDebugSupportFromHelpMenu(helpMenu);
+        return debugSupport;
+    }
+    
+    protected static String getAppImageVersion(File appimage) throws IOException {
+//        File tempdir = File.createTempFile("OoliteStarter-appimage", ".tmp");
+//        try {
+//            tempdir.delete();
+//            tempdir.mkdirs();
+//            Util.execReadToString(new String[]{appimage.getAbsolutePath(), "--appimage-extract"}, null, tempdir);
+//            File manifest = new File(tempdir, "squashfs-root/usr/bin/Resources/manifest.plist");
+//            return Oolite.getVersionFromManifest(manifest);
+//        } finally {
+//            FileUtils.deleteQuietly(tempdir);
+//        }
+
+        String helpMenu = Util.execReadToString(new String[]{appimage.getAbsolutePath(), "--nosplash", "--help"});
+        String version = getVersionFromHelpMenu(helpMenu);
+        return version;
+    }
+    
+    protected static String getAppImageDebugSupport(File appimage) throws IOException {
+//        File tempdir = File.createTempFile("OoliteStarter-appimage", ".tmp");
+//        try {
+//            tempdir.delete();
+//            tempdir.mkdirs();
+//            Util.execReadToString(new String[]{appimage.getAbsolutePath(), "--appimage-extract"}, null, tempdir);
+//            File manifest = new File(tempdir, "squashfs-root/usr/bin/Resources/manifest.plist");
+//            return Oolite.getDebugSupportFromManifestInputStream(new FileInputStream(manifest), "squashfs-root/usr/bin/Resources/manifest.plist");
+//        } finally {
+//            FileUtils.deleteQuietly(tempdir);
+//        }
+
+        String helpMenu = Util.execReadToString(new String[]{appimage.getAbsolutePath(), "--nosplash", "--help"});
+        String debugSupport = getDebugSupportFromHelpMenu(helpMenu);
+        return debugSupport;
+    }
+    
+    /**
+     * Returns an installation based on the given path.
+     * It detects classic, flatpak and appimage installations.
+     * 
+     * @param path the path to Oolite
+     * @return the populated installation
+     */
+    public static Installation populateInstallation(String path) {
+        if (path.startsWith("flatpak: ")) {
+            String[] components = path.split("\\s+");
+            Installation i = new Installation();
+            i.setHomeDir(System.getProperty("user.home"));
+
+            try {
+                String version = getFlatPakVersion();
+                i.setVersion(version);
+            } catch (Exception e) {
+                log.warn("Could not read version from flatpak", e);
+                i.setVersion(components[2]);
+            }
+
+            try {
+                String debugsupport = getFlatPakDebugSupport();
+                i.setDebugCapable("yes".equals(debugsupport));
+            } catch (Exception e) {
+                log.warn("Could not read debug_support_capable from appimage", e);
+            }
+            
+            i.setExecutable("flatpak run space.oolite.Oolite");
+            
+            String baseData = System.getProperty("user.home") + "/.var/app/space.oolite.Oolite";
+            i.setAddonDir(baseData + "/AddOns");
+            i.setDeactivatedAddonDir(baseData + "/.DeactivatedAddOns");
+            i.setManagedAddonDir(baseData + "/.ManagedAddOns");
+            i.setManagedDeactivatedAddonDir(baseData + "/.ManagedDeactivatedAddOns");
+            i.setSavegameDir(baseData + "/SavedGames");
+            return i;
+        } else if (path.endsWith(".AppImage")) {
+            File appimage = new File(path);
+            Installation i = new Installation();
+            i.setHomeDir(appimage.getParent());
+            
+            try {
+                String version = getAppImageVersion(appimage);
+                i.setVersion(version);
+            } catch (Exception e) {
+                log.warn("Could not read version from appimage", e);
+            }
+            
+            try {
+                String debugsupport = getAppImageDebugSupport(appimage);
+                i.setDebugCapable("yes".equals(debugsupport));
+            } catch (Exception e) {
+                log.warn("Could not read debug_support_capable from appimage", e);
+            }
+            
+            i.setExecutable(path);
+
+            String baseData = i.getHomeDir() + "/GameData";
+            i.setAddonDir(baseData + "/AddOns");
+            i.setDeactivatedAddonDir(baseData + "/.DeactivatedAddOns");
+            i.setManagedAddonDir(baseData + "/.ManagedAddOns");
+            i.setManagedDeactivatedAddonDir(baseData + "/.ManagedDeactivatedAddOns");
+            i.setSavegameDir(baseData + "/SavedGames");
+            return i;
+        } else {
+            File homeDir = new File(path);
+            return Oolite.populateFromHomeDir(homeDir);
+        }
     }
     
 }

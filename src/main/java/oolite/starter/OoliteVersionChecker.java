@@ -10,6 +10,8 @@ import java.io.InputStream;
 import java.lang.module.ModuleDescriptor;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.time.Duration;
 import java.time.Instant;
@@ -150,8 +152,8 @@ public class OoliteVersionChecker {
      * @return the URL
      * @throws MalformedURLException something went wrong
      */
-    public URL getReleasesURL() throws MalformedURLException {
-        return new URL("https://api.github.com/repos/" + owner + "/" + repo + "/releases");
+    public URL getReleasesURL() throws MalformedURLException, URISyntaxException {
+        return new URI("https://api.github.com/repos/" + owner + "/" + repo + "/releases").toURL();
     }
     
     /**
@@ -161,8 +163,8 @@ public class OoliteVersionChecker {
      * @return the URL
      * @throws MalformedURLException something went wrong
      */
-    public URL getHtmlReleaseURL(String releaseTag) throws MalformedURLException {
-        return new URL("https://github.com/" + owner + "/" + repo + "/releases/tag/" + releaseTag);
+    public URL getHtmlReleaseURL(String releaseTag) throws MalformedURLException, URISyntaxException {
+        return new URI("https://github.com/" + owner + "/" + repo + "/releases/tag/" + releaseTag).toURL();
     }
     
     /**
@@ -200,7 +202,7 @@ public class OoliteVersionChecker {
      * @param version the latest version
      * @return the html message
      */
-    public String getHtmlUserMessage(ModuleDescriptor.Version version) throws MalformedURLException {
+    public String getHtmlUserMessage(ModuleDescriptor.Version version) throws MalformedURLException, URISyntaxException {
         URL url = getHtmlReleaseURL(version.toString());
         
         StringBuilder html = new StringBuilder("<html><body>");
@@ -227,7 +229,7 @@ public class OoliteVersionChecker {
                 EventQueue.invokeLater(() -> MrGimlet.showMessage(parentComponent, message, 10000, image) );
                 return true;
             }
-        } catch (IOException e) {
+        } catch (IOException | URISyntaxException e) {
             log.info("Could not check for update", e);
         }
         return false;

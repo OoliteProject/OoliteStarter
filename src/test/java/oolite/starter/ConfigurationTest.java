@@ -6,6 +6,7 @@ package oolite.starter;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.time.Duration;
 import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
@@ -52,7 +53,7 @@ public class ConfigurationTest {
      * Test of testGetOoliteCommand method, of class Configuration.
      */
     @Test
-    public void testDefaultConfiguration() throws MalformedURLException {
+    public void testDefaultConfiguration() throws MalformedURLException, URISyntaxException {
         Configuration c = new Configuration();
         assertNull(c.getActiveInstallation());
     }
@@ -61,7 +62,7 @@ public class ConfigurationTest {
      * Test of testGetOoliteCommand2 method, of class Configuration.
      */
     @Test
-    public void testDefaultConfiguration2() throws MalformedURLException, IOException, ParserConfigurationException, SAXException, XPathExpressionException {
+    public void testDefaultConfiguration2() throws MalformedURLException, IOException, ParserConfigurationException, SAXException, XPathExpressionException, URISyntaxException {
         try {
             new Configuration(new File("src/test/resources/testConfig.properties"));
             fail("expected exception");
@@ -75,19 +76,20 @@ public class ConfigurationTest {
      * Test of testGetOoliteCommand3 method, of class Configuration.
      */
     @Test
-    public void testDefaultConfiguration3() throws MalformedURLException, IOException, ParserConfigurationException, SAXException, XPathExpressionException {
+    public void testDefaultConfiguration3() throws MalformedURLException, IOException, ParserConfigurationException, SAXException, XPathExpressionException, URISyntaxException {
         Configuration c = new Configuration(new File("src/test/resources/testConfig.xml"));
         List<File> addonDirs = c.getAddonDirs();
         assertEquals(4, addonDirs.size());
         assertEquals("/home/user/GNUstep/Applications/Oolite/DeactivatedAddOns", String.valueOf(c.getDeactivatedAddonsDir()));
         assertEquals("[https://addons.oolite.space/api/1.0/overview, http://addons.oolite.org/api/1.0/overview]", String.valueOf(c.getExpansionManagerURLs()));
         assertEquals("/home/user/GNUstep/Library/ApplicationSupport/Oolite/ManagedAddOns", String.valueOf(c.getManagedAddonsDir()));
-        assertEquals("/home/user/GNUstep/Applications/Oolite/oolite.app/oolite-wrapper", c.getOoliteCommand());
+        assertEquals(1, c.getOoliteCommand().size());
+        assertEquals("/home/user/GNUstep/Applications/Oolite/oolite.app/oolite-wrapper", c.getOoliteCommand().get(0));
         assertEquals("/home/user/oolite-saves", String.valueOf(c.getSaveGameDir()));
     }
 
     @Test
-    public void testActivateInstallation_String() throws MalformedURLException {
+    public void testActivateInstallation_String() throws MalformedURLException, URISyntaxException {
         log.info("testActivateInstallation_String");
         Configuration c = new Configuration();
         try {
@@ -100,7 +102,7 @@ public class ConfigurationTest {
     }
 
     @Test
-    public void testActivateInstallation_Installation() throws MalformedURLException {
+    public void testActivateInstallation_Installation() throws MalformedURLException, URISyntaxException {
         log.info("testActivateInstallation_Installation");
         Configuration c = new Configuration();
         Installation i = new Installation();
@@ -113,7 +115,7 @@ public class ConfigurationTest {
     }
     
     @Test
-    public void testGetUpdateCheckInterval() throws IOException, ParserConfigurationException, SAXException, XPathExpressionException {
+    public void testGetUpdateCheckInterval() throws IOException, ParserConfigurationException, SAXException, XPathExpressionException, URISyntaxException {
         log.info("testGetUpdateCheckInterval");
         
         Configuration c = new Configuration(new File("src/test/resources/testConfig.xml"));

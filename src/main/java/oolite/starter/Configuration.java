@@ -9,6 +9,8 @@ import java.beans.PropertyChangeSupport;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.time.Duration;
 import java.time.Instant;
@@ -71,9 +73,9 @@ public class Configuration {
      * Creates a new Configuration instance.
      * Finds the platform specific configuration file to initialize.
      */
-    public Configuration() throws MalformedURLException {
+    public Configuration() throws MalformedURLException, URISyntaxException {
         expansionManagerURLs = new ArrayList<>();
-        expansionManagerURLs.add(new URL(DEFAULT_URL));
+        expansionManagerURLs.add(new URI(DEFAULT_URL).toURL());
         
         installations = new ArrayList<>();
         updateCheckInterval = Duration.ofDays(7);
@@ -85,7 +87,7 @@ public class Configuration {
      * 
      * @param the configuration file to load
      */
-    public Configuration(File f) throws IOException, ParserConfigurationException, SAXException, XPathExpressionException {
+    public Configuration(File f) throws IOException, ParserConfigurationException, SAXException, XPathExpressionException, URISyntaxException {
         this();
         
         this.loadConfiguration(f);
@@ -112,7 +114,7 @@ public class Configuration {
      * 
      * @param f the file to load
      */
-    public final void loadConfiguration(File f) throws ParserConfigurationException, SAXException, IOException, XPathExpressionException {
+    public final void loadConfiguration(File f) throws ParserConfigurationException, SAXException, IOException, XPathExpressionException, URISyntaxException {
         DocumentBuilder db = DocumentBuilderFactory.newDefaultInstance().newDocumentBuilder();
         Document doc = db.parse(f);
         XPath xpath = XPathFactory.newDefaultInstance().newXPath();
@@ -124,7 +126,7 @@ public class Configuration {
         ArrayList<URL> urls = new ArrayList<>();
         for (int i = 0; i< nl.getLength(); i++) {
             Element eExpansionManagerUrl = (Element)nl.item(i);
-            urls.add(new URL(eExpansionManagerUrl.getTextContent()));
+            urls.add(new URI(eExpansionManagerUrl.getTextContent()).toURL());
         }
         expansionManagerURLs = urls;
         
@@ -147,7 +149,7 @@ public class Configuration {
             Installation inst = new Installation();
             inst.setHomeDir(xpath.evaluate("HomeDir", eInstallation));
             inst.setVersion(xpath.evaluate("Version", eInstallation));
-            inst.setExcecutable(xpath.evaluate("Executable", eInstallation));
+            inst.setExecutable(xpath.evaluate("Executable", eInstallation));
             inst.setSavegameDir(xpath.evaluate("SaveGameDir", eInstallation));
             inst.setAddonDir(xpath.evaluate("AddonDir", eInstallation));
             inst.setDeactivatedAddonDir(xpath.evaluate("DeactivatedAddonDir", eInstallation));
@@ -235,7 +237,7 @@ public class Configuration {
             eInstallation.appendChild(e);
 
             e = doc.createElement("Executable");
-            e.setTextContent(installation.getExcecutable());
+            e.setTextContent(installation.getExecutable());
             eInstallation.appendChild(e);
             
             e = doc.createElement("SaveGameDir");
@@ -388,16 +390,42 @@ public class Configuration {
         return new File(activeInstallation.getSavegameDir());
     }
     
+//    /**
+//     * Returns the command to execute for running Oolite.
+//     * 
+//     * @return the command
+//     */
+//    public String getOoliteCommand() {
+//        if (activeInstallation == null) {
+//            throw new IllegalStateException(CONF_NO_ACTIVE_INSTALLATION);
+//        }
+//        return activeInstallation.getExecutable();
+//    }
+    
     /**
      * Returns the command to execute for running Oolite.
      * 
      * @return the command
      */
-    public String getOoliteCommand() {
+    public List<String> getOoliteCommand() {
+        log.debug("getOoliteCommand()");
+        
         if (activeInstallation == null) {
             throw new IllegalStateException(CONF_NO_ACTIVE_INSTALLATION);
         }
-        return activeInstallation.getExcecutable();
+        
+        String exe = activeInstallation.getExecutable();
+        List<String> result = new ArrayList<>();
+        if (exe.startsWith("flatpak ")) {
+            String[] parts = exe.split("\\s+");
+            for (String part: parts) {
+                result.add(part);
+            }
+        } else {
+            result.add(exe);
+        }
+
+        return result;
     }
     
     /**

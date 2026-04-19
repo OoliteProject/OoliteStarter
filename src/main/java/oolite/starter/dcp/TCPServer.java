@@ -34,6 +34,8 @@ public class TCPServer extends AbstractConnector {
     private Connector.Status connectionStatus = Connector.Status.passive;
     private Thread connectionBuilder;
     
+    private int connectionCount;
+    
     /**
      * Creates a new TCPServer.
      */
@@ -112,6 +114,7 @@ public class TCPServer extends AbstractConnector {
 
             @Override
             public void sessionCreated(IoSession session) throws Exception {
+                connectionCount++;
                 if (hasSession()) {
                     connectionStatus = Status.connected;
                 } else {
@@ -237,6 +240,7 @@ public class TCPServer extends AbstractConnector {
         }
         acceptor.setCloseOnDeactivation(true);
         acceptor.unbind();
+        log.info("{} stopped listening on {}. We had {} connections.", TCPServer.class.getName(), PORT, connectionCount);
     }
 
     /**

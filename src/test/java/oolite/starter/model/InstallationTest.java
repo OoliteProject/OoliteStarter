@@ -39,17 +39,17 @@ public class InstallationTest {
     }
 
     /**
-     * Test of getExcecutable method, of class Installation.
+     * Test of getExecutable method, of class Installation.
      */
     @Test
-    public void testSetGetExcecutable() {
-        log.info("getExcecutable");
+    public void testSetGetExecutable() {
+        log.info("getExecutable");
         
         Installation instance = new Installation();
-        assertNull(instance.getExcecutable());
+        assertNull(instance.getExecutable());
 
-        instance.setExcecutable("myexec");
-        assertEquals("myexec", instance.getExcecutable());
+        instance.setExecutable("myexec");
+        assertEquals("myexec", instance.getExecutable());
     }
 
     /**
@@ -156,7 +156,7 @@ public class InstallationTest {
     public void testToString() {
         log.info("toString");
         Installation instance = new Installation();
-        assertEquals("Installation{excecutable=null, version=null, homeDir=null, savegameDir=null, addonDirs=null, deactivatedAddonDir=null, managedAddonDir=null, managedDeactivatedAddonDir=null, debugCapable=false, mqtt=null}", instance.toString());
+        assertEquals("Installation{executable=null, version=null, homeDir=null, savegameDir=null, addonDirs=null, deactivatedAddonDir=null, managedAddonDir=null, managedDeactivatedAddonDir=null, debugCapable=false, mqtt=null}", instance.toString());
     }
 
 }

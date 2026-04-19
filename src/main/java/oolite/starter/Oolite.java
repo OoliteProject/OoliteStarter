@@ -86,6 +86,7 @@ public class Oolite implements PropertyChangeListener {
     private static final String OOLITE_CONFIGURATION_MUST_NOT_BE_NULL = "configuration must not be null";
     private static final String OOLITE_DOWNLOAD_URL = "downloadUrl";
     private static final String OOLITE_STARTER_EXPANSION_FQN = "org.oolite.hiran.OoliteStarter.oxp";
+    private static final String OOLITE_STARTER_EXPANSION_FQN_PATTERN = ".*org\\.oolite\\.\\S+\\.OoliteStarter\\.oxp";
     private static final String OOLITE_EXPANSIONS_MUST_NOT_BE_NULL = "expansions must not be null";
     private static final String OOLITE_EXPANSION_MUST_NOT_BE_NULL = "expansion must not be null";
     private static final String OOLITE_IDENTIFIER = "identifier";
@@ -157,29 +158,33 @@ public class Oolite implements PropertyChangeListener {
     boolean versionMatches(ModuleDescriptor.Version minVersion, String current, ModuleDescriptor.Version maxVersion) {
         log.debug("versionMatches({}, {}, {})", minVersion, current, maxVersion);
         
-        ModuleDescriptor.Version expVersion = parseVersion(current);
-        boolean minOk = false;
-        boolean maxOk = false;
+        try {
+            ModuleDescriptor.Version expVersion = parseVersion(current);
+            boolean minOk = false;
+            boolean maxOk = false;
 
-        log.trace("expVersion {}", expVersion);
-        if (minVersion == null) {
-            // we have not even a minimum version? Then all versions match
-            minOk = true;
-        } else if (minVersion.compareTo(expVersion) <= 0 || "0".equals(minVersion.toString())) {
-            log.trace("minVersion matched");
-            minOk = true;
+            log.trace("expVersion {}", expVersion);
+            if (minVersion == null) {
+                // we have not even a minimum version? Then all versions match
+                minOk = true;
+            } else if (minVersion.compareTo(expVersion) <= 0 || "0".equals(minVersion.toString())) {
+                log.trace("minVersion matched");
+                minOk = true;
+            }
+
+            // we have a minVersion that matches. What about the maxversion?
+            if (maxVersion == null) {
+                maxOk = true;
+            } else if (expVersion.compareTo(maxVersion) <= 0) {
+                log.trace("maxVersion matched");
+                maxOk = true;
+            }
+
+            // only if both min and max match this one counts
+            return minOk && maxOk;
+        } catch (Exception e) {
+            throw new IllegalStateException(String.format("Could not compare versions min=%s, current=%s, max=%s", minVersion, current, maxVersion), e);
         }
-
-        // we have a minVersion that matches. What about the maxversion?
-        if (maxVersion == null) {
-            maxOk = true;
-        } else if (expVersion.compareTo(maxVersion) <= 0) {
-            log.trace("maxVersion matched");
-            maxOk = true;
-        }
-
-        // only if both min and max match this one counts
-        return minOk && maxOk;
     }
     
     /**
@@ -193,7 +198,6 @@ public class Oolite implements PropertyChangeListener {
      */
     List<Expansion> getExpansionByReference(Expansion.Dependency reference, List<Expansion> expansions, boolean checkEnabled) {
         log.debug("getExpansionByReference({}, {}, {})", reference, expansions, checkEnabled);
-        
         if (reference == null) {
             throw new IllegalArgumentException("reference must not be null");
         }
@@ -203,34 +207,38 @@ public class Oolite implements PropertyChangeListener {
         if (reference.getIdentifier() == null) {
             throw new IllegalArgumentException("reference must have a non-null identifier");
         }
-        
-        List<Expansion> result = new ArrayList<>();
-        
-        ModuleDescriptor.Version minVersion = parseVersion(reference.getVersion());
-        ModuleDescriptor.Version maxVersion = parseVersion(reference.getMaximumVersion());
-        
-        log.trace("minVersion {}", minVersion);
-        log.trace("maxVersion {}", maxVersion);
-        
-        for (Expansion expansion: expansions) {
-            log.trace("checking expansion {}", expansion);
-            
-            if (checkEnabled && !expansion.isEnabled()) {
-                // we need to check that the expansion is enabled.
-                // this one is not - so continue
-                continue;
-            }
-            
-            if (reference.getIdentifier().equals(expansion.getIdentifier())) {
-                log.trace("identifier matched");
 
-                if (versionMatches(minVersion, expansion.getVersion(), maxVersion)) {
-                    result.add(expansion);
+        try {
+            List<Expansion> result = new ArrayList<>();
+
+            ModuleDescriptor.Version minVersion = parseVersion(reference.getVersion());
+            ModuleDescriptor.Version maxVersion = parseVersion(reference.getMaximumVersion());
+
+            log.trace("minVersion {}", minVersion);
+            log.trace("maxVersion {}", maxVersion);
+
+            for (Expansion expansion: expansions) {
+                log.trace("checking expansion {}", expansion);
+
+                if (checkEnabled && !expansion.isEnabled()) {
+                    // we need to check that the expansion is enabled.
+                    // this one is not - so continue
+                    continue;
+                }
+
+                if (reference.getIdentifier().equals(expansion.getIdentifier())) {
+                    log.trace("identifier matched");
+
+                    if (versionMatches(minVersion, expansion.getVersion(), maxVersion)) {
+                        result.add(expansion);
+                    }
                 }
             }
+
+            return result;
+        } catch (Exception e) {
+            throw new IllegalStateException(String.format("Could not match reference %s", reference), e);
         }
-        
-        return result;
     }
     
     /**
@@ -536,7 +544,7 @@ public class Oolite implements PropertyChangeListener {
                 String token = st.nextToken();
                 if (token.equals(debugAddOn)) {
                     // do nothing for Oolite's debug OXP
-                } else if (token.equals(myAddOn) || token.endsWith(OOLITE_STARTER_EXPANSION_FQN)) {
+                } else if (token.equals(myAddOn) || token.matches(OOLITE_STARTER_EXPANSION_FQN_PATTERN)) {
                     // do nothing for OoliteStarter's companion
                 } else if (token.startsWith(managedAddOnDir)) {
                     // get the last path component
@@ -645,15 +653,15 @@ public class Oolite implements PropertyChangeListener {
     public void run() throws IOException, InterruptedException, ProcessRunException {
         log.debug("run()");
 
-        String executable = configuration.getOoliteCommand();
-        if (executable == null) {
+        List<String> baseCommand = configuration.getOoliteCommand();
+        if (baseCommand == null) {
             throw new IllegalStateException("active installation has no executable");
         }
 
         List<String> command = new ArrayList<>();
-        command.add(executable);
+        command.addAll(baseCommand);
         command.add("-nosplash");
-        File dir = new File(executable).getParentFile();
+        File dir = new File(configuration.getActiveInstallation().getHomeDir());
         
         run(command, dir);
     }
@@ -669,11 +677,11 @@ public class Oolite implements PropertyChangeListener {
         log.debug("run({})", savegame);
 
         List<String> command = new ArrayList<>();
-        command.add(configuration.getOoliteCommand());
+        command.addAll(configuration.getOoliteCommand());
+        command.add("-nosplash");
         command.add("-load");
         command.add(savegame.getFile().getAbsolutePath());
-        command.add("-nosplash");
-        File dir = new File(configuration.getOoliteCommand()).getParentFile();
+        File dir = new File(configuration.getActiveInstallation().getHomeDir());
 
         run(command, dir);
     }
@@ -1193,6 +1201,7 @@ public class Oolite implements PropertyChangeListener {
         List<Expansion> localList = null;
         try {
             localList = getLocalExpansions();
+            log.info("Loaded {} local expansions", localList.size());
         } catch (Exception e) {
             log.error("Could not load local expansions", e);
             localList = new ArrayList<>();
@@ -1200,6 +1209,7 @@ public class Oolite implements PropertyChangeListener {
         List<Expansion> remoteList = null;
         try {
             remoteList = getOnlineExpansions();
+            log.info("Loaded {} remote expansions", remoteList.size());
         } catch (Exception e) {
             log.error("Could not load remote expansions", e);
             remoteList = new ArrayList<>();
@@ -1925,13 +1935,13 @@ public class Oolite implements PropertyChangeListener {
                 .filter(Expansion::isEnabled)
                 .forEach(expansion -> {
 
-            List<Expansion> ds = getExpansionByReference(new Expansion.Dependency(expansion.getIdentifier()), expansions, false);
-            // filter out those that are incompatible
-            ds = ds.stream()
-                    .filter(exp -> !exp.getEMStatus().isIncompatible())
-                    .collect(Collectors.toList());
-            
             try {
+                List<Expansion> ds = getExpansionByReference(new Expansion.Dependency(expansion.getIdentifier()), expansions, false);
+                // filter out those that are incompatible
+                ds = ds.stream()
+                        .filter(exp -> !exp.getEMStatus().isIncompatible())
+                        .collect(Collectors.toList());
+
                 if (ds.size() > 1) {
                     // sort backwards (latest is first)
                     Collections.sort(ds, (t, t1) -> {
@@ -1947,7 +1957,7 @@ public class Oolite implements PropertyChangeListener {
                     ds.get(0).getEMStatus().setUpdate(true);
                 }
             } catch (Exception ex) {
-                log.warn("Could not check updates for {}", expansion.getIdentifier(), ex);
+                log.warn("Could not check updates for {} ({})", expansion.getIdentifier(), expansion.getLocalFile(), ex);
             }
 
         });
@@ -2252,20 +2262,64 @@ public class Oolite implements PropertyChangeListener {
         log.debug("getVersionFromManifest({})", f);
         
         try (InputStream in = new FileInputStream(f)) {
-            PlistParser.DictionaryContext dc = PlistUtil.parsePListDict(in, f.getAbsolutePath());
-
-            for (PlistParser.KeyvaluepairContext kvc: dc.keyvaluepair()) {
-                String key = kvc.STRING().getText();
-                String value = kvc.value().getText();
-                
-                log.trace("looking at key {} value {}", key, value);
-                if (OOLITE_VERSION.equals(key)) {
-                    return value;
-                }
-            }
-
-            return null;
+            return getVersionFromManifestInputStream(in, f.getAbsolutePath());
         }
+    }
+
+    /**
+     * Extracts the Oolite version from the given inputstream 
+     * (expects manifest.plist format).
+     * 
+     * @param in the plist stream to read
+     * @param sourceName the path of the sourcefile, to put in error messages
+     * @return the version number found
+     * @throws ParserConfigurationException something went wrong
+     * @throws SAXException something went wrong
+     * @throws IOException something went wrong
+     * @throws XPathExpressionException something went wrong
+     */
+    public static String getVersionFromManifestInputStream(InputStream in, String sourceName) throws IOException {
+        PlistParser.DictionaryContext dc = PlistUtil.parsePListDict(in, sourceName);
+
+        for (PlistParser.KeyvaluepairContext kvc: dc.keyvaluepair()) {
+            String key = kvc.STRING().getText();
+            String value = kvc.value().getText();
+
+            log.trace("looking at key {} value {}", key, value);
+            if (OOLITE_VERSION.equals(key)) {
+                return value;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Extracts the Oolite debug_functionality_support flag from the given inputstream 
+     * (expects manifest.plist format).
+     * 
+     * @param in the plist stream to read
+     * @param sourceName the path of the sourcefile, to put in error messages
+     * @return the version number found
+     * @throws ParserConfigurationException something went wrong
+     * @throws SAXException something went wrong
+     * @throws IOException something went wrong
+     * @throws XPathExpressionException something went wrong
+     */
+    public static String getDebugSupportFromManifestInputStream(InputStream in, String sourceName) throws IOException {
+        PlistParser.DictionaryContext dc = PlistUtil.parsePListDict(in, sourceName);
+
+        for (PlistParser.KeyvaluepairContext kvc: dc.keyvaluepair()) {
+            String key = kvc.STRING().getText();
+            String value = kvc.value().getText();
+
+            log.trace("looking at key {} value {}", key, value);
+            if ("debug_functionality_support".equals(key)) {
+                return value;
+            }
+        }
+
+        return null;
     }
     
     /**
@@ -2459,7 +2513,7 @@ public class Oolite implements PropertyChangeListener {
         }
         log.info("executable");
         try {
-            i.setExcecutable(Oolite.getExecutable(homeDir).getCanonicalPath());
+            i.setExecutable(Oolite.getExecutable(homeDir).getCanonicalPath());
         } catch (IOException e) {
             log.warn("Cannot get executable for {}", homeDir, e);
         }

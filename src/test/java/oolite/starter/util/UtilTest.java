@@ -60,7 +60,7 @@ public class UtilTest {
         String execCommand = "";
         String expResult = "";
         try {
-            Util.execReadToString(execCommand);
+            Util.execReadToString(new String[]{execCommand});
             fail("expected exception");
         } catch (IllegalArgumentException e) {
             assertEquals("execCommand must contain something", e.getMessage());

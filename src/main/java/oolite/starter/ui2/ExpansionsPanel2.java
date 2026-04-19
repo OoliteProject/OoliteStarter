@@ -184,7 +184,7 @@ public class ExpansionsPanel2 extends javax.swing.JPanel implements Oolite2.Ooli
 
                 String input = JOptionPane.showInputDialog(
                         ExpansionsPanel2.this, 
-                        "Please enter download URL.\nYou can find download URLs at https://wiki.alioth.net/index.php/Guide_to_Unlisted_OXPs",
+                        "Please enter a URL pointing to an OXP zip file.\nYou can find download URLs at https://wiki.alioth.net/index.php/Guide_to_Unlisted_OXPs",
                         "Download OXP...",
                         JOptionPane.QUESTION_MESSAGE
                 );
@@ -414,17 +414,19 @@ public class ExpansionsPanel2 extends javax.swing.JPanel implements Oolite2.Ooli
 
         spAvailable.setPreferredSize(new java.awt.Dimension(250, 130));
 
+        jlAvailable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jlAvailable.setName("AvailableJList"); // NOI18N
         spAvailable.setViewportView(jlAvailable);
 
         spInstalled.setPreferredSize(new java.awt.Dimension(250, 130));
 
+        jlInstalled.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jlInstalled.setName("InstalledJList"); // NOI18N
         spInstalled.setViewportView(jlInstalled);
 
         btInstall.setAction(installAction);
         btInstall.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/line_end_arrow_FILL0_wght400_GRAD0_opsz48.png"))); // NOI18N
-        btInstall.setToolTipText("Install");
+        btInstall.setToolTipText("Install/Update");
 
         btRemove.setAction(removeAction);
         btRemove.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/line_start_arrow_FILL0_wght400_GRAD0_opsz48.png"))); // NOI18N
@@ -436,7 +438,7 @@ public class ExpansionsPanel2 extends javax.swing.JPanel implements Oolite2.Ooli
 
         btDownload.setAction(downloadAction);
         btDownload.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/download_FILL0_wght400_GRAD0_opsz48.png"))); // NOI18N
-        btDownload.setToolTipText("Download...");
+        btDownload.setToolTipText("Download OXP...");
 
         btDelete.setAction(deleteAction);
         btDelete.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/delete_forever_FILL0_wght400_GRAD0_opsz48.png"))); // NOI18N

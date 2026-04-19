@@ -6,6 +6,7 @@ package oolite.starter.model;
 import java.awt.Image;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import javax.imageio.ImageIO;
 import javax.xml.xpath.XPath;
@@ -120,7 +121,7 @@ public class OoliteFlavor {
      * @param element the element to read
      * @return the read flavor
      */
-    public static OoliteFlavor buildFrom(URL baseUrl, Element element) throws XPathExpressionException, MalformedURLException {
+    public static OoliteFlavor buildFrom(URL baseUrl, Element element) throws XPathExpressionException, MalformedURLException, URISyntaxException {
         log.debug("buildFrom({})", element);
         XPath xpath = XPathFactory.newInstance().newXPath();
         String name = xpath.evaluate("name", element);
@@ -128,6 +129,8 @@ public class OoliteFlavor {
         String imgUrl = xpath.evaluate("icon", element);
         String esUrl = xpath.evaluate("expansion-set", element);
         
-        return new OoliteFlavor(name, description, new URL(baseUrl, imgUrl), new URL(baseUrl, esUrl));
+        URL isu = baseUrl.toURI().resolve(imgUrl).toURL();
+        URL esu = baseUrl.toURI().resolve(esUrl).toURL();
+        return new OoliteFlavor(name, description, isu, esu);
     }
 }
