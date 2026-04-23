@@ -65,6 +65,8 @@ this.startUpComplete = function()
 
 this.alertConditionChanged = function(newCondition, oldCondition)
 {
+    if (!debugConsole)
+        return;
     if (this.pushdata!=true)
         return;
 
@@ -77,6 +79,8 @@ this.alertConditionChanged = function(newCondition, oldCondition)
 
 this.commsMessageReceived = function(message, sender)
 {
+    if (!debugConsole)
+        return;
     if (this.pushdata!=true)
         return;
 
@@ -100,7 +104,9 @@ this.playerWillSaveGame = function(reason)
 
 this.shipWillDockWithStation = function(station)
 {
-   log(this.name, "shipWillDockWithStation(" + station + ")");
+    if (!debugConsole)
+        return;
+    log(this.name, "shipWillDockWithStation(" + station + ")");
 
     var msg = {
         'msgType': "shipWillDockWithStation",
@@ -113,7 +119,9 @@ this.shipWillDockWithStation = function(station)
 
 this.shipDockedWithStation = function(station)
 {
-   log(this.name, "shipWillDockWithStation(" + station + ")");
+    if (!debugConsole)
+        return;
+    log(this.name, "shipWillDockWithStation(" + station + ")");
 
     var msg = {
         'msgType': "shipDockedWithStation",
@@ -126,7 +134,9 @@ this.shipDockedWithStation = function(station)
 
 this.shipWillLaunchFromStation = function(station)
 {
-   log(this.name, "shipWillLaunchFromStation(" + station + ")");
+    if (!debugConsole)
+        return;
+    log(this.name, "shipWillLaunchFromStation(" + station + ")");
 
     var msg = {
         'msgType': "shipWillLaunchFromStation",
@@ -139,7 +149,9 @@ this.shipWillLaunchFromStation = function(station)
 
 this.shipLaunchedFromStation = function(station)
 {
-   log(this.name, "shipLaunchedFromStation(" + station + ")");
+    if (!debugConsole)
+        return;
+    log(this.name, "shipLaunchedFromStation(" + station + ")");
 
     var msg = {
         'msgType': "shipLaunchedFromStation",
@@ -153,7 +165,9 @@ this.shipLaunchedFromStation = function(station)
 
 this.stationWithdrewDockingClearance = function(station)
 {
-   log(this.name, "stationWithdrewDockingClearance()");
+    if (!debugConsole)
+        return;
+    log(this.name, "stationWithdrewDockingClearance()");
 
     var msg = {
         'msgType': "stationWithdrewDockingClearance",
@@ -166,7 +180,9 @@ this.stationWithdrewDockingClearance = function(station)
 
 this.playerWillEnterWitchspace = function()
 {
-   log(this.name, "playerWillEnterWitchspace()");
+    if (!debugConsole)
+        return;
+    log(this.name, "playerWillEnterWitchspace()");
 
     var msg = {
         'msgType': "playerWillEnterWitchspace",
@@ -179,7 +195,9 @@ this.playerWillEnterWitchspace = function()
 
 this.shipExitedWormhole = function()
 {
-   log(this.name, "shipExitedWormhole()");
+    if (!debugConsole)
+        return;
+    log(this.name, "shipExitedWormhole()");
 
     var msg = {
         'msgType': "shipExitedWormhole",
@@ -205,7 +223,9 @@ this.shipWitchspaceBlocked = function()
 
 this.wormholeSuggested = function(wormhole)
 {
-   log(this.name, "wormholeSuggested(" + wormhole + ")");
+    if (!debugConsole)
+        return;
+    log(this.name, "wormholeSuggested(" + wormhole + ")");
 
     var msg = {
         'msgType': "wormholeSuggested",
@@ -219,7 +239,9 @@ this.wormholeSuggested = function(wormhole)
 
 this.shipEnteredStationAegis = function(station)
 {
-   log(this.name, "shipEnteredStationAegis(" + station + ")");
+    if (!debugConsole)
+        return;
+    log(this.name, "shipEnteredStationAegis(" + station + ")");
 
     var msg = {
         'msgType': "shipEnteredStationAegis",
@@ -233,7 +255,9 @@ this.shipEnteredStationAegis = function(station)
 
 this.shipExitedStationAegis = function(station)
 {
-   log(this.name, "shipExitedStationAegis(" + station + ")");
+    if (!debugConsole)
+        return;
+    log(this.name, "shipExitedStationAegis(" + station + ")");
 
     var msg = {
         'msgType': "shipExitedStationAegis",
@@ -247,7 +271,9 @@ this.shipExitedStationAegis = function(station)
 
 this.shipEnteredPlanetaryVicinity = function(planet)
 {
-   log(this.name, "shipEnteredPlanetaryVicinity(" + planet + ")");
+    if (!debugConsole)
+        return;
+    log(this.name, "shipEnteredPlanetaryVicinity(" + planet + ")");
 
     var msg = {
         'msgType': "shipEnteredPlanetaryVicinity",
@@ -261,7 +287,9 @@ this.shipEnteredPlanetaryVicinity = function(planet)
 
 this.shipExitedPlanetaryVicinity = function(planet)
 {
-   log(this.name, "shipExitedPlanetaryVicinity(" + planet + ")");
+    if (!debugConsole)
+        return;
+    log(this.name, "shipExitedPlanetaryVicinity(" + planet + ")");
 
     var msg = {
         'msgType': "shipExitedPlanetaryVicinity",
@@ -275,7 +303,9 @@ this.shipExitedPlanetaryVicinity = function(planet)
 
 this.shipApproachingPlanetSurface = function(planet)
 {
-   log(this.name, "shipApproachingPlanetSurface(" + planet + ")");
+    if (!debugConsole)
+        return;
+    log(this.name, "shipApproachingPlanetSurface(" + planet + ")");
 
     var msg = {
         'msgType': "shipApproachingPlanetSurface",
@@ -289,7 +319,9 @@ this.shipApproachingPlanetSurface = function(planet)
 
 this.shipLeavingPlanetSurface = function(planet)
 {
-   log(this.name, "shipLeavingPlanetSurface(" + planet + ")");
+    if (!debugConsole)
+        return;
+    log(this.name, "shipLeavingPlanetSurface(" + planet + ")");
 
     var msg = {
         'msgType': "shipLeavingPlanetSurface",
@@ -303,7 +335,9 @@ this.shipLeavingPlanetSurface = function(planet)
 
 this.cascadeWeaponDetected = function(weapon)
 {
-   log(this.name, "cascadeWeaponDetected(" + weapon + ")");
+    if (!debugConsole)
+        return;
+    log(this.name, "cascadeWeaponDetected(" + weapon + ")");
 
     var msg = {
         'msgType': "cascadeWeaponDetected",
@@ -316,7 +350,9 @@ this.cascadeWeaponDetected = function(weapon)
 
 this.defenseTargetDestroyed = function(target)
 {
-   log(this.name, "defenseTargetDestroyed(" + target + ")");
+    if (!debugConsole)
+        return;
+    log(this.name, "defenseTargetDestroyed(" + target + ")");
 
     var msg = {
         'msgType': "defenseTargetDestroyed",
@@ -329,7 +365,9 @@ this.defenseTargetDestroyed = function(target)
 
 this.escortAttack = function(target)
 {
-   log(this.name, "escortAttack(" + target + ")");
+    if (!debugConsole)
+        return;
+    log(this.name, "escortAttack(" + target + ")");
 
     var msg = {
         'msgType': "escortAttack",
@@ -342,7 +380,9 @@ this.escortAttack = function(target)
 
 this.helpRequestReceived = function(ally, enemy)
 {
-   log(this.name, "helpRequestReceived(" + ally + ", " + enemy + ")");
+    if (!debugConsole)
+        return;
+    log(this.name, "helpRequestReceived(" + ally + ", " + enemy + ")");
 
     var msg = {
         'msgType': "helpRequestReceived",
@@ -356,7 +396,9 @@ this.helpRequestReceived = function(ally, enemy)
 
 this.shipAttackedOther = function(other)
 {
-   log(this.name, "shipAttackedOther(" + other + ")");
+    if (!debugConsole)
+        return;
+    log(this.name, "shipAttackedOther(" + other + ")");
 
     var msg = {
         'msgType': "shipAttackedOther",
@@ -369,7 +411,9 @@ this.shipAttackedOther = function(other)
 
 this.shipAttackedWithMissile = function(missile, whom)
 {
-   log(this.name, "shipAttackedWithMissile(" + missile + ", " + whom + ")");
+    if (!debugConsole)
+        return;
+    log(this.name, "shipAttackedWithMissile(" + missile + ", " + whom + ")");
 
     var msg = {
         'msgType': "shipAttackedWithMissile",
@@ -383,7 +427,9 @@ this.shipAttackedWithMissile = function(missile, whom)
 
 this.shipAttackerDistracted = function(whom)
 {
-   log(this.name, "shipAttackerDistracted(" + whom + ")");
+    if (!debugConsole)
+        return;
+    log(this.name, "shipAttackerDistracted(" + whom + ")");
 
     var msg = {
         'msgType': "shipAttackerDistracted",
@@ -397,7 +443,9 @@ this.shipAttackerDistracted = function(whom)
 
 this.shipBeingAttacked = function(whom)
 {
-   log(this.name, "shipBeingAttacked(" + whom + ")");
+    if (!debugConsole)
+        return;
+    log(this.name, "shipBeingAttacked(" + whom + ")");
 
     var msg = {
         'msgType': "shipBeingAttacked",
@@ -411,12 +459,24 @@ this.shipBeingAttacked = function(whom)
 
 this.shipBeingAttackedByCloaked = function()
 {
-     // Your code here
+    if (!debugConsole)
+        return;
+    log(this.name, "shipBeingAttackedByCloaked()");
+
+    var msg = {
+        'msgType': "shipBeingAttackedByCloaked",
+    }
+        //,
+        //'sender': sender.displayName
+        //'sender': sender
+    debugConsole.consoleMessage(JSON.stringify(msg));
 }
 
 this.shipBeingAttackedUnsuccessfully = function(whom)
 {
-   log(this.name, "shipBeingAttackedUnsuccessfully(" + whom + ")");
+    if (!debugConsole)
+        return;
+    log(this.name, "shipBeingAttackedUnsuccessfully(" + whom + ")");
 
     var msg = {
         'msgType': "shipBeingAttackedUnsuccessfully",
@@ -430,17 +490,39 @@ this.shipBeingAttackedUnsuccessfully = function(whom)
 
  this.shipCloakActivated = function()
  {
-    // Your code here
+    if (!debugConsole)
+        return;
+    log(this.name, "shipCloakActivated(" + whom + ")");
+
+    var msg = {
+        'msgType': "shipCloakActivated",
+    }
+        //,
+        //'sender': sender.displayName
+        //'sender': sender
+    debugConsole.consoleMessage(JSON.stringify(msg));
  }
  
   this.shipCloakDeactivated = function()
  {
-    // Your code here
+    if (!debugConsole)
+        return;
+    log(this.name, "shipCloakDeactivated(" + whom + ")");
+
+    var msg = {
+        'msgType': "shipCloakDeactivated",
+    }
+        //,
+        //'sender': sender.displayName
+        //'sender': sender
+    debugConsole.consoleMessage(JSON.stringify(msg));
  }
  
  this.shipTargetDestroyed = function(target)
 {
-   log(this.name, "shipTargetDestroyed(" + target + ")");
+    if (!debugConsole)
+        return;
+    log(this.name, "shipTargetDestroyed(" + target + ")");
 
     var msg = {
         'msgType': "shipTargetDestroyed",
@@ -454,7 +536,19 @@ this.shipBeingAttackedUnsuccessfully = function(whom)
 
 this.shipDied = function(whom, why)
 {
-     // Your code here
+    if (!debugConsole)
+        return;
+    log(this.name, "shipDied(" + whom + + ", " + why + ")");
+
+    var msg = {
+        'msgType': "shipDied",
+        'whom': whom,
+        'why': why,
+    }
+        //,
+        //'sender': sender.displayName
+        //'sender': sender
+    debugConsole.consoleMessage(JSON.stringify(msg));
 }
 
 this.shipEnergyBecameFull = function()
@@ -469,7 +563,9 @@ this.shipEnergyIsLow = function()
 
 this.shipHitByECM = function(pulsesRemaining)
 {
-   log(this.name, "shipHitByECM(" + pulsesRemaining + ")");
+    if (!debugConsole)
+        return;
+    log(this.name, "shipHitByECM(" + pulsesRemaining + ")");
 
     var msg = {
         'msgType': "shipHitByECM",
@@ -493,7 +589,9 @@ this.shipKilledOther = function(whom,damageType)
 
 this.shipReleasedEquipment = function(mine)
 {
-   log(this.name, "shipReleasedEquipment(" + mine + ")");
+    if (!debugConsole)
+        return;
+    log(this.name, "shipReleasedEquipment(" + mine + ")");
 
     var msg = {
         'msgType': "shipReleasedEquipment",
@@ -507,7 +605,9 @@ this.shipReleasedEquipment = function(mine)
 
 this.shipTargetAcquired = function(target)
 {
-   log(this.name, "shipTargetAcquired(" + target + ")");
+    if (!debugConsole)
+        return;
+    log(this.name, "shipTargetAcquired(" + target + ")");
 
     var msg = {
         'msgType': "shipTargetAcquired",
@@ -528,7 +628,9 @@ this.shipTargetCloaked = function()
 
 this.shipTargetLost = function(target)
 {
-   log(this.name, "shipTargetLost(" + target + ")");
+    if (!debugConsole)
+        return;
+    log(this.name, "shipTargetLost(" + target + ")");
 
     var msg = {
         'msgType': "shipTargetLost",
@@ -565,7 +667,9 @@ this.distressMessageReceived = function(aggressor, sender)
 
 this.equipmentAdded = function(equipmentKey)
 {
-   log(this.name, "equipmentAdded(" + equipmentKey + ")");
+    if (!debugConsole)
+        return;
+    log(this.name, "equipmentAdded(" + equipmentKey + ")");
 
     var msg = {
         'msgType': "equipmentAdded",
@@ -579,7 +683,9 @@ this.equipmentAdded = function(equipmentKey)
 
 this.equipmentRemoved = function(equipmentKey)
 {
-   log(this.name, "equipmentRemoved(" + equipmentKey + ")");
+    if (!debugConsole)
+        return;
+    log(this.name, "equipmentRemoved(" + equipmentKey + ")");
 
     var msg = {
         'msgType': "equipmentRemoved",
@@ -598,7 +704,9 @@ this.shipAchievedDesiredRange = function()
 
 this.shipAIFrustrated = function(context)
 {
-   log(this.name, "shipAIFrustrated(" + context + ")");
+    if (!debugConsole)
+        return;
+    log(this.name, "shipAIFrustrated(" + context + ")");
 
     var msg = {
         'msgType': "shipAIFrustrated",
@@ -617,7 +725,9 @@ this.shipBountyChanged = function(delta,reason)
 
 this.shipCloseContact = function(otherShip)
 {
-   log(this.name, "shipCloseContact(" + otherShip + ")");
+    if (!debugConsole)
+        return;
+    log(this.name, "shipCloseContact(" + otherShip + ")");
 
     var msg = {
         'msgType': "shipCloseContact",
@@ -631,7 +741,9 @@ this.shipCloseContact = function(otherShip)
 
 this.shipDumpedCargo = function(cargo)
 {
-   log(this.name, "shipDumpedCargo(" + cargo + ")");
+    if (!debugConsole)
+        return;
+    log(this.name, "shipDumpedCargo(" + cargo + ")");
 
     var msg = {
         'msgType': "shipDumpedCargo",
@@ -660,7 +772,9 @@ this.shipReachedNavPoint = function()
 
 this.shipScoopedOther = function(whom)
 {
-   log(this.name, "shipScoopedOther(" + whom + ")");
+    if (!debugConsole)
+        return;
+    log(this.name, "shipScoopedOther(" + whom + ")");
 
     var msg = {
         'msgType': "shipScoopedOther",
@@ -674,7 +788,9 @@ this.shipScoopedOther = function(whom)
 
 this.shipLaunchedEscapePod = function(escapepod, passengers)
 {
-   log(this.name, "shipLaunchedEscapePod(" + escapepod + ", " + passengers + ")");
+    if (!debugConsole)
+        return;
+    log(this.name, "shipLaunchedEscapePod(" + escapepod + ", " + passengers + ")");
 
     var msg = {
         'msgType': "shipLaunchedEscapePod",
