@@ -43,7 +43,7 @@ public class InstallationsPanel extends javax.swing.JPanel {
     private static final String INSTALLATIONSPANEL_COULD_NOT_SAVE = "Could not save";
     private static final String INSTALLATIONSPANEL_COULD_NOT_ACTIVATE = "Could not select";
     
-    private static final ImageIcon icon_star = new ImageIcon(InstallationsPanel.class.getResource("/icons/star_FILL1_wght400_GRAD0_opsz24.png"));
+    private static final ImageIcon icon_star = new ImageIcon(InstallationsPanel.class.getResource("/icons/star_FILL0_wght400_GRAD0_opsz24_w.png"));
     
     private InstallationForm installationDetails;
     private InstallationTableModel model;
@@ -288,7 +288,7 @@ public class InstallationsPanel extends javax.swing.JPanel {
             }
         });
 
-        btActivate.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/star_FILL1_wght400_GRAD0_opsz24.png"))); // NOI18N
+        btActivate.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/star_FILL0_wght400_GRAD0_opsz24_w.png"))); // NOI18N
         btActivate.setText("Select");
         btActivate.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {

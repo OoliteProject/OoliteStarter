@@ -455,7 +455,7 @@ public class ExpansionsPanel2 extends javax.swing.JPanel implements Oolite2.Ooli
 
         jProgressBar1.setIndeterminate(true);
 
-        btFlterAvailable.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/filter_list_FILL0_wght400_GRAD0_opsz24.png"))); // NOI18N
+        btFlterAvailable.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/filter_list_FILL0_wght400_GRAD0_opsz24_w.png"))); // NOI18N
         btFlterAvailable.setToolTipText("Sort & Filter...");
         btFlterAvailable.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -463,7 +463,7 @@ public class ExpansionsPanel2 extends javax.swing.JPanel implements Oolite2.Ooli
             }
         });
 
-        btFilterInstalled.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/filter_list_FILL0_wght400_GRAD0_opsz24.png"))); // NOI18N
+        btFilterInstalled.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/filter_list_FILL0_wght400_GRAD0_opsz24_w.png"))); // NOI18N
         btFilterInstalled.setToolTipText("Sort & Filter...");
         btFilterInstalled.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
