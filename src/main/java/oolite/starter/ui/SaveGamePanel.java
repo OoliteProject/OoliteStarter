@@ -128,7 +128,7 @@ public class SaveGamePanel extends javax.swing.JPanel implements ExpansionManage
         }
     };
     
-    private transient Action fixAction = new AbstractAction("Fix...", new ImageIcon(getClass().getResource("/icons/healing_FILL0_wght400_GRAD0_opsz24.png"))) {
+    private transient Action fixAction = new AbstractAction("Fix...", new ImageIcon(getClass().getResource("/icons/healing_FILL0_wght400_GRAD0_opsz24_w.png"))) {
         private static final Logger log = LogManager.getLogger();
 
         @Override
