@@ -678,7 +678,12 @@ public class OoliteTest {
     public void testCreateExpansionFromManifest3() throws XPathExpressionException, ParserConfigurationException, SAXException, IOException {
         log.info("testCreateExpansionFromManifest3");
         
-        DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        dbf.setValidating(false);
+        dbf.setNamespaceAware(true);
+        dbf.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+        
+        DocumentBuilder db = dbf.newDocumentBuilder();
         Document doc = null;
         try {
             doc = db.parse(new File("src/test/resources/data/manifest.xml"));
