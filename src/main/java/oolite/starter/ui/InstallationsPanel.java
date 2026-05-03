@@ -248,7 +248,7 @@ public class InstallationsPanel extends javax.swing.JPanel {
         setName("Oolite Versions"); // NOI18N
         setLayout(new java.awt.BorderLayout());
 
-        btAdd.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/note_add_24dp_FILL0_wght400_GRAD0_opsz24.png"))); // NOI18N
+        btAdd.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/note_add_24dp_FILL0_wght400_GRAD0_opsz24_w.png"))); // NOI18N
         btAdd.setText("Add...");
         btAdd.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -256,7 +256,7 @@ public class InstallationsPanel extends javax.swing.JPanel {
             }
         });
 
-        btEdit.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/edit_FILL0_wght400_GRAD0_opsz24.png"))); // NOI18N
+        btEdit.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/edit_FILL0_wght400_GRAD0_opsz24_w.png"))); // NOI18N
         btEdit.setText("Edit...");
         btEdit.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -264,7 +264,7 @@ public class InstallationsPanel extends javax.swing.JPanel {
             }
         });
 
-        btRemove.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/scan_delete_24dp_FILL0_wght400_GRAD0_opsz24.png"))); // NOI18N
+        btRemove.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/scan_delete_24dp_FILL0_wght400_GRAD0_opsz24_w.png"))); // NOI18N
         btRemove.setText("Remove");
         btRemove.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -272,7 +272,7 @@ public class InstallationsPanel extends javax.swing.JPanel {
             }
         });
 
-        btScan.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/search_FILL0_wght400_GRAD0_opsz24.png"))); // NOI18N
+        btScan.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/search_FILL0_wght400_GRAD0_opsz24_w.png"))); // NOI18N
         btScan.setText("Scan...");
         btScan.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -280,7 +280,7 @@ public class InstallationsPanel extends javax.swing.JPanel {
             }
         });
 
-        btSave.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/download_FILL0_wght400_GRAD0_opsz24.png"))); // NOI18N
+        btSave.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/download_FILL0_wght400_GRAD0_opsz24_w.png"))); // NOI18N
         btSave.setText("Save");
         btSave.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {

@@ -425,11 +425,11 @@ public class ExpansionsPanel2 extends javax.swing.JPanel implements Oolite2.Ooli
         spInstalled.setViewportView(jlInstalled);
 
         btInstall.setAction(installAction);
-        btInstall.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/line_end_arrow_FILL0_wght400_GRAD0_opsz48.png"))); // NOI18N
+        btInstall.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/line_end_arrow_FILL0_wght400_GRAD0_opsz48_w.png"))); // NOI18N
         btInstall.setToolTipText("Install/Update");
 
         btRemove.setAction(removeAction);
-        btRemove.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/line_start_arrow_FILL0_wght400_GRAD0_opsz48.png"))); // NOI18N
+        btRemove.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/line_start_arrow_FILL0_wght400_GRAD0_opsz48_w.png"))); // NOI18N
         btRemove.setToolTipText("Remove");
 
         jLabel1.setText("Available");
@@ -437,11 +437,11 @@ public class ExpansionsPanel2 extends javax.swing.JPanel implements Oolite2.Ooli
         jLabel2.setText("Installed");
 
         btDownload.setAction(downloadAction);
-        btDownload.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/download_FILL0_wght400_GRAD0_opsz48.png"))); // NOI18N
+        btDownload.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/download_FILL0_wght400_GRAD0_opsz48_w.png"))); // NOI18N
         btDownload.setToolTipText("Download OXP...");
 
         btDelete.setAction(deleteAction);
-        btDelete.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/delete_forever_FILL0_wght400_GRAD0_opsz48.png"))); // NOI18N
+        btDelete.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/delete_forever_FILL0_wght400_GRAD0_opsz48_w.png"))); // NOI18N
         btDelete.setToolTipText("Delete");
 
         jProgressBar1.setIndeterminate(true);

@@ -61,7 +61,7 @@ public class ExpansionSetPanel extends javax.swing.JPanel {
         btLoad = new javax.swing.JButton();
         btSave = new javax.swing.JButton();
 
-        btLoad.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/upload_FILL0_wght400_GRAD0_opsz48.png"))); // NOI18N
+        btLoad.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/upload_FILL0_wght400_GRAD0_opsz48_w.png"))); // NOI18N
         btLoad.setText("Load...");
         btLoad.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -69,7 +69,7 @@ public class ExpansionSetPanel extends javax.swing.JPanel {
             }
         });
 
-        btSave.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/download_FILL0_wght400_GRAD0_opsz48.png"))); // NOI18N
+        btSave.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/download_FILL0_wght400_GRAD0_opsz48_w.png"))); // NOI18N
         btSave.setText("Save...");
         btSave.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
