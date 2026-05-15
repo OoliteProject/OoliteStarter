@@ -201,7 +201,7 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
 
         jPanel2.setLayout(new java.awt.GridBagLayout());
 
-        btReload.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/refresh_FILL0_wght400_GRAD0_opsz48.png"))); // NOI18N
+        btReload.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/refresh_FILL0_wght400_GRAD0_opsz48_w.png"))); // NOI18N
         btReload.setText("Reload");
         btReload.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -213,7 +213,7 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
         gridBagConstraints.gridy = 1;
         jPanel2.add(btReload, gridBagConstraints);
 
-        btNew.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/play_arrow_FILL0_wght400_GRAD0_opsz48.png"))); // NOI18N
+        btNew.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/play_arrow_FILL0_wght400_GRAD0_opsz48_w.png"))); // NOI18N
         btNew.setText("New");
         btNew.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         btNew.addActionListener(new java.awt.event.ActionListener() {
@@ -228,7 +228,7 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
         gridBagConstraints.insets = new java.awt.Insets(5, 2, 5, 2);
         jPanel2.add(btNew, gridBagConstraints);
 
-        btResume.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/resume_FILL0_wght400_GRAD0_opsz48.png"))); // NOI18N
+        btResume.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/resume_FILL0_wght400_GRAD0_opsz48_w.png"))); // NOI18N
         btResume.setText("Resume");
         btResume.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         btResume.addActionListener(new java.awt.event.ActionListener() {
@@ -248,7 +248,7 @@ public class StartGamePanel extends javax.swing.JPanel implements Oolite.OoliteL
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         jPanel2.add(filler1, gridBagConstraints);
 
-        btDelete.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/delete_forever_FILL0_wght400_GRAD0_opsz48.png"))); // NOI18N
+        btDelete.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/delete_forever_FILL0_wght400_GRAD0_opsz48_w.png"))); // NOI18N
         btDelete.setText("Delete");
         btDelete.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {

@@ -37,7 +37,7 @@
         <Component class="javax.swing.JButton" name="btReload">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/icons/refresh_FILL0_wght400_GRAD0_opsz48.png"/>
+              <Image iconType="3" name="/icons/refresh_FILL0_wght400_GRAD0_opsz48_w.png"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Reload"/>
           </Properties>
@@ -53,7 +53,7 @@
         <Component class="javax.swing.JButton" name="btNew">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/icons/play_arrow_FILL0_wght400_GRAD0_opsz48.png"/>
+              <Image iconType="3" name="/icons/play_arrow_FILL0_wght400_GRAD0_opsz48_w.png"/>
             </Property>
             <Property name="text" type="java.lang.String" value="New"/>
             <Property name="horizontalAlignment" type="int" value="2"/>
@@ -70,7 +70,7 @@
         <Component class="javax.swing.JButton" name="btResume">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/icons/resume_FILL0_wght400_GRAD0_opsz48.png"/>
+              <Image iconType="3" name="/icons/resume_FILL0_wght400_GRAD0_opsz48_w.png"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Resume"/>
             <Property name="horizontalAlignment" type="int" value="2"/>
@@ -105,7 +105,7 @@
         <Component class="javax.swing.JButton" name="btDelete">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/icons/delete_forever_FILL0_wght400_GRAD0_opsz48.png"/>
+              <Image iconType="3" name="/icons/delete_forever_FILL0_wght400_GRAD0_opsz48_w.png"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Delete"/>
           </Properties>

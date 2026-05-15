@@ -2,6 +2,7 @@
  */
 package oolite.starter.ui2;
 
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
@@ -14,6 +15,7 @@ import java.util.Comparator;
 import java.util.List;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.JEditorPane;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.SortOrder;
@@ -27,6 +29,7 @@ import oolite.starter.generic.SortedListModel;
 import oolite.starter.model.Expansion;
 import oolite.starter.model.Installation;
 import oolite.starter.model.ProcessData;
+import oolite.starter.ui.HyperLinkListener;
 import oolite.starter.util.FilterAndSearchUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -182,9 +185,15 @@ public class ExpansionsPanel2 extends javax.swing.JPanel implements Oolite2.Ooli
                     return;
                 }
 
+                String message = "<html>Please enter a URL pointing to an OXP zip file.<br/>You can find download URLs at <a href=\"https://wiki.alioth.net/index.php/Guide_to_Unlisted_OXPs\">https://wiki.alioth.net/index.php/Guide_to_Unlisted_OXPs</a></html>";
+                JEditorPane jep = new JEditorPane("text/html", message);
+                jep.setEditable(false);
+                jep.addHyperlinkListener(new HyperLinkListener());
+                jep.setBackground(new Color(0,0,0, 0));
+                
                 String input = JOptionPane.showInputDialog(
-                        ExpansionsPanel2.this, 
-                        "Please enter a URL pointing to an OXP zip file.\nYou can find download URLs at https://wiki.alioth.net/index.php/Guide_to_Unlisted_OXPs",
+                        ExpansionsPanel2.this,
+                        jep,
                         "Download OXP...",
                         JOptionPane.QUESTION_MESSAGE
                 );
@@ -425,11 +434,11 @@ public class ExpansionsPanel2 extends javax.swing.JPanel implements Oolite2.Ooli
         spInstalled.setViewportView(jlInstalled);
 
         btInstall.setAction(installAction);
-        btInstall.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/line_end_arrow_FILL0_wght400_GRAD0_opsz48.png"))); // NOI18N
+        btInstall.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/line_end_arrow_FILL0_wght400_GRAD0_opsz48_w.png"))); // NOI18N
         btInstall.setToolTipText("Install/Update");
 
         btRemove.setAction(removeAction);
-        btRemove.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/line_start_arrow_FILL0_wght400_GRAD0_opsz48.png"))); // NOI18N
+        btRemove.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/line_start_arrow_FILL0_wght400_GRAD0_opsz48_w.png"))); // NOI18N
         btRemove.setToolTipText("Remove");
 
         jLabel1.setText("Available");
@@ -437,16 +446,16 @@ public class ExpansionsPanel2 extends javax.swing.JPanel implements Oolite2.Ooli
         jLabel2.setText("Installed");
 
         btDownload.setAction(downloadAction);
-        btDownload.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/download_FILL0_wght400_GRAD0_opsz48.png"))); // NOI18N
+        btDownload.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/download_FILL0_wght400_GRAD0_opsz48_w.png"))); // NOI18N
         btDownload.setToolTipText("Download OXP...");
 
         btDelete.setAction(deleteAction);
-        btDelete.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/delete_forever_FILL0_wght400_GRAD0_opsz48.png"))); // NOI18N
+        btDelete.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/delete_forever_FILL0_wght400_GRAD0_opsz48_w.png"))); // NOI18N
         btDelete.setToolTipText("Delete");
 
         jProgressBar1.setIndeterminate(true);
 
-        btFlterAvailable.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/filter_list_FILL0_wght400_GRAD0_opsz24.png"))); // NOI18N
+        btFlterAvailable.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/filter_list_FILL0_wght400_GRAD0_opsz24_w.png"))); // NOI18N
         btFlterAvailable.setToolTipText("Sort & Filter...");
         btFlterAvailable.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -454,7 +463,7 @@ public class ExpansionsPanel2 extends javax.swing.JPanel implements Oolite2.Ooli
             }
         });
 
-        btFilterInstalled.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/filter_list_FILL0_wght400_GRAD0_opsz24.png"))); // NOI18N
+        btFilterInstalled.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/filter_list_FILL0_wght400_GRAD0_opsz24_w.png"))); // NOI18N
         btFilterInstalled.setToolTipText("Sort & Filter...");
         btFilterInstalled.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {

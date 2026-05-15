@@ -71,7 +71,7 @@
         <Component class="javax.swing.JButton" name="btAdd">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/icons/note_add_24dp_FILL0_wght400_GRAD0_opsz24.png"/>
+              <Image iconType="3" name="/icons/note_add_24dp_FILL0_wght400_GRAD0_opsz24_w.png"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Add..."/>
           </Properties>
@@ -82,7 +82,7 @@
         <Component class="javax.swing.JButton" name="btEdit">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/icons/edit_FILL0_wght400_GRAD0_opsz24.png"/>
+              <Image iconType="3" name="/icons/edit_FILL0_wght400_GRAD0_opsz24_w.png"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Edit..."/>
           </Properties>
@@ -93,7 +93,7 @@
         <Component class="javax.swing.JButton" name="btRemove">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/icons/scan_delete_24dp_FILL0_wght400_GRAD0_opsz24.png"/>
+              <Image iconType="3" name="/icons/scan_delete_24dp_FILL0_wght400_GRAD0_opsz24_w.png"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Remove"/>
           </Properties>
@@ -104,7 +104,7 @@
         <Component class="javax.swing.JButton" name="btScan">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/icons/search_FILL0_wght400_GRAD0_opsz24.png"/>
+              <Image iconType="3" name="/icons/search_FILL0_wght400_GRAD0_opsz24_w.png"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Scan..."/>
           </Properties>
@@ -115,7 +115,7 @@
         <Component class="javax.swing.JButton" name="btSave">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/icons/download_FILL0_wght400_GRAD0_opsz24.png"/>
+              <Image iconType="3" name="/icons/download_FILL0_wght400_GRAD0_opsz24_w.png"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Save"/>
           </Properties>
@@ -126,7 +126,7 @@
         <Component class="javax.swing.JButton" name="btActivate">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/icons/star_FILL1_wght400_GRAD0_opsz24.png"/>
+              <Image iconType="3" name="/icons/star_FILL0_wght400_GRAD0_opsz24_w.png"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Select"/>
           </Properties>
