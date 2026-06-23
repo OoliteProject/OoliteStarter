@@ -333,12 +333,16 @@ public class Oolite2 {
      * Removes phantom expansions that are neither online nor offline.
      */
     void removePhantoms() {
+        log.debug("removePhantoms()");
+        
         List<Expansion> phantoms = expansions.stream()
             .filter(e -> e.getDownloadUrl()==null && e.getLocalFile()==null)
             .collect(Collectors.toList());
         
-        log.info("Removing phantoms {}", phantoms);
-        expansions.removeAll(phantoms);
+        if (!phantoms.isEmpty()) {
+            log.info("Removing phantoms {}", phantoms);
+            expansions.removeAll(phantoms);
+        }
     }
     
     void validateDependencies() {

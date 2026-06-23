@@ -1687,5 +1687,50 @@ public class OoliteTest {
         assertNotNull(result);
         assertEquals(0, result.size());
     }
+    
+    @Test
+    public void testGetExpansionFromOxp() throws Exception {
+        log.info("testGetExpansionFromOxp()");
+        
+        Oolite instance = new Oolite();
+        Expansion result = instance.getExpansionFromOxp(null);
+        assertNull(result); // we expect no expansion to be found in this setup
+    }
+    
+    @Test
+    public void testGetExpansionFromOxp2() throws Exception {
+        log.info("testGetExpansionFromOxp2()");
+
+        File f = new File("src/test/resources/data/PHKB_Folder.oxp/Galactic_Navy 5.4.3.oxp");
+        Oolite instance = new Oolite();
+
+        Expansion result = instance.getExpansionFromOxp(f);
+        assertNotNull(result);
+        assertNull(result.getAuthor());
+        assertNull(result.getCategory());
+        assertNull(result.getConflictOxps());
+        assertNotNull(result.getConflictRefs());
+        assertEquals("This OXP only contains a \"requires.plist\".\n" +
+                        "These contain not much useful information. Consider adding a \"manifest.plist\"!\n" +
+                        "More information: https://wiki.alioth.net/index.php/Manifest.plist", result.getDescription());
+        assertNull(result.getDownloadUrl());
+        assertNotNull(result.getEMStatus());
+        assertEquals(0, result.getFileSize()); // do we really expect zero size? Well, it's a directory.
+        assertTrue(result.getIdentifier().endsWith(f.getPath()));
+        assertNull(result.getInformationUrl());
+        assertNull(result.getLicense());
+        assertNotNull(result.getLocalFile());
+        assertEquals("", result.getMaximumOoliteVersion());
+        assertNotNull(result.getOolite());
+        assertNull(result.getOptionalOxps());
+        assertNotNull(result.getOptionalRefs());
+        assertEquals("1.74", result.getRequiredOoliteVersion());
+        assertNotNull(result.getRequiredRefs());
+        assertNull(result.getRequiresOxps());
+        assertNull(result.getTags());
+        assertEquals("Galactic_Navy 5.4.3", result.getTitle());
+        assertNull(result.getUploadDate());
+        assertEquals("0", result.getVersion());
+    }
 
 }

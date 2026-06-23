@@ -567,7 +567,7 @@ public class Expansion implements Comparable<Expansion> {
     /**
      * Returns the optional OXPs list.
      * 
-     * @return the list of OXPs
+     * @return the list of OXPs. May be null.
      */
     public List<Dependency> getOptionalOxps() {
         return optionalOxps;
@@ -961,24 +961,27 @@ public class Expansion implements Comparable<Expansion> {
      */
     public List<ExpansionReference> getOptionalRefs() {
         List<ExpansionReference> result = new ArrayList<>();
-        for (Dependency dep: getOptionalOxps()) {
-            ExpansionReference er = oolite.getExpansionReference(dep);
-            switch (er.getStatus()) {
-                case CONFLICT:
-                    break;
-                case MISSING:
-                    er.setStatus(ExpansionReference.Status.OK);
-                    break;
-                case OK:
-                    er.setStatus(ExpansionReference.Status.OK);
-                    break;
-                case REQUIRED_MISSING:
-                    er.setStatus(ExpansionReference.Status.OK);
-                    break;
-                case SURPLUS:
-                    break;
+        List<Dependency> optionalOxps = getOptionalOxps();
+        if (optionalOxps != null) {
+            for (Dependency dep: optionalOxps) {
+                ExpansionReference er = oolite.getExpansionReference(dep);
+                switch (er.getStatus()) {
+                    case CONFLICT:
+                        break;
+                    case MISSING:
+                        er.setStatus(ExpansionReference.Status.OK);
+                        break;
+                    case OK:
+                        er.setStatus(ExpansionReference.Status.OK);
+                        break;
+                    case REQUIRED_MISSING:
+                        er.setStatus(ExpansionReference.Status.OK);
+                        break;
+                    case SURPLUS:
+                        break;
+                }
+                result.add(er);
             }
-            result.add(er);
         }
         return result;
     }
