@@ -2508,6 +2508,9 @@ public class Oolite implements PropertyChangeListener {
      */
     public static Installation populateFromHomeDir(File homeDir) {
         log.debug("populateFromHomeDir({})", homeDir);
+        if (homeDir == null) {
+            throw new IllegalArgumentException("homeDir must not be null");
+        }
         
         Installation i = new Installation();
         i.setHomeDir(homeDir.getAbsolutePath());

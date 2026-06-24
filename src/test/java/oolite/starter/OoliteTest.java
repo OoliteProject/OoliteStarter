@@ -1733,4 +1733,36 @@ public class OoliteTest {
         assertEquals("0", result.getVersion());
     }
 
+    @Test
+    public void testPopulateFromHomeDir() {
+        log.info("testPopulateFromHomeDir()");
+        
+        try {
+            Oolite.populateFromHomeDir(null);
+            fail("exception expected");
+        } catch (IllegalArgumentException e) {
+            assertEquals("homeDir must not be null", e.getMessage());
+            log.debug("caught expected exception");
+        }
+    }
+
+    @Test
+    public void testPopulateFromHomeDir2() {
+        log.info("testPopulateFromHomeDir2()");
+        
+        File f = new File("src/test/resources/data/OoliteTest/testPopulateFromHomeDir2");
+        
+        Installation result = Oolite.populateFromHomeDir(f);
+        assertNotNull(result);
+        assertNull(result.getAddonDir());
+        assertTrue(result.getDeactivatedAddonDir().endsWith("src/test/resources/data/OoliteTest/DeactivatedAddOns"));
+        assertTrue(result.getExecutable().endsWith("src/test/resources/data/OoliteTest/testPopulateFromHomeDir2/Contents/MacOS/Oolite"));
+        assertTrue(result.getHomeDir().endsWith("src/test/resources/data/OoliteTest/testPopulateFromHomeDir2"));
+        assertTrue(result.getManagedAddonDir().endsWith("GNUstep/Library/ApplicationSupport/Oolite/ManagedAddOns"));
+        assertTrue(result.getManagedDeactivatedAddonDir().endsWith("GNUstep/Library/ApplicationSupport/Oolite/ManagedDeactivatedAddOns"));
+        assertNull(result.getMqtt());
+        assertTrue(result.getSavegameDir().endsWith("oolite-saves"));
+        assertNull(result.getVersion());
+    }
+
 }
