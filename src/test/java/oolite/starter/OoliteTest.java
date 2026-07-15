@@ -27,6 +27,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
 import oolite.starter.model.Command;
 import oolite.starter.model.Expansion;
+import oolite.starter.model.Expansion.Dependency;
 import oolite.starter.model.ExpansionReference;
 import oolite.starter.model.Installation;
 import oolite.starter.model.OoliteFlavor;
@@ -42,6 +43,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import org.mockito.Mockito;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
@@ -1686,6 +1688,44 @@ public class OoliteTest {
         List<Command> result = instance.buildCommandList(expansions, target);
         assertNotNull(result);
         assertEquals(0, result.size());
+    }
+    
+    /**
+     * Test if required expansions calculated in.
+     * 
+     * @throws ParserConfigurationException 
+     */
+    @Test
+    public void testBuildCommandList5() throws ParserConfigurationException {
+        log.info("testBuildCommandList5");
+        
+        List<Expansion> expansions = new ArrayList<>();
+        expansions.add(new Expansion.Builder()
+                .identifier("A")
+                .requiresOxp(new Dependency("B"))
+                .build());
+
+        DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+        Document doc = db.newDocument();
+        Element root = doc.createElement("ExpansionList");
+        Element expansion = doc.createElement("Expansion");
+        expansion.setAttribute("downloadUrl", "https://wiki.alioth.net/img_auth.php/d/d6/EnergyRebalance.oxz");
+        expansion.setAttribute("identifier", "oolite.oxp.stranger.EnergyRebalance");
+        expansion.setAttribute("version", "0.3.0");
+        root.appendChild(expansion);
+        NodeList target = root.getChildNodes();
+        
+        Oolite instance = new Oolite();
+        
+        List<Command> result = instance.buildCommandList(expansions, target);
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        assertEquals("INSTALL", result.get(0).getAction().name());
+        assertNull(result.get(0).getExpansion().getIdentifier());
+        assertEquals("oolite.oxp.stranger.EnergyRebalance:0.3.0", result.get(0).getExpansion().getTitle());
+        assertEquals("https://wiki.alioth.net/img_auth.php/d/d6/EnergyRebalance.oxz", result.get(0).getExpansion().getDownloadUrl());
+        
+        // todo: fail("need flavor with expansions that have dependencies");
     }
     
     @Test

@@ -1720,6 +1720,8 @@ public class Oolite implements PropertyChangeListener {
             throw new IllegalArgumentException("target must not be null");
         }
         
+        // todo: where do we check for required or conflicting addons?
+        
         List<Command> result = new ArrayList<>();
 
         TreeMap<String, String> enabledAddons = prepareEnabledAddonsList(target);
@@ -1765,6 +1767,7 @@ public class Oolite implements PropertyChangeListener {
                 }
             }
         }
+        // todo check dependencies
 
         return result;
     }

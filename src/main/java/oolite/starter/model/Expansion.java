@@ -29,6 +29,7 @@ public class Expansion implements Comparable<Expansion> {
     public static class Builder {
         
         private String identifier;
+        private List<Dependency> requiresOxps;
         
         /**
          * Sets the identifier for the expansion.
@@ -38,6 +39,17 @@ public class Expansion implements Comparable<Expansion> {
          */
         public Builder identifier(String identifier) {
             this.identifier = identifier;
+            requiresOxps = new ArrayList<>();
+            return this;
+        }
+        
+        /**
+         * Adds a required dependency for the expansion.
+         * @param oxp the dependency
+         * @return  the builder
+         */
+        public Builder requiresOxp(Dependency oxp) {
+            requiresOxps.add(oxp);
             return this;
         }
         
@@ -49,6 +61,7 @@ public class Expansion implements Comparable<Expansion> {
         public Expansion build() {
             Expansion result = new Expansion();
             result.setIdentifier(identifier);
+            result.setRequiresOxps(requiresOxps);
             return result;
         }
         
