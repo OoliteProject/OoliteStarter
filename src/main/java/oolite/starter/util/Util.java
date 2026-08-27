@@ -171,6 +171,9 @@ public class Util {
      */
     public static String humanreadableSize(long size) {
         log.debug("humanreadableSize({})", size);
+        if (size >= 1024*1024*1024) {
+            return String.format("%.2f GB", (size)/(1024f*1024f*1024f));
+        }
         if (size >= 1024*1024) {
             return String.format("%.2f MB", (size)/(1024f*1024f));
         }
@@ -188,6 +191,14 @@ public class Util {
      */
     public static boolean isZipFile(File f) throws IOException {
         log.debug("isZipFile({})", f);
+        
+        if (f == null) {
+            throw new IllegalArgumentException("f must not be null");
+        }
+        
+        if (!f.isFile()) {
+            return false; // this cannot be a zip file
+        }
         
         try (RandomAccessFile raf = new RandomAccessFile(f, "r")) {
             int fileSignature = raf.readInt();

@@ -30,15 +30,19 @@ public class SortedListModel<T> extends AbstractListModel<T> {
         private int index;
         
         public SortedListEntry(int index) {
+            log.debug("SortedListEntry({})", index);
             this.index = index;
         }
         
         public int getIndex() {
+            log.debug("getIndex()", index);
             return index;
         }
 
         @Override
         public int compareTo(SortedListEntry thatEntry) {
+            log.debug("compareTo({})", thatEntry);
+            
             // Retrieve the element that this entry points to 
             // in the original model.
             T thisElement = unsortedModel.getElementAt(index);
@@ -52,6 +56,11 @@ public class SortedListModel<T> extends AbstractListModel<T> {
                 comparison = -comparison;
             }
             return comparison;
+        }
+
+        @Override
+        public String toString() {
+            return "SortedListEntry{" + "index=" + index + '}';
         }
         
     }
@@ -119,6 +128,8 @@ public class SortedListModel<T> extends AbstractListModel<T> {
     }
     
     private void resort() {
+        log.trace("resort()");
+        
         sortedList = new ArrayList<>(unsortedModel.getSize());
         for (int x = 0; x < unsortedModel.getSize(); x++) {
             SortedListEntry entry = new SortedListEntry(x);
@@ -132,6 +143,8 @@ public class SortedListModel<T> extends AbstractListModel<T> {
      * entry in the sorted model.
      */
     private int findInsertionPoint(SortedListEntry entry) {
+        log.trace("findInsertionPoint({})", entry);
+        
         int insertionPoint = sortedList.size();
         if (sortOrder != SortOrder.UNSORTED)  {
             insertionPoint =  Collections.binarySearch((List)sortedList, entry);
@@ -144,11 +157,14 @@ public class SortedListModel<T> extends AbstractListModel<T> {
 
     @Override
     public int getSize() {
+        log.debug("getSize()");
         return sortedList.size();
     }
 
     @Override
     public T getElementAt(int i) {
+        log.debug("getElementAt({})", i);
+
         if (i < 0 || i >= sortedList.size()) {
             //throw new IndexOutOfBoundsException("Cannot find index " + i + ": Must be in [0 and " + (sortedList.size()-1) + "]");
             log.warn("Cannot find index {}: Must be in [0 and {}]", i, sortedList.size()-1);

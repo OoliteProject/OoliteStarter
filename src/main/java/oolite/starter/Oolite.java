@@ -1417,17 +1417,23 @@ public class Oolite implements PropertyChangeListener {
      * @throws SAXException something went wrong
      * @throws XPathExpressionException something went wrong
      */
-    private Expansion getExpansionFromOxp(File f) throws IOException, ParserConfigurationException, SAXException, XPathExpressionException {
+    Expansion getExpansionFromOxp(File f) throws IOException, ParserConfigurationException, SAXException, XPathExpressionException {
         log.debug("getExpansionsFromOxp({})", f);
         File manifestFile = new File(f, "manifest.plist");
         if (manifestFile.isFile()) {
             InputStream stream = new FileInputStream(manifestFile);
-            return createExpansionFromManifest(stream, manifestFile.getAbsolutePath());
+            Expansion result = createExpansionFromManifest(stream, manifestFile.getAbsolutePath());
+            result.setOolite(this);
+            result.setLocalFile(f);
+            return result;
         }
         manifestFile = new File(f, "requires.plist");
         if (manifestFile.isFile()) {
             InputStream stream = new FileInputStream(manifestFile);
-            return createExpansionFromRequires(stream, manifestFile.getAbsolutePath());
+            Expansion result = createExpansionFromRequires(stream, manifestFile.getAbsolutePath());
+            result.setOolite(this);
+            result.setLocalFile(f);
+            return result;
         }
         return null;
     }
@@ -1714,6 +1720,8 @@ public class Oolite implements PropertyChangeListener {
             throw new IllegalArgumentException("target must not be null");
         }
         
+        // todo: where do we check for required or conflicting addons?
+        
         List<Command> result = new ArrayList<>();
 
         TreeMap<String, String> enabledAddons = prepareEnabledAddonsList(target);
@@ -1759,6 +1767,7 @@ public class Oolite implements PropertyChangeListener {
                 }
             }
         }
+        // todo check dependencies
 
         return result;
     }
@@ -2502,6 +2511,9 @@ public class Oolite implements PropertyChangeListener {
      */
     public static Installation populateFromHomeDir(File homeDir) {
         log.debug("populateFromHomeDir({})", homeDir);
+        if (homeDir == null) {
+            throw new IllegalArgumentException("homeDir must not be null");
+        }
         
         Installation i = new Installation();
         i.setHomeDir(homeDir.getAbsolutePath());

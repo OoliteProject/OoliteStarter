@@ -29,6 +29,7 @@ public class Expansion implements Comparable<Expansion> {
     public static class Builder {
         
         private String identifier;
+        private List<Dependency> requiresOxps;
         
         /**
          * Sets the identifier for the expansion.
@@ -38,6 +39,17 @@ public class Expansion implements Comparable<Expansion> {
          */
         public Builder identifier(String identifier) {
             this.identifier = identifier;
+            requiresOxps = new ArrayList<>();
+            return this;
+        }
+        
+        /**
+         * Adds a required dependency for the expansion.
+         * @param oxp the dependency
+         * @return  the builder
+         */
+        public Builder requiresOxp(Dependency oxp) {
+            requiresOxps.add(oxp);
             return this;
         }
         
@@ -49,6 +61,7 @@ public class Expansion implements Comparable<Expansion> {
         public Expansion build() {
             Expansion result = new Expansion();
             result.setIdentifier(identifier);
+            result.setRequiresOxps(requiresOxps);
             return result;
         }
         
@@ -567,7 +580,7 @@ public class Expansion implements Comparable<Expansion> {
     /**
      * Returns the optional OXPs list.
      * 
-     * @return the list of OXPs
+     * @return the list of OXPs. May be null.
      */
     public List<Dependency> getOptionalOxps() {
         return optionalOxps;
@@ -961,24 +974,27 @@ public class Expansion implements Comparable<Expansion> {
      */
     public List<ExpansionReference> getOptionalRefs() {
         List<ExpansionReference> result = new ArrayList<>();
-        for (Dependency dep: getOptionalOxps()) {
-            ExpansionReference er = oolite.getExpansionReference(dep);
-            switch (er.getStatus()) {
-                case CONFLICT:
-                    break;
-                case MISSING:
-                    er.setStatus(ExpansionReference.Status.OK);
-                    break;
-                case OK:
-                    er.setStatus(ExpansionReference.Status.OK);
-                    break;
-                case REQUIRED_MISSING:
-                    er.setStatus(ExpansionReference.Status.OK);
-                    break;
-                case SURPLUS:
-                    break;
+        List<Dependency> optionalOxps = getOptionalOxps();
+        if (optionalOxps != null) {
+            for (Dependency dep: optionalOxps) {
+                ExpansionReference er = oolite.getExpansionReference(dep);
+                switch (er.getStatus()) {
+                    case CONFLICT:
+                        break;
+                    case MISSING:
+                        er.setStatus(ExpansionReference.Status.OK);
+                        break;
+                    case OK:
+                        er.setStatus(ExpansionReference.Status.OK);
+                        break;
+                    case REQUIRED_MISSING:
+                        er.setStatus(ExpansionReference.Status.OK);
+                        break;
+                    case SURPLUS:
+                        break;
+                }
+                result.add(er);
             }
-            result.add(er);
         }
         return result;
     }

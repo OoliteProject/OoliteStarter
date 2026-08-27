@@ -34,50 +34,6 @@ public class FlavorsPanel extends javax.swing.JPanel {
     public FlavorsPanel() {
         log.debug("FlavorsPanel()");
         initComponents();
-        
-        
-//        jList1.setCellRenderer(new OoliteFlavorListCellRenderer());
-        
-//        MouseAdapter ma = new MouseAdapter() {
-//            @Override
-//            public void mouseClicked(MouseEvent e) {
-//                log.debug("offer install...");
-//            }
-//        };
-//        jList1.addMouseListener(ma);
-
-//        AbstractAction action = new AbstractAction("Install...") {
-//            @Override
-//            public void actionPerformed(ActionEvent ae) {
-//                log.debug("actionPerformed(...)");
-//                OoliteFlavor flavor = jList1.getSelectedValue();
-//                if (flavor == null) {
-//                    return;
-//                }
-//                log.warn("Install flavor {} from {}...", flavor.getName(), flavor.getExpansionSetUrl());
-//                
-//                try {
-//                    NodeList nl = oolite.parseExpansionSet(flavor.getExpansionSetUrl());
-//                    log.warn("Parsed expansion set {}", flavor.getExpansionSetUrl());
-//                    
-//                    List<Command> plan = oolite.buildCommandList(oolite2.getExpansions(), nl);
-//                    
-//                    if (plan.isEmpty()) {
-//                        JOptionPane.showConfirmDialog(FlavorsPanel.this, "We're already there, kiddo.");
-//                    } else  {
-//                        // have user approve the plan
-//                        if (JOptionPane.showConfirmDialog(FlavorsPanel.this, Util.createCommandListPanel(plan), "Confirm these actions...", JOptionPane.OK_CANCEL_OPTION)==JOptionPane.OK_OPTION) {
-//                            // execute the plan
-//                            ExpansionManager.getInstance().addCommands(plan);
-//                            MrGimlet.showMessage(FlavorsPanel.this, "Working on it...");
-//                        }
-//                    }
-//                } catch (Exception e) {
-//                    log.error("Could not install expansion set");
-//                }
-//            }
-//        };
-//        listAction = new ListAction(jList1, action);
     }
     
     /**
@@ -97,10 +53,6 @@ public class FlavorsPanel extends javax.swing.JPanel {
                 oflc.setData(flavor);
                 jPanel1.add(oflc);
             }
-        
-//            model = new DefaultListModel<>();
-//            model.addAll(oolite.getFlavorList());        
-//            jList1.setModel(model);
         } catch (Exception e) {
             log.error("Could not load flavors", e);
             model = null;

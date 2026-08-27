@@ -27,6 +27,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
 import oolite.starter.model.Command;
 import oolite.starter.model.Expansion;
+import oolite.starter.model.Expansion.Dependency;
 import oolite.starter.model.ExpansionReference;
 import oolite.starter.model.Installation;
 import oolite.starter.model.OoliteFlavor;
@@ -42,6 +43,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import org.mockito.Mockito;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
@@ -1686,6 +1688,121 @@ public class OoliteTest {
         List<Command> result = instance.buildCommandList(expansions, target);
         assertNotNull(result);
         assertEquals(0, result.size());
+    }
+    
+    /**
+     * Test if required expansions calculated in.
+     * 
+     * @throws ParserConfigurationException 
+     */
+    @Test
+    public void testBuildCommandList5() throws ParserConfigurationException {
+        log.info("testBuildCommandList5");
+        
+        List<Expansion> expansions = new ArrayList<>();
+        expansions.add(new Expansion.Builder()
+                .identifier("A")
+                .requiresOxp(new Dependency("B"))
+                .build());
+
+        DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+        Document doc = db.newDocument();
+        Element root = doc.createElement("ExpansionList");
+        Element expansion = doc.createElement("Expansion");
+        expansion.setAttribute("downloadUrl", "https://wiki.alioth.net/img_auth.php/d/d6/EnergyRebalance.oxz");
+        expansion.setAttribute("identifier", "oolite.oxp.stranger.EnergyRebalance");
+        expansion.setAttribute("version", "0.3.0");
+        root.appendChild(expansion);
+        NodeList target = root.getChildNodes();
+        
+        Oolite instance = new Oolite();
+        
+        List<Command> result = instance.buildCommandList(expansions, target);
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        assertEquals("INSTALL", result.get(0).getAction().name());
+        assertNull(result.get(0).getExpansion().getIdentifier());
+        assertEquals("oolite.oxp.stranger.EnergyRebalance:0.3.0", result.get(0).getExpansion().getTitle());
+        assertEquals("https://wiki.alioth.net/img_auth.php/d/d6/EnergyRebalance.oxz", result.get(0).getExpansion().getDownloadUrl());
+        
+        // todo: fail("need flavor with expansions that have dependencies");
+    }
+    
+    @Test
+    public void testGetExpansionFromOxp() throws Exception {
+        log.info("testGetExpansionFromOxp()");
+        
+        Oolite instance = new Oolite();
+        Expansion result = instance.getExpansionFromOxp(null);
+        assertNull(result); // we expect no expansion to be found in this setup
+    }
+    
+    @Test
+    public void testGetExpansionFromOxp2() throws Exception {
+        log.info("testGetExpansionFromOxp2()");
+
+        File f = new File("src/test/resources/data/PHKB_Folder.oxp/Galactic_Navy 5.4.3.oxp");
+        Oolite instance = new Oolite();
+
+        Expansion result = instance.getExpansionFromOxp(f);
+        assertNotNull(result);
+        assertNull(result.getAuthor());
+        assertNull(result.getCategory());
+        assertNull(result.getConflictOxps());
+        assertNotNull(result.getConflictRefs());
+        assertEquals("This OXP only contains a \"requires.plist\".\n" +
+                        "These contain not much useful information. Consider adding a \"manifest.plist\"!\n" +
+                        "More information: https://wiki.alioth.net/index.php/Manifest.plist", result.getDescription());
+        assertNull(result.getDownloadUrl());
+        assertNotNull(result.getEMStatus());
+        assertEquals(0, result.getFileSize()); // do we really expect zero size? Well, it's a directory.
+        assertTrue(result.getIdentifier().endsWith(f.getPath()));
+        assertNull(result.getInformationUrl());
+        assertNull(result.getLicense());
+        assertNotNull(result.getLocalFile());
+        assertEquals("", result.getMaximumOoliteVersion());
+        assertNotNull(result.getOolite());
+        assertNull(result.getOptionalOxps());
+        assertNotNull(result.getOptionalRefs());
+        assertEquals("1.74", result.getRequiredOoliteVersion());
+        assertNotNull(result.getRequiredRefs());
+        assertNull(result.getRequiresOxps());
+        assertNull(result.getTags());
+        assertEquals("Galactic_Navy 5.4.3", result.getTitle());
+        assertNull(result.getUploadDate());
+        assertEquals("0", result.getVersion());
+    }
+
+    @Test
+    public void testPopulateFromHomeDir() {
+        log.info("testPopulateFromHomeDir()");
+        
+        try {
+            Oolite.populateFromHomeDir(null);
+            fail("exception expected");
+        } catch (IllegalArgumentException e) {
+            assertEquals("homeDir must not be null", e.getMessage());
+            log.debug("caught expected exception");
+        }
+    }
+
+    @Test
+    public void testPopulateFromHomeDir2() {
+        log.info("testPopulateFromHomeDir2()");
+        
+        File f = new File("src/test/resources/data/OoliteTest/testPopulateFromHomeDir2");
+        
+        Installation result = Oolite.populateFromHomeDir(f);
+        assertNotNull(result);
+        assertNull(result.getAddonDir());
+        assertTrue(result.getDeactivatedAddonDir().endsWith("src/test/resources/data/OoliteTest/DeactivatedAddOns"));
+        assertTrue(result.getExecutable().endsWith("src/test/resources/data/OoliteTest/testPopulateFromHomeDir2/Contents/MacOS/Oolite"));
+        assertTrue(result.getHomeDir().endsWith("src/test/resources/data/OoliteTest/testPopulateFromHomeDir2"));
+        assertTrue(result.getManagedAddonDir().endsWith("GNUstep/Library/ApplicationSupport/Oolite/ManagedAddOns"));
+        assertTrue(result.getManagedDeactivatedAddonDir().endsWith("GNUstep/Library/ApplicationSupport/Oolite/ManagedDeactivatedAddOns"));
+        assertNull(result.getMqtt());
+        assertTrue(result.getSavegameDir().endsWith("oolite-saves"));
+        assertNull(result.getVersion());
     }
 
 }
