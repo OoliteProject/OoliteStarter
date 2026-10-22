@@ -406,30 +406,35 @@ public class MainFrame extends javax.swing.JFrame {
             // todo: move all this checking into the Installation class
             // then it is easier to distinguish bare, flatpak and appimage installations
             
-            String executable = i.getExecutable();
-            if (executable == null) {
+            String executableName = i.getExecutable();
+            if (executableName == null) {
                 return false;
             }
-            File f = new File(executable);
-            if (!f.isFile()) {
-                log.warn("File {} not found.", f);
+            File executable = new File(executableName);
+            if (!executable.isFile()) {
+                log.warn("File {} not found.", executable);
                 return false;
             }
 
-            f = new File(i.getHomeDir());
-            if (!f.isDirectory()) {
-                log.warn("File {} not found.", f);
+            File homedir = new File(i.getHomeDir());
+            if (!homedir.isDirectory()) {
+                log.warn("File {} not found.", homedir);
                 return false;
             }
             
             try {
-                String v = oolite.getVersionFromHomeDir(f);
+                String v = null;
+                if (executableName.toLowerCase().endsWith(".appimage")) {
+                    v = Oolite2.getAppImageVersion(executable);
+                } else {
+                    v = oolite.getVersionFromHomeDir(homedir);
+                }
                 if (!i.getVersion().equals(v)) {
                     log.warn("Oolite declared as {} but found {}", i.getVersion(), v);
                     return false;
                 }
             } catch (IOException e) {
-                log.warn("Could not get version for {}", f, e);
+                log.warn("Could not get version for {}", homedir, e);
             }
         }
         

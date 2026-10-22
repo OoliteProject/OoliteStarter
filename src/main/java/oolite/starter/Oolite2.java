@@ -664,8 +664,12 @@ public class Oolite2 {
 //            FileUtils.deleteQuietly(tempdir);
 //        }
 
-        String helpMenu = Util.execReadToString(new String[]{appimage.getAbsolutePath(), "--nosplash", "--help"});
+        String[] command = new String[]{appimage.getAbsolutePath(), "--nosplash", "--help"};
+        String helpMenu = Util.execReadToString(command);
         String version = getVersionFromHelpMenu(helpMenu);
+        if (version == null) {
+            log.warn("Could not read version from AppImage help menu. We executed\n{}\n and got this menu:\n{}", command, helpMenu);
+        }
         return version;
     }
     
